@@ -17,12 +17,12 @@ namespace WeightMaster.Core
             string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
 
             userModel apiResponse = await apiClient.PostAsync<userModel>(url, null);
-           
+
             if (apiResponse != null && apiResponse.Status == "success")
             {
 
                 var userService = new UserService(new AppDbContext());
-                await userService.ReplaceUsersAsync(apiResponse.Users); 
+                await userService.ReplaceUsersAsync(apiResponse.Users);
 
 
                 foreach (var user in apiResponse.Users)
@@ -45,7 +45,6 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
-
         public async Task<int> getChangeCount()
         {
             ApiClient apiClient = new ApiClient();
@@ -66,7 +65,6 @@ namespace WeightMaster.Core
             }
             return userCount;
         }
-
         public async Task<bool> UserDbValidation()
         {
             try {
@@ -107,7 +105,7 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-        public async Task<bool> LoginUser(string username, string password)
+        public async Task<String> LoginUser(string username, string password)
         {
             try
             {
@@ -116,13 +114,32 @@ namespace WeightMaster.Core
                     var userService = new UserService(new AppDbContext());
                     return await userService.LogUserLogin(username, password); ;
                 });
-                return true;
+                return "";
             }
             catch (Exception ex)
             {
-                return false;
+                return "";
             }
         }
+        public async Task DumpLineMastersInformationAsync()
+        {
+            ApiClient apiClient = new ApiClient();
+            string url = "http://152.42.249.231:8000/api/method/get_linemasters";
 
+            LineMasterResponse apiResponse = await apiClient.GetAsync<LineMasterResponse>(url);
+
+            if (apiResponse != null && apiResponse.Status == "success")
+            {
+                foreach (var lineMaster in apiResponse.Data)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Line Name: {lineMaster.LineName}");
+                    System.Diagnostics.Debug.WriteLine($"Line Master: {lineMaster.lmaster}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data received or status is not 'success'.");
+            }
+        }
     }
 }

@@ -31,11 +31,9 @@ namespace WeightMaster.Services
             return await _engine.VerifyEmailInDbAsync(email);
         }
 
-        public async Task<bool> loginUser(String email,string password)
+        public async Task<String> loginUser(String email,string password)
         {
             return await _engine.LoginUser(email,password);
         }
-
-
     }
 }

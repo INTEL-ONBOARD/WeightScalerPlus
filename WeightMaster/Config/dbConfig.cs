@@ -6,11 +6,9 @@ namespace WeightMaster.Config
     public class AppDbContext : DbContext
     {
         internal object UserBlockModels;
-
-        public DbSet<Student> Students { get; set; }
-        public DbSet<UserBlockModel> Users { get; set; }
-
-        public DbSet<UserLoginModel> UserLogins { get; set; }
+        public DbSet<UserBlockModel> UsersData { get; set; }
+        public DbSet<UserLoginModel> UserLoginsLog { get; set; }
+        public DbSet<LineMasterBlockModel> lineMasterData { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
