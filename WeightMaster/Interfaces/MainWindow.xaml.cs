@@ -194,6 +194,13 @@ namespace WeightMaster
             base.OnClosed(e);
         }
 
+
+
+
+
+
+
+
         //event to accept only numbers in the textboxes
         private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {

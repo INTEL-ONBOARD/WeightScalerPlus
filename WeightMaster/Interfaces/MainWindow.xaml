@@ -258,7 +258,7 @@
                         </Border>
                     </Button>
                     <!--Home button (when home button is invicible)-->
-                    <Button x:Name="HomeButton" Visibility="Hidden" Background="Transparent" BorderThickness="0" Margin="1413,0,168,0" Style="{StaticResource HoverButton}" Click="HomeButtonClick">
+                    <Button x:Name="HomeButton" Visibility="Hidden" Background="Transparent" BorderThickness="0" Margin="1524,0,168,0" Style="{StaticResource HoverButton}" Click="HomeButtonClick">
                         <Border Background="#D9D9D9" CornerRadius="30" Padding="10" Width="120" Height="120">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <!-- Home image -->
@@ -598,6 +598,7 @@
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,31">
                             <StackPanel x:Name="Station1TablePanel" Width="690">
+                                <!--
                                 <Border Width="690" Height="50" Background="#F9F9F9" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="2" Padding="10">
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -616,7 +617,7 @@
                                         <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" x:Name="GoldenLeafWeight" Text="180Kg" />
                                     </Grid>
                                 </Border>
-
+                                -->
                             </StackPanel>
                         </ScrollViewer>
                     </Grid>
