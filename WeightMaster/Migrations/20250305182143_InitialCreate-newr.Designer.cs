@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250305150501_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250305182143_InitialCreate-newr")]
+    partial class InitialCreatenewr
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,28 +25,25 @@ namespace WeightMaster.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("WeightMaster.Models.Student", b =>
+            modelBuilder.Entity("WeightMaster.Models.LineMasterBlockModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Email")
+                    b.Property<string>("LineMaster")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("LineName")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
-                    b.ToTable("Students");
+                    b.ToTable("lineMasterData");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.UserBlockModel", b =>
@@ -78,7 +75,7 @@ namespace WeightMaster.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("UsersData");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.UserLoginModel", b =>
@@ -103,7 +100,7 @@ namespace WeightMaster.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserLogins");
+                    b.ToTable("UserLoginsLog");
                 });
 #pragma warning restore 612, 618
         }

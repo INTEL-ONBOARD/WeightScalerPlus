@@ -126,10 +126,13 @@ namespace WeightMaster.Core
             ApiClient apiClient = new ApiClient();
             string url = "http://152.42.249.231:8000/api/method/get_linemasters";
 
-            LineMasterResponse apiResponse = await apiClient.GetAsync<LineMasterResponse>(url);
+            LineMasterResponse apiResponse = await apiClient.PostAsync<LineMasterResponse>(url,null);
 
             if (apiResponse != null && apiResponse.Status == "success")
             {
+                System.Diagnostics.Debug.WriteLine("HERE >>>>> "+apiResponse.ToString());
+                var userService = new LineMasterService(new AppDbContext());
+                await userService.ReplaceLineMasterDataAsync(apiResponse.Data);
                 foreach (var lineMaster in apiResponse.Data)
                 {
                     System.Diagnostics.Debug.WriteLine($"Line Name: {lineMaster.LineName}");
@@ -141,5 +144,6 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
+
     }
 }

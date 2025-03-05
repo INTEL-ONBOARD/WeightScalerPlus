@@ -38,7 +38,7 @@ namespace WeightMaster
         public async Task testExecution()
         {
            
-            await _consoleHandler.GetStudentsAsync();
+            await _consoleHandler.GetLineMasterAsync();
         }
 
         //global to use on the close event
@@ -85,7 +85,7 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            //await testExecution();
+            await _consoleHandler.GetLineMasterAsync();
 
             string username = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
