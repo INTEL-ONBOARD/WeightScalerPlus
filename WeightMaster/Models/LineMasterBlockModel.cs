@@ -10,7 +10,7 @@ namespace WeightMaster.Models
     public class LineMasterBlockModel
     {
         public int id {  get; set; }
-        public string LineName { get; set; }
-        public string LineMaster { get; set; }
+        public string? LineName { get; set; }
+        public string? LineMaster { get; set; }
     }
 }

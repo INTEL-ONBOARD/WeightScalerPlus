@@ -16,10 +16,10 @@ namespace WeightMaster.Services
             _engine = new Engine();
         }
 
-        public async Task GetStudentsAsync()
-        {
-            await _engine.dumpUserInformation();
-        }
+        //public async Task GetStudentsAsync()
+        //{
+        //    await _engine.dumpUserInformation();
+        //}
 
         public async Task<bool> VerifyUserDb()
         {
@@ -34,6 +34,13 @@ namespace WeightMaster.Services
         public async Task<String> loginUser(String email,string password)
         {
             return await _engine.LoginUser(email,password);
+        }
+
+
+
+        public async Task GetLineMasterAsync()
+        {
+            await _engine.DumpLineMastersInformationAsync();
         }
     }
 }
