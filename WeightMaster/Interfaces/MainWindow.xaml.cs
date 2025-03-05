@@ -128,7 +128,8 @@ namespace WeightMaster
 
         private void TogglePasswordVisibilityClick(object sender, RoutedEventArgs e)
         {
-
+            //PasswordTextBox.PasswordCharProperty.Readable = true;
+            //PasswordTextBox.Readable = false;
         }
 
         //topbar section
@@ -137,6 +138,13 @@ namespace WeightMaster
             SettingsFrame.Visibility = Visibility.Visible;
             Station1Frame.Visibility = Visibility.Collapsed;
             //button visibility logic
+            ApplicationSettingsButton.Opacity = 0.6;
+            GeneralSettingsButton.Opacity = 1.0;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            GeneralSettingsButtonRightArrow.Visibility = Visibility.Visible;
+
+            GeneralSettingsSection.Visibility = Visibility.Visible;
+            ApplicationSettingsSection.Visibility = Visibility.Hidden;
             //Console.Beep();
             HomeButton.Visibility = Visibility.Visible;
             SettingsButton.Visibility = Visibility.Collapsed;
@@ -161,13 +169,31 @@ namespace WeightMaster
             Station2Frame.Visibility = Visibility.Collapsed;
         }
 
-        private void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
-        {
-            GeneralSettingsSection.Visibility = Visibility.Visible;
-        }
 
 
         //settings frame
+        private void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationSettingsButton.Opacity = 0.6;
+            GeneralSettingsButton.Opacity = 1.0;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            GeneralSettingsButtonRightArrow.Visibility = Visibility.Visible;
+
+            GeneralSettingsSection.Visibility = Visibility.Visible;
+            ApplicationSettingsSection.Visibility = Visibility.Hidden;
+        }
+        private void ApplicationSettingsButtonClick(object sender, RoutedEventArgs e)
+        {
+            ApplicationSettingsButton.Opacity = 1.0;
+            GeneralSettingsButton.Opacity = 0.6;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Visible;
+            GeneralSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            GeneralSettingsSection.Visibility = Visibility.Hidden;
+            ApplicationSettingsSection.Visibility = Visibility.Visible;
+        }
+
+
+
         private void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -217,6 +243,7 @@ namespace WeightMaster
             }
             return true;
         }
+
 
     }
 }

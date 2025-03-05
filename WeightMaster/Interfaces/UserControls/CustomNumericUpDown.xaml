@@ -27,21 +27,21 @@
 
         <!-- Numeric TextBox -->
         <Border Grid.Column="0" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,0,10,0">
-            <TextBox x:Name="txtValue" IsReadOnly="True" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" 
+            <TextBox x:Name="txtValue" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" 
      VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Right"
-     PreviewTextInput="txtValue_PreviewTextInput" />
+     PreviewTextInput="txtValue_PreviewTextInput" TextChanged="txtValue_TextChanged"/>
         </Border>
 
         <!-- Decrement (minus) Button -->
-        <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Click="Decrement_Click" Style="{StaticResource HoverButton}" >
-            <Border Height="36" Width="46" Background="#2DAA44" CornerRadius="10" Padding="12">
+        <Button Grid.Column="1" Cursor="Hand" Background="Transparent" BorderThickness="0" Click="Decrement_Click" Style="{StaticResource HoverButton}" >
+            <Border Height="38" Width="46" Background="#2ECC71" CornerRadius="10" Padding="12">
                 <Image Source="minus_button.png"/>
             </Border>
         </Button>
 
         <!-- Increment (plus) Button -->
-        <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Click="Increment_Click" Style="{StaticResource HoverButton}" >
-            <Border Height="36" Width="46" Background="#2DAA44" CornerRadius="10" Padding="12">
+        <Button Grid.Column="2" Cursor="Hand" Background="Transparent" BorderThickness="0" Click="Increment_Click" Style="{StaticResource HoverButton}" >
+            <Border Height="38" Width="46" Background="#2ECC71" CornerRadius="10" Padding="12">
                 <Image Source="plus_button.png"/>
             </Border>
         </Button>

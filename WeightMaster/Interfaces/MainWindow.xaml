@@ -142,12 +142,12 @@
                          Foreground="#666666" 
                          FontSize="14" 
                          Margin="0,0,0,32"/>
-
+                        <TextBlock Text="පරිශීලක නාමය" Foreground="#C8C8C8" Width="315" Margin="0,0,0,5"/>
                         <TextBox x:Name="UsernameTextBox"
                          Height="60" 
                          Style="{StaticResource CustomTextBox}"
                          Margin="0,0,0,16"/>
-
+                        <TextBlock Text="මුරපදය" Foreground="#C8C8C8" Width="316" Margin="0,0,0,5"/>
                         <Grid Margin="0,0,0,24">
                             <PasswordBox x:Name="PasswordTextBox"
                          Height="60"
@@ -155,7 +155,7 @@
                          Margin="0,0,0,16"/>
 
 
-                            <Button HorizontalAlignment="Right" 
+                            <Button Cursor="Hand" HorizontalAlignment="Right" 
                     Style="{StaticResource PasswordVisibilityToggle}"
                     Click="TogglePasswordVisibilityClick" Margin="0,0,10,16" Width="30">
                                 <Path x:Name="VisibilityIcon"
@@ -167,7 +167,7 @@
 
 
                     <!--Station 1 radio button-->
-                    <RadioButton x:Name="RadioBtnStation1" GroupName="LoginPathGroup"  Background="Transparent" BorderThickness="0" Margin="20,386,200,338">
+                    <RadioButton x:Name="RadioBtnStation1" GroupName="LoginPathGroup"  Background="Transparent" BorderThickness="0" Margin="20,428,200,296">
                         <RadioButton.Template>
                             <ControlTemplate TargetType="RadioButton">
                                 <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="163" Height="60">
@@ -189,7 +189,7 @@
                     </RadioButton>
 
                     <!--Station 2 radio button-->
-                    <RadioButton x:Name="RadioBtnStation2" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="200,386,20,338">
+                    <RadioButton x:Name="RadioBtnStation2" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="200,428,20,296">
                         <RadioButton.Template>
                             <ControlTemplate TargetType="RadioButton">
                                 <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="163" Height="60">
@@ -210,7 +210,7 @@
                     </RadioButton>
 
                     <!--Admin Access radio button-->
-                    <RadioButton x:Name="RadioBtnAdmin" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="20,455,20,269">
+                    <RadioButton x:Name="RadioBtnAdmin" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="20,503,20,221" >
                         <RadioButton.Template>
                             <ControlTemplate TargetType="RadioButton">
                                 <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="336" Height="60">
@@ -230,7 +230,7 @@
                         </RadioButton.Template>
                     </RadioButton>
                     <!--Login button-->
-                    <Button Background="Transparent" BorderThickness="0" Margin="20,524,20,200" Click="LoginButtonClick" >
+                    <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="20,578,20,146" Click="LoginButtonClick" >
                         <Border Background="#2ECC71" CornerRadius="18" Padding="10" Width="336" Height="60">
                             <Image Source="/Interfaces/login_button.png"/>
                         </Border>
@@ -248,7 +248,7 @@
                     <TextBlock x:Name="TopBarText" Text="වේදිකාව-1" FontSize="46" Margin="161,17,1207,44" FontWeight="Bold"  />
                     <TextBlock x:Name="TopBarDate" Text="2024-12-14" FontSize="24" Margin="168,81,1433,24" FontWeight="Medium"  />
                     <!--Settings button (when home button is invicible)-->
-                    <Button x:Name="SettingsButton" Visibility="Visible" Background="Transparent" BorderThickness="0" Margin="1524,0,168,0" Style="{StaticResource HoverButton}" Click="SettingsButtonClick">
+                    <Button Cursor="Hand" x:Name="SettingsButton" Visibility="Visible" Background="Transparent" BorderThickness="0" Margin="1524,0,168,0" Style="{StaticResource HoverButton}" Click="SettingsButtonClick">
                         <Border Background="#D9D9D9" CornerRadius="30" Padding="10" Width="120" Height="120">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <!-- Logout image -->
@@ -258,7 +258,7 @@
                         </Border>
                     </Button>
                     <!--Home button (when home button is invicible)-->
-                    <Button x:Name="HomeButton" Visibility="Hidden" Background="Transparent" BorderThickness="0" Margin="1524,0,168,0" Style="{StaticResource HoverButton}" Click="HomeButtonClick">
+                    <Button Cursor="Hand" x:Name="HomeButton" Visibility="Hidden" Background="Transparent" BorderThickness="0" Margin="1524,0,168,0" Style="{StaticResource HoverButton}" Click="HomeButtonClick">
                         <Border Background="#D9D9D9" CornerRadius="30" Padding="10" Width="120" Height="120">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <!-- Home image -->
@@ -269,8 +269,8 @@
                     </Button>
 
                     <!--Logout button-->
-                    <Button Background="Transparent" BorderThickness="0" Margin="1666,0,26,0" Style="{StaticResource HoverButton}" Click="LogoutButtonClick">
-                        <Border Background="#2DAA44" CornerRadius="30" Padding="10" Width="120" Height="120">
+                    <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="1666,0,26,0" Style="{StaticResource HoverButton}" Click="LogoutButtonClick">
+                        <Border Background="#2ECC71" CornerRadius="30" Padding="10" Width="120" Height="120">
                             <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
                                 <!-- Logout image -->
                                 <Image Source="/Interfaces/logouot_button.png" Height="52" Width="52"/>
@@ -310,8 +310,8 @@
                         </Grid>
 
                         <!--Confirm button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="48,182,48,37" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="305">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="48,182,48,37" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="305">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>
                         </Button>
@@ -327,14 +327,14 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                            <Ellipse Width="20" Height="20" Fill="#2DAA44" Margin="20,0,10,0"/>
+                            <Ellipse Width="20" Height="20" Fill="#2ECC71" Margin="20,0,10,0"/>
                             <TextBlock Text="Connected" Foreground="#BFBFBF" FontSize="15" FontWeight="SemiBold" Margin="5,0,0,0" />
                         </StackPanel>
-                        <TextBlock VerticalAlignment="Bottom" Grid.Row="1" Text="36.5KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="10,22,12,0"  />
-                        <TextBlock VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="32,0,0,0" />
+                        <TextBlock VerticalAlignment="Bottom" Grid.Row="1" Text="36.5KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="41,0,10,0"  />
+                        <TextBlock VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="310">
+                        <Button Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="310">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>
                         </Button>
@@ -396,8 +396,8 @@
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
-                            <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,0,0">
-                                <Border Background="#2DAA44" CornerRadius="10" Padding="12">
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <Image Source="/Interfaces/qr_icon.png"/>
                                 </Border>
                             </Button>
@@ -442,8 +442,8 @@
                                 </Border>
                             </Grid>
                             <!-- Tick Button -->
-                            <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
-                                <Border Background="#2DAA44" CornerRadius="10" Padding="12">
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <Image Source="/Interfaces/tick.png"/>
                                 </Border>
                             </Button>
@@ -466,8 +466,8 @@
                                 </Border>
                             </Grid>
                             <!-- Tick Button -->
-                            <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
-                                <Border Background="#2DAA44" CornerRadius="10" Padding="12">
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <Image Source="/Interfaces/tick.png"/>
                                 </Border>
                             </Button>
@@ -476,7 +476,7 @@
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,314,0,386" />
                         <!--Vertical lining upper middle-->
                         <Line X1="0" X2="0" Y1="0" Y2="270" Stroke="#F0F0F0" StrokeThickness="2" Margin="211,315,380,120" />
-                        <StackPanel Orientation="Vertical" Margin="33,330,429,114">
+                        <StackPanel Orientation="Vertical" Margin="33,330,394,114">
                             <!--accepted weight textbox-->
                             <Grid Margin="0,8,0,0">
                                 <Grid.RowDefinitions>
@@ -559,15 +559,15 @@
                             </Grid>
                         </Grid>
                         <!--Clear button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="300,630,20,34" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="300,630,20,34" Style="{StaticResource HoverButton}">
                             <Border Background="#616161" CornerRadius="8" Padding="10" Width="262" Height="36">
                                 <TextBlock Text="Clear" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="241">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
@@ -633,7 +633,7 @@
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
-                        <Grid Margin="21,89,26,81">
+                        <Grid Margin="50,102,55,68">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
@@ -646,7 +646,7 @@
                             </ComboBox>
                         </Grid>
                         <!--weight leaf officer textbox-->
-                        <Grid  Margin="26,19,26,174" >
+                        <Grid  Margin="50,32,55,161" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
@@ -658,8 +658,8 @@
                         </Grid>
 
                         <!--Confirm button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="50,190,55,23" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="305">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="50,190,55,23" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="305">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>
                         </Button>
@@ -675,14 +675,14 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                            <Ellipse Width="20" Height="20" Fill="#2DAA44" Margin="20,0,10,0"/>
+                            <Ellipse Width="20" Height="20" Fill="#2ECC71" Margin="20,0,10,0"/>
                             <TextBlock Text="Connected" Foreground="#BFBFBF" FontSize="15" FontWeight="SemiBold" Margin="5,0,0,0" />
                         </StackPanel>
-                        <TextBlock VerticalAlignment="Bottom" Grid.Row="1" Text="36.5KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="10,22,12,0"  />
-                        <TextBlock VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="32,0,0,0" />
+                        <TextBlock VerticalAlignment="Bottom" Grid.Row="1" Text="36.5KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="41,0,10,0"  />
+                        <TextBlock VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="310">
+                        <Button Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="310">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>
                         </Button>
@@ -744,8 +744,8 @@
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
-                            <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,0,0">
-                                <Border Background="#2DAA44" CornerRadius="10" Padding="12">
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <Image Source="/Interfaces/qr_icon.png"/>
                                 </Border>
                             </Button>
@@ -888,15 +888,15 @@
                         <Line X1="30" X2="560" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,436,32,264" />
 
                         <!--Clear button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="300,630,20,34" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="300,630,20,34" Style="{StaticResource HoverButton}">
                             <Border Background="#616161" CornerRadius="8" Padding="10" Width="262" Height="36">
                                 <TextBlock Text="CLEAR" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}">
-                            <Border Background="#2DAA44" CornerRadius="8" Padding="10" Height="36" Width="241">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
@@ -985,14 +985,22 @@
             <!--SettingsFrame-->
             <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
                 <!--Left section with scroller-->
-                <Grid Background="White" Margin="0,0,1143,0" >
+                <Grid Background="White" Margin="0,44,1143,0" >
                     <ScrollViewer Width="600">
-                        <StackPanel HorizontalAlignment="Left">
-                            <Button x:Name="ManageInventoryButton" Width="580" Height="100" Background="White" BorderThickness="0" Click="GeneralSettingsButtonClick">
+                        <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top" Orientation="Vertical">
+                            <Button x:Name="GeneralSettingsButton" Style="{StaticResource NoFocusButtonStyle}" Cursor="Hand" Width="580" Height="100" Background="White" BorderThickness="0" Click="GeneralSettingsButtonClick">
                                 <Grid HorizontalAlignment="Center" Background="White" Width="580" Height="100">
                                     <Image  Margin="41,34,501,28" Source="/Interfaces/station_1_image.png"/>
-                                    <Image x:Name="ManageInventoryButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png"/>
+                                    <Image x:Name="GeneralSettingsButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png"/>
                                     <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="General Settings"/>
+                                    <Border Height="2" Background="#CACACA" Width="600" Margin="0,96,0,2"/>
+                                </Grid>
+                            </Button>
+                            <Button x:Name="ApplicationSettingsButton"  Cursor="Hand" Width="580" Height="100" Background="White" BorderThickness="0" Click="ApplicationSettingsButtonClick">
+                                <Grid HorizontalAlignment="Center" Background="White" Width="580" Height="100">
+                                    <Image  Margin="41,34,501,28" Source="/Interfaces/station_1_image.png"/>
+                                    <Image x:Name="ApplicationSettingsButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png"/>
+                                    <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="Application Settings"/>
                                     <Border Height="2" Background="#CACACA" Width="600" Margin="0,96,0,2"/>
                                 </Grid>
                             </Button>
@@ -1006,9 +1014,9 @@
 
                     <!-- General settings section-->
                     <Grid x:Name="GeneralSettingsSection" Visibility="Visible">
-
+                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="General Settings" Width="227"/>
                         <!-- FIle Chooser TextBox -->
-                        <Grid Margin="33,40,639,669">
+                        <Grid Margin="62,109,610,600">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="350"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1020,7 +1028,7 @@
                                 </Border>
                             </Grid>
                             <!-- Tick Button -->
-                            <Button Grid.Column="1" Click="OpenFileButton_Click" Background="Transparent" BorderThickness="0" Margin="10,24,0,0" Style="{StaticResource HoverButton}">
+                            <Button Cursor="Hand" Grid.Column="1" Click="OpenFileButton_Click" Background="Transparent" BorderThickness="0" Margin="10,24,0,0" Style="{StaticResource HoverButton}">
                                 <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <TextBlock Text="Choose File" Foreground="White"/>
                                 </Border>
@@ -1029,7 +1037,7 @@
 
 
                         <!-- disabled Slide Switch -->
-                        <Grid Height="50" Margin="33,147,926,602" >
+                        <Grid Height="50" Margin="62,204,897,545" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -1041,6 +1049,15 @@
                         </Grid>
 
                     </Grid>
+
+
+                    <!-- Application settings section-->
+                    <Grid x:Name="ApplicationSettingsSection" Visibility="Hidden">
+                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="Application Settings" Width="227"/>
+
+
+                    </Grid>
+
                 </Grid>
             </Grid>
         </Grid>
@@ -1099,7 +1116,7 @@
                             </Grid>
                         </Border>
                         <!--Card-->
-                        <Border CornerRadius="20" Background="#2DAA44" Margin="440,346,0,23" Grid.ColumnSpan="2">
+                        <Border CornerRadius="20" Background="#2ECC71" Margin="440,346,0,23" Grid.ColumnSpan="2">
                             <Grid >
                                 <TextBlock Text="0KG" FontSize="96" FontWeight="Bold" Foreground="#B7FFCF" Margin="60,57,28,181" />
                                 <TextBlock Text="සාමාන්‍ය දළු බර" FontSize="32" FontWeight="Medium" Foreground="#B7FFCF" Margin="45,168,45,75"/>
@@ -1225,7 +1242,7 @@
                             </Grid>
                         </Border>
                         <!--Card-->
-                        <Border CornerRadius="20" Background="#2DAA44" Margin="440,346,0,23" Grid.ColumnSpan="2">
+                        <Border CornerRadius="20" Background="#2ECC71" Margin="440,346,0,23" Grid.ColumnSpan="2">
                             <Grid >
                                 <TextBlock Text="0KG" FontSize="96" FontWeight="Bold" Foreground="#B7FFCF" Margin="60,57,28,181" />
                                 <TextBlock Text="සාමාන්‍ය දළු බර" FontSize="32" FontWeight="Medium" Foreground="#B7FFCF" Margin="45,168,45,75"/>
@@ -1315,7 +1332,7 @@
 </Window>
 
 <!--
-<Button Width="200" Height="60" Background="Transparent" BorderThickness="0">
+<Button Cursor="Hand" Width="200" Height="60" Background="Transparent" BorderThickness="0">
     <Border Background="Green" CornerRadius="30" Padding="10" Width="200" Height="60">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
             <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>

@@ -94,5 +94,21 @@ namespace WeightMaster.Interfaces.UserControls
                 e.CancelCommand();
             }
         }
+
+        // Handle the TextChanged event to update Value
+        private void txtValue_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Try parsing the text; if valid, update Value.
+            if (int.TryParse(txtValue.Text, out int newValue))
+            {
+                // Optionally, enforce minimum and maximum boundaries.
+                if (newValue < Minimum)
+                    newValue = Minimum;
+                else if (newValue > Maximum)
+                    newValue = Maximum;
+
+                Value = newValue;
+            }
+        }
     }
 }

@@ -236,9 +236,10 @@
                           IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
                           ClickMode="Press"
                           HorizontalAlignment="Right"
+                          Cursor="Hand"
                           Width="46" 
                           Height="33" 
-                          Background="#2DAA44"
+                          Background="#2ECC71"
                           BorderThickness="0">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
@@ -283,6 +284,28 @@
                             <Setter Property="Foreground" Value="Gray"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="NoFocusButtonStyle" TargetType="Button">
+        <Setter Property="OverridesDefaultStyle" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" 
+                        BorderBrush="{TemplateBinding BorderBrush}" 
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="0">
+                        <ContentPresenter HorizontalAlignment="Center" 
+                                      VerticalAlignment="Center"/>
+                    </Border>
+                    <!-- No triggers for focus or mouse-over -->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
