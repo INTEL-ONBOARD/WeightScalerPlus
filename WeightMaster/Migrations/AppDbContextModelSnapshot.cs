@@ -43,29 +43,6 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Age = 20,
-                            Email = "john.doe@example.com",
-                            Name = "John Doe"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Age = 22,
-                            Email = "jane.smith@example.com",
-                            Name = "Jane Smith"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Age = 23,
-                            Email = "alice.johnson@example.com",
-                            Name = "Alice Johnson"
-                        });
                 });
 
             modelBuilder.Entity("WeightMaster.Models.UserBlockModel", b =>
@@ -77,19 +54,15 @@ namespace WeightMaster.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApiKey")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("ApiSecret")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Roles")
@@ -97,7 +70,6 @@ namespace WeightMaster.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Username")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

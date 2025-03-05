@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WeightMaster.Config;
 using WeightMaster.Models;
+using WeightMaster.Services;
 
 namespace WeightMaster.Core
 {
@@ -45,9 +47,17 @@ namespace WeightMaster.Core
 
             // Pass null since no data is needed
             userModel apiResponse = await apiClient.PostAsync<userModel>(url, null);
+            
 
+            //var userService = new UserService(new AppDbContext());
+            //await userService.SaveUsersAsync(apiResponse.Users);
             if (apiResponse != null && apiResponse.Status == "success")
             {
+
+                var userService = new UserService(new AppDbContext());
+                await userService.SaveUsersAsync(apiResponse.Users); 
+
+
                 foreach (var user in apiResponse.Users)
                 {
                     System.Diagnostics.Debug.WriteLine($"Username: {user.Username}");

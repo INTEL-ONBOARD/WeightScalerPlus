@@ -14,12 +14,12 @@ namespace WeightMaster.Models
 
     public class User
     {
-        public string Username { get; set; }
-        public string Email { get; set; }
-        public string FullName { get; set; }
+        public string? Username { get; set; }
+        public string? Email { get; set; }
+        public string? FullName { get; set; }
         public List<string> Roles { get; set; }
-        public string ApiKey { get; set; }
-        public string ApiSecret { get; set; }
+        public string? ApiKey { get; set; }
+        public string? ApiSecret { get; set; }
     }
 
 }
