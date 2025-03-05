@@ -85,7 +85,6 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            //await _consoleHandler.GetStudentsAsync();
             //await testExecution();
 
             string username = UsernameTextBox.Text;
@@ -103,8 +102,19 @@ namespace WeightMaster
                 return;
             }
 
+            await _consoleHandler.loginUser(username, password);
+            await Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    
+                });
+                
+                //window switch here
+            });
+
             // Check which radio button is selected and show the corresponding page
-            else if (RadioBtnStation1.IsChecked == true)
+            if (RadioBtnStation1.IsChecked == true)
             {
                 LoginFrame.Visibility = Visibility.Collapsed;
                 StationMainFrame.Visibility = Visibility.Visible;
