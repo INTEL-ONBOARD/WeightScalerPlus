@@ -1,0 +1,297 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+
+    <Style x:Key="WindowCloseButton" TargetType="Button">
+        <Setter Property="Width" Value="30"/>
+        <Setter Property="Height" Value="30"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Hover effect-->
+    <Style x:Key="HoverButton" TargetType="Button">
+        <Setter Property="Background" Value="#F9F9F9"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border RenderTransformOrigin="0.5,0.5" x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="12">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <!-- Apply the ScaleTransform -->
+                        <Border.RenderTransform>
+                            <ScaleTransform ScaleX="1" ScaleY="1"/>
+                        </Border.RenderTransform>
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Trigger.EnterActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                    Storyboard.TargetName="ButtonBorder"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                    To="0.95" Duration="0:0:0.2"/>
+                                        <DoubleAnimation
+                                    Storyboard.TargetName="ButtonBorder"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="0.95" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.EnterActions>
+
+                            <Trigger.ExitActions>
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <DoubleAnimation
+                                    Storyboard.TargetName="ButtonBorder"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
+                                    To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation
+                                    Storyboard.TargetName="ButtonBorder"
+                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
+                                    To="1" Duration="0:0:0.2"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </Trigger.ExitActions>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--dashboard cards?-->
+
+
+
+    <Style x:Key="CustomTextBox" TargetType="TextBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="TextBox">
+                    <Grid>
+                        <!-- Outer Border -->
+                        <Border Background="White" BorderThickness="1" BorderBrush="#E0E0E0" CornerRadius="8">
+                            <Grid>
+                                <!-- Placeholder TextBlock -->
+                                <TextBlock x:Name="PlaceholderText"
+                                   Text="පරිශීලක නාමය"
+                                   Foreground="Gray"
+                                   FontSize="16"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Left"
+                                   Margin="14,0,0,0"
+                                   IsHitTestVisible="False"/>
+
+                                <!-- Actual TextBox Content -->
+                                <ScrollViewer x:Name="PART_ContentHost" Margin="12,8" VerticalAlignment="Center"/>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Triggers to Show/Hide Placeholder -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="{x:Null}">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+    <Style x:Key="CustomPasswordBox" TargetType="PasswordBox">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border Background="White"
+            BorderThickness="1"
+            BorderBrush="#E0E0E0"
+            CornerRadius="8">
+                        <ScrollViewer x:Name="PART_ContentHost" 
+                    Margin="12,8"
+                    VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="PasswordVisibilityToggle" TargetType="Button">
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="Transparent">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Toggle button-->
+    <Style TargetType="{x:Type ToggleButton}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Viewbox>
+                        <Border x:Name="Border" CornerRadius="10"
+                    Background="#FFFFFFFF"
+                    Width="40" Height="20">
+                            <Border.Effect>
+                                <DropShadowEffect ShadowDepth="0.5" Direction="0" Opacity="0.3" />
+                            </Border.Effect>
+                            <Ellipse x:Name="Ellipse" Fill="#FFFFFFFF" Stretch="Uniform"
+                         Margin="2 1 2 1"
+                         Stroke="Gray" StrokeThickness="0.2"
+                         HorizontalAlignment="Stretch">
+                                <Ellipse.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="1" Opacity="0.3" Direction="260" />
+                                </Ellipse.Effect>
+                            </Ellipse>
+                        </Border>
+                    </Viewbox>
+                    <ControlTemplate.Triggers>
+                        <EventTrigger RoutedEvent="Checked">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="#FF4CD661"
+                                            Duration="0:0:0.1" />
+                                    <ThicknessAnimation Storyboard.TargetName="Ellipse"
+                                                Storyboard.TargetProperty="Margin"
+                                                To="20 1 2 1"
+                                                Duration="0:0:0.1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                        <EventTrigger RoutedEvent="Unchecked">
+                            <BeginStoryboard>
+                                <Storyboard>
+                                    <ColorAnimation Storyboard.TargetName="Border"
+                                            Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)"
+                                            To="White"
+                                            Duration="0:0:0.1" />
+                                    <ThicknessAnimation Storyboard.TargetName="Ellipse"
+                                                Storyboard.TargetProperty="Margin"
+                                                To="2 1 2 1"
+                                                Duration="0:0:0.1" />
+                                </Storyboard>
+                            </BeginStoryboard>
+                        </EventTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--Custom dropdown with green button-->
+    <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
+        <Setter Property="Background" Value="Transparent"/>
+        <!--
+    <Setter Property="Width" Value="200"/>
+    -->
+        <Setter Property="Height" Value="35"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBox">
+                    <Grid>
+                        <!-- Display area (mimics the textbox) -->
+                        <Border x:Name="DisplayBorder" 
+                            Background="#F7F7F7" 
+                            BorderThickness="2"
+                            BorderBrush="#C4C4C4"
+                            CornerRadius="10" 
+                            Padding="10" 
+                            Margin="2,0,55,0">
+                            <!-- Reduced margin to control the button gap -->
+                            <ContentPresenter x:Name="ContentPresenter" 
+                                          Content="{TemplateBinding SelectionBoxItem}"
+                                          VerticalAlignment="Center"
+                                          HorizontalAlignment="Left"
+                                          RecognizesAccessKey="True"/>
+                        </Border>
+
+                        <!-- Toggle button (styled as a green button) -->
+                        <ToggleButton x:Name="ToggleButton" 
+                                  Focusable="False"
+                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                                  ClickMode="Press"
+                                  HorizontalAlignment="Right"
+                                  
+                                  Width="46" 
+                                  Height="33" 
+                                  Background="#2DAA44"
+                                  BorderThickness="0">
+                            <ToggleButton.Style>
+                                <Style TargetType="ToggleButton">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="ToggleButton">
+                                                <Border Background="{TemplateBinding Background}" 
+                                                    CornerRadius="10">
+                                                    <ContentPresenter HorizontalAlignment="Center" 
+                                                                  VerticalAlignment="Center"/>
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ToggleButton.Style>
+                            <TextBlock Text="▼" Foreground="White" FontSize="16" 
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </ToggleButton>
+
+                        <!-- Popup for dropdown items -->
+                        <Popup x:Name="Popup" 
+                           Placement="Bottom"
+                           IsOpen="{TemplateBinding IsDropDownOpen}"
+                           AllowsTransparency="True"
+                           Focusable="False"
+                           PopupAnimation="Slide">
+                            <Border x:Name="PopupBorder" 
+                                Background="White" 
+                                BorderBrush="Gray" 
+                                BorderThickness="1" 
+                                CornerRadius="5" 
+                                Margin="2">
+                                <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
+                                    <StackPanel IsItemsHost="True" 
+                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                </ScrollViewer>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter TargetName="PopupBorder" Property="MinHeight" Value="95"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="Gray"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
+</ResourceDictionary>

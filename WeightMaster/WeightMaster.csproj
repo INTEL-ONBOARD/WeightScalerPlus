@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Interfaces\arrow_right.png" />
+    <None Remove="Interfaces\close_button.png" />
+    <None Remove="Interfaces\home_button.png" />
+    <None Remove="Interfaces\login_button.png" />
+    <None Remove="Interfaces\logouot_button.png" />
+    <None Remove="Interfaces\minus_button.png" />
+    <None Remove="Interfaces\plus_button.png" />
+    <None Remove="Interfaces\qr_icon.png" />
+    <None Remove="Interfaces\settings_button.png" />
+    <None Remove="Interfaces\station_1_image.png" />
+    <None Remove="Interfaces\teacoop_logo.png" />
+    <None Remove="Interfaces\tick.png" />
+    <None Remove="Interfaces\UserControls\minus_button.png" />
+    <None Remove="Interfaces\UserControls\plus_button.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Interfaces\arrow_right.png" />
+    <Resource Include="Interfaces\close_button.png" />
+    <Resource Include="Interfaces\home_button.png" />
+    <Resource Include="Interfaces\login_button.png" />
+    <Resource Include="Interfaces\logouot_button.png" />
+    <Resource Include="Interfaces\minus_button.png" />
+    <Resource Include="Interfaces\plus_button.png" />
+    <Resource Include="Interfaces\qr_icon.png" />
+    <Resource Include="Interfaces\settings_button.png" />
+    <Resource Include="Interfaces\station_1_image.png" />
+    <Resource Include="Interfaces\teacoop_logo.png" />
+    <Resource Include="Interfaces\tick.png" />
+    <Resource Include="Interfaces\UserControls\minus_button.png" />
+    <Resource Include="Interfaces\UserControls\plus_button.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+    <Folder Include="View\" />
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+
+</Project>
