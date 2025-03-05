@@ -102,9 +102,10 @@ namespace WeightMaster
                 return;
             }
 
-            await _consoleHandler.loginUser(username, password);
+
             await Task.Run(() =>
             {
+                string u_sername = _consoleHandler.loginUser(username, password);
                 Dispatcher.Invoke(() =>
                 {
                     
