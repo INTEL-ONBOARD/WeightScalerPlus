@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:WeightMaster"
         
         xmlns:userContorls="clr-namespace:WeightMaster.Interfaces.UserControls"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com"
         mc:Ignorable="d"
         Title="MainWindow" Height="1080" Width="1920"
         WindowStyle="None"
@@ -230,9 +231,16 @@
                         </RadioButton.Template>
                     </RadioButton>
                     <!--Login button-->
+                    <!--
                     <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="20,578,20,146" Click="LoginButtonClick" >
                         <Border Background="#2ECC71" CornerRadius="18" Padding="10" Width="336" Height="60">
                             <Image Source="/Interfaces/login_button.png"/>
+                        </Border>
+                    </Button>
+                    -->
+                    <Button Background="Transparent" BorderThickness="0" Margin="27,582,26,146" Click="LoginButtonClick" Style="{StaticResource HoverButton}">
+                        <Border Background="#2ECC71" CornerRadius="18" Padding="10" Width="331">
+                            <Image Source="/Interfaces/login_button.png" Stretch="Uniform"/>
                         </Border>
                     </Button>
                 </Grid>
@@ -983,7 +991,9 @@
             </Grid>
 
             <!--SettingsFrame-->
-            <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
+            <Grid x:Name="SettingsFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
+                <!--horizontal line-->
+                <Border Width="4" Background="Black" Margin="644,77,1172,14" />
                 <!--Left section with scroller-->
                 <Grid Background="White" Margin="0,44,1143,0" >
                     <ScrollViewer Width="600">
