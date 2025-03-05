@@ -6,6 +6,18 @@
              xmlns:local="clr-namespace:WeightMaster.Interfaces.UserControls"
              mc:Ignorable="d" 
              d:DesignHeight="50" d:DesignWidth="400">
+
+    <!-- Merging the external ResourceDictionary containing styles -->
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../general_styles.xaml"/>
+                <ResourceDictionary Source="../custom_styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
@@ -15,21 +27,22 @@
 
         <!-- Numeric TextBox -->
         <Border Grid.Column="0" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,0,10,0">
-            <TextBox x:Name="txtValue" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" 
-                     VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Right"/>
+            <TextBox x:Name="txtValue" IsReadOnly="True" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" 
+     VerticalAlignment="Center" HorizontalAlignment="Stretch" TextAlignment="Right"
+     PreviewTextInput="txtValue_PreviewTextInput" />
         </Border>
 
         <!-- Decrement (minus) Button -->
-        <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Click="Decrement_Click">
+        <Button Grid.Column="1" Background="Transparent" BorderThickness="0" Click="Decrement_Click" Style="{StaticResource HoverButton}" >
             <Border Height="36" Width="46" Background="#2DAA44" CornerRadius="10" Padding="12">
-                <Image Source="/Interfaces/UserControls/minus_button.png"/>
+                <Image Source="minus_button.png"/>
             </Border>
         </Button>
 
         <!-- Increment (plus) Button -->
-        <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Click="Increment_Click">
+        <Button Grid.Column="2" Background="Transparent" BorderThickness="0" Click="Increment_Click" Style="{StaticResource HoverButton}" >
             <Border Height="36" Width="46" Background="#2DAA44" CornerRadius="10" Padding="12">
-                <Image Source="/Interfaces/UserControls/plus_button.png"/>
+                <Image Source="plus_button.png"/>
             </Border>
         </Button>
     </Grid>

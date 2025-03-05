@@ -30,6 +30,9 @@ namespace WeightMaster.Interfaces.UserControls
         {
             InitializeComponent();
             UpdateText();
+
+            // Handle paste operations to ensure only numbers are pasted
+            DataObject.AddPastingHandler(txtValue, OnPaste);
         }
 
         // Update the TextBox with the current value
@@ -55,6 +58,40 @@ namespace WeightMaster.Interfaces.UserControls
             {
                 Value -= Increment;
                 UpdateText();
+            }
+        }
+
+        // Event handler to restrict non-numeric input
+        private void txtValue_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        // Check if the input text is numeric
+        private bool IsTextNumeric(string text)
+        {
+            foreach (char c in text)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+            return true;
+        }
+
+        // Handle paste event to allow only numeric text
+        private void OnPaste(object sender, DataObjectPastingEventArgs e)
+        {
+            if (e.DataObject.GetDataPresent(typeof(string)))
+            {
+                string pastedText = (string)e.DataObject.GetData(typeof(string));
+                if (!IsTextNumeric(pastedText))
+                {
+                    e.CancelCommand();
+                }
+            }
+            else
+            {
+                e.CancelCommand();
             }
         }
     }

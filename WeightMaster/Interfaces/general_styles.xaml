@@ -204,52 +204,46 @@
     </Style>
 
     <!--Custom dropdown with green button-->
+    <!--Custom dropdown with green button-->
     <Style x:Key="CustomComboBoxStyle" TargetType="ComboBox">
         <Setter Property="Background" Value="Transparent"/>
-        <!--
-    <Setter Property="Width" Value="200"/>
-    -->
         <Setter Property="Height" Value="35"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ComboBox">
                     <Grid>
-                        <!-- Display area (mimics the textbox) -->
                         <Border x:Name="DisplayBorder" 
-                            Background="#F7F7F7" 
-                            BorderThickness="2"
-                            BorderBrush="#C4C4C4"
-                            CornerRadius="10" 
-                            Padding="10" 
-                            Margin="2,0,55,0">
-                            <!-- Reduced margin to control the button gap -->
+                    Background="#F7F7F7" 
+                    BorderThickness="2"
+                    BorderBrush="#C4C4C4"
+                    CornerRadius="10" 
+                    Padding="6" 
+                    Margin="2,0,55,0">
                             <ContentPresenter x:Name="ContentPresenter" 
-                                          Content="{TemplateBinding SelectionBoxItem}"
-                                          VerticalAlignment="Center"
-                                          HorizontalAlignment="Left"
-                                          RecognizesAccessKey="True"/>
+                                  Content="{TemplateBinding SelectionBoxItem}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Left"
+                                  RecognizesAccessKey="True"/>
                         </Border>
 
-                        <!-- Toggle button (styled as a green button) -->
                         <ToggleButton x:Name="ToggleButton" 
-                                  Focusable="False"
-                                  IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
-                                  ClickMode="Press"
-                                  HorizontalAlignment="Right"
-                                  
-                                  Width="46" 
-                                  Height="33" 
-                                  Background="#2DAA44"
-                                  BorderThickness="0">
+                          Focusable="False"
+                          IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}"
+                          ClickMode="Press"
+                          HorizontalAlignment="Right"
+                          Width="46" 
+                          Height="33" 
+                          Background="#2DAA44"
+                          BorderThickness="0">
                             <ToggleButton.Style>
                                 <Style TargetType="ToggleButton">
                                     <Setter Property="Template">
                                         <Setter.Value>
                                             <ControlTemplate TargetType="ToggleButton">
                                                 <Border Background="{TemplateBinding Background}" 
-                                                    CornerRadius="10">
+                                            CornerRadius="10">
                                                     <ContentPresenter HorizontalAlignment="Center" 
-                                                                  VerticalAlignment="Center"/>
+                                                          VerticalAlignment="Center"/>
                                                 </Border>
                                             </ControlTemplate>
                                         </Setter.Value>
@@ -257,25 +251,21 @@
                                 </Style>
                             </ToggleButton.Style>
                             <TextBlock Text="▼" Foreground="White" FontSize="16" 
-                                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                           HorizontalAlignment="Center" VerticalAlignment="Center"/>
                         </ToggleButton>
 
-                        <!-- Popup for dropdown items -->
-                        <Popup x:Name="Popup" 
-                           Placement="Bottom"
-                           IsOpen="{TemplateBinding IsDropDownOpen}"
-                           AllowsTransparency="True"
-                           Focusable="False"
-                           PopupAnimation="Slide">
+                        <Popup x:Name="Popup" Placement="Bottom" IsOpen="{TemplateBinding IsDropDownOpen}"
+                   AllowsTransparency="True" Focusable="False" PopupAnimation="Slide">
                             <Border x:Name="PopupBorder" 
-                                Background="White" 
-                                BorderBrush="Gray" 
-                                BorderThickness="1" 
-                                CornerRadius="5" 
-                                Margin="2">
+                        Background="#F7F7F7" 
+                        BorderBrush="#C4C4C4" 
+                        BorderThickness="2" 
+                        CornerRadius="5" 
+                        Margin="2"
+                        Width="{Binding ActualWidth, ElementName=DisplayBorder}">
                                 <ScrollViewer Margin="4,6,4,6" SnapsToDevicePixels="True">
                                     <StackPanel IsItemsHost="True" 
-                                            KeyboardNavigation.DirectionalNavigation="Contained"/>
+                                    KeyboardNavigation.DirectionalNavigation="Contained"/>
                                 </ScrollViewer>
                             </Border>
                         </Popup>

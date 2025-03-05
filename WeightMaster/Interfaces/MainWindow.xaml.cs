@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Services;
 
@@ -27,6 +28,36 @@ namespace WeightMaster
             //Topbar
             runtimeService = new Runtime(this , path); // Pass the labels from XAML
             TopBarDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
+            OpenCustomerWindow();
+        }
+
+        private void OpenCustomerWindow()
+        {
+            CustomerWindow customerWindow = new CustomerWindow();
+
+            // Get primary screen dimensions
+            double primaryScreenWidth = SystemParameters.PrimaryScreenWidth;
+            double primaryScreenHeight = SystemParameters.PrimaryScreenHeight;
+
+            // Get virtual screen dimensions (total for all monitors)
+            double virtualScreenWidth = SystemParameters.VirtualScreenWidth;
+            double virtualScreenHeight = SystemParameters.VirtualScreenHeight;
+
+            // Check if there's more than one screen
+            if (virtualScreenWidth > primaryScreenWidth || virtualScreenHeight > primaryScreenHeight)
+            {
+                // Assuming the secondary screen is to the right of the primary screen
+                customerWindow.WindowStartupLocation = WindowStartupLocation.Manual;
+                customerWindow.Left = primaryScreenWidth; // Position at the start of the second screen
+                customerWindow.Top = 0; // Align to the top
+            }
+            else
+            {
+                // If no secondary screen, open normally
+                customerWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            }
+
+            customerWindow.Show();
         }
 
 
@@ -147,6 +178,23 @@ namespace WeightMaster
         {
             runtimeService.OnWindowClosed(); // Clean up resources when the window is closed
             base.OnClosed(e);
+        }
+
+        //event to accept only numbers in the textboxes
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Check if the input text is numeric
+            e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        private bool IsTextNumeric(string text)
+        {
+            foreach (char c in text)
+            {
+                if (!char.IsDigit(c))
+                    return false;
+            }
+            return true;
         }
 
     }
