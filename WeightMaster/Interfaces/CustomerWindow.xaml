@@ -191,13 +191,13 @@
                                 <!--Vertical lining upper middle-->
                                 <Line HorizontalAlignment="Center" VerticalAlignment="Center" X1="0" X2="0" Y1="0" Y2="270" Stroke="#F0F0F0" StrokeThickness="2" />
                                 <TextBlock Text="ප්‍රවාහන මාර්ගය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,76,493,238"/>
-                                <TextBlock Text="Ilukpitiya" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,102,396,202"/>
+                                <TextBlock Text="Ilukpitiya" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,102,396,195"/>
 
                                 <TextBlock Text="ප්‍රවාහන නියෝජිත " FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,76,144,238"/>
-                                <TextBlock Text="Mr. Ranaweera" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,102,56,202"/>
+                                <TextBlock Text="Mr. Ranaweera" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,102,34,190"/>
 
                                 <TextBlock Text="නම" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,217,493,97"/>
-                                <TextBlock Text="Mr. Kulathunga" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,242,390,62"/>
+                                <TextBlock Text="Mr. Kulathunga" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,242,390,55"/>
 
                                 <TextBlock Text=" සාමාජික අංකය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,214,143,100"/>
                                 <TextBlock Text="95905" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,242,77,62"/>

@@ -25,6 +25,15 @@ namespace WeightMaster
         private String path;
         private ConsoleHandler _consoleHandler;
 
+        public int nSacks_st1 = 0;
+        public int nBoxes_st1 = 0;
+        public int singleBoxWeight = 10;
+
+        // Global integer for the total leaf weight(floor value)
+        public int totalLeafWeight_st1 = 0;
+        public int totalBoxWeight_st1 = 0;
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -86,12 +95,14 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             await _consoleHandler.GetLineMasterAsync();
+            //checks db records 
+            await _consoleHandler.VerifyUserDb();
 
-            string username = UsernameTextBox.Text;
+            string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
 
 
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("කරුණාකර නිවැරදි පරිශීලක නාමය හා මුරපදය ඇතුලත් කරන්න", "Validation Error");
                 return;
@@ -102,10 +113,10 @@ namespace WeightMaster
                 return;
             }
 
-
+            string username = await _consoleHandler.loginUser(email, password);
+            weightLeafOfficerTxt_st1.Text = username;
             await Task.Run(() =>
             {
-                string u_sername = _consoleHandler.loginUser(username, password);
                 Dispatcher.Invoke(() =>
                 {
                     statusLabel.Content = "Logging in...";
@@ -115,7 +126,7 @@ namespace WeightMaster
 
                 //window switch here
             });
-
+            statusLabel.Content = "Login Success!";
             // Check which radio button is selected and show the corresponding page
             if (RadioBtnStation1.IsChecked == true)
             {
@@ -221,31 +232,106 @@ namespace WeightMaster
 
 
         //station1 frame
-private void txtNSacks_TextChanged(object sender, TextChangedEventArgs e)
-{
-    if (!string.IsNullOrWhiteSpace(txtNSacks.Text))
-    {
-        // When txtNSacks has text, disable txtNBoxes and update border colors
-        txtNBoxes.IsEnabled = false;
-        borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
-        borderNBoxes.BorderBrush = new SolidColorBrush(Colors.Gray); // Gray out
-    }
-    else
-    {
-        // When txtNSacks is empty and txtNBoxes is empty, enable both and revert to default border color
-        if (string.IsNullOrWhiteSpace(txtNBoxes.Text))
+
+        private void wieghtScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
         {
-            txtNBoxes.IsEnabled = true;
-            borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-            borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+            // Check if the status equals "සමබරයි"
+            if (weightScalerStatus_st1.Text == "සමබරයි")
+            {
+                // Example weight text: "36.5KG"
+                string weightText = weightScalerValTxt_st1.Text.ToUpper().Replace("KG", "").Trim();
+                if (decimal.TryParse(weightText, out decimal weight))
+                {
+                    // Get the largest integer less than or equal to the specified number
+                    int floorValue = (int)Math.Floor((double)weight);
+                    // Set the global variable
+                    totalLeafWeight_st1 = floorValue;
+                    // Update the acceptedLeafWeightTxt_st1 TextBox/TextBlock
+                    acceptedLeafWeightTxt_st1.Text = totalLeafWeight_st1.ToString();
+                }
+                else
+                {
+                    MessageBox.Show("Invalid weight value.");
+                }
+            }
         }
-    }
+
+        private bool _isUpdatingWeights = false;
+
+        private void goldenLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingWeights)
+                return;
+
+            _isUpdatingWeights = true;
+
+            // Parse the accepted and golden weights as integers.
+            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+                int.TryParse(goldenLeafWeight_st1.Text, out int golden))
+            {
+                // Calculate normal weight: accepted = golden + normal
+                int normal = accepted - golden;
+                normalLeafWeight_st1.Text = normal.ToString();
+            }
+            else
+            {
+                normalLeafWeight_st1.Text = "";
+            }
+
+            _isUpdatingWeights = false;
+        }
+
+        private void normalLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (_isUpdatingWeights)
+                return;
+
+            _isUpdatingWeights = true;
+
+            // Parse the accepted and normal weights as integers.
+            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+                int.TryParse(normalLeafWeight_st1.Text, out int normal))
+            {
+                // Calculate golden weight: accepted = golden + normal
+                int golden = accepted - normal;
+                goldenLeafWeight_st1.Text = golden.ToString();
+            }
+            else
+            {
+                goldenLeafWeight_st1.Text = "";
+            }
+
+            _isUpdatingWeights = false;
+        }
+
+
+
+        private void txtNSacks_TextChanged(object sender, TextChangedEventArgs e)
+{
+            if (!string.IsNullOrWhiteSpace(txtNSacks.Text))
+            {
+                // When txtNSacks has text, disable txtNBoxes and update border colors
+                txtNBoxes.IsEnabled = false;
+                borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
+                borderNBoxes.BorderBrush = new SolidColorBrush(Colors.Gray); // Gray out
+            }
+            else
+            {
+                // When txtNSacks is empty and txtNBoxes is empty, enable both and revert to default border color
+                if (string.IsNullOrWhiteSpace(txtNBoxes.Text))
+                {
+                    txtNBoxes.IsEnabled = true;
+                    borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                    borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                }
+            }
 }
 
 private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
 {
     if (!string.IsNullOrWhiteSpace(txtNBoxes.Text))
     {
+                nBoxes_st1 = 0;
         // When txtNBoxes has text, disable txtNSacks and update border colors
         txtNSacks.IsEnabled = false;
         borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
@@ -256,7 +342,8 @@ private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
         // When txtNBoxes is empty and txtNSacks is empty, enable both and revert to default border color
         if (string.IsNullOrWhiteSpace(txtNSacks.Text))
         {
-            txtNSacks.IsEnabled = true;
+                    nBoxes_st1 = Int32.Parse(txtNBoxes.Text);
+                    txtNSacks.IsEnabled = true;
             borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
             borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
         }
