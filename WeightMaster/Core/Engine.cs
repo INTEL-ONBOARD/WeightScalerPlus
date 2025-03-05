@@ -9,27 +9,58 @@ namespace WeightMaster.Core
 {
     public class Engine
     {
+        //public async Task dumpUserInformation()
+        //{
+        //    ApiClient apiClient = new ApiClient();
+        //    string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
+        //    userModel apiResponse = await apiClient.PostAsync<userModel>(url, new {});
+
+        //    if (apiResponse != null && apiResponse.Status == "success")
+        //    {
+        //        foreach (var user in apiResponse.Users)
+        //        {
+        //            Console.WriteLine($"Username: {user.Username}");
+        //            Console.WriteLine($"Email: {user.Email}");
+        //            Console.WriteLine($"Full Name: {user.FullName}");
+        //            Console.WriteLine("Roles:");
+        //            foreach (var role in user.Roles)
+        //            {
+        //                Console.WriteLine($"- {role}");
+        //            }
+        //            Console.WriteLine($"API Key: {user.ApiKey}");
+        //            Console.WriteLine($"API Secret: {user.ApiSecret}");
+        //            Console.WriteLine();
+        //        }
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("No data received or status is not 'success'.");
+        //    }
+        //}
+
         public async Task dumpUserInformation()
         {
             ApiClient apiClient = new ApiClient();
             string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
-            userModel apiResponse = await apiClient.PostAsync<userModel>(url, new {});
+
+            // Pass null since no data is needed
+            userModel apiResponse = await apiClient.PostAsync<userModel>(url, null);
 
             if (apiResponse != null && apiResponse.Status == "success")
             {
                 foreach (var user in apiResponse.Users)
                 {
-                    Console.WriteLine($"Username: {user.Username}");
-                    Console.WriteLine($"Email: {user.Email}");
-                    Console.WriteLine($"Full Name: {user.FullName}");
-                    Console.WriteLine("Roles:");
+                    System.Diagnostics.Debug.WriteLine($"Username: {user.Username}");
+                    System.Diagnostics.Debug.WriteLine($"Email: {user.Email}");
+                    System.Diagnostics.Debug.WriteLine($"Full Name: {user.FullName}");
+                    System.Diagnostics.Debug.WriteLine("Roles:");
                     foreach (var role in user.Roles)
                     {
-                        Console.WriteLine($"- {role}");
+                        System.Diagnostics.Debug.WriteLine($"- {role}");
                     }
-                    Console.WriteLine($"API Key: {user.ApiKey}");
-                    Console.WriteLine($"API Secret: {user.ApiSecret}");
-                    Console.WriteLine();
+                    System.Diagnostics.Debug.WriteLine($"API Key: {user.ApiKey}");
+                    System.Diagnostics.Debug.WriteLine($"API Secret: {user.ApiSecret}");
+
                 }
             }
             else
@@ -37,5 +68,7 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
+
+
     }
 }

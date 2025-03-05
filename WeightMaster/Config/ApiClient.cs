@@ -67,26 +67,39 @@ public class ApiClient
         }
     }
 
-    public async Task<T> PostAsync<T>(string url, object data)
+    public async Task<T> PostAsync<T>(string url, object data = null)
     {
         try
         {
-            string jsonData = JsonConvert.SerializeObject(data);
+            string jsonData = data != null ? JsonConvert.SerializeObject(data) : string.Empty;
             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-            HttpResponseMessage response = await _httpClient.PostAsync(url, content);
+
+            var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = content
+            };
+
+            // Add the Authorization header with the token
+            request.Headers.Add("Authorization", "Token 05f64f326eff436:d27fd60cb19f7d5");
+
+
+            HttpResponseMessage response = await _httpClient.SendAsync(request);
+            System.Diagnostics.Debug.WriteLine(response.ToString());
             response.EnsureSuccessStatusCode();
+
             string responseData = await response.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<T>(responseData);
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine( "An error occurred while sending a POST request to {Url} with data {@Data}", ex, url, data);
-            throw; 
+            System.Diagnostics.Debug.WriteLine("An error occurred while sending a POST request to {0} with data {1}: {2}", url, data, ex);
+            throw;
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine("An unexpected error occurred during the POST request to {Url} with data {@Data}", ex, url, data);
-            throw; 
+            System.Diagnostics.Debug.WriteLine("An unexpected error occurred during the POST request to {0} with data {1}: {2}", url, data, ex);
+            throw;
         }
     }
+
 }
