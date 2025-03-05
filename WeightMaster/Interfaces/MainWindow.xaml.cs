@@ -31,14 +31,14 @@ namespace WeightMaster
             //Topbar
             runtimeService = new Runtime(this , path); // Pass the labels from XAML
             TopBarDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
-            OpenCustomerWindow();
+            //OpenCustomerWindow();
             _consoleHandler = new ConsoleHandler();
         }
 
-        public static async Task testExecution()
+        public async Task testExecution()
         {
-            ConsoleHandler handler = new ConsoleHandler();
-            await handler.GetStudentsAsync();
+           
+            await _consoleHandler.GetStudentsAsync();
         }
 
         //global to use on the close event
@@ -86,7 +86,7 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             //await _consoleHandler.GetStudentsAsync();
-
+            //await testExecution();
 
             string username = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
@@ -199,6 +199,7 @@ namespace WeightMaster
 
         private void LogoutButtonClick(object sender, RoutedEventArgs e)
         {
+            //IntroFrame.Visibility = Visibility.Visible;
             LoginFrame.Visibility = Visibility.Visible;
             StationMainFrame.Visibility = Visibility.Collapsed;
             Station1Frame.Visibility= Visibility.Collapsed;
