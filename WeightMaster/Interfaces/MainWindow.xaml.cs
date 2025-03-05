@@ -107,9 +107,11 @@ namespace WeightMaster
             {
                 Dispatcher.Invoke(() =>
                 {
+                    statusLabel.Content = "Logging in...";
                     
                 });
                 
+
                 //window switch here
             });
 
@@ -215,6 +217,50 @@ namespace WeightMaster
             Station1Frame.Visibility= Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
         }
+
+
+        //station1 frame
+private void txtNSacks_TextChanged(object sender, TextChangedEventArgs e)
+{
+    if (!string.IsNullOrWhiteSpace(txtNSacks.Text))
+    {
+        // When txtNSacks has text, disable txtNBoxes and update border colors
+        txtNBoxes.IsEnabled = false;
+        borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
+        borderNBoxes.BorderBrush = new SolidColorBrush(Colors.Gray); // Gray out
+    }
+    else
+    {
+        // When txtNSacks is empty and txtNBoxes is empty, enable both and revert to default border color
+        if (string.IsNullOrWhiteSpace(txtNBoxes.Text))
+        {
+            txtNBoxes.IsEnabled = true;
+            borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+            borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+        }
+    }
+}
+
+private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
+{
+    if (!string.IsNullOrWhiteSpace(txtNBoxes.Text))
+    {
+        // When txtNBoxes has text, disable txtNSacks and update border colors
+        txtNSacks.IsEnabled = false;
+        borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
+        borderNSacks.BorderBrush = new SolidColorBrush(Colors.Gray); // Gray out
+    }
+    else
+    {
+        // When txtNBoxes is empty and txtNSacks is empty, enable both and revert to default border color
+        if (string.IsNullOrWhiteSpace(txtNSacks.Text))
+        {
+            txtNSacks.IsEnabled = true;
+            borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+            borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+        }
+    }
+}
 
 
 

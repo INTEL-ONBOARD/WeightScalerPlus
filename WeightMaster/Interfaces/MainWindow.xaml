@@ -330,7 +330,7 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධාරී" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
                             <Border Grid.Row="1" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,0,0,5">
-                                <TextBox Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Top" Height="23" Margin="0,4,0,0"/>
+                                <TextBox x:Name="drpWeightOfficer" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Top" Height="23" Margin="0,4,0,0"/>
                             </Border>
                         </Grid>
 
@@ -455,44 +455,53 @@
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <TextBlock Text="ගෝනි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
+                            <Border x:Name="borderNSacks"
+                            Grid.Row="1" Height="38" 
+                            Background="#F7F7F7" 
+                            CornerRadius="10" 
+                            BorderBrush="#C4C4C4" 
+                            BorderThickness="2" 
+                            Padding="2" 
+                            Margin="0,0,10,0">
+                                <TextBox x:Name="txtNSacks" 
+                             PreviewTextInput="TextBox_PreviewTextInput" 
+                             TextChanged="txtNSacks_TextChanged"
+                             Background="#F7F7F7" 
+                             BorderThickness="0" 
+                             Foreground="Black" 
+                             FontSize="14" 
+                             VerticalAlignment="Center" 
+                             HorizontalAlignment="Stretch" 
+                             TextAlignment="Left"/>
                             </Border>
                         </Grid>
-                        <!-- 
-                        <Grid Margin="33,231,308,412">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="50"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0" Margin="0,0,10,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                                <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                                </Border>
-                            </Grid>
-                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
-                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
-                                    <Image Source="/Interfaces/tick.png"/>
-                                </Border>
-                            </Button>
-                        </Grid>
- -->
                         <Grid Margin="310,231,36,412">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="පෙට්ටි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            <TextBlock Text="පෙට්ටි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
+                            <Border x:Name="borderNBoxes"
+                            Grid.Row="1" Height="38" 
+                            Background="#F7F7F7" 
+                            CornerRadius="10" 
+                            BorderBrush="#C4C4C4" 
+                            BorderThickness="2" 
+                            Padding="2">
+                                <TextBox x:Name="txtNBoxes" 
+                                 PreviewTextInput="TextBox_PreviewTextInput" 
+                                 TextChanged="txtNBoxes_TextChanged"
+                                 Background="#F7F7F7" 
+                                 BorderThickness="0" 
+                                 Foreground="Black" 
+                                 FontSize="14" 
+                                 VerticalAlignment="Center" 
+                                 HorizontalAlignment="Stretch"/>
                             </Border>
                         </Grid>
+
+
                         <!-- 
                         <Grid Margin="310,231,36,412">
                             <Grid.ColumnDefinitions>
@@ -516,6 +525,29 @@
                             </Button>
                         </Grid>
                         -->
+                        <!-- 
+                        <Grid Margin="33,231,308,412">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="50"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid Grid.Column="0" Margin="0,0,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="0,19,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="10" Padding="12">
+                                    <Image Source="/Interfaces/tick.png"/>
+                                </Border>
+                            </Button>
+                        </Grid>
+ -->
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,314,0,386" />
                         <!--Vertical lining upper middle-->
