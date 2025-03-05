@@ -68,11 +68,25 @@ namespace WeightMaster
 
 
         //Login Frame
-        //Login Frame
         private void LoginButtonClick(object sender, RoutedEventArgs e)
         {
+            string username = UsernameTextBox.Text;
+            string password = PasswordTextBox.Password;
+
+
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                MessageBox.Show("කරුණාකර නිවැරදි පරිශීලක නාමය හා මුරපදය ඇතුලත් කරන්න", "Validation Error");
+                return;
+            }
+            else if (RadioBtnStation1.IsChecked == false && RadioBtnStation2.IsChecked == false) 
+            {
+                MessageBox.Show("කරුණාකර ප්‍රවේශ වීමට මැදිරියක් තෝරාගන්න.", "Validation Error");
+                return;
+            }
+
             // Check which radio button is selected and show the corresponding page
-            if (RadioBtnStation1.IsChecked == true)
+            else if (RadioBtnStation1.IsChecked == true)
             {
                 LoginFrame.Visibility = Visibility.Collapsed;
                 StationMainFrame.Visibility = Visibility.Visible;

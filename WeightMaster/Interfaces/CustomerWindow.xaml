@@ -78,8 +78,8 @@
             <Border Background="#F4F4F4" Margin="10,8,10,836" CornerRadius="20">
                 <Grid>
                     <Image Source="station_1_image.png" Margin="0,26,1635,16"/>
-                    <TextBlock x:Name="TopBarCustomerText" Text="වේදිකාව" FontSize="48" Margin="125,17,1243,60" FontWeight="Bold" Foreground="Black"/>
-                    <TextBlock x:Name="TopBarCustomerDate" Text="2024-12-14" FontSize="24" Margin="125,81,1476,31" FontWeight="Medium" Foreground="#D0D0D0"/>
+                    <TextBlock x:Name="TopBarCustomerText" Text="වේදිකාව" FontSize="48" Margin="125,17,1243,53" FontWeight="Bold" Foreground="Black"/>
+                    <TextBlock x:Name="TopBarCustomerDate" Text="2024-12-14" FontSize="24" Margin="125,85,1476,27" FontWeight="Medium" Foreground="#D0D0D0"/>
                 </Grid>
             </Border>
 

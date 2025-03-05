@@ -83,6 +83,8 @@
                         <Border Background="White" BorderThickness="1" BorderBrush="#E0E0E0" CornerRadius="8">
                             <Grid>
                                 <!-- Placeholder TextBlock -->
+                                <!--
+                                
                                 <TextBlock x:Name="PlaceholderText"
                                    Text="පරිශීලක නාමය"
                                    Foreground="Gray"
@@ -91,7 +93,7 @@
                                    HorizontalAlignment="Left"
                                    Margin="14,0,0,0"
                                    IsHitTestVisible="False"/>
-
+                                -->
                                 <!-- Actual TextBox Content -->
                                 <ScrollViewer x:Name="PART_ContentHost" Margin="12,8" VerticalAlignment="Center"/>
                             </Grid>
@@ -99,6 +101,8 @@
                     </Grid>
 
                     <!-- Triggers to Show/Hide Placeholder -->
+                    <!--
+                    
                     <ControlTemplate.Triggers>
                         <Trigger Property="Text" Value="">
                             <Setter TargetName="PlaceholderText" Property="Visibility" Value="Visible"/>
@@ -110,6 +114,7 @@
                             <Setter TargetName="PlaceholderText" Property="Visibility" Value="Collapsed"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
+                    -->
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
