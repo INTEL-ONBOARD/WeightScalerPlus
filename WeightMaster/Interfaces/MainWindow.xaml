@@ -133,7 +133,7 @@
 
 
         <!--Login Frame-->
-        <Grid x:Name="LoginFrame" Visibility="Hidden" Background="White" Margin="38,49,40,49" >
+        <Grid x:Name="LoginFrame" Visibility="Visible" Background="White" Margin="38,49,40,49" >
             <Border Background="White" CornerRadius="20" Margin="728,36,728,86">
                 <Grid Margin="0,72,0,0">
                     <StackPanel  Margin="20,98,20,305">
@@ -150,19 +150,36 @@
                          Margin="0,0,0,16"/>
                         <TextBlock Text="මුරපදය" Foreground="#C8C8C8" Width="316" Margin="0,0,0,5"/>
                         <Grid Margin="0,0,0,24">
-                            <PasswordBox x:Name="PasswordTextBox"
-                         Height="60"
-                         Style="{StaticResource CustomPasswordBox}"
-                         Margin="0,0,0,16"/>
+                            <Grid>
+                                <!-- Container for password controls -->
+                                <Grid>
+                                    <!-- PasswordBox: for masked input -->
+                                    <PasswordBox x:Name="PasswordBoxControl"
+                                     Height="60"
+                                     Style="{StaticResource CustomPasswordBox}"
+                                     Margin="0,0,0,16"
+                                     Visibility="Visible" />
 
+                                    <!-- TextBox: for visible password (initially hidden) -->
+                                    <TextBox x:Name="VisiblePasswordTextBox"
+                                     Height="60"
+                                     Style="{StaticResource CustomTextBox}"
+                                     Margin="0,0,0,16"
+                                     Visibility="Collapsed"
+                                     Foreground="Black"
+                                     FontSize="16"/>
+                                </Grid>
 
-                            <Button Cursor="Hand" HorizontalAlignment="Right" 
-                    Style="{StaticResource PasswordVisibilityToggle}"
-                    Click="TogglePasswordVisibilityClick" Margin="0,0,10,16" Width="30">
-                                <Path x:Name="VisibilityIcon"
-                      Data="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
-                      Fill="#666666" Stretch="Uniform" Width="16" Height="16"/>
-                            </Button>
+                                <!-- Toggle Visibility Button -->
+                                <Button HorizontalAlignment="Right" 
+                                  Style="{StaticResource PasswordVisibilityToggle}"
+                                  Click="TogglePasswordVisibilityClick"
+                                  Margin="0,0,10,16" Width="30">
+                                                            <Path x:Name="VisibilityIcon"
+                                  Data="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"
+                                  Fill="#666666" Stretch="Uniform" Width="16" Height="16"/>
+                                </Button>
+                            </Grid>
                         </Grid>
                     </StackPanel>
 
@@ -248,7 +265,7 @@
         </Grid>
 
         <!--Station Main Frame-->
-        <Grid x:Name="StationMainFrame" Visibility="Visible" Background="White" Margin="40,50,40,50" >
+        <Grid x:Name="StationMainFrame" Visibility="Hidden" Background="White" Margin="40,50,40,50" >
             <!--Top bar-->
             <Border Background="#FBFBFB" Margin="10,8,10,836" CornerRadius="20">
                 <Grid>
@@ -991,7 +1008,7 @@
             </Grid>
 
             <!--SettingsFrame-->
-            <Grid x:Name="SettingsFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
+            <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
                 <!--horizontal line-->
                 <Border Width="4" Background="Black" Margin="644,77,1172,14" />
                 <!--Left section with scroller-->
