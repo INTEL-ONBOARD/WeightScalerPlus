@@ -31,7 +31,7 @@ namespace WeightMaster
             //Topbar
             runtimeService = new Runtime(this , path); // Pass the labels from XAML
             TopBarDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
-            OpenCustomerWindow();
+            //OpenCustomerWindow();
             _consoleHandler = new ConsoleHandler();
         }
 
@@ -41,9 +41,11 @@ namespace WeightMaster
             await _consoleHandler.GetStudentsAsync();
         }
 
+        //global to use on the close event
+        private CustomerWindow customerWindow;
         private void OpenCustomerWindow()
         {
-            CustomerWindow customerWindow = new CustomerWindow();
+            customerWindow = new CustomerWindow();
 
             // Get primary screen dimensions
             double primaryScreenWidth = SystemParameters.PrimaryScreenWidth;
@@ -56,6 +58,7 @@ namespace WeightMaster
             // Check if there's more than one screen
             if (virtualScreenWidth > primaryScreenWidth || virtualScreenHeight > primaryScreenHeight)
             {
+                //binal: in order to work, set the secondory screen to the right of the primary screen(main screen: left, secondory screen: right)
                 // Assuming the secondary screen is to the right of the primary screen
                 customerWindow.WindowStartupLocation = WindowStartupLocation.Manual;
                 customerWindow.Left = primaryScreenWidth; // Position at the start of the second screen
@@ -73,16 +76,19 @@ namespace WeightMaster
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
+            if (customerWindow != null)
+            {
+                customerWindow.Close();
+            }
             this.Close();
         }
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            //await _consoleHandler.GetStudentsAsync();
-            await testExecution();
+            //await testExecution();
 
             string username = UsernameTextBox.Text;
-            string password = PasswordTextBox.Password;
+            string password = PasswordBoxControl.Password;
 
 
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
@@ -96,8 +102,19 @@ namespace WeightMaster
                 return;
             }
 
+            await _consoleHandler.loginUser(username, password);
+            await Task.Run(() =>
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    
+                });
+                
+                //window switch here
+            });
+
             // Check which radio button is selected and show the corresponding page
-            else if (RadioBtnStation1.IsChecked == true)
+            if (RadioBtnStation1.IsChecked == true)
             {
                 LoginFrame.Visibility = Visibility.Collapsed;
                 StationMainFrame.Visibility = Visibility.Visible;
@@ -137,10 +154,28 @@ namespace WeightMaster
 
         }
 
+        private bool _isPasswordVisible = false;
+
         private void TogglePasswordVisibilityClick(object sender, RoutedEventArgs e)
         {
-            //PasswordTextBox.PasswordCharProperty.Readable = true;
-            //PasswordTextBox.Readable = false;
+            if (_isPasswordVisible)
+            {
+                // Hide the visible TextBox and show the PasswordBox.
+                // Update the PasswordBox value from the TextBox.
+                PasswordBoxControl.Password = VisiblePasswordTextBox.Text;
+                VisiblePasswordTextBox.Visibility = Visibility.Collapsed;
+                PasswordBoxControl.Visibility = Visibility.Visible;
+                _isPasswordVisible = false;
+            }
+            else
+            {
+                // Show the TextBox and hide the PasswordBox.
+                // Update the TextBox text from the PasswordBox.
+                VisiblePasswordTextBox.Text = PasswordBoxControl.Password;
+                PasswordBoxControl.Visibility = Visibility.Collapsed;
+                VisiblePasswordTextBox.Visibility = Visibility.Visible;
+                _isPasswordVisible = true;
+            }
         }
 
         //topbar section
@@ -174,6 +209,7 @@ namespace WeightMaster
 
         private void LogoutButtonClick(object sender, RoutedEventArgs e)
         {
+            //IntroFrame.Visibility = Visibility.Visible;
             LoginFrame.Visibility = Visibility.Visible;
             StationMainFrame.Visibility = Visibility.Collapsed;
             Station1Frame.Visibility= Visibility.Collapsed;
@@ -254,7 +290,6 @@ namespace WeightMaster
             }
             return true;
         }
-
 
     }
 }
