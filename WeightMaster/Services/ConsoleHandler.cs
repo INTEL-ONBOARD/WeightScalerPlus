@@ -20,5 +20,22 @@ namespace WeightMaster.Services
         {
             await _engine.dumpUserInformation();
         }
+
+        public async Task<bool> VerifyUserDb()
+        {
+            return await _engine.UserDbValidation(); 
+        }
+
+        public async Task<bool> ValidateEmail(String email)
+        {
+            return await _engine.VerifyEmailInDbAsync(email);
+        }
+
+        public async Task<bool> loginUser(String email,string password)
+        {
+            return await _engine.LoginUser(email,password);
+        }
+
+
     }
 }

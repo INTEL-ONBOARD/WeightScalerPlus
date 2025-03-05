@@ -11,51 +11,18 @@ namespace WeightMaster.Core
 {
     public class Engine
     {
-        //public async Task dumpUserInformation()
-        //{
-        //    ApiClient apiClient = new ApiClient();
-        //    string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
-        //    userModel apiResponse = await apiClient.PostAsync<userModel>(url, new {});
-
-        //    if (apiResponse != null && apiResponse.Status == "success")
-        //    {
-        //        foreach (var user in apiResponse.Users)
-        //        {
-        //            Console.WriteLine($"Username: {user.Username}");
-        //            Console.WriteLine($"Email: {user.Email}");
-        //            Console.WriteLine($"Full Name: {user.FullName}");
-        //            Console.WriteLine("Roles:");
-        //            foreach (var role in user.Roles)
-        //            {
-        //                Console.WriteLine($"- {role}");
-        //            }
-        //            Console.WriteLine($"API Key: {user.ApiKey}");
-        //            Console.WriteLine($"API Secret: {user.ApiSecret}");
-        //            Console.WriteLine();
-        //        }
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("No data received or status is not 'success'.");
-        //    }
-        //}
-
         public async Task dumpUserInformation()
         {
             ApiClient apiClient = new ApiClient();
             string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
 
-            // Pass null since no data is needed
             userModel apiResponse = await apiClient.PostAsync<userModel>(url, null);
-            
-
-            //var userService = new UserService(new AppDbContext());
-            //await userService.SaveUsersAsync(apiResponse.Users);
+           
             if (apiResponse != null && apiResponse.Status == "success")
             {
 
                 var userService = new UserService(new AppDbContext());
-                await userService.SaveUsersAsync(apiResponse.Users); 
+                await userService.ReplaceUsersAsync(apiResponse.Users); 
 
 
                 foreach (var user in apiResponse.Users)
@@ -79,6 +46,83 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<int> getChangeCount()
+        {
+            ApiClient apiClient = new ApiClient();
+            string url = "http://152.42.249.231:8000/api/method/send_user_infromtaion";
+
+            userModel apiResponse = await apiClient.PostAsync<userModel>(url, null);
+            int userCount = 0;
+            if (apiResponse != null && apiResponse.Status == "success")
+            {
+                foreach (var user in apiResponse.Users)
+                {
+                   userCount++;
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data received or status is not 'success'.");
+            }
+            return userCount;
+        }
+
+        public async Task<bool> UserDbValidation()
+        {
+            try {
+                await Task.Run(async () =>
+                {
+                    var userService = new UserService(new AppDbContext());
+                    int userCount = await userService.GetUserCountAsync();
+                    int apiUserCount = await getChangeCount();
+                    if (userCount != apiUserCount)
+                    {
+                        dumpUserInformation();
+                    }
+                    return true;
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+            
+        }
+        public async Task<bool> VerifyEmailInDbAsync(string email)
+        {
+            try
+            {
+                return await Task.Run(async () =>
+                {
+                    var userService = new UserService(new AppDbContext());
+
+                    bool emailExists = await userService.EmailExistsAsync(email);
+
+                    return emailExists;
+                });
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public async Task<bool> LoginUser(string username, string password)
+        {
+            try
+            {
+                await Task.Run(async () =>
+                {
+                    var userService = new UserService(new AppDbContext());
+                    return await userService.LogUserLogin(username, password); ;
+                });
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
 
     }
 }
