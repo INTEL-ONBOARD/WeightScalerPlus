@@ -5,7 +5,11 @@ namespace WeightMaster.Config
 {
     public class AppDbContext : DbContext
     {
+        internal object UserBlockModels;
+
         public DbSet<Student> Students { get; set; }
+        public DbSet<UserBlockModel> Users { get; set; }
+        
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -16,34 +20,34 @@ namespace WeightMaster.Config
             }
         }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    base.OnModelCreating(modelBuilder);
 
-            // Seed data for Students
-            modelBuilder.Entity<Student>().HasData(
-                new Student
-                {
-                    Id = 1,
-                    Name = "John Doe",
-                    Age = 20,
-                    Email = "john.doe@example.com"
-                },
-                new Student
-                {
-                    Id = 2,
-                    Name = "Jane Smith",
-                    Age = 22,
-                    Email = "jane.smith@example.com"
-                },
-                new Student
-                {
-                    Id = 3,
-                    Name = "Alice Johnson",
-                    Age = 23,
-                    Email = "alice.johnson@example.com"
-                }
-            );
-        }
+        //    // Seed data for Students
+        //    modelBuilder.Entity<Student>().HasData(
+        //        new Student
+        //        {
+        //            Id = 1,
+        //            Name = "John Doe",
+        //            Age = 20,
+        //            Email = "john.doe@example.com"
+        //        },
+        //        new Student
+        //        {
+        //            Id = 2,
+        //            Name = "Jane Smith",
+        //            Age = 22,
+        //            Email = "jane.smith@example.com"
+        //        },
+        //        new Student
+        //        {
+        //            Id = 3,
+        //            Name = "Alice Johnson",
+        //            Age = 23,
+        //            Email = "alice.johnson@example.com"
+        //        }
+        //    );
+        //}
     }
 }

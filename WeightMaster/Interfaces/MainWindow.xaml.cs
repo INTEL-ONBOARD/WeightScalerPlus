@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using WeightMaster.Core;
 using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Services;
@@ -22,6 +23,8 @@ namespace WeightMaster
     {
         private Runtime runtimeService;
         private String path;
+        private ConsoleHandler _consoleHandler;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -29,6 +32,13 @@ namespace WeightMaster
             runtimeService = new Runtime(this , path); // Pass the labels from XAML
             TopBarDate.Text = DateTime.Now.ToString("MM/dd/yyyy");
             OpenCustomerWindow();
+                        _consoleHandler = new ConsoleHandler();
+        }
+
+        public static async Task testExecution()
+        {
+            ConsoleHandler handler = new ConsoleHandler();
+            await handler.GetStudentsAsync();
         }
 
         private void OpenCustomerWindow()
@@ -66,10 +76,11 @@ namespace WeightMaster
             this.Close();
         }
 
-
-        //Login Frame
-        private void LoginButtonClick(object sender, RoutedEventArgs e)
+        private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
+            await _consoleHandler.GetStudentsAsync();
+
+
             string username = UsernameTextBox.Text;
             string password = PasswordTextBox.Password;
 

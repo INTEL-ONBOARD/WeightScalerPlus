@@ -11,8 +11,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250305025734_InitialCreate2")]
-    partial class InitialCreate2
+    [Migration("20250305120158_tr")]
+    partial class tr
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,29 +46,41 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Students");
+                });
 
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Age = 20,
-                            Email = "john.doe@example.com",
-                            Name = "John Doe"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Age = 22,
-                            Email = "jane.smith@example.com",
-                            Name = "Jane Smith"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Age = 23,
-                            Email = "alice.johnson@example.com",
-                            Name = "Alice Johnson"
-                        });
+            modelBuilder.Entity("WeightMaster.Models.UserBlockModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ApiKey")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ApiSecret")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
