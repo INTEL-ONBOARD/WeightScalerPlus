@@ -6,6 +6,7 @@ namespace WeightMaster.Config
     public class AppDbContext : DbContext
     {
         public DbSet<Student> Students { get; set; }
+        public DbSet<UserBlockModel> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
