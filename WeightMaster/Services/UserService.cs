@@ -32,36 +32,39 @@ public class UserService
         var userBlockModels = users.Select(user => MapUserToUserBlockModel(user)).ToList();
 
         // Save the mapped users into the database  
-        await _context.Users.AddRangeAsync(userBlockModels);
+        await _context.UsersData.AddRangeAsync(userBlockModels);
         await _context.SaveChangesAsync();
     }
     public async Task ReplaceUsersAsync(List<User> users)
     {
         // Step 1: Clean the table (delete all rows)
-        _context.Users.RemoveRange(_context.Users);  // This removes all records from the Users table.
+        _context.UsersData.RemoveRange(_context.UsersData);  // This removes all records from the Users table.
 
         // Step 2: Map each user to a UserBlockModel
         var userBlockModels = users.Select(user => MapUserToUserBlockModel(user)).ToList();
 
         // Step 3: Save the mapped users into the database
-        await _context.Users.AddRangeAsync(userBlockModels);  // Add the new data
+        await _context.UsersData.AddRangeAsync(userBlockModels);  // Add the new data
         await _context.SaveChangesAsync();  // Commit changes to the database
     }
 
     public async Task<int> GetUserCountAsync()
     {
-        return await _context.Users.CountAsync();
+        return await _context.UsersData.CountAsync();
     }
 
     public async Task<bool> EmailExistsAsync(string email)
     {
-        return await _context.Users.AnyAsync(user => user.Email == email);
+        return await _context.UsersData.AnyAsync(user => user.Email == email);
     }
-    public async Task<bool> LogUserLogin(string email, string password)
+    public async Task<String> LogUserLogin(string email, string password)
     {
         // Await the result of EmailExistsAsync
         if (await EmailExistsAsync(email))
         {
+            var user = await _context.UsersData.FirstOrDefaultAsync(u => u.Email == email);
+            string username = user.Username;
+
             var userLogin = new UserLoginModel
             {
                 Email = email,
@@ -70,10 +73,10 @@ public class UserService
                 LoginDateTime = DateTime.Now // Capture current date and time
             };
 
-            await _context.UserLogins.AddAsync(userLogin); // AddAsync for async operations
+            await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
             await _context.SaveChangesAsync(); // SaveChangesAsync for async save to the database
 
-            return true;
+            return username;
         }
         else
         {
@@ -85,9 +88,9 @@ public class UserService
                 LoginDateTime = DateTime.Now // Capture current date and time
             };
 
-            await _context.UserLogins.AddAsync(userLogin); // AddAsync for async operations
+            await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
             await _context.SaveChangesAsync();
-            return false;
+            return "Unknown";
         }
     }
 
