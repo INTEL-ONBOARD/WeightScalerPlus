@@ -357,7 +357,7 @@
                             <Ellipse Width="20" Height="20" Fill="#2ECC71" Margin="20,0,10,0"/>
                             <TextBlock Text="Connected" Foreground="#BFBFBF" FontSize="15" FontWeight="SemiBold" Margin="5,0,0,0" />
                         </StackPanel>
-                        <TextBlock x:Name="weightScalerValTxt_st1" VerticalAlignment="Bottom" Grid.Row="1" Text="36.5KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="41,0,10,0"  />
+                        <TextBlock x:Name="weightScalerValTxt_st1" VerticalAlignment="Bottom" Grid.Row="1" Text="0.0KG" Foreground="Black" FontSize="96" FontWeight="Bold" Margin="41,0,10,0"  />
                         <TextBlock x:Name="weightScalerStatus_st1" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
                         <Button x:Name="wieghtScalerConfirmBtn_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click">
