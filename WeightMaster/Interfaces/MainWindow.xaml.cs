@@ -256,53 +256,53 @@ namespace WeightMaster
             }
         }
 
-        private bool _isUpdatingWeights = false;
+        //private bool _isUpdatingWeights = false;
 
-        private void goldenLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_isUpdatingWeights)
-                return;
+        //private void goldenLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    if (_isUpdatingWeights)
+        //        return;
 
-            _isUpdatingWeights = true;
+        //    _isUpdatingWeights = true;
 
-            // Parse the accepted and golden weights as integers.
-            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
-                int.TryParse(goldenLeafWeight_st1.Text, out int golden))
-            {
-                // Calculate normal weight: accepted = golden + normal
-                int normal = accepted - golden;
-                normalLeafWeight_st1.Text = normal.ToString();
-            }
-            else
-            {
-                normalLeafWeight_st1.Text = "";
-            }
+        //    // Parse the accepted and golden weights as integers.
+        //    if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+        //        int.TryParse(goldenLeafWeight_st1.Text, out int golden))
+        //    {
+        //        // Calculate normal weight: accepted = golden + normal
+        //        int normal = accepted - golden;
+        //        normalLeafWeight_st1.Text = normal.ToString();
+        //    }
+        //    else
+        //    {
+        //        normalLeafWeight_st1.Text = "";
+        //    }
 
-            _isUpdatingWeights = false;
-        }
+        //    _isUpdatingWeights = false;
+        //}
 
-        private void normalLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_isUpdatingWeights)
-                return;
+        //private void normalLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    if (_isUpdatingWeights)
+        //        return;
 
-            _isUpdatingWeights = true;
+        //    _isUpdatingWeights = true;
 
-            // Parse the accepted and normal weights as integers.
-            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
-                int.TryParse(normalLeafWeight_st1.Text, out int normal))
-            {
-                // Calculate golden weight: accepted = golden + normal
-                int golden = accepted - normal;
-                goldenLeafWeight_st1.Text = golden.ToString();
-            }
-            else
-            {
-                goldenLeafWeight_st1.Text = "";
-            }
+        //    // Parse the accepted and normal weights as integers.
+        //    if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+        //        int.TryParse(normalLeafWeight_st1.Text, out int normal))
+        //    {
+        //        // Calculate golden weight: accepted = golden + normal
+        //        int golden = accepted - normal;
+        //        goldenLeafWeight_st1.Text = golden.ToString();
+        //    }
+        //    else
+        //    {
+        //        goldenLeafWeight_st1.Text = "";
+        //    }
 
-            _isUpdatingWeights = false;
-        }
+        //    _isUpdatingWeights = false;
+        //}
 
 
 
@@ -331,7 +331,7 @@ private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
 {
     if (!string.IsNullOrWhiteSpace(txtNBoxes.Text))
     {
-                nBoxes_st1 = 0;
+                //nBoxes_st1 = 0;
         // When txtNBoxes has text, disable txtNSacks and update border colors
         txtNSacks.IsEnabled = false;
         borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Green highlight
@@ -342,7 +342,7 @@ private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
         // When txtNBoxes is empty and txtNSacks is empty, enable both and revert to default border color
         if (string.IsNullOrWhiteSpace(txtNSacks.Text))
         {
-                    nBoxes_st1 = Int32.Parse(txtNBoxes.Text);
+                    //nBoxes_st1 = Int32.Parse(txtNBoxes.Text);
                     txtNSacks.IsEnabled = true;
             borderNSacks.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
             borderNBoxes.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
