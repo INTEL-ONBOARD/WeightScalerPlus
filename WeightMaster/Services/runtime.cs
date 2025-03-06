@@ -105,7 +105,7 @@ namespace WeightMaster.Services
                             else
                             {
                                 window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Red);
-                                window.weightScalerStatus_st1.Text = "UNSTABLE";
+                                window.weightScalerStatus_st1.Text = "අසමබරයි";
                             }
                         }
                         else
