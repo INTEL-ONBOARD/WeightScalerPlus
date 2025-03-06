@@ -1,5 +1,7 @@
 ﻿using Microsoft.Win32;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -9,10 +11,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using WeightMaster.Core;
 using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Services;
+using Path = System.IO.Path;
 
 namespace WeightMaster
 {
@@ -32,6 +36,124 @@ namespace WeightMaster
         // Global integer for the total leaf weight(floor value)
         public int totalLeafWeight_st1 = 0;
         public int totalBoxWeight_st1 = 0;
+
+
+
+
+
+
+        //private string filePath;
+        //private FileSystemWatcher fileWatcher;
+        //private DispatcherTimer readTimer;
+
+        //private void BrowseButton_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Open a file dialog to select the JSON file.
+        //    var dialog = new Microsoft.Win32.OpenFileDialog
+        //    {
+        //        Filter = "JSON files (*.json)|*.json|All files (*.*)|*.*"
+        //    };
+
+        //    if (dialog.ShowDialog() == true)
+        //    {
+        //        filePath = dialog.FileName;
+        //        StartFileWatcher();
+        //        StartTimer();
+        //    }
+        //}
+
+        //private void StartFileWatcher()
+        //{
+        //    // Dispose any existing watcher.
+        //    fileWatcher?.Dispose();
+
+        //    // Initialize FileSystemWatcher for the selected file.
+        //    fileWatcher = new FileSystemWatcher
+        //    {
+        //        Path = Path.GetDirectoryName(filePath),
+        //        Filter = Path.GetFileName(filePath),
+        //        NotifyFilter = NotifyFilters.LastWrite
+        //    };
+
+        //    fileWatcher.Changed += OnFileChanged;
+        //    fileWatcher.EnableRaisingEvents = true;
+
+        //    // Read the file initially.
+        //    ReadFile();
+        //}
+
+        //private void StartTimer()
+        //{
+        //    // Create or restart a DispatcherTimer to refresh the UI continuously.
+        //    if (readTimer == null)
+        //    {
+        //        readTimer = new DispatcherTimer();
+        //        readTimer.Interval = TimeSpan.FromMilliseconds(500); // Adjust interval as needed.
+        //        readTimer.Tick += (s, e) => ReadFile();
+        //    }
+        //    readTimer.Start();
+        //}
+
+        //private void OnFileChanged(object sender, FileSystemEventArgs e)
+        //{
+        //    // Use the Dispatcher to ensure the UI is updated on the main thread.
+        //    Dispatcher.Invoke(() => ReadFile());
+        //}
+
+        //private void ReadFile()
+        //{
+        //    try
+        //    {
+        //        // Open the file with sharing enabled to allow concurrent writes.
+        //        using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        //        using (var reader = new StreamReader(stream))
+        //        {
+        //            string json = reader.ReadToEnd();
+        //            // Configure the serializer to ignore case differences.
+        //            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        //            var data = JsonSerializer.Deserialize<WeightData>(json, options);
+        //            if (data != null)
+        //            {
+        //                System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
+        //                // Update the UI with both values.
+        //                weightScalerValTxt_st1.Text = data.Value;
+        //                weightScalerStatus_st1.Text = data.Stable;
+        //            }
+        //        }
+        //    }
+        //    catch (IOException)
+        //    {
+        //        // If the file is temporarily locked, try again shortly.
+        //        Dispatcher.InvokeAsync(() =>
+        //        {
+        //            System.Threading.Thread.Sleep(100);
+        //            ReadFile();
+        //        }, DispatcherPriority.Background);
+        //        System.Diagnostics.Debug.WriteLine("Issue occured!");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        MessageBox.Show($"Error reading file: {ex.Message}");
+        //    }
+        //}
+
+        //// Class to represent the JSON structure.
+        //public class WeightData
+        //{
+        //    public string Value { get; set; }
+        //    public string Stable { get; set; }
+        //}
+
+        //protected override void OnClosed(EventArgs e)
+        //{
+        //    fileWatcher?.Dispose();
+        //    readTimer?.Stop();
+        //    runtimeService.OnWindowClosed();
+        //    base.OnClosed(e);
+        //}
+
+
+
 
 
         public MainWindow()
@@ -258,51 +380,51 @@ namespace WeightMaster
 
         private bool _isUpdatingWeights = false;
 
-        private void goldenLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_isUpdatingWeights)
-                return;
+        //private void goldenLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    if (_isUpdatingWeights)
+        //        return;
 
-            _isUpdatingWeights = true;
+        //    _isUpdatingWeights = true;
 
-            // Parse the accepted and golden weights as integers.
-            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
-                int.TryParse(goldenLeafWeight_st1.Text, out int golden))
-            {
-                // Calculate normal weight: accepted = golden + normal
-                int normal = accepted - golden;
-                normalLeafWeight_st1.Text = normal.ToString();
-            }
-            else
-            {
-                normalLeafWeight_st1.Text = "";
-            }
+        //    // Parse the accepted and golden weights as integers.
+        //    if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+        //        int.TryParse(goldenLeafWeight_st1.Text, out int golden))
+        //    {
+        //        // Calculate normal weight: accepted = golden + normal
+        //        int normal = accepted - golden;
+        //        normalLeafWeight_st1.Text = normal.ToString();
+        //    }
+        //    else
+        //    {
+        //        normalLeafWeight_st1.Text = "";
+        //    }
 
-            _isUpdatingWeights = false;
-        }
+        //    _isUpdatingWeights = false;
+        //}
 
-        private void normalLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (_isUpdatingWeights)
-                return;
+        //private void normalLeafWeight_st1_TextChanged(object sender, TextChangedEventArgs e)
+        //{
+        //    if (_isUpdatingWeights)
+        //        return;
 
-            _isUpdatingWeights = true;
+        //    _isUpdatingWeights = true;
 
-            // Parse the accepted and normal weights as integers.
-            if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
-                int.TryParse(normalLeafWeight_st1.Text, out int normal))
-            {
-                // Calculate golden weight: accepted = golden + normal
-                int golden = accepted - normal;
-                goldenLeafWeight_st1.Text = golden.ToString();
-            }
-            else
-            {
-                goldenLeafWeight_st1.Text = "";
-            }
+        //    // Parse the accepted and normal weights as integers.
+        //    if (int.TryParse(acceptedLeafWeightTxt_st1.Text, out int accepted) &&
+        //        int.TryParse(normalLeafWeight_st1.Text, out int normal))
+        //    {
+        //        // Calculate golden weight: accepted = golden + normal
+        //        int golden = accepted - normal;
+        //        goldenLeafWeight_st1.Text = golden.ToString();
+        //    }
+        //    else
+        //    {
+        //        goldenLeafWeight_st1.Text = "";
+        //    }
 
-            _isUpdatingWeights = false;
-        }
+        //    _isUpdatingWeights = false;
+        //}
 
 
 
@@ -395,11 +517,11 @@ private void txtNBoxes_TextChanged(object sender, TextChangedEventArgs e)
 
         }
 
-        protected override void OnClosed(EventArgs e)
-        {
-            runtimeService.OnWindowClosed(); // Clean up resources when the window is closed
-            base.OnClosed(e);
-        }
+        //protected override void OnClosed(EventArgs e)
+        //{
+        //    runtimeService.OnWindowClosed(); // Clean up resources when the window is closed
+        //    base.OnClosed(e);
+        //}
 
 
 
