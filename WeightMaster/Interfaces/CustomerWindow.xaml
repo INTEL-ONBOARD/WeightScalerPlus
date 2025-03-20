@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:userContorls="clr-namespace:WeightMaster.Interfaces.UserControls"
         xmlns:local="clr-namespace:WeightMaster.Interfaces"
         Title="MainWindow" Height="1080" Width="1920"
         WindowStyle="None"
@@ -75,263 +76,145 @@
 
         <!--Customer Main Frame-->
         <Grid x:Name="CustomerMainFrame" Visibility="Visible" Background="Transparent" Margin="70,49,70,49" >
-            <Border Background="#F4F4F4" Margin="10,8,10,836" CornerRadius="20">
+            <!--customer top bar-->
+            <Border Background="White" Margin="0,8,0,804" BorderBrush="#B4B4B4" BorderThickness="0,0,0,1">
                 <Grid>
-                    <Image Source="station_1_image.png" Margin="0,26,1635,16"/>
-                    <TextBlock x:Name="TopBarCustomerText" Text="වේදිකාව" FontSize="48" Margin="125,17,1243,53" FontWeight="Bold" Foreground="Black"/>
-                    <TextBlock x:Name="TopBarCustomerDate" Text="2024-12-14" FontSize="24" Margin="125,85,1476,27" FontWeight="Medium" Foreground="#D0D0D0"/>
+                    <TextBlock x:Name="TopbarCustomerCompanyText" FontSize="36" Margin="28,46,373,56" FontWeight="Bold" Foreground="Black" Text="සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය"/>
+                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="28,104,1261,23" FontWeight="Bold" Foreground="#2DAA44" Text="මොරවක්කොරළේ තේ කම්හල"/>
+                    <userContorls:CustomerDateAndTime Margin="1466,46,74,23"/>
                 </Grid>
             </Border>
 
             <!--Station1CustomerFrame-->
-            <Grid x:Name="Station1CustomerFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
-                <!--Weight labels-->
-                <Border CornerRadius="20" Margin="16,31,874,60"  Background="#FBFBFB">
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="482*"/>
-                            <ColumnDefinition Width="389*"/>
-                        </Grid.ColumnDefinitions>
-                        <!--total weights and nSack/nBox Card-->
-                        <Border CornerRadius="20" Background="#DFDFDF" Margin="0,0,0,418" Grid.ColumnSpan="2">
-                            <Grid >
-                                <TextBlock Text="36.5KG" FontSize="64" FontWeight="Bold" Foreground="Black" Margin="42,93,600,139" />
-                                <TextBlock Text="සම්පූර්ණ බර" FontSize="30" FontWeight="Medium" Foreground="#888888" Margin="60,178,600,84"/>
-
-                                <!--Vertical lining upper middle-->
-                                <Line HorizontalAlignment="Left" VerticalAlignment="Center" X1="0" X2="0" Y1="0" Y2="270" Stroke="#B4B4B4" StrokeThickness="3" Height="156" Margin="275,0,0,0" />
-
-                                <TextBlock Text="37KG" FontSize="64" FontWeight="Bold" Foreground="Black" Margin="297,93,392,139" />
-                                <TextBlock Text="පිළිගත් බර" FontSize="30" FontWeight="Medium" Foreground="#888888" Margin="297,178,392,84"/>
-
-                                <!--Inner card for nBoxes and nSacks-->
-                                <Border CornerRadius="20" Background="#FFFFFF" Margin="520,28,28,28">
-                                    <Grid>
-                                        <TextBlock Text="5" FontSize="64" TextAlignment="Right" FontWeight="Bold" Foreground="#000000" Margin="87,0,144,181" />
-                                        <TextBlock Text="මලු ගණන" FontSize="28" FontWeight="Medium" Foreground="#888888" Margin="87,80,87,128"/>
-                                        <!--Horizontal lining upper middle-->
-                                        <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#B4B4B4" StrokeThickness="3" Margin="44,126,56,128" RenderTransformOrigin="0.5,0.5" />
-                                        <TextBlock Text="4" FontSize="64" TextAlignment="Right" FontWeight="Bold" Foreground="#000000" Margin="87,126,144,55" />
-                                        <TextBlock Text="පෙට්ටි ගණන" FontSize="28" FontWeight="Medium" Foreground="#888888" Margin="65,198,65,10"/>
-                                    </Grid>
-                                </Border>
-
-                            </Grid>
-                        </Border>
-                        <!--Card-->
-                        <Border CornerRadius="20" Background="#877F5D" Margin="0,346,84,23">
-                            <Grid >
-                                <TextBlock Text="24KG" FontSize="96" FontWeight="Bold" Foreground="#FFEB90" Margin="34,68,10,181" />
-                                <TextBlock Text="රන් දළු බර" FontSize="32" FontWeight="Medium" Foreground="#FFEB90" Margin="60,180,60,65"/>
-                            </Grid>
-                        </Border>
-                        <!--Card-->
-                        <Border CornerRadius="20" Background="#2DAA44" Margin="440,346,0,23" Grid.ColumnSpan="2">
-                            <Grid >
-                                <TextBlock Text="0KG" FontSize="96" FontWeight="Bold" Foreground="#B7FFCF" Margin="60,57,28,181" />
-                                <TextBlock Text="සාමාන්‍ය දළු බර" FontSize="32" FontWeight="Medium" Foreground="#B7FFCF" Margin="45,168,45,75"/>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <Border Margin="924,31,0,60" CornerRadius="20" Background="#FAFAFA">
-                    <Grid>
-                        <!--upper Card-->
-                        <Border CornerRadius="20" Background="Transparent" Margin="28,26,28,420">
+            <Grid x:Name="Station1CustomerFrame" Visibility="Visible" Background="White" Margin="10,183,10,10">
+                <Border  Background="White">
+                    <StackPanel Orientation="Horizontal">
+                        <!--left section-->
+                        <Border Width="590" BorderBrush="#B4B4B4" BorderThickness="0,0,1,0">
                             <Grid>
-                                <StackPanel Background="Transparent" Margin="0,0,0,160" Orientation="Horizontal" HorizontalAlignment="Center" Width="780">
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
+                                <!--Weight labels-->
+                                <StackPanel Orientation="Vertical">
+                                    <Border BorderBrush="#B4B4B4" BorderThickness="0,0,0,0" Height="260">
                                         <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="වතුරට" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="75,78,41,24"/>
+                                            <!-- Green Ellipse -->
+                                            <Canvas VerticalAlignment="Center" HorizontalAlignment="Left" Height="124" Width="140" Margin="34,0,0,0">
+                                                <Ellipse Width="128" Height="128" Fill="#2ECC71" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                                <Ellipse Width="84" Height="84" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="22" Canvas.Top="23"/>
+                                            </Canvas>
+                                            <TextBlock FontSize="80" FontWeight="Bold" Text="0.0" Margin="218,64,11,90"/>
+                                            <TextBlock  FontSize="26" FontWeight="SemiBold" Foreground="#888888" Text="සම්පූර්ණ බර(KG)" Margin="228,175,84,35"/>
                                         </Grid>
                                     </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
+                                    <Border BorderBrush="#B4B4B4" BorderThickness="0,1,0,1" Height="260">
                                         <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text=" තැම්බුණු" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="59,78,41,24"/>
+                                            <Image Source="/Interfaces/tick_in_green_circle.png" Margin="36,76,422,59"/>
+                                            <TextBlock FontSize="96" FontWeight="Bold" Text="0" Margin="218,64,11,90"/>
+                                            <TextBlock  FontSize="26" FontWeight="SemiBold" Foreground="#888888" Text="පිළිගත් බර(KG)" Margin="228,181,84,29"/>
                                         </Grid>
                                     </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="ප්‍රතික්ෂේපිත" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="48,78,25,24"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="මෝරපු" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="75,78,41,24"/>
-                                        </Grid>
+                                    <Border BorderBrush="#B4B4B4" BorderThickness="0,0,0,0" Height="260">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Border BorderBrush="#B4B4B4" BorderThickness="0,0,1,0" Width="292">
+                                                <Grid>
+                                                    <Image Source="/Interfaces/sack.png" Margin="55,48,162,142" />
+                                                    <TextBlock FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="127,14,29,126"/>
+                                                    <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="ගෝනි ගණන(n)" Margin="67,130,49,90"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Width="292">
+                                                <Grid>
+                                                    <Image Source="/Interfaces/crate.png" Margin="62,54,161,141" />
+                                                    <TextBlock FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="134,14,22,126"/>
+                                                    <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="පෙට්ටි ගණන(n)" Margin="67,130,49,90"/>
+                                                </Grid>
+                                            </Border>
+                                        </StackPanel>
                                     </Border>
                                 </StackPanel>
-
-                                <StackPanel Background="Transparent" Margin="0,142,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Width="780">
-                                    <Border CornerRadius="20" Margin="6,0,6,0" Background="#F0F0F0" Width="380">
-                                        <Grid>
-                                            <TextBlock Text="3KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="65,15,130,56"/>
-                                            <TextBlock Text="මුළු පෙට්ටි බර" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="126,87,126,28"/>
-                                        </Grid>
+                            </Grid>
+                        </Border>
+                        <!--right section-->
+                        <Border Width="1170">
+                            <Grid>
+                                <StackPanel Orientation="Vertical">
+                                    <Border Height="364">
+                                        <StackPanel Orientation="Horizontal">
+                                            <!--logo space-->
+                                            <Border Width="372" BorderBrush="#B4B4B4" BorderThickness="0,0,1,0">
+                                                <Grid>
+                                                    <Image Source="/Interfaces/teacoop_logo.png" Margin="37,56,55,56"/>
+                                                </Grid>
+                                            </Border>
+                                            <!--customer details-->
+                                            <Border Width="796">
+                                                <StackPanel Orientation="Vertical">
+                                                    <Border Height="180" BorderBrush="#B4B4B4" BorderThickness="0,0,0,1">
+                                                        <Grid>
+                                                            <Image Source="/Interfaces/customer.png" Margin="58,39,629,39"/>
+                                                            <TextBlock FontSize="48" FontWeight="Bold" Text="-" Margin="199,39,407,70"/>
+                                                            <TextBlock FontSize="32" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,345,21"/>
+                                                        </Grid>
+                                                    </Border>
+                                                    <Border Height="180">
+                                                        <Grid>
+                                                            <Image Source="/Interfaces/transport.png" Margin="58,39,629,39"/>
+                                                            <TextBlock FontSize="48" FontWeight="Bold" Text="-" Margin="199,39,407,70"/>
+                                                            <TextBlock FontSize="32" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,345,21"/>
+                                                        </Grid>
+                                                    </Border>
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
                                     </Border>
-                                    <Border CornerRadius="20" Margin="6,0,6,0" Background="#F0F0F0" Width="380">
+                                    <!--weigt deduction factor labels-->
+                                    <Border BorderBrush="#B4B4B4" BorderThickness="0,1,0,0" Height="380">
                                         <Grid>
-                                            <TextBlock Text="3KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="65,15,130,56"/>
-                                            <TextBlock Text="මුළු දළු බර" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="150,87,111,28"/>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,30,800,198">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="වතුරට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,112,31"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,30,412,198">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="ප්‍රතික්ෂේපිත(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,46,31"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,30,30,198">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="මුළු පෙට්ටි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,26,31"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,205,800,23">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="තැම්බුණු(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,69,31"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,205,412,23">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="මෝරපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,68,31"/>
+                                                </Grid>
+                                            </Border>
+                                            <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,205,30,23">
+                                                <Grid>
+                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock Text="මුළු මලු බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,57,31"/>
+                                                </Grid>
+                                            </Border>
+
                                         </Grid>
                                     </Border>
                                 </StackPanel>
                             </Grid>
                         </Border>
-                        <!--Lower customer info Card-->
-                        <Border CornerRadius="20" Background="Black" Margin="28,332,28,56">
-                            <Grid >
-                                <!--Horizontal lining upper middle-->
-                                <Line HorizontalAlignment="Center" VerticalAlignment="Center" X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,171,0,163" />
-                                <!--Vertical lining upper middle-->
-                                <Line HorizontalAlignment="Center" VerticalAlignment="Center" X1="0" X2="0" Y1="0" Y2="270" Stroke="#F0F0F0" StrokeThickness="2" />
-                                <TextBlock Text="ප්‍රවාහන මාර්ගය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,76,493,238"/>
-                                <TextBlock Text="Ilukpitiya" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,102,396,195"/>
-
-                                <TextBlock Text="ප්‍රවාහන නියෝජිත " FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,76,144,238"/>
-                                <TextBlock Text="Mr. Ranaweera" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,102,34,190"/>
-
-                                <TextBlock Text="නම" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,217,493,97"/>
-                                <TextBlock Text="Mr. Kulathunga" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,242,390,55"/>
-
-                                <TextBlock Text=" සාමාජික අංකය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,214,143,100"/>
-                                <TextBlock Text="95905" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,242,77,62"/>
-                            </Grid>
-                        </Border>
-                    </Grid>
+                    </StackPanel>
                 </Border>
             </Grid>
 
-            <!--Station1CustomerFrame-->
-            <Grid x:Name="Station2CustomerFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
-
-
-                <!--Weight labels-->
-                <Border CornerRadius="20" Margin="16,31,874,60"  Background="#FBFBFB">
-                    <Grid >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="482*"/>
-                            <ColumnDefinition Width="389*"/>
-                        </Grid.ColumnDefinitions>
-                        <!--total weights and nSack/nBox Card-->
-                        <Border CornerRadius="20" Background="#DFDFDF" Margin="0,0,0,418" Grid.ColumnSpan="2">
-                            <Grid >
-                                <TextBlock Text="36.5KG" FontSize="64" FontWeight="Bold" Foreground="Black" Margin="42,93,600,139" />
-                                <TextBlock Text="සම්පූර්ණ බර" FontSize="30" FontWeight="Medium" Foreground="#888888" Margin="60,178,600,84"/>
-
-                                <!--Vertical lining upper middle-->
-                                <Line HorizontalAlignment="Left" VerticalAlignment="Center" X1="0" X2="0" Y1="0" Y2="270" Stroke="#B4B4B4" StrokeThickness="3" Height="156" Margin="275,0,0,0" />
-
-                                <TextBlock Text="37KG" FontSize="64" FontWeight="Bold" Foreground="Black" Margin="297,93,392,139" />
-                                <TextBlock Text="පිළිගත් බර" FontSize="30" FontWeight="Medium" Foreground="#888888" Margin="297,178,392,84"/>
-
-                                <!--Inner card for nBoxes and nSacks-->
-                                <Border CornerRadius="20" Background="#FFFFFF" Margin="520,28,28,28">
-                                    <Grid>
-                                        <TextBlock Text="5" FontSize="64" TextAlignment="Right" FontWeight="Bold" Foreground="#000000" Margin="87,0,144,181" />
-                                        <TextBlock Text="මලු ගණන" FontSize="28" FontWeight="Medium" Foreground="#888888" Margin="87,80,87,128"/>
-                                        <!--Horizontal lining upper middle-->
-                                        <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#B4B4B4" StrokeThickness="3" Margin="44,126,56,128" RenderTransformOrigin="0.5,0.5" />
-                                        <TextBlock Text="4" FontSize="64" TextAlignment="Right" FontWeight="Bold" Foreground="#000000" Margin="87,126,144,55" />
-                                        <TextBlock Text="පෙට්ටි ගණන" FontSize="28" FontWeight="Medium" Foreground="#888888" Margin="65,198,65,10"/>
-                                    </Grid>
-                                </Border>
-
-                            </Grid>
-                        </Border>
-                        <!--Card-->
-                        <Border CornerRadius="20" Background="#877F5D" Margin="0,346,84,23">
-                            <Grid >
-                                <TextBlock Text="24KG" FontSize="96" FontWeight="Bold" Foreground="#FFEB90" Margin="34,68,10,181" />
-                                <TextBlock Text="රන් දළු බර" FontSize="32" FontWeight="Medium" Foreground="#FFEB90" Margin="60,180,60,65"/>
-                            </Grid>
-                        </Border>
-                        <!--Card-->
-                        <Border CornerRadius="20" Background="#2DAA44" Margin="440,346,0,23" Grid.ColumnSpan="2">
-                            <Grid >
-                                <TextBlock Text="0KG" FontSize="96" FontWeight="Bold" Foreground="#B7FFCF" Margin="60,57,28,181" />
-                                <TextBlock Text="සාමාන්‍ය දළු බර" FontSize="32" FontWeight="Medium" Foreground="#B7FFCF" Margin="45,168,45,75"/>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-
-                <Border Margin="924,31,0,60" CornerRadius="20" Background="#FAFAFA">
-                    <Grid>
-                        <!--upper Card-->
-                        <Border CornerRadius="20" Background="Transparent" Margin="28,26,28,420">
-                            <Grid>
-                                <StackPanel Background="Transparent" Margin="0,0,0,160" Orientation="Horizontal" HorizontalAlignment="Center" Width="780">
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="වතුරට" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="75,78,41,24"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text=" තැම්බුණු" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="59,78,41,24"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="ප්‍රතික්ෂේපිත" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="48,78,25,24"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border CornerRadius="20" Margin="5,0,5,0" Background="#F0F0F0" Width="185">
-                                        <Grid>
-                                            <TextBlock Text="0KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="17,5,18,44"/>
-                                            <TextBlock Text="මෝරපු" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="75,78,41,24"/>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-
-                                <StackPanel Background="Transparent" Margin="0,142,0,0" Orientation="Horizontal" HorizontalAlignment="Center" Width="780">
-                                    <Border CornerRadius="20" Margin="6,0,6,0" Background="#F0F0F0" Width="380">
-                                        <Grid>
-                                            <TextBlock Text="3KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="65,15,130,56"/>
-                                            <TextBlock Text="මුළු පෙට්ටි බර" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="126,87,126,28"/>
-                                        </Grid>
-                                    </Border>
-                                    <Border CornerRadius="20" Margin="6,0,6,0" Background="#F0F0F0" Width="380">
-                                        <Grid>
-                                            <TextBlock Text="3KG" FontSize="64" FontWeight="Medium" Foreground="Black" TextAlignment="Right" Margin="65,15,130,56"/>
-                                            <TextBlock Text="මුළු දළු බර" FontSize="16" FontWeight="SemiBold" Foreground="#616161" Margin="150,87,111,28"/>
-                                        </Grid>
-                                    </Border>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                        <!--Lower customer info Card-->
-                        <Border CornerRadius="20" Background="Black" Margin="28,332,28,56">
-                            <Grid >
-                                <!--Horizontal lining upper middle-->
-                                <Line HorizontalAlignment="Center" VerticalAlignment="Center" X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,171,0,163" />
-                                <!--Vertical lining upper middle-->
-                                <Line HorizontalAlignment="Center" VerticalAlignment="Center" X1="0" X2="0" Y1="0" Y2="270" Stroke="#F0F0F0" StrokeThickness="2" />
-                                <TextBlock Text="ප්‍රවාහන මාර්ගය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,76,493,238"/>
-                                <TextBlock Text="Ilukpitiya" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,102,396,202"/>
-
-                                <TextBlock Text="ප්‍රවාහන නියෝජිත " FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,76,144,238"/>
-                                <TextBlock Text="Mr. Ranaweera" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,102,56,202"/>
-
-                                <TextBlock Text="නම" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="90,217,493,97"/>
-                                <TextBlock Text="Mr. Kulathunga" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="90,242,390,62"/>
-
-                                <TextBlock Text=" සාමාජික අංකය" FontSize="16" FontWeight="Medium" Foreground="#C2C2C2" Margin="440,214,143,100"/>
-                                <TextBlock Text="95905" FontSize="32" FontWeight="SemiBold" Foreground="White" Margin="440,242,77,62"/>
-                            </Grid>
-                        </Border>
-                    </Grid>
-                </Border>
-            </Grid>
 
         </Grid>
 
