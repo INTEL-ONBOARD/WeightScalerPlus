@@ -315,11 +315,11 @@ namespace WeightMaster
 
 
 
-        public async Task testExecution()
-        {
+        //public async Task testExecution()
+        //{
 
-            await _consoleHandler.GetLineMasterAsync();
-        }
+        //    await _consoleHandler.GetLineMasterAsync();
+        //}
 
         //made this global to used on the close event
         private CustomerWindow customerWindow;
@@ -365,10 +365,11 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            await _consoleHandler.GetLineMasterAsync();
             //checks db records whether they exists
             await _consoleHandler.VerifyUserDb();
-
+            System.Diagnostics.Debug.WriteLine("> calling start");
+            await _consoleHandler.VerifyLineMasterDb();
+            System.Diagnostics.Debug.WriteLine("> calling done");
             string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
 

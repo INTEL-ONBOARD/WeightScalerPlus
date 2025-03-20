@@ -90,7 +90,7 @@ public class UserService
 
             await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
             await _context.SaveChangesAsync();
-            return "Unknown";
+            return "unknown";
         }
     }
 

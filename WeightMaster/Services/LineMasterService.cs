@@ -24,7 +24,7 @@ namespace WeightMaster.Services
             return new LineMasterBlockModel
             {
                 LineName = lineMaster.LineName,
-                LineMaster = lineMaster.lmaster
+                LineMaster = lineMaster.LineMasterName
             };
         }
 
@@ -44,7 +44,7 @@ namespace WeightMaster.Services
         {
             // Step 1: Clean the table (delete all rows)
             _context.lineMasterData.RemoveRange(_context.lineMasterData);  // This removes all records from the LineMasterData table.
-
+            System.Diagnostics.Debug.WriteLine("> Data restoring");
             // Step 2: Map each LineMaster to a LineMasterEntityModel
             var lineMasterEntities = lineMasters.Select(lineMaster => MapLineMasterToEntity(lineMaster)).ToList();
 
