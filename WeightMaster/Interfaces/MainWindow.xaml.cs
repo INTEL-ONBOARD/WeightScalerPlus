@@ -398,7 +398,7 @@ namespace WeightMaster
             });
 
 
-            if (username.Equals(""))
+            if (!username.Equals("") || !username.Equals("unknown"))
             {
                 statusLabel.Content = "Login Success!";
                 // Check which radio button is selected and show the corresponding page
@@ -409,7 +409,7 @@ namespace WeightMaster
                     Station1Frame.Visibility = Visibility.Visible;
                     Station2Frame.Visibility = Visibility.Collapsed;
                     //change topbar text
-                    TopBarText.Text = "වේදිකාව-1";
+                    //TopBarText.Text = "වේදිකාව-1";
 
                 }
                 else if (RadioBtnStation2.IsChecked == true)
@@ -428,7 +428,7 @@ namespace WeightMaster
                     CustomerCompletionRowPanel.Children.Add(cctr3);
 
                     //change topbar text
-                    TopBarText.Text = "වේදිකාව-2";
+                    //TopBarText.Text = "වේදිකාව-2";
                 }
                 else if (RadioBtnAdmin.IsChecked == true)
                 {
