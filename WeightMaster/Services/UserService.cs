@@ -75,7 +75,7 @@ public class UserService
 
             await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
             await _context.SaveChangesAsync(); // SaveChangesAsync for async save to the database
-
+            //System.Diagnostics.Debug.WriteLine("service line >> " + username);
             return username;
         }
         else
