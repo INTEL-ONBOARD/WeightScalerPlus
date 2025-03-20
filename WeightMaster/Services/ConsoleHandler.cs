@@ -39,7 +39,11 @@ namespace WeightMaster.Services
             return await _engine.LoginUser(email, password);
         }
 
-
+        //return usernames of all users as a list
+        public async Task<List<string>> getUsernames()
+        {
+            return await _engine.GetUsernamesAsync();
+        }
 
 
 

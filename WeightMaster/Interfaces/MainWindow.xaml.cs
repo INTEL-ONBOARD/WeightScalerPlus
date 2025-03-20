@@ -366,14 +366,15 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             //checks db records whether they exists
-            await _consoleHandler.VerifyUserDb();
+            //await _consoleHandler.VerifyUserDb();
+            //await _consoleHandler.VerifyLineMasterDb();
             System.Diagnostics.Debug.WriteLine("> calling start");
-            var lineMasterData = await _consoleHandler.getLineMasterData();
-            if (lineMasterData != null && lineMasterData.Any())
+            var username = await _consoleHandler.getUsernames();
+            if (username != null && username.Any())
             {
-                foreach (var lineMaster in lineMasterData)
+                foreach (var user in username)
                 {
-                    System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
+                    System.Diagnostics.Debug.WriteLine($"> : {user}");
                 }
             }
             System.Diagnostics.Debug.WriteLine("> calling done");

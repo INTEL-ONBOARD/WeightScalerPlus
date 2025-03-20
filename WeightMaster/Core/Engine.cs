@@ -123,6 +123,35 @@ namespace WeightMaster.Core
                 return "unknown";
             }
         }
+
+
+
+
+
+        public async Task<List<string>> GetUsernamesAsync()
+        {
+            try
+            {
+                var userService = new UserService(new AppDbContext());
+                // Directly await the method without using Task.Run
+                var data = await userService.GetAllUsernamesAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                // Optionally log the exception here
+                Console.WriteLine($"Error: {ex.Message}");
+                return null;
+            }
+        }
+
+
+
+
+
+
+
+
         public async Task DumpLineMastersInformationAsync()
         {
 
@@ -147,8 +176,8 @@ namespace WeightMaster.Core
 
                 foreach (var lineMaster in apiResponse.Message.Data)
                 {
-                    System.Diagnostics.Debug.WriteLine($"Line Name: {lineMaster.LineName}");
-                    System.Diagnostics.Debug.WriteLine($"Line Master: {lineMaster.LineMasterName}");
+                    //System.Diagnostics.Debug.WriteLine($"Line Name: {lineMaster.LineName}");
+                    //System.Diagnostics.Debug.WriteLine($"Line Master: {lineMaster.LineMasterName}");
                 }
                 System.Diagnostics.Debug.WriteLine("> Data pulling done");
 
