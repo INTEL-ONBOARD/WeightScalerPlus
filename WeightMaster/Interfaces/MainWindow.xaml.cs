@@ -221,7 +221,7 @@ namespace WeightMaster
 
             await _consoleHandler.VerifyUserDb();
             System.Diagnostics.Debug.WriteLine("> calling start");
-            await _consoleHandler.GetLineMasterAsync();
+            await _consoleHandler.VerifyLineMasterDb();
             System.Diagnostics.Debug.WriteLine("> calling done");
             string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
