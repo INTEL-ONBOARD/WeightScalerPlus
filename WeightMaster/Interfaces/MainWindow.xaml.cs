@@ -369,10 +369,10 @@ namespace WeightMaster
             //await _consoleHandler.VerifyUserDb();
             //await _consoleHandler.VerifyLineMasterDb();
             System.Diagnostics.Debug.WriteLine("> calling start");
-            var username = await _consoleHandler.getUsernames();
-            if (username != null && username.Any())
+            var usernameList = await _consoleHandler.getUsernames();
+            if (usernameList != null && usernameList.Any())
             {
-                foreach (var user in username)
+                foreach (var user in usernameList)
                 {
                     System.Diagnostics.Debug.WriteLine($"> : {user}");
                 }
