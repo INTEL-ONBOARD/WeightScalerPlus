@@ -435,7 +435,7 @@
                             <Grid Grid.Column="0" Height="60">
                                 <TextBlock Grid.Row="0" Text="කේත අංකය / සාමාජික අංකය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,37"/>
                                 <Border Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,0">
-                                    <TextBox x:Name="barcodeTxt_st1" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="barcodeTxt_st1" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -885,7 +885,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="සම්පූර්ණ පෙට්ටි ගණන(n)" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="පෙට්ටි ගණන(n)" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>

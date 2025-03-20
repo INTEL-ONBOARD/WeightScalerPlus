@@ -399,7 +399,7 @@ namespace WeightMaster
             });
 
 
-            if (!username.Equals("") || !username.Equals("unknown"))
+            if (!username.Equals("unknown"))
             {
                 statusLabel.Content = "Login Success!";
                 // Check which radio button is selected and show the corresponding page
@@ -506,6 +506,20 @@ namespace WeightMaster
 
 
         //station1 frame_______________________________________________________________________________________________________________________
+
+        private void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
+        {
+           string request = barcodeTxt_st1.Text;
+            bool isSuccess = true;
+            if (isSuccess)
+            {
+                Console.WriteLine(request);
+            }
+            else {
+                //show red line
+            }
+        }
+
 
         private void wieghtScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
         {
