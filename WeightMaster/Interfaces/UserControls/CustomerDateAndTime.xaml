@@ -1,0 +1,15 @@
+﻿<UserControl x:Class="WeightMaster.Interfaces.UserControls.CustomerDateAndTime"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:WeightMaster.Interfaces.UserControls"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="240">
+    <Grid Background="White" >
+        <StackPanel Orientation="Vertical" HorizontalAlignment="Right">
+            <TextBlock x:Name="DateTextBlock" HorizontalAlignment="Right" FontSize="36" FontWeight="SemiBold" Foreground="#D0D0D0" Text="00 - 00 - 0000"/>
+            <TextBlock x:Name="TimeTextBlock" HorizontalAlignment="Right" FontSize="30" FontWeight="SemiBold" Foreground="#808080" Text="0.00 am"/>
+        </StackPanel>
+    </Grid>
+</UserControl>
