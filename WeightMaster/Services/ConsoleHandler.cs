@@ -31,6 +31,8 @@ namespace WeightMaster.Services
             return await _engine.VerifyEmailInDbAsync(email);
         }
 
+
+        //return username or "unknown" : use this for user login 
         public async Task<string> loginUser(String email,string password)
         {
             return await _engine.LoginUser(email,password);
@@ -38,7 +40,10 @@ namespace WeightMaster.Services
 
 
 
-        public async Task GetLineMasterAsync()
+
+
+
+        public async Task VerifyLineMasterDb()
         {
             await _engine.DumpLineMastersInformationAsync();
         }

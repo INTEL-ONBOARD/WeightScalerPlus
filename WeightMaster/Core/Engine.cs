@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using WeightMaster.Config;
 using WeightMaster.Models;
@@ -119,26 +120,38 @@ namespace WeightMaster.Core
             }
             catch (Exception ex)
             {
-                return "NOT-FOUND 2";
+                return "unknown";
             }
         }
         public async Task DumpLineMastersInformationAsync()
         {
+
             ApiClient apiClient = new ApiClient();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Allows case-insensitive mapping
+            };
             string url = "http://152.42.249.231:8000/api/method/get_linemasters";
 
-            LineMasterResponse apiResponse = await apiClient.PostAsync<LineMasterResponse>(url,null);
+            LineMasterResponse apiResponse = await apiClient.PostAsync<LineMasterResponse>(url,null , options);
+            System.Diagnostics.Debug.WriteLine("> called 1");
+            //System.Diagnostics.Debug.WriteLine("> res"+ apiResponse.Status.ToString());
 
-            if (apiResponse != null && apiResponse.Status == "success")
+            if (apiResponse != null && apiResponse.Message.Status == "success")
             {
-                System.Diagnostics.Debug.WriteLine("HERE >>>>> "+apiResponse.ToString());
+                //System.Diagnostics.Debug.WriteLine("HERE >>>>> "+apiResponse.ToString());
+                System.Diagnostics.Debug.WriteLine("> called 2");
                 var userService = new LineMasterService(new AppDbContext());
-                await userService.ReplaceLineMasterDataAsync(apiResponse.Data);
-                foreach (var lineMaster in apiResponse.Data)
+                await userService.ReplaceLineMasterDataAsync(apiResponse.Message.Data);
+                System.Diagnostics.Debug.WriteLine("> Data saved done");
+
+                foreach (var lineMaster in apiResponse.Message.Data)
                 {
                     System.Diagnostics.Debug.WriteLine($"Line Name: {lineMaster.LineName}");
-                    System.Diagnostics.Debug.WriteLine($"Line Master: {lineMaster.lmaster}");
+                    System.Diagnostics.Debug.WriteLine($"Line Master: {lineMaster.LineMasterName}");
                 }
+                System.Diagnostics.Debug.WriteLine("> Data pulling done");
+
             }
             else
             {
