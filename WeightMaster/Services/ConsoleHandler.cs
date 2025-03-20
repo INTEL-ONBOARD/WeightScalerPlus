@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WeightMaster.Core;
+using WeightMaster.Models;
 
 namespace WeightMaster.Services
 {
@@ -23,7 +24,7 @@ namespace WeightMaster.Services
 
         public async Task<bool> VerifyUserDb()
         {
-            return await _engine.UserDbValidation(); 
+            return await _engine.UserDbValidation();
         }
 
         public async Task<bool> ValidateEmail(String email)
@@ -33,19 +34,25 @@ namespace WeightMaster.Services
 
 
         //return username or "unknown" : use this for user login 
-        public async Task<string> loginUser(String email,string password)
+        public async Task<string> loginUser(String email, string password)
         {
-            return await _engine.LoginUser(email,password);
+            return await _engine.LoginUser(email, password);
         }
 
 
 
 
 
-
+        //verify the lineMasterdb
         public async Task VerifyLineMasterDb()
         {
             await _engine.DumpLineMastersInformationAsync();
+        }
+
+        //get data from the linemaster db return as a list
+        public async Task<List<LineMasterBlockModel>> getLineMasterData()
+        {
+            return await _engine.getLineMasterData();
         }
     }
 }

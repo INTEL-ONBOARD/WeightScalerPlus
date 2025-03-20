@@ -58,5 +58,23 @@ namespace WeightMaster.Services
         {
             return await _context.lineMasterData.CountAsync();
         }
+
+        // Retrieve line master data from the database
+        public async Task<List<LineMasterBlockModel>> GetLineMasterDataAsync()
+        {
+            // Query the database and retrieve the data
+            var lineMasterEntities = await _context.lineMasterData
+                                                    .Select(entity => new LineMasterBlockModel
+                                                    {
+                                                        id = entity.id,
+                                                        LineName = entity.LineName,
+                                                        LineMaster = entity.LineMaster
+                                                    })
+                                                    .ToListAsync();
+            
+
+            return lineMasterEntities;
+        }
+
     }
 }

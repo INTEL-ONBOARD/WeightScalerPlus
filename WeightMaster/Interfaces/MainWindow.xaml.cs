@@ -368,7 +368,14 @@ namespace WeightMaster
             //checks db records whether they exists
             await _consoleHandler.VerifyUserDb();
             System.Diagnostics.Debug.WriteLine("> calling start");
-            await _consoleHandler.VerifyLineMasterDb();
+            var lineMasterData = await _consoleHandler.getLineMasterData();
+            if (lineMasterData != null && lineMasterData.Any())
+            {
+                foreach (var lineMaster in lineMasterData)
+                {
+                    System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
+                }
+            }
             System.Diagnostics.Debug.WriteLine("> calling done");
             string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;

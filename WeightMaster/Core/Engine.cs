@@ -159,5 +159,22 @@ namespace WeightMaster.Core
             }
         }
 
+        internal async Task<List<LineMasterBlockModel>> getLineMasterData()
+        {
+            try
+            {
+                var lineService = new LineMasterService(new AppDbContext());
+                var data = await lineService.GetLineMasterDataAsync();
+                System.Diagnostics.Debug.WriteLine("Running!");
+
+                return data;  
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                return new List<LineMasterBlockModel>();
+            }
+        }
+
     }
 }
