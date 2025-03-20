@@ -518,12 +518,16 @@ namespace WeightMaster
         {
            string request = barcodeTxt_st1.Text;
             bool isSuccess = true;
+            string response = "";
             if (isSuccess)
             {
-                Console.WriteLine(request);
+                System.Diagnostics.Debug.WriteLine(request+": "+response);
+                customerNameTxt_st1.Text = response;
             }
             else {
                 //show red line
+                customerNameTxt_st1.Text = "-";
+                System.Diagnostics.Debug.WriteLine("Barcode data failed/not found");
             }
         }
 
