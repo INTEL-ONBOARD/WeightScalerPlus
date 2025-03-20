@@ -166,11 +166,11 @@ namespace WeightMaster
             _consoleHandler = new ConsoleHandler();
         }
 
-        public async Task testExecution()
-        {
-           
-            await _consoleHandler.GetLineMasterAsync();
-        }
+        //public async Task testExecution()
+        //{
+        //    System.Diagnostics.Debug.WriteLine("yeees");
+        //    await _consoleHandler.GetLineMasterAsync();
+        //}
 
         //global to use on the close event
         private CustomerWindow customerWindow;
@@ -216,8 +216,9 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            await _consoleHandler.GetLineMasterAsync();
+            //await _consoleHandler.GetLineMasterAsync();
             //checks db records 
+
             await _consoleHandler.VerifyUserDb();
 
             string email = UsernameTextBox.Text;

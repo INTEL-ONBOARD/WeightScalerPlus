@@ -109,16 +109,17 @@ namespace WeightMaster.Core
         {
             try
             {
+                String data = "unknown";
                 await Task.Run(async () =>
                 {
                     var userService = new UserService(new AppDbContext());
-                    return await userService.LogUserLogin(username, password); ;
+                    data = await userService.LogUserLogin(username, password); ;
                 });
-                return "";
+                return data;
             }
             catch (Exception ex)
             {
-                return "";
+                return "NOT-FOUND 2";
             }
         }
         public async Task DumpLineMastersInformationAsync()
