@@ -399,7 +399,7 @@ namespace WeightMaster
             lineMasterData = await _consoleHandler.getLineMasterData();
             if (lineMasterData != null && lineMasterData.Any())
             {
-                foreach (var user in usernameList)
+                foreach (var lineMaster in lineMasterData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
                     lineNameCmb_st1.Items.Add(lineMaster.LineName);
