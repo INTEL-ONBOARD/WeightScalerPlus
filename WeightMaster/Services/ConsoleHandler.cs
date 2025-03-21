@@ -79,8 +79,9 @@ namespace WeightMaster.Services
             return await _engine.getMemberNumberId(id);
         }
 
-
-
-
+        internal async Task<bool> AddTransactionAsync(TransactionLogBlockModel newTransaction)
+        {
+            return await _engine.setTransaction(newTransaction); 
+        }
     }
 }

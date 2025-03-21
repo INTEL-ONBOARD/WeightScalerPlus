@@ -10,6 +10,9 @@ namespace WeightMaster.Config
         public DbSet<UserLoginModel> UserLoginsLog { get; set; }
         public DbSet<LineMasterBlockModel> lineMasterData { get; set; }
         public DbSet<MemberBlockModel> MembersData { get; set; }
+        public DbSet<TransactionLogBlockModel> transactionData { get; set; }
+        public DbSet<FinalTransactionBlockModel> FinaltransactionData { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)

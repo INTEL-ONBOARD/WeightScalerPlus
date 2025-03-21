@@ -101,7 +101,6 @@ namespace WeightMaster.Services
         {
             var member = await _context.MembersData
                 .FirstOrDefaultAsync(m => m.CustomMemberNum == customMemberNum);
-
             return member?.CellNumber ?? "";
         }
 

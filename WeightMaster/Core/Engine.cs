@@ -274,6 +274,22 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<bool> setTransaction(TransactionLogBlockModel model)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                bool data = await transactionService.AddTransactionAsync(model);
+                System.Diagnostics.Debug.WriteLine(">>>>!" + data);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                // await DumpMemberInformation();
+                return false;
+            }
+        }
 
 
     }
