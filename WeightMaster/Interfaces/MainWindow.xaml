@@ -112,9 +112,9 @@
                         <Border Height="100" Width="100" BorderBrush="#F0F0F0" BorderThickness="10" CornerRadius="10">
                             <Image Source="/Interfaces/teacoop_logo.png" Stretch="Uniform" />
                         </Border>
-                        <!--
-                        <Image gif:ImageBehavior.AnimatedSource="/Interfaces/loading.gif" Height="150" Width="150"/>
-                        -->
+
+                        <Image  Height="150" Width="150" gif:ImageBehavior.AnimatedSource="/Interfaces/loading.gif"/>
+                        
                         <!-- Animation trigger-->
                     </StackPanel>
                     <Grid Grid.Row="2">
@@ -467,7 +467,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="මුලකරු සමග නම" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock x:Name="customerNameTxt_st1" Grid.Row="1" Text="W.S. Kulathunga" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock x:Name="customerNameTxt_st1" Grid.Row="1" Text="-" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!--transport agent label-->
                         <Grid Margin="313,96,33,557" >
@@ -476,7 +476,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන නියෝජිත" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" x:Name="lineMasterNameLbl_st1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="1" x:Name="lineMasterNameLbl_st1" Text="-" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,151,0,550" />
