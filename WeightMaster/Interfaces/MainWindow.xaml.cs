@@ -70,126 +70,13 @@ namespace WeightMaster
         //__________________________________________________________________________________|
 
 
-        //private string filePath;
-        //private FileSystemWatcher fileWatcher;
-        //private DispatcherTimer readTimer;
-
-        //private void BrowseButton_Click(object sender, RoutedEventArgs e)
-        //{
-        //    // Open a file dialog to select the JSON file.
-        //    var dialog = new Microsoft.Win32.OpenFileDialog
-        //    {
-        //        Filter = "JSON files (.json)|.json|All files (.)|."
-        //    };
-
-        //    if (dialog.ShowDialog() == true)
-        //    {
-        //        filePath = dialog.FileName;
-        //        StartFileWatcher();
-        //        StartTimer();
-        //    }
-        //}
-
-        //private void StartFileWatcher()
-        //{
-        //    // Dispose any existing watcher.
-        //    fileWatcher?.Dispose();
-
-        //    // Initialize FileSystemWatcher for the selected file.
-        //    fileWatcher = new FileSystemWatcher
-        //    {
-        //        Path = Path.GetDirectoryName(filePath),
-        //        Filter = Path.GetFileName(filePath),
-        //        NotifyFilter = NotifyFilters.LastWrite
-        //    };
-
-        //    fileWatcher.Changed += OnFileChanged;
-        //    fileWatcher.EnableRaisingEvents = true;
-
-        //    // Read the file initially.
-        //    ReadFile();
-        //}
-
-        //private void StartTimer()
-        //{
-        //    // Create or restart a DispatcherTimer to refresh the UI continuously.
-        //    if (readTimer == null)
-        //    {
-        //        readTimer = new DispatcherTimer();
-        //        readTimer.Interval = TimeSpan.FromMilliseconds(500); // Adjust interval as needed.
-        //        readTimer.Tick += (s, e) => ReadFile();
-        //    }
-        //    readTimer.Start();
-        //}
-
-        //private void OnFileChanged(object sender, FileSystemEventArgs e)
-        //{
-        //    // Use the Dispatcher to ensure the UI is updated on the main thread.
-        //    Dispatcher.Invoke(() => ReadFile());
-        //}
-
-        //private void ReadFile()
-        //{
-        //    try
-        //    {
-        //        // Open the file with sharing enabled to allow concurrent writes.
-        //        using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-        //        using (var reader = new StreamReader(stream))
-        //        {
-        //            string json = reader.ReadToEnd();
-        //            // Configure the serializer to ignore case differences.
-        //            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        //            var data = JsonSerializer.Deserialize<WeightData>(json, options);
-        //            if (data != null)
-        //            {
-        //                System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
-        //                // Update the UI with both values.
-        //                weightScalerValTxt_st1.Text = data.Value;
-        //                weightScalerStatus_st1.Text = data.Stable;
-        //            }
-        //        }
-        //    }
-        //    catch (IOException)
-        //    {
-        //        // If the file is temporarily locked, try again shortly.
-        //        Dispatcher.InvokeAsync(() =>
-        //        {
-        //            System.Threading.Thread.Sleep(100);
-        //            ReadFile();
-        //        }, DispatcherPriority.Background);
-        //        System.Diagnostics.Debug.WriteLine("Issue occured!");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        MessageBox.Show($"Error reading file: {ex.Message}");
-        //    }
-        //}
-
-        //// Class to represent the JSON structure.
-        //public class WeightData
-        //{
-        //    public string Value { get; set; }
-        //    public string Stable { get; set; }
-        //}
-
-        //protected override void OnClosed(EventArgs e)
-        //{
-        //    fileWatcher?.Dispose();
-        //    readTimer?.Stop();
-        //    runtimeService.OnWindowClosed();
-        //    base.OnClosed(e);
-        //}
-
-
-
-
-
         public MainWindow()
         {
             InitializeComponent();
             //Topbar
             runtimeService = new Runtime(this, path); // Pass the labels from XAML
             OpenCustomerWindow();
+            //this console handler is used globally
             _consoleHandler = new ConsoleHandler();
             // Handles key presses globally(currently used to handle Enter key press)
             this.PreviewKeyDown += MainWindow_PreviewKeyDown;
@@ -198,6 +85,100 @@ namespace WeightMaster
             _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(100) };
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
+
+            StartupTheAppAsync();
+        }
+
+        private async void StartupTheAppAsync()
+        {
+            //closing existing pages
+            Station1Frame.Visibility = Visibility.Collapsed;
+            Station2Frame.Visibility = Visibility.Collapsed;
+            SettingsFrame.Visibility = Visibility.Collapsed;
+            StationMainFrame.Visibility = Visibility.Collapsed;
+            IntroFrame.Visibility = Visibility.Visible;
+
+            //repeat until no exception is occured.
+            bool failed = false;
+            do {
+                try
+                {
+                    //Verifying User Database
+                    // Update status label: "Verifying User Database..."
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "Verifying Database Status(1)...";
+                    });
+                    // Await the asynchronous operation
+                    await _consoleHandler.VerifyUserDb();
+                    // Once verification is complete, update the status label again
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(1)";
+                    });
+                    // Optionally, wait a short moment to show the completion status, then hide the IntroFrame
+                    await Task.Delay(1000);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"User Database Error: {ex.Message}";
+                    });
+                }
+
+                //Verifying LineMaster Database
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "Verifying Database Status(2)...";
+                    });
+                    await _consoleHandler.VerifyLineMasterDb();
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(2)";
+                    });
+                    await Task.Delay(1000);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"LineMaster Database Error: {ex.Message}";
+                    });
+                }
+
+                //Verifying Member Database
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "Verifying Member Database Status(3)...";
+                    });
+                    await _consoleHandler.verifyMemberDb();
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(3)";
+                    });
+                    await Task.Delay(1000);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Member Database Error: {ex.Message}";
+                    });
+                }
+            }
+            while (failed);
+
+            IntroFrame.Visibility = Visibility.Collapsed;
+            LoginFrame.Visibility = Visibility.Visible;
+            
         }
 
         private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -390,9 +371,7 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             //checks db records whether they exists
-            await _consoleHandler.VerifyUserDb();
-            await _consoleHandler.VerifyLineMasterDb();
-            await _consoleHandler.verifyMemberDb();
+            
 
 
             System.Diagnostics.Debug.WriteLine("> calling start");
@@ -917,3 +896,119 @@ namespace WeightMaster
         }
     }
 }
+
+
+
+
+//private string filePath;
+//private FileSystemWatcher fileWatcher;
+//private DispatcherTimer readTimer;
+
+//private void BrowseButton_Click(object sender, RoutedEventArgs e)
+//{
+//    // Open a file dialog to select the JSON file.
+//    var dialog = new Microsoft.Win32.OpenFileDialog
+//    {
+//        Filter = "JSON files (.json)|.json|All files (.)|."
+//    };
+
+//    if (dialog.ShowDialog() == true)
+//    {
+//        filePath = dialog.FileName;
+//        StartFileWatcher();
+//        StartTimer();
+//    }
+//}
+
+//private void StartFileWatcher()
+//{
+//    // Dispose any existing watcher.
+//    fileWatcher?.Dispose();
+
+//    // Initialize FileSystemWatcher for the selected file.
+//    fileWatcher = new FileSystemWatcher
+//    {
+//        Path = Path.GetDirectoryName(filePath),
+//        Filter = Path.GetFileName(filePath),
+//        NotifyFilter = NotifyFilters.LastWrite
+//    };
+
+//    fileWatcher.Changed += OnFileChanged;
+//    fileWatcher.EnableRaisingEvents = true;
+
+//    // Read the file initially.
+//    ReadFile();
+//}
+
+//private void StartTimer()
+//{
+//    // Create or restart a DispatcherTimer to refresh the UI continuously.
+//    if (readTimer == null)
+//    {
+//        readTimer = new DispatcherTimer();
+//        readTimer.Interval = TimeSpan.FromMilliseconds(500); // Adjust interval as needed.
+//        readTimer.Tick += (s, e) => ReadFile();
+//    }
+//    readTimer.Start();
+//}
+
+//private void OnFileChanged(object sender, FileSystemEventArgs e)
+//{
+//    // Use the Dispatcher to ensure the UI is updated on the main thread.
+//    Dispatcher.Invoke(() => ReadFile());
+//}
+
+//private void ReadFile()
+//{
+//    try
+//    {
+//        // Open the file with sharing enabled to allow concurrent writes.
+//        using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+//        using (var reader = new StreamReader(stream))
+//        {
+//            string json = reader.ReadToEnd();
+//            // Configure the serializer to ignore case differences.
+//            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+//            var data = JsonSerializer.Deserialize<WeightData>(json, options);
+//            if (data != null)
+//            {
+//                System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
+//                // Update the UI with both values.
+//                weightScalerValTxt_st1.Text = data.Value;
+//                weightScalerStatus_st1.Text = data.Stable;
+//            }
+//        }
+//    }
+//    catch (IOException)
+//    {
+//        // If the file is temporarily locked, try again shortly.
+//        Dispatcher.InvokeAsync(() =>
+//        {
+//            System.Threading.Thread.Sleep(100);
+//            ReadFile();
+//        }, DispatcherPriority.Background);
+//        System.Diagnostics.Debug.WriteLine("Issue occured!");
+//    }
+//    catch (Exception ex)
+//    {
+//        MessageBox.Show($"Error reading file: {ex.Message}");
+//    }
+//}
+
+//// Class to represent the JSON structure.
+//public class WeightData
+//{
+//    public string Value { get; set; }
+//    public string Stable { get; set; }
+//}
+
+//protected override void OnClosed(EventArgs e)
+//{
+//    fileWatcher?.Dispose();
+//    readTimer?.Stop();
+//    runtimeService.OnWindowClosed();
+//    base.OnClosed(e);
+//}
+
+
+
