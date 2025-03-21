@@ -29,6 +29,7 @@
     <None Remove="Interfaces\crate.png" />
     <None Remove="Interfaces\customer.png" />
     <None Remove="Interfaces\home_button.png" />
+    <None Remove="Interfaces\loading.gif" />
     <None Remove="Interfaces\login_button.png" />
     <None Remove="Interfaces\logouot_button.png" />
     <None Remove="Interfaces\minus_button.png" />
@@ -51,6 +52,7 @@
     <Resource Include="Interfaces\crate.png" />
     <Resource Include="Interfaces\customer.png" />
     <Resource Include="Interfaces\home_button.png" />
+    <Resource Include="Interfaces\loading.gif" />
     <Resource Include="Interfaces\login_button.png" />
     <Resource Include="Interfaces\logouot_button.png" />
     <Resource Include="Interfaces\minus_button.png" />
