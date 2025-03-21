@@ -205,5 +205,57 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task DumpMemberInformation()
+        {
+            ApiClient apiClient = new ApiClient();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Allows case-insensitive mapping
+            };
+            string url = "http://152.42.249.231:8000/api/method/fetch_all_member_data";
+
+            // Assuming memberModel is the model representing the API response for members
+            Response apiResponse = await apiClient.PostAsync<Response>(url, null,options);
+
+            if (apiResponse != null && apiResponse.Status == "success")
+            {
+                var memberService = new MemberService(new AppDbContext());
+                await memberService.ReplaceMembersAsync(apiResponse.Data.Members);
+
+                foreach (var member in apiResponse.Data.Members)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Name: {member.Name}");
+                    System.Diagnostics.Debug.WriteLine($"Custom Member Number: {member.CustomMemberNum}");
+                    System.Diagnostics.Debug.WriteLine($"Custom Name With Initials: {member.CustomNameWithInitials}");
+                    System.Diagnostics.Debug.WriteLine($"Cell Number: {member.CellNumber ?? "N/A"}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data received or status is not 'success'.");
+            }
+        }
+
+
+        public async Task<String> getMemberNameById(String id)
+        {
+            try
+            {
+                var memService = new MemberService(new AppDbContext());
+                String data = await memService.GetCustomNameWithInitialsAsync(id);
+                System.Diagnostics.Debug.WriteLine(">>>>!" + data);
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                await DumpMemberInformation();
+                return "Unknown";
+            }
+        }
+
+
+
     }
 }

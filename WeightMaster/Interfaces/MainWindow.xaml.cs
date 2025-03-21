@@ -368,6 +368,9 @@ namespace WeightMaster
             //checks db records whether they exists
             //await _consoleHandler.VerifyUserDb();
             //await _consoleHandler.VerifyLineMasterDb();
+            await _consoleHandler.verifyMemberDb();
+
+
             System.Diagnostics.Debug.WriteLine("> calling start");
             var usernameList = await _consoleHandler.getUsernames();
             if (usernameList != null && usernameList.Any())
@@ -515,15 +518,20 @@ namespace WeightMaster
 
         //station1 frame_______________________________________________________________________________________________________________________
 
-        private void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
+        private async void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
         {
-           string request = barcodeTxt_st1.Text;
+            string request = barcodeTxt_st1.Text;
             bool isSuccess = true;
             string response = "";
             if (isSuccess)
             {
-                System.Diagnostics.Debug.WriteLine(request+": "+response);
-                customerNameTxt_st1.Text = response;
+
+                System.Diagnostics.Debug.WriteLine("> calling start");
+                String memberName = await _consoleHandler.GetMemberName(request);
+
+                System.Diagnostics.Debug.WriteLine(request+": "+ memberName);
+                customerNameTxt_st1.Text = memberName;
+
             }
             else {
                 //show red line
