@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Packaging;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,16 +62,25 @@ namespace WeightMaster.Services
 
 
 
-
+        //verify the memberdb
         public async Task verifyMemberDb()
         {
             await _engine.DumpMemberInformation();
 
         }
+        //get member name by id
         public async Task<string> GetMemberName(String id)
         {
             return await _engine.getMemberNameById(id);
         }
+        //get member nuber by id
+        public async Task<string> GetMemberNumber(String id)
+        {
+            return await _engine.getMemberNumberId(id);
+        }
+
+
+
 
     }
 }

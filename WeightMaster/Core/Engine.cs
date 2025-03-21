@@ -255,6 +255,25 @@ namespace WeightMaster.Core
             }
         }
 
+        
+
+        public async Task<String> getMemberNumberId(String id)
+        {
+            try
+            {
+                var memService = new MemberService(new AppDbContext());
+                String data = await memService.GetCellNumberByCustomMemberNumAsync(id);
+                System.Diagnostics.Debug.WriteLine(">>>>!" + data);
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                await DumpMemberInformation();
+                return "Unknown";
+            }
+        }
+
 
 
     }
