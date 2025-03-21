@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -278,10 +280,35 @@ namespace WeightMaster.Core
         {
             try
             {
-                var transactionService = new TransactionService(new AppDbContext());
-                bool data = await transactionService.AddTransactionAsync(model);
-                System.Diagnostics.Debug.WriteLine(">>>>!" + data);
-                return true;
+
+                // var transactionService = new TransactionService(new AppDbContext());
+                // bool data = await transactionService.AddTransactionAsync(model);
+                // System.Diagnostics.Debug.WriteLine(":::::" + data);
+
+                var runService = new RunService(new AppDbContext());
+                RunLog RunLogs = new RunLog
+                {
+                    Status = true, // Set the status as true (or false)
+                    Date = DateTime.UtcNow, // Set the current date and time
+                    Transaction = model,
+                    FinalTransaction = null,
+                    LastUpdated = DateTime.UtcNow // Set the last updated time to now
+                };
+                await runService.AddRunLogAsync(RunLogs);
+                // System.Diagnostics.Debug.WriteLine(":::::" + data);
+                bool result = await UpdateGreenLeafCollectionAsync(model);
+                if (result)
+                {
+                    return true;
+                }
+                else
+                {
+                    RunLog log = await runService.GetMostRecentRunLogAsync();
+                    log.Status = false;
+                    await runService.UpdateRunLogAsync(log);
+                    return false;
+
+                }
             }
             catch (Exception ex)
             {
@@ -290,6 +317,37 @@ namespace WeightMaster.Core
                 return false;
             }
         }
+
+
+        public async Task<bool> UpdateGreenLeafCollectionAsync(TransactionLogBlockModel transactionBlockModel)
+        {
+            ApiClient apiClient = new ApiClient();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Allows case-insensitive mapping
+            };
+
+            string url = "http://152.42.249.231:8000/api/method/update_green_leaf_collection";
+
+            try
+            {
+                // Send transactionBlockModel as the body of the POST request
+                var apiResponse = await apiClient.PostAsync<object>(url, transactionBlockModel, options);
+                // If we reach this point, the status code is 2xx, return true
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
+                return false; // Return false if the request failed (status code 4xx or 5xx)
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
+                return false;
+            }
+        }
+
 
 
     }

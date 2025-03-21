@@ -148,6 +148,38 @@ namespace WeightMaster.Migrations
                     b.ToTable("MembersData");
                 });
 
+            modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("FinalTransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinalTransactionId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("RunLog");
+                });
+
             modelBuilder.Entity("WeightMaster.Models.TransactionLogBlockModel", b =>
                 {
                     b.Property<int>("Id")
@@ -285,6 +317,21 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLoginsLog");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
+                {
+                    b.HasOne("WeightMaster.Models.FinalTransactionBlockModel", "FinalTransaction")
+                        .WithMany()
+                        .HasForeignKey("FinalTransactionId");
+
+                    b.HasOne("WeightMaster.Models.TransactionLogBlockModel", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId");
+
+                    b.Navigation("FinalTransaction");
+
+                    b.Navigation("Transaction");
                 });
 #pragma warning restore 612, 618
         }

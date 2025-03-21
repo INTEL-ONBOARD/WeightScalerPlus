@@ -898,7 +898,7 @@ namespace WeightMaster
 
             var newTransaction = new TransactionLogBlockModel
             {
-                LineName = "Line A",
+                LineName = "Line AFGH",
                 TransportAgent = "Agent X",
                 Company = "Company Y",
                 LeafWeightOfficer = "Officer Z",
@@ -924,9 +924,12 @@ namespace WeightMaster
             };
 
             // Call the service to add the transaction
-            await _consoleHandler.AddTransactionAsync(newTransaction);
+            bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
 
-
+            if (_isok)
+            {
+                System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
+            }
 
         }
     }
