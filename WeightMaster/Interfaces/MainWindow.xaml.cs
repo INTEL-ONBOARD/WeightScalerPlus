@@ -390,8 +390,8 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             //checks db records whether they exists
-            //await _consoleHandler.VerifyUserDb();
-            //await _consoleHandler.VerifyLineMasterDb();
+            await _consoleHandler.VerifyUserDb();
+            await _consoleHandler.VerifyLineMasterDb();
             await _consoleHandler.verifyMemberDb();
 
 

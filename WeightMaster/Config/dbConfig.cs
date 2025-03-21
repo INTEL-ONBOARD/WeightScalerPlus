@@ -14,7 +14,7 @@ namespace WeightMaster.Config
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var connectionString = "Server=localhost;Database=weighthandlerdb;User=root;Password=";
+                var connectionString = "Server=localhost;Database=weighthandlerdb;User=root;Password=root";
                 optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.25"));
             }
         }
