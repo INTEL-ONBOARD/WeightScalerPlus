@@ -909,7 +909,7 @@ namespace WeightMaster
             return true;
         }
 
-        private void finishButton_st1_Click(object sender, RoutedEventArgs e)
+        private async void finishButton_st1_Click(object sender, RoutedEventArgs e)
         {
             _enterPressCount = 0; //0 1 2
 
@@ -926,6 +926,41 @@ namespace WeightMaster
             goldenLeafWeightTxt_st1.Text = "";
             normalLeafWeightTxt_st1.Text = "";
             acceptedLeafWeightTxt_st1.Text = "";
+
+
+
+
+            var newTransaction = new TransactionLogBlockModel
+            {
+                LineName = "Line A",
+                TransportAgent = "Agent X",
+                Company = "Company Y",
+                LeafWeightOfficer = "Officer Z",
+                Supervisor = "Supervisor A",
+                BarcodeDetails = "123456789",
+                NameWithInitials = "John D.",
+                PhoneNumber = "123-456-7890",
+                Date = DateTime.Now,
+                BoxCount = 5,
+                BagCount = 10,
+                MaximumNormalLeafWeight = 150.0f,
+                TotalLeafWeight = 140.5f,
+                ActualNormalLeafWeight = 140.5f,
+                TotalGoldLeafWeight = 10.0f,
+                Water = 0.0f,
+                Morapuwata = 1.0f,
+                Thambimata = 0.5f,
+                Reject = 2.0f,
+                BoxWeight = 50.0f,
+                FinalGreenLeafCount = 500,
+                FinalGoldLeafCount = 50,
+                RealValue = 4.2f
+            };
+
+            // Call the service to add the transaction
+            await _consoleHandler.AddTransactionAsync(newTransaction);
+
+
 
         }
     }

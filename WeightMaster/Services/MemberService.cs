@@ -96,5 +96,15 @@ namespace WeightMaster.Services
             return member?.CustomNameWithInitials ?? "No name with initials found";
         }
 
+        // Method to get the cell number based on custom member number
+        public async Task<string> GetCellNumberByCustomMemberNumAsync(string customMemberNum)
+        {
+            var member = await _context.MembersData
+                .FirstOrDefaultAsync(m => m.CustomMemberNum == customMemberNum);
+            return member?.CellNumber ?? "";
+        }
+
+
+
     }
 }

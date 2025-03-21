@@ -10,11 +10,14 @@ namespace WeightMaster.Config
         public DbSet<UserLoginModel> UserLoginsLog { get; set; }
         public DbSet<LineMasterBlockModel> lineMasterData { get; set; }
         public DbSet<MemberBlockModel> MembersData { get; set; }
+        public DbSet<TransactionLogBlockModel> transactionData { get; set; }
+        public DbSet<FinalTransactionBlockModel> FinaltransactionData { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var connectionString = "Server=localhost;Database=weighthandlerdb;User=user;Password=password";
+                var connectionString = "Server=192.168.1.162;Database=weighthandlerdb;User=user;Password=password;"; 
                 optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.25"));
             }
         }
