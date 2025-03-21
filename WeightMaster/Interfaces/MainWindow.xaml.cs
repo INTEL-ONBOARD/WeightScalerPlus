@@ -52,6 +52,15 @@ namespace WeightMaster
 
         public int currentTotalDeduction_st1 = 0;
 
+        //finalized values by each round to send to db/api
+        public int finalGoldenLeafWeight = 0;
+        public int finalNormalLeafWeight = 0;
+        public int finalGoldLeafWeight = 0;
+        //public int finalGoldLeafWeight = 0;
+        //public int finalGoldLeafWeight = 0;
+        //public int finalGoldLeafWeight = 0;
+        //public int finalGoldLeafWeight = 0;
+
         //barcode related__________________________________________________________________
         private StringBuilder _barcodeBuffer = new StringBuilder();
         private DispatcherTimer _timer;
@@ -75,7 +84,7 @@ namespace WeightMaster
             InitializeComponent();
             //Topbar
             runtimeService = new Runtime(this, path); // Pass the labels from XAML
-            OpenCustomerWindow();
+            //OpenCustomerWindow(); //this was moved to the login to trigger this upon login.
             //this console handler is used globally
             _consoleHandler = new ConsoleHandler();
             // Handles key presses globally(currently used to handle Enter key press)
@@ -117,7 +126,7 @@ namespace WeightMaster
                         statusLabel.Content = "DB Verified(1)";
                     });
                     // Optionally, wait a short moment to show the completion status, then hide the IntroFrame
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -140,7 +149,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "DB Verified(2)";
                     });
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -156,14 +165,14 @@ namespace WeightMaster
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = "Verifying Member Database Status(3)...";
+                        statusLabel.Content = "Verifying Database Status(3)...";
                     });
                     await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
                     });
-                    await Task.Delay(1000);
+                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -328,7 +337,7 @@ namespace WeightMaster
         private CustomerWindow customerWindow;
         private void OpenCustomerWindow()
         {
-            customerWindow = new CustomerWindow();
+            customerWindow = new CustomerWindow(this);
 
             // Get primary screen dimensions
             double primaryScreenWidth = SystemParameters.PrimaryScreenWidth;
@@ -367,12 +376,10 @@ namespace WeightMaster
         }
 
         List<LineMasterBlockModel> lineMasterData = null;
+        List<String> supervisorData = null;
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
-            //checks db records whether they exists
-            
-
 
             System.Diagnostics.Debug.WriteLine("> calling start");
             lineMasterData = await _consoleHandler.getLineMasterData();
@@ -386,6 +393,20 @@ namespace WeightMaster
                 }
             }
             System.Diagnostics.Debug.WriteLine("> calling done");
+
+            System.Diagnostics.Debug.WriteLine("> fetching supervisor data");
+            supervisorData = await _consoleHandler.getUsernames();
+            if (supervisorData != null && supervisorData.Any())
+            {
+                foreach (string supervisor in supervisorData)
+                {
+                    System.Diagnostics.Debug.WriteLine($"supervisor Name: {supervisor}");
+                    supervisorCmb_st1.Items.Add(supervisor);
+
+                }
+            }
+            System.Diagnostics.Debug.WriteLine("> supervisor fetching done");
+
             string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
 
@@ -418,6 +439,10 @@ namespace WeightMaster
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
+
+                //opening customer window
+                OpenCustomerWindow();
+
                 // Check which radio button is selected and show the corresponding page
                 if (RadioBtnStation1.IsChecked == true)
                 {
@@ -525,6 +550,15 @@ namespace WeightMaster
             StationMainFrame.Visibility = Visibility.Collapsed;
             Station1Frame.Visibility = Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
+
+            //clear existing data
+            //clear weight leaf cmb officer data
+            lineNameCmb_st1.Items.Clear();
+            //clear line master cmb data
+            supervisorCmb_st1.Items.Clear();
+
+            //hmm you need either to clear all textboxes or restart the app.
+
         }
 
 

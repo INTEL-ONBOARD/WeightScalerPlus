@@ -311,7 +311,7 @@
                 </Grid>
             </Border>
             <!--Station1Frame-->
-            <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station1Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
@@ -321,7 +321,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
@@ -726,7 +726,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->

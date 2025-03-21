@@ -19,10 +19,14 @@ namespace WeightMaster.Interfaces
     /// </summary>
     public partial class CustomerWindow : Window
     {
-        public CustomerWindow()
+        private readonly MainWindow _mainWindow; // Reference to MainWindow
+        public CustomerWindow(MainWindow mainWindow)
         {
             InitializeComponent();
+            _mainWindow = mainWindow;
         }
+
+        
 
         private void exit(object sender, RoutedEventArgs e)
         {
