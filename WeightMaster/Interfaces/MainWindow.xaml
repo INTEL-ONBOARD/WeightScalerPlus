@@ -389,10 +389,12 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="lineNameCmb_st1" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st1_SelectionChanged" Grid.Row="1"  >
+                                <!--
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
+                                -->
                             </ComboBox>
                         </Grid>
 
@@ -474,7 +476,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන නියෝජිත" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="1" x:Name="lineMasterNameLbl_st1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,151,0,550" />
@@ -748,7 +750,7 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධාරී" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
                             <Border Grid.Row="1" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,0,0,5">
-                                <TextBox Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Top" Height="23" Margin="0,4,0,0"/>
+                                <TextBox x:Name="weightLeafOfficerTxt_st2" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Top" Height="23" Margin="0,4,0,0"/>
                             </Border>
                         </Grid>
 
@@ -779,7 +781,7 @@
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#8B8B8B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <!--Confirm buttonn-->
-                        <Button Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" x:Name="wieghtScalerConfirmBtn_st2"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="310">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>
@@ -837,10 +839,10 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
-                                <ComboBoxItem Content="Katujurunda"/>
-                                <ComboBoxItem Content="Haggala"/>
-                                <ComboBoxItem Content="Nuwara-Eliya"/>
+                            <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                                <ComboBoxItem Content="Alaska"/>
+                                <ComboBoxItem Content="Boston"/>
+                                <ComboBoxItem Content="Newyork"/>
                             </ComboBox>
                         </Grid>
                         <!--name w. initials label-->
@@ -850,7 +852,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන නියෝජිත" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock x:Name="lblLineMasterName_st2" Grid.Row="1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
@@ -1009,7 +1011,7 @@
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="28,643,313,19" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st2" Background="Transparent" BorderThickness="0" Margin="28,643,313,19" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="CONFIRM" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
@@ -1088,7 +1090,7 @@
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="232">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="FINISH" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
@@ -1097,11 +1099,11 @@
                         <Border BorderThickness="2" Background="Black" CornerRadius="20" Height="56" Margin="518,12,8,11">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Width="164">
                                 <Ellipse Width="20" Height="20" Fill="#D8FFD3" Margin="5,0,5,0"/>
-                                <TextBlock Text="48"  FontSize="24" FontWeight="SemiBold" Foreground="#D8FFD3"/>
+                                <TextBlock Text="0"  FontSize="24" FontWeight="SemiBold" Foreground="#D8FFD3"/>
                                 <Ellipse Width="20" Height="20" Fill="#FFE9E9" Margin="10,0,5,0"/>
-                                <TextBlock Text="6"  FontSize="24" FontWeight="SemiBold" Foreground="#FFE9E9"/>
+                                <TextBlock Text="0"  FontSize="24" FontWeight="SemiBold" Foreground="#FFE9E9"/>
                                 <Ellipse Width="20" Height="20" Fill="#F8DC80" Margin="10,0,5,0"/>
-                                <TextBlock Text="18"  FontSize="24" FontWeight="SemiBold" Foreground="#F8DC80"/>
+                                <TextBlock Text="0"  FontSize="24" FontWeight="SemiBold" Foreground="#F8DC80"/>
                             </StackPanel>
                         </Border>
                     </Grid>

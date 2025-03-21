@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System.Configuration;
 using System.IO;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.Intrinsics.X86;
 using System.Text;
@@ -19,6 +20,7 @@ using System.Windows.Threading;
 using WeightMaster.Core;
 using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
+using WeightMaster.Models;
 using WeightMaster.Services;
 using Path = System.IO.Path;
 
@@ -210,19 +212,39 @@ namespace WeightMaster
 
         private void ExecuteEnterButtonSteps()
         {
-            switch (_enterPressCount)
+            if (Station1Frame.IsVisible && !Station2Frame.IsVisible)
             {
-                case 0:
-                    wieghtScalerConfirmBtn_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step1 click
-                    break;
-                case 1:
-                    confirmAddRowButton_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step2 click
-                    MessageBox.Show("step 2 triggered");
-                    break;
-                case 2:
-                    confirmAll_rounds_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step3 click
-                    MessageBox.Show("step 3 triggered");
-                    break;
+                switch (_enterPressCount)
+                {
+                    case 0:
+                        wieghtScalerConfirmBtn_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step1 click
+                        break;
+                    case 1:
+                        confirmAddRowButton_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step2 click
+                                                                                                    //MessageBox.Show("step 2 triggered");
+                        break;
+                    case 2:
+                        confirmAll_rounds_st1.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step3 click
+                                                                                                  //MessageBox.Show("step 3 triggered");
+                        break;
+                }
+            }
+            if (Station1Frame.IsVisible && !Station2Frame.IsVisible)
+            {
+                switch (_enterPressCount)
+                {
+                    case 0:
+                        wieghtScalerConfirmBtn_st2.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step1 click
+                        break;
+                    case 1:
+                        confirmAddRowButton_st2.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step2 click
+                                                                                                    //MessageBox.Show("step 2 triggered");
+                        break;
+                    case 2:
+                        confirmAll_rounds_st2.RaiseEvent(new RoutedEventArgs(Button.ClickEvent)); // Trigger step3 click
+                                                                                                  //MessageBox.Show("step 3 triggered");
+                        break;
+                }
             }
         }
 
@@ -363,17 +385,21 @@ namespace WeightMaster
             this.Close();
         }
 
+        List<LineMasterBlockModel> lineMasterData = null;
+
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
             //checks db records whether they exists
             await _consoleHandler.VerifyUserDb();
             System.Diagnostics.Debug.WriteLine("> calling start");
-            var lineMasterData = await _consoleHandler.getLineMasterData();
+            lineMasterData = await _consoleHandler.getLineMasterData();
             if (lineMasterData != null && lineMasterData.Any())
             {
                 foreach (var lineMaster in lineMasterData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
+                    lineNameCmb_st1.Items.Add(lineMaster.LineName);
+
                 }
             }
             System.Diagnostics.Debug.WriteLine("> calling done");
@@ -392,7 +418,6 @@ namespace WeightMaster
             }
 
             string username = await _consoleHandler.loginUser(email, password);
-            weightLeafOfficerTxt_st1.Text = username;
             await Task.Run(() =>
             {
                 Dispatcher.Invoke(() =>
@@ -406,12 +431,16 @@ namespace WeightMaster
             });
 
 
-            if (!username.Equals("unknown"))
+            if (/*!username.Equals("unknown")*/true)
             {
                 statusLabel.Content = "Login Success!";
+                statusLabel.Content = "";
                 // Check which radio button is selected and show the corresponding page
                 if (RadioBtnStation1.IsChecked == true)
                 {
+                    //load the username as the leaf weight officer
+                    weightLeafOfficerTxt_st1.Text = username;
+
                     LoginFrame.Visibility = Visibility.Collapsed;
                     StationMainFrame.Visibility = Visibility.Visible;
                     Station1Frame.Visibility = Visibility.Visible;
@@ -422,6 +451,10 @@ namespace WeightMaster
                 }
                 else if (RadioBtnStation2.IsChecked == true)
                 {
+
+                    //load the username as the leaf weight officer
+                    weightLeafOfficerTxt_st2.Text = username;
+
                     LoginFrame.Visibility = Visibility.Collapsed;
                     StationMainFrame.Visibility = Visibility.Visible;
                     Station2Frame.Visibility = Visibility.Visible;
@@ -528,6 +561,20 @@ namespace WeightMaster
                 //show red line
                 customerNameTxt_st1.Text = "-";
                 System.Diagnostics.Debug.WriteLine("Barcode data failed/not found");
+            }
+        }
+
+        private void lineNameCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
+            var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
+            if (result != null)
+            {
+                lineMasterNameLbl_st1.Text = result.LineMaster;
+            }
+            else
+            {
+                lineMasterNameLbl_st1.Text = "-";
             }
         }
 
@@ -705,7 +752,7 @@ namespace WeightMaster
             //if normal weight doesn't exceeds total deduction(now you need to update both golden leaf weights & normal leaf weights)
             else if (totalDeductions > currentNormalLeafWeight_st1)
             {
-                MessageBox.Show("here triggered");
+                //MessageBox.Show("here triggered");
                 normalLeafWeightTxt_st1.Text = "0";
                 goldenLeafWeightTxt_st1.Text = (currentGoldenLeafWeight_st1 - (totalDeductions - currentNormalLeafWeight_st1)).ToString();
                 //update helper value
