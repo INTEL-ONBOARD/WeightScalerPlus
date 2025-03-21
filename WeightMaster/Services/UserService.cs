@@ -94,5 +94,21 @@ public class UserService
         }
     }
 
+    public async Task<List<string>> GetAllUsernamesAsync()
+    {
+        // Use LINQ to query the database and select only the usernames
+        var usernames = await _context.UsersData
+            .Select(user => user.Username)
+            .ToListAsync();
+
+        foreach (var username in usernames)
+        {
+            Console.WriteLine(">>>>>>           "+ username);
+        }
+
+        return usernames;
+    }
+
+
 
 }
