@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -24,13 +25,20 @@ namespace WeightMaster.Interfaces
         {
             InitializeComponent();
             _mainWindow = mainWindow;
+            DataContext = this; // Optional: Set DataContext for binding
+            //_mainWindow.PropertyChanged += MainWindow_PropertyChanged; // Listen for changes
         }
 
-        
-
-        private void exit(object sender, RoutedEventArgs e)
+        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            this.Close();
+            //if (e.PropertyName == nameof(MainWindow.YourProperty))
+            //{
+            //    // Update UI or logic here when "YourProperty" changes
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        //YourTextBox.Text = _mainWindow.YourProperty; // Example update
+            //    });
+            //}
         }
     }
 }

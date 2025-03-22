@@ -497,6 +497,7 @@ namespace WeightMaster
                 }
             }
             else {
+                statusLabel.Content = "Login Failed...";
                 MessageBox.Show("කරුණාකර නිවැරදි තොරතුරු අතුලත් කරන්න");
             }
 
@@ -921,6 +922,45 @@ namespace WeightMaster
             else 
             {
                 MessageBox.Show("කරුණාකර සියලු තොරතුරු අතුලත් කරන්න");
+            }
+        }
+
+        //station2 frame______________________________________________________________________________________________________________________________
+
+        private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string request = barcodeTxt_st2.Text;
+            bool isSuccess = true;
+            string response = "";
+            if (isSuccess)
+            {
+
+                System.Diagnostics.Debug.WriteLine("> calling start");
+                String memberName = await _consoleHandler.GetMemberName(request);
+
+                System.Diagnostics.Debug.WriteLine(request + ": " + memberName);
+                customerNameTxt_st2.Text = memberName;
+
+            }
+            else
+            {
+                //show red line
+                customerNameTxt_st2.Text = "-";
+                System.Diagnostics.Debug.WriteLine("Barcode data failed/not found");
+            }
+        }
+
+        private void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string searchLineName = lineNameCmb_st2.SelectedItem.ToString(); // replace with the line name you're searching for
+            var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
+            if (result != null)
+            {
+                lineMasterNameLbl_st2.Text = result.LineMaster;
+            }
+            else
+            {
+                lineMasterNameLbl_st2.Text = "-";
             }
         }
 
