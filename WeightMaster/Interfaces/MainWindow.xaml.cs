@@ -1046,43 +1046,48 @@ namespace WeightMaster
 
         private async void finishButton_st1_Click(object sender, RoutedEventArgs e)
         {
+
             var newTransaction = new TransactionLogBlockModel
             {
-                LineName = lineNameCmb_st1.SelectedValue.ToString(),
-                TransportAgent = lineMasterNameLbl_st1.Text,
-                Company = "නව ඇලන්වැලි තේ කම්හල",
-                LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                Supervisor = supervisorCmb_st1.SelectedValue.ToString(),
-                BarcodeDetails = barcodeTxt_st1.Text,
-                NameWithInitials = customerNameTxt_st1.Text,
-                PhoneNumber = "123-456-7890",
-                Date = DateTime.Now.ToString(),
+                linename = lineNameCmb_st1.SelectedValue.ToString(),
+                transportagent = lineMasterNameLbl_st1.Text,
+                company = "නව ඇලන්වැලි තේ කම්හල",
+                leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                superviosr = supervisorCmb_st1.SelectedValue.ToString(),
+                barcode_details = barcodeTxt_st1.Text,
+                name_with_initials = customerNameTxt_st1.Text,
+                phone_number = "123-456-7890",
+                date = DateTime.Now.ToString("yyyy-MM-dd"), // Assuming you want the date in "YYYY-MM-DD" format
 
-                BoxCount = finalNBoxes_st1,
-                BagCount = finalNSacks_st1,
+                box_count = finalNBoxes_st1,
+                bag_count = finalNSacks_st1,
+                real_value = finalWeightScalerWeight_st1,
 
-                MaximumNormalLeafWeight = 90,
-                TotalLeafWeight = finalAcceptedLeafWeight_st1,
-                ActualNormalLeafWeight = finalNormalLeafWeight_st1,
-                TotalGoldLeafWeight = finalGoldenLeafWeight_st1,
+                maximum_nomal_leaf_weight = 90,
+                total_leaf_weight = finalAcceptedLeafWeight_st1,
+                actual_nomal_leaf_weight = finalNormalLeafWeight_st1,
+                total_gold_leaf_weight = finalGoldenLeafWeight_st1,
 
-                Water = finalWateredWeight_st1,
-                Morapuwata = finalMaturedWeight_st1,
-                Thambimata = finalSpoiledWeight_st1,
-                Reject = finalRejectedWeight_st1,
-                BoxWeight = finalNBoxes_st1 * (int)singleBoxWeight,
+                water = finalWateredWeight_st1,
+                morapuwata = finalMaturedWeight_st1,
+                thambimata = finalSpoiledWeight_st1,
+                reject = finalRejectedWeight_st1,
+                box_weight = finalNBoxes_st1 * (int)singleBoxWeight,
 
-                FinalGreenLeafCount = finalAvailableNormalLeafWeight_st1,
-                FinalGoldLeafCount = finalAvailableGoldenLeafWeight_st1,
-                RealValue = finalWeightScalerWeight_st1
+                final_green_leaf_count = finalAvailableNormalLeafWeight_st1,
+                final_gold_leaf_count = finalAvailableGoldenLeafWeight_st1
             };
+
+
+
+
             System.Diagnostics.Debug.WriteLine(newTransaction);
             // Call the service to add the transaction
             bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
 
             if (_isok)
             {
-                System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ ongoing cloud update ]::::::::::::");
 
                 _enterPressCount = 0; //0 1 2
 

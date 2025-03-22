@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeightMaster.Migrations
 {
     /// <inheritdoc />
-    public partial class newmore : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -102,38 +102,38 @@ namespace WeightMaster.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    LineName = table.Column<string>(type: "longtext", nullable: true)
+                    linename = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TransportAgent = table.Column<string>(type: "longtext", nullable: true)
+                    transportagent = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Company = table.Column<string>(type: "longtext", nullable: true)
+                    company = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LeafWeightOfficer = table.Column<string>(type: "longtext", nullable: true)
+                    leaf_weight_officer = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Supervisor = table.Column<string>(type: "longtext", nullable: true)
+                    superviosr = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BarcodeDetails = table.Column<string>(type: "longtext", nullable: true)
+                    barcode_details = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    NameWithInitials = table.Column<string>(type: "longtext", nullable: true)
+                    name_with_initials = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
+                    phone_number = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Date = table.Column<string>(type: "longtext", nullable: true)
+                    date = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BoxCount = table.Column<int>(type: "int", nullable: false),
-                    BagCount = table.Column<int>(type: "int", nullable: false),
-                    MaximumNormalLeafWeight = table.Column<int>(type: "int", nullable: false),
-                    TotalLeafWeight = table.Column<int>(type: "int", nullable: false),
-                    ActualNormalLeafWeight = table.Column<int>(type: "int", nullable: false),
-                    TotalGoldLeafWeight = table.Column<int>(type: "int", nullable: false),
-                    Water = table.Column<int>(type: "int", nullable: false),
-                    Morapuwata = table.Column<int>(type: "int", nullable: false),
-                    Thambimata = table.Column<int>(type: "int", nullable: false),
-                    Reject = table.Column<int>(type: "int", nullable: false),
-                    BoxWeight = table.Column<int>(type: "int", nullable: false),
-                    FinalGreenLeafCount = table.Column<int>(type: "int", nullable: false),
-                    FinalGoldLeafCount = table.Column<int>(type: "int", nullable: false),
-                    RealValue = table.Column<double>(type: "double", nullable: false)
+                    box_count = table.Column<int>(type: "int", nullable: false),
+                    bag_count = table.Column<int>(type: "int", nullable: false),
+                    real_value = table.Column<double>(type: "double", nullable: false),
+                    maximum_nomal_leaf_weight = table.Column<int>(type: "int", nullable: false),
+                    total_leaf_weight = table.Column<int>(type: "int", nullable: false),
+                    actual_nomal_leaf_weight = table.Column<int>(type: "int", nullable: false),
+                    total_gold_leaf_weight = table.Column<int>(type: "int", nullable: false),
+                    water = table.Column<int>(type: "int", nullable: false),
+                    morapuwata = table.Column<int>(type: "int", nullable: false),
+                    thambimata = table.Column<int>(type: "int", nullable: false),
+                    reject = table.Column<int>(type: "int", nullable: false),
+                    box_weight = table.Column<int>(type: "int", nullable: false),
+                    final_green_leaf_count = table.Column<int>(type: "int", nullable: false),
+                    final_gold_leaf_count = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
