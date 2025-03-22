@@ -123,7 +123,7 @@
                                             </Border>
                                             <Border Width="292">
                                                 <Grid>
-                                                    <Image Source="/Interfaces/crate.png" Margin="62,54,161,141" />
+                                                    <Image Source="/Interfaces/crate.png" Margin="57,54,166,141" />
                                                     <TextBlock FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="134,14,22,126"/>
                                                     <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="පෙට්ටි ගණන(n)" Margin="67,130,49,90"/>
                                                 </Grid>
@@ -178,13 +178,13 @@
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,30,412,198">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="ප්‍රතික්ෂේපිත(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,46,31"/>
+                                                    <TextBlock Text="ප්‍රතික්ෂේපිත(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="106,91,67,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,30,30,198">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මුළු පෙට්ටි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,26,31"/>
+                                                    <TextBlock Text="මුළු පෙට්ටි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="106,91,47,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,205,800,23">
@@ -196,13 +196,13 @@
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,205,412,23">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මෝරපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,68,31"/>
+                                                    <TextBlock Text="මෝරපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="114,91,81,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,205,30,23">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මුළු මලු බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,57,31"/>
+                                                    <TextBlock Text="මුළු මලු බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="109,91,75,31"/>
                                                 </Grid>
                                             </Border>
 

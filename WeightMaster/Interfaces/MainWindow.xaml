@@ -311,7 +311,7 @@
                 </Grid>
             </Border>
             <!--Station1Frame-->
-            <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station1Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
@@ -322,9 +322,11 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                             <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                                <!--
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
+                                -->
                             </ComboBox>
                         </Grid>
                         <!--weight leaf officer textbox-->
@@ -726,17 +728,17 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
-                        <!-- Transport Method Dropdown -->
+                        <!-- supervisor Dropdown -->
                         <Grid Margin="50,102,55,68">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="supervisorCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
@@ -800,7 +802,7 @@
                             <Grid Grid.Column="0" Height="60">
                                 <TextBlock Grid.Row="0" Text="කේත අංකය / සාමාජික අංකය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,37"/>
                                 <Border Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,0">
-                                    <TextBox x:Name="barcodeTxt_st2" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="barcodeTxt_st2" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -830,7 +832,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="මුලකරු සමග නම" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" Text="W.S. Kulathunga" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="1" x:Name="customerNameTxt_st2" Text="W.S. Kulathunga" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!-- Transport Route Dropdown -->
                         <Grid Margin="310,19,36,617" >
@@ -839,7 +841,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st2_SelectionChanged" Grid.Row="1"  >
                                 <ComboBoxItem Content="Alaska"/>
                                 <ComboBoxItem Content="Boston"/>
                                 <ComboBoxItem Content="Newyork"/>
@@ -852,7 +854,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන නියෝජිත" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock x:Name="lblLineMasterName_st2" Grid.Row="1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="H.K. Kariyawasam" FontSize="12" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
