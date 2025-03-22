@@ -413,7 +413,9 @@ namespace WeightMaster
                 foreach (string supervisor in supervisorData)
                 {
                     System.Diagnostics.Debug.WriteLine($"supervisor Name: {supervisor}");
+                    //adding supervisors to both stations
                     supervisorCmb_st1.Items.Add(supervisor);
+                    supervisorCmb_st2.Items.Add(supervisor);
 
                 }
             }
@@ -567,8 +569,10 @@ namespace WeightMaster
             //clear existing data
             //clear weight leaf cmb officer data
             lineNameCmb_st1.Items.Clear();
+            lineNameCmb_st2.Items.Clear();
             //clear line master cmb data
             supervisorCmb_st1.Items.Clear();
+            supervisorCmb_st2.Items.Clear();
 
             //hmm you need either to clear all textboxes or restart the app.
 
@@ -918,6 +922,8 @@ namespace WeightMaster
                 finalAvailableGoldenLeafWeight_st1 += finalAvailableGoldenLeafWeight;
                 finalAvailableNormalLeafWeight_st1 += finalAvailableNormalLeafWeight;
                 //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
+
+                //if everything was added successfully, clear all textboxes(except table row, member & line master/name details)
     }
             else 
             {
@@ -1040,49 +1046,35 @@ namespace WeightMaster
 
         private async void finishButton_st1_Click(object sender, RoutedEventArgs e)
         {
-            _enterPressCount = 0; //0 1 2
-
-            wateredTxt_st1.Text = "";
-            rejectedTxt_st1.Text = "";
-            spoiledTxt_st1.Text = "";
-            maturedTxt_st1.Text = "";
-            normalLeafWeightTxt_st1.Text = "";
-            goldenLeafWeightTxt_st1.Text = "";
-            //keep these empty else both textboxes gets disabled by logic.
-            nSacksTxt_st1.Text = "";
-            nBoxesTxt_st1.Text = "";
-
-            goldenLeafWeightTxt_st1.Text = "";
-            normalLeafWeightTxt_st1.Text = "";
-            acceptedLeafWeightTxt_st1.Text = "";
-
-
-
             var newTransaction = new TransactionLogBlockModel
             {
-                LineName = "Line A",
-                TransportAgent = "Agent X",
-                Company = "Company Y",
-                LeafWeightOfficer = "Officer Z",
-                Supervisor = "Supervisor A",
-                BarcodeDetails = "123456789",
-                NameWithInitials = "John D.",
+                LineName = lineNameCmb_st1.SelectedValue.ToString(),
+                TransportAgent = lineMasterNameLbl_st1.Text,
+                Company = "නව ඇලන්වැලි තේ කම්හල",
+                LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
+                Supervisor = supervisorCmb_st1.SelectedValue.ToString(),
+                BarcodeDetails = barcodeTxt_st1.Text,
+                NameWithInitials = customerNameTxt_st1.Text,
                 PhoneNumber = "123-456-7890",
-                Date = DateTime.Now,
-                BoxCount = 5,
-                BagCount = 10,
-                MaximumNormalLeafWeight = 150.0f,
-                TotalLeafWeight = 140.5f,
-                ActualNormalLeafWeight = 140.5f,
-                TotalGoldLeafWeight = 10.0f,
-                Water = 0.0f,
-                Morapuwata = 1.0f,
-                Thambimata = 0.5f,
-                Reject = 2.0f,
-                BoxWeight = 50.0f,
-                FinalGreenLeafCount = 500,
-                FinalGoldLeafCount = 50,
-                RealValue = 4.2f
+                Date = DateTime.Now.ToString(),
+
+                BoxCount = finalNBoxes_st1,
+                BagCount = finalNSacks_st1,
+
+                MaximumNormalLeafWeight = 90,
+                TotalLeafWeight = finalAcceptedLeafWeight_st1,
+                ActualNormalLeafWeight = finalNormalLeafWeight_st1,
+                TotalGoldLeafWeight = finalGoldenLeafWeight_st1,
+
+                Water = finalWateredWeight_st1,
+                Morapuwata = finalMaturedWeight_st1,
+                Thambimata = finalSpoiledWeight_st1,
+                Reject = finalRejectedWeight_st1,
+                BoxWeight = finalNBoxes_st1 * (int)singleBoxWeight,
+
+                FinalGreenLeafCount = finalAvailableNormalLeafWeight_st1,
+                FinalGoldLeafCount = finalAvailableGoldenLeafWeight_st1,
+                RealValue = finalWeightScalerWeight_st1
             };
             System.Diagnostics.Debug.WriteLine(newTransaction);
             // Call the service to add the transaction
@@ -1091,6 +1083,22 @@ namespace WeightMaster
             if (_isok)
             {
                 System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
+
+                _enterPressCount = 0; //0 1 2
+
+                wateredTxt_st1.Text = "";
+                rejectedTxt_st1.Text = "";
+                spoiledTxt_st1.Text = "";
+                maturedTxt_st1.Text = "";
+                normalLeafWeightTxt_st1.Text = "";
+                goldenLeafWeightTxt_st1.Text = "";
+                //keep these empty else both textboxes gets disabled by logic.
+                nSacksTxt_st1.Text = "";
+                nBoxesTxt_st1.Text = "";
+
+                goldenLeafWeightTxt_st1.Text = "";
+                normalLeafWeightTxt_st1.Text = "";
+                acceptedLeafWeightTxt_st1.Text = "";
             }
 
         }

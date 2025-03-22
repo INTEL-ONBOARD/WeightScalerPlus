@@ -322,9 +322,11 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                             <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                                <!--
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
+                                -->
                             </ComboBox>
                         </Grid>
                         <!--weight leaf officer textbox-->
@@ -729,14 +731,14 @@
             <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
-                        <!-- Transport Method Dropdown -->
+                        <!-- supervisor Dropdown -->
                         <Grid Margin="50,102,55,68">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="supervisorCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>

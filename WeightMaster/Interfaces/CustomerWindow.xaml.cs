@@ -40,5 +40,10 @@ namespace WeightMaster.Interfaces
             //    });
             //}
         }
+
+        private void exit(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
     }
 }
