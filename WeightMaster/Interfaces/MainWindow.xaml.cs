@@ -37,14 +37,14 @@ namespace WeightMaster
 
         private int _enterPressCount = 0; // Tracks the number of Enter presses
 
-        public int nSacks_st1 = 0;
-        public int nBoxes_st1 = 0;
+        //public int nSacks_st1 = 0;
+        //public int nBoxes_st1 = 0;
         private double singleBoxWeight = 3;
 
 
         // Global integer for the total leaf weight(floor value)
-        public int totalLeafWeight_st1 = 0;
-        public int totalBoxWeight_st1 = 0;
+        //public int totalLeafWeight_st1 = 0;
+        //public int totalBoxWeight_st1 = 0;
 
         public int currentAcceptedLeafWeight_st1 = 0;
         private double currentGoldenLeafWeight_st1 = 0;
@@ -72,6 +72,11 @@ namespace WeightMaster
         private int finalAvailableGoldenLeafWeight_st1 = 0;
         private int finalAvailableNormalLeafWeight_st1 = 0;
         //private int finalAvailableLeafWeight = 0;
+
+        //_________________________________________________________|
+
+        public int currentAcceptedSackWeight_st2 = 0;
+
 
         //barcode related__________________________________________________________________
         private StringBuilder _barcodeBuffer = new StringBuilder();
@@ -107,9 +112,10 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            StartupTheAppAsync();
+            //StartupTheAppAsync();
         }
 
+        //used to startup the app with database verifications and closing & opening windows
         private async void StartupTheAppAsync()
         {
             //closing existing pages
@@ -401,7 +407,7 @@ namespace WeightMaster
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
                     lineNameCmb_st1.Items.Add(lineMaster.LineName);
-
+                    lineNameCmb_st2.Items.Add(lineMaster.LineName);
                 }
             }
             System.Diagnostics.Debug.WriteLine("> calling done");
@@ -561,7 +567,7 @@ namespace WeightMaster
         private void LogoutButtonClick(object sender, RoutedEventArgs e)
         {
             //IntroFrame.Visibility = Visibility.Visible;
-            LoginFrame.Visibility = Visibility.Visible;
+            //LoginFrame.Visibility = Visibility.Visible;
             StationMainFrame.Visibility = Visibility.Collapsed;
             Station1Frame.Visibility = Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
@@ -575,7 +581,7 @@ namespace WeightMaster
             supervisorCmb_st2.Items.Clear();
 
             //hmm you need either to clear all textboxes or restart the app.
-
+            StartupTheAppAsync();
         }
 
 
@@ -879,13 +885,13 @@ namespace WeightMaster
             nBoxesTxt_st1.Text = "";
         }
 
-        
+
         private void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
             //load table rows(test)
             if (!acceptedLeafWeightTxt_st1.Text.Equals("") && !goldenLeafWeightTxt_st1.Text.Equals("") && !normalLeafWeightTxt_st1.Text.Equals("") && ((!nSacksTxt_st1.Text.Equals("") && nBoxesTxt_st1.Text.Equals("")) || (nSacksTxt_st1.Text.Equals("") && !nBoxesTxt_st1.Text.Equals(""))))
             {
-                _enterPressCount =2;
+                _enterPressCount = 2;
                 int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st1.Text) + Convert.ToInt32(normalLeafWeightTxt_st1.Text));
                 Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, totalWeight.ToString(), goldenLeafWeightTxt_st1.Text, normalLeafWeightTxt_st1.Text);
                 Station1TablePanel.Children.Add(station1TableRow1);
@@ -924,8 +930,20 @@ namespace WeightMaster
                 //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
 
                 //if everything was added successfully, clear all textboxes(except table row, member & line master/name details)
-    }
-            else 
+                nSacksTxt_st1.Text = "";
+                nBoxesTxt_st1.Text = "";
+
+                wateredTxt_st1.Text = "";
+                rejectedTxt_st1.Text = "";
+                spoiledTxt_st1.Text = "";
+                maturedTxt_st1.Text = "";
+
+                normalLeafWeightTxt_st1.Text = "";
+                goldenLeafWeightTxt_st1.Text = "";
+                acceptedLeafWeightTxt_st1.Text = "";
+
+            }
+            else
             {
                 MessageBox.Show("කරුණාකර සියලු තොරතුරු අතුලත් කරන්න");
             }
@@ -967,6 +985,31 @@ namespace WeightMaster
             else
             {
                 lineMasterNameLbl_st2.Text = "-";
+            }
+        }
+
+        private void wieghtScalerConfirmBtn_st2_Click(object sender, RoutedEventArgs e)
+        {
+            // Check if the status equals "සමබරයි"
+            if (weightScalerStatus_st2.Text == "සමබරයි")
+            {
+                // Example weight text: "36.5KG"
+                string weightText = weightScalerValTxt_st2.Text.ToUpper().Replace("KG", "").Trim();
+                if (decimal.TryParse(weightText, out decimal weight))
+                {
+                    // Get the largest integer less than or equal to the specified number
+                    int CeilingValue = (int)Math.Ceiling((double)weight);
+                    // Update the acceptedLeafWeightTxt_st1 TextBox/TextBlock
+                    acceptedSackWeight_st2.Text = CeilingValue.ToString();
+                    currentAcceptedSackWeight_st2 = CeilingValue;
+
+                    //to catch up with Enter key press event(in case of the manual click)
+                    _enterPressCount = 1; // Cycle 0→1→2→0...
+                }
+                else
+                {
+                    MessageBox.Show("Invalid weight value.");
+                }
             }
         }
 
@@ -1046,59 +1089,89 @@ namespace WeightMaster
 
         private async void finishButton_st1_Click(object sender, RoutedEventArgs e)
         {
-            var newTransaction = new TransactionLogBlockModel
+            
+            // Call the service to add the transaction(if at least one record was present)
+            if (finalAcceptedLeafWeight_st1 != 0) {
+
+                var newTransaction = new TransactionLogBlockModel
+                {
+                    LineName = lineNameCmb_st1.SelectedValue.ToString(),
+                    TransportAgent = lineMasterNameLbl_st1.Text,
+                    Company = "නව ඇලන්වැලි තේ කම්හල",
+                    LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
+                    Supervisor = supervisorCmb_st1.SelectedValue.ToString(),
+                    BarcodeDetails = barcodeTxt_st1.Text,
+                    NameWithInitials = customerNameTxt_st1.Text,
+                    PhoneNumber = "123-456-7890",
+                    Date = DateTime.Now.ToString(),
+
+                    BoxCount = finalNBoxes_st1,
+                    BagCount = finalNSacks_st1,
+
+                    MaximumNormalLeafWeight = 90,
+                    TotalLeafWeight = finalAcceptedLeafWeight_st1,
+                    ActualNormalLeafWeight = finalNormalLeafWeight_st1,
+                    TotalGoldLeafWeight = finalGoldenLeafWeight_st1,
+
+                    Water = finalWateredWeight_st1,
+                    Morapuwata = finalMaturedWeight_st1,
+                    Thambimata = finalSpoiledWeight_st1,
+                    Reject = finalRejectedWeight_st1,
+                    BoxWeight = finalNBoxes_st1 * (int)singleBoxWeight,
+
+                    FinalGreenLeafCount = finalAvailableNormalLeafWeight_st1,
+                    FinalGoldLeafCount = finalAvailableGoldenLeafWeight_st1,
+                    RealValue = finalWeightScalerWeight_st1
+                };
+                System.Diagnostics.Debug.WriteLine(newTransaction);
+                bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
+
+                if (_isok)
+                {
+                    System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
+
+                    //select the next press enter button as the target
+                    _enterPressCount = 0; //0 1 2
+                                          //clear all textboxes and labels(including table row, member & line master / name details)
+                                          //keep these empty else both textboxes gets disabled by logic.
+                    nSacksTxt_st1.Text = "";
+                    nBoxesTxt_st1.Text = "";
+
+                    wateredTxt_st1.Text = "";
+                    rejectedTxt_st1.Text = "";
+                    spoiledTxt_st1.Text = "";
+                    maturedTxt_st1.Text = "";
+
+                    normalLeafWeightTxt_st1.Text = "";
+                    goldenLeafWeightTxt_st1.Text = "";
+                    acceptedLeafWeightTxt_st1.Text = "";
+
+                    barcodeTxt_st1.Text = "";
+                    customerNameTxt_st1.Text = "";
+
+                    lineMasterNameLbl_st1.Text = "";
+
+                    //remove all table rows
+                    Station1TablePanel.Children.Clear();
+                }
+                else
+                {
+                    MessageBox.Show(
+                        "Upload failed, please try again",
+                        "Upload Status",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                }
+            }
+            else 
             {
-                LineName = lineNameCmb_st1.SelectedValue.ToString(),
-                TransportAgent = lineMasterNameLbl_st1.Text,
-                Company = "නව ඇලන්වැලි තේ කම්හල",
-                LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                Supervisor = supervisorCmb_st1.SelectedValue.ToString(),
-                BarcodeDetails = barcodeTxt_st1.Text,
-                NameWithInitials = customerNameTxt_st1.Text,
-                PhoneNumber = "123-456-7890",
-                Date = DateTime.Now.ToString(),
-
-                BoxCount = finalNBoxes_st1,
-                BagCount = finalNSacks_st1,
-
-                MaximumNormalLeafWeight = 90,
-                TotalLeafWeight = finalAcceptedLeafWeight_st1,
-                ActualNormalLeafWeight = finalNormalLeafWeight_st1,
-                TotalGoldLeafWeight = finalGoldenLeafWeight_st1,
-
-                Water = finalWateredWeight_st1,
-                Morapuwata = finalMaturedWeight_st1,
-                Thambimata = finalSpoiledWeight_st1,
-                Reject = finalRejectedWeight_st1,
-                BoxWeight = finalNBoxes_st1 * (int)singleBoxWeight,
-
-                FinalGreenLeafCount = finalAvailableNormalLeafWeight_st1,
-                FinalGoldLeafCount = finalAvailableGoldenLeafWeight_st1,
-                RealValue = finalWeightScalerWeight_st1
-            };
-            System.Diagnostics.Debug.WriteLine(newTransaction);
-            // Call the service to add the transaction
-            bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
-
-            if (_isok)
-            {
-                System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
-
-                _enterPressCount = 0; //0 1 2
-
-                wateredTxt_st1.Text = "";
-                rejectedTxt_st1.Text = "";
-                spoiledTxt_st1.Text = "";
-                maturedTxt_st1.Text = "";
-                normalLeafWeightTxt_st1.Text = "";
-                goldenLeafWeightTxt_st1.Text = "";
-                //keep these empty else both textboxes gets disabled by logic.
-                nSacksTxt_st1.Text = "";
-                nBoxesTxt_st1.Text = "";
-
-                goldenLeafWeightTxt_st1.Text = "";
-                normalLeafWeightTxt_st1.Text = "";
-                acceptedLeafWeightTxt_st1.Text = "";
+                MessageBox.Show(
+                        "Please enter records to upload",
+                        "Upload Status",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
             }
 
         }
