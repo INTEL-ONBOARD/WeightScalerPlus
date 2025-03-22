@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeightMaster.Migrations
 {
     /// <inheritdoc />
-    public partial class final : Migration
+    public partial class newmore : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -118,21 +118,22 @@ namespace WeightMaster.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     PhoneNumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    Date = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     BoxCount = table.Column<int>(type: "int", nullable: false),
                     BagCount = table.Column<int>(type: "int", nullable: false),
-                    MaximumNormalLeafWeight = table.Column<float>(type: "float", nullable: false),
-                    TotalLeafWeight = table.Column<float>(type: "float", nullable: false),
-                    ActualNormalLeafWeight = table.Column<float>(type: "float", nullable: false),
-                    TotalGoldLeafWeight = table.Column<float>(type: "float", nullable: false),
-                    Water = table.Column<float>(type: "float", nullable: false),
-                    Morapuwata = table.Column<float>(type: "float", nullable: false),
-                    Thambimata = table.Column<float>(type: "float", nullable: false),
-                    Reject = table.Column<float>(type: "float", nullable: false),
-                    BoxWeight = table.Column<float>(type: "float", nullable: false),
+                    MaximumNormalLeafWeight = table.Column<int>(type: "int", nullable: false),
+                    TotalLeafWeight = table.Column<int>(type: "int", nullable: false),
+                    ActualNormalLeafWeight = table.Column<int>(type: "int", nullable: false),
+                    TotalGoldLeafWeight = table.Column<int>(type: "int", nullable: false),
+                    Water = table.Column<int>(type: "int", nullable: false),
+                    Morapuwata = table.Column<int>(type: "int", nullable: false),
+                    Thambimata = table.Column<int>(type: "int", nullable: false),
+                    Reject = table.Column<int>(type: "int", nullable: false),
+                    BoxWeight = table.Column<int>(type: "int", nullable: false),
                     FinalGreenLeafCount = table.Column<int>(type: "int", nullable: false),
                     FinalGoldLeafCount = table.Column<int>(type: "int", nullable: false),
-                    RealValue = table.Column<float>(type: "float", nullable: false)
+                    RealValue = table.Column<double>(type: "double", nullable: false)
                 },
                 constraints: table =>
                 {

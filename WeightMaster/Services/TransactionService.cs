@@ -74,10 +74,7 @@ namespace WeightMaster.Services
         }
 
         // Check if a transaction exists based on LineName and Date
-        public async Task<bool> TransactionExistsAsync(string lineName, DateTime date)
-        {
-            return await _context.transactionData.AnyAsync(t => t.LineName == lineName && t.Date == date);
-        }
+
 
         // Get all transactions by a specific TransportAgent
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByTransportAgentAsync(string transportAgent)

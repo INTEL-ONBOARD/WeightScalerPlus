@@ -324,15 +324,24 @@ namespace WeightMaster.Core
             ApiClient apiClient = new ApiClient();
             var options = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // Allows case-insensitive mapping
+                PropertyNameCaseInsensitive = true, // Allows case-insensitive mapping
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping // Prevents escaping Unicode characters
             };
 
             string url = "http://152.42.249.231:8000/api/method/update_green_leaf_collection";
 
             try
             {
+                // Serialize the transactionBlockModel to JSON for viewing the body content
+                var jsonBodyContent = JsonSerializer.Serialize(transactionBlockModel, options);
+
+                // Log the URL and the body content in the debug console
+                System.Diagnostics.Debug.WriteLine($"> URL: {url}");
+                System.Diagnostics.Debug.WriteLine($"> Body: {jsonBodyContent}");
+
                 // Send transactionBlockModel as the body of the POST request
-                var apiResponse = await apiClient.PostAsync<object>(url, transactionBlockModel, options);
+                var apiResponse = await apiClient.PostAsync<object>(url, transactionBlockModel);
+
                 // If we reach this point, the status code is 2xx, return true
                 return true;
             }
@@ -347,6 +356,8 @@ namespace WeightMaster.Core
                 return false;
             }
         }
+
+
 
 
 

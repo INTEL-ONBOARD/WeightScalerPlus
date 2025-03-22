@@ -158,7 +158,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Member Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb();
+                    //await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -895,33 +895,34 @@ namespace WeightMaster
 
 
 
-
             var newTransaction = new TransactionLogBlockModel
             {
-                LineName = "Line AFGH",
-                TransportAgent = "Agent X",
-                Company = "Company Y",
-                LeafWeightOfficer = "Officer Z",
-                Supervisor = "Supervisor A",
-                BarcodeDetails = "123456789",
-                NameWithInitials = "John D.",
-                PhoneNumber = "123-456-7890",
-                Date = DateTime.Now,
-                BoxCount = 5,
-                BagCount = 10,
-                MaximumNormalLeafWeight = 150.0f,
-                TotalLeafWeight = 140.5f,
-                ActualNormalLeafWeight = 140.5f,
-                TotalGoldLeafWeight = 10.0f,
-                Water = 0.0f,
-                Morapuwata = 1.0f,
-                Thambimata = 0.5f,
-                Reject = 2.0f,
-                BoxWeight = 50.0f,
-                FinalGreenLeafCount = 500,
-                FinalGoldLeafCount = 50,
-                RealValue = 4.2f
+                LineName = "ලංකාගම",                           // Matches "linename"
+                TransportAgent = "ජේ.පී දිල්මා දිල්හානි",    // Matches "transportagent"
+                Company = "නව ඇලන්වැලි තේ කම්හල",            // Matches "company"
+                LeafWeightOfficer = "greenleaf null",          // Matches "leaf_weight_officer"
+                Supervisor = "Administrator",                  // Matches "superviosr"
+                BarcodeDetails = "001",                        // Matches "barcode_details"
+                NameWithInitials = "කේ.එ.ගුණපාල",            // Matches "name_with_initials"
+                PhoneNumber = "0712345678",                    // Matches "phone_number"
+                Date = DateTime.Now.ToString("yyyy-MM-dd"),           // Matches "date"
+                BoxCount = 3,                                  // Matches "box_count"
+                BagCount = 0,                                  // Matches "bag_count"
+                MaximumNormalLeafWeight = 69,                  // Matches "maximum_nomal_leaf_weight"
+                TotalLeafWeight = 60,                          // Matches "total_leaf_weight"
+                ActualNormalLeafWeight = 30,                   // Matches "actual_nomal_leaf_weight"
+                TotalGoldLeafWeight = 30,                      // Matches "total_gold_leaf_weight"
+                Water = 1,                                     // Matches "water"
+                Morapuwata = 1,                                // Matches "morapuwata"
+                Thambimata = 1,                                // Matches "thambimata"
+                Reject = 1,                                    // Matches "reject"
+                BoxWeight = 3,                                 // Matches "box_weight"
+                FinalGreenLeafCount = 23,                      // Matches "final_green_leaf_count"
+                FinalGoldLeafCount = 30,                       // Matches "final_gold_leaf_count"
+                RealValue = 4.19999980926513               // Matches "real_value"
             };
+
+
 
             // Call the service to add the transaction
             bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
