@@ -321,7 +321,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
@@ -367,7 +367,7 @@
                         <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
-                            <TextBlock x:Name="weightScalerValTxt_st1" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBlock x:Name="weightScalerValTxt_st1" VerticalAlignment="Bottom" Text="37.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBlock x:Name="weightScalerStatus_st1" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
@@ -574,7 +574,7 @@
 
                         <Grid Margin="10,321,10,114">
 
-                            <!--spoiled textbox-->
+                            <!--nSacks textbox-->
                             <Grid Margin="10,20,392,127">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20"/>
@@ -582,7 +582,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock  x:Name="nSacksLbl_st1" Grid.Row="0" Text="ගෝනි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Width="92" />
                                 <Border x:Name="borderNSacks_st1" Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="nSacksTxt_st1" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="nSacksTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="nSacksTxt_st1" PreviewTextInput="nSacksTxt_PreviewTextInput" TextChanged="nSacksTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!--nBoxes textbox-->
@@ -593,7 +593,7 @@
                                 </Grid.RowDefinitions>
                                 <TextBlock x:Name="nBoxesLbl_st1" Grid.Row="0" Text="පෙට්ටි ගණන" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Width="92" />
                                 <Border x:Name="borderNBoxes_st1" Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="nBoxesTxt_st1" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="nBoxesTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="nBoxesTxt_st1" TextChanged="WeightDeducation_TextChanged" PreviewTextInput="BoxWeightDeduction_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!--watered textbox-->
