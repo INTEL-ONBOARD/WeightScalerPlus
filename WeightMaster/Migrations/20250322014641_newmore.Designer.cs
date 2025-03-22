@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250321090400_latest_update")]
-    partial class latest_update
+    [Migration("20250322014641_newmore")]
+    partial class newmore
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,85 @@ namespace WeightMaster.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("WeightMaster.Models.FinalTransactionBlockModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<float>("ActualNormalLeafWeight")
+                        .HasColumnType("float");
+
+                    b.Property<int>("BagCount")
+                        .HasColumnType("int");
+
+                    b.Property<float>("BagWeight")
+                        .HasColumnType("float");
+
+                    b.Property<string>("BarcodeDetails")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("FinalGoldLeafCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinalGreenLeafCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LeafWeightOfficer")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LineName")
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("MaximumNormalLeafWeight")
+                        .HasColumnType("float");
+
+                    b.Property<float>("Morapuwata")
+                        .HasColumnType("float");
+
+                    b.Property<string>("NameWithInitials")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("RealValue")
+                        .HasColumnType("float");
+
+                    b.Property<float>("Reject")
+                        .HasColumnType("float");
+
+                    b.Property<string>("Supervisor")
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("Thambimata")
+                        .HasColumnType("float");
+
+                    b.Property<float>("TotalGoldLeafWeight")
+                        .HasColumnType("float");
+
+                    b.Property<float>("TotalLeafWeight")
+                        .HasColumnType("float");
+
+                    b.Property<string>("TransportAgent")
+                        .HasColumnType("longtext");
+
+                    b.Property<float>("Water")
+                        .HasColumnType("float");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinaltransactionData");
+                });
 
             modelBuilder.Entity("WeightMaster.Models.LineMasterBlockModel", b =>
                 {
@@ -72,6 +151,38 @@ namespace WeightMaster.Migrations
                     b.ToTable("MembersData");
                 });
 
+            modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int?>("FinalTransactionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<int?>("TransactionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FinalTransactionId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("RunLog");
+                });
+
             modelBuilder.Entity("WeightMaster.Models.TransactionLogBlockModel", b =>
                 {
                     b.Property<int>("Id")
@@ -80,8 +191,8 @@ namespace WeightMaster.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<float>("ActualNormalLeafWeight")
-                        .HasColumnType("float");
+                    b.Property<int>("ActualNormalLeafWeight")
+                        .HasColumnType("int");
 
                     b.Property<int>("BagCount")
                         .HasColumnType("int");
@@ -92,14 +203,14 @@ namespace WeightMaster.Migrations
                     b.Property<int>("BoxCount")
                         .HasColumnType("int");
 
-                    b.Property<float>("BoxWeight")
-                        .HasColumnType("float");
+                    b.Property<int>("BoxWeight")
+                        .HasColumnType("int");
 
                     b.Property<string>("Company")
                         .HasColumnType("longtext");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime(6)");
+                    b.Property<string>("Date")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("FinalGoldLeafCount")
                         .HasColumnType("int");
@@ -113,11 +224,11 @@ namespace WeightMaster.Migrations
                     b.Property<string>("LineName")
                         .HasColumnType("longtext");
 
-                    b.Property<float>("MaximumNormalLeafWeight")
-                        .HasColumnType("float");
+                    b.Property<int>("MaximumNormalLeafWeight")
+                        .HasColumnType("int");
 
-                    b.Property<float>("Morapuwata")
-                        .HasColumnType("float");
+                    b.Property<int>("Morapuwata")
+                        .HasColumnType("int");
 
                     b.Property<string>("NameWithInitials")
                         .HasColumnType("longtext");
@@ -125,26 +236,29 @@ namespace WeightMaster.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("longtext");
 
-                    b.Property<float>("Reject")
-                        .HasColumnType("float");
+                    b.Property<double>("RealValue")
+                        .HasColumnType("double");
+
+                    b.Property<int>("Reject")
+                        .HasColumnType("int");
 
                     b.Property<string>("Supervisor")
                         .HasColumnType("longtext");
 
-                    b.Property<float>("Thambimata")
-                        .HasColumnType("float");
+                    b.Property<int>("Thambimata")
+                        .HasColumnType("int");
 
-                    b.Property<float>("TotalGoldLeafWeight")
-                        .HasColumnType("float");
+                    b.Property<int>("TotalGoldLeafWeight")
+                        .HasColumnType("int");
 
-                    b.Property<float>("TotalLeafWeight")
-                        .HasColumnType("float");
+                    b.Property<int>("TotalLeafWeight")
+                        .HasColumnType("int");
 
                     b.Property<string>("TransportAgent")
                         .HasColumnType("longtext");
 
-                    b.Property<float>("Water")
-                        .HasColumnType("float");
+                    b.Property<int>("Water")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -206,6 +320,21 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLoginsLog");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
+                {
+                    b.HasOne("WeightMaster.Models.FinalTransactionBlockModel", "FinalTransaction")
+                        .WithMany()
+                        .HasForeignKey("FinalTransactionId");
+
+                    b.HasOne("WeightMaster.Models.TransactionLogBlockModel", "Transaction")
+                        .WithMany()
+                        .HasForeignKey("TransactionId");
+
+                    b.Navigation("FinalTransaction");
+
+                    b.Navigation("Transaction");
                 });
 #pragma warning restore 612, 618
         }

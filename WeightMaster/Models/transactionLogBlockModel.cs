@@ -18,21 +18,21 @@ namespace WeightMaster.Models
         public string? BarcodeDetails { get; set; }
         public string? NameWithInitials { get; set; }
         public string? PhoneNumber { get; set; }
-        public DateTime Date { get; set; }
+        public string? Date { get; set; }
         public int BoxCount { get; set; }
         public int BagCount { get; set; }
-        public float MaximumNormalLeafWeight { get; set; }
-        public float TotalLeafWeight { get; set; }
-        public float ActualNormalLeafWeight { get; set; }
-        public float TotalGoldLeafWeight { get; set; }
-        public float Water { get; set; }
-        public float Morapuwata { get; set; }
-        public float Thambimata { get; set; }
-        public float Reject { get; set; }
-        public float BoxWeight { get; set; }
+        public int MaximumNormalLeafWeight { get; set; }
+        public int TotalLeafWeight { get; set; }
+        public int ActualNormalLeafWeight { get; set; }
+        public int TotalGoldLeafWeight { get; set; }
+        public int Water { get; set; }
+        public int Morapuwata { get; set; }
+        public int Thambimata { get; set; }
+        public int Reject { get; set; }
+        public int BoxWeight { get; set; }
         public int FinalGreenLeafCount { get; set; }
         public int FinalGoldLeafCount { get; set; }
-        public float RealValue { get; set; }
+        public double RealValue { get; set; }
 
     }
 }

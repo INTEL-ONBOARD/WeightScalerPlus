@@ -179,7 +179,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb();
+                    //await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -1058,42 +1058,40 @@ namespace WeightMaster
 
 
 
-
             var newTransaction = new TransactionLogBlockModel
             {
-                LineName = lineNameCmb_st1.SelectedValue.ToString(),
-                TransportAgent = lineMasterNameLbl_st1.Text,
-                Company = "නව ඇලන්වැලි තේ කම්හල",
-                LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                Supervisor = supervisorCmb_st1.SelectedValue.ToString(),
-                BarcodeDetails = barcodeTxt_st1.Text,
-                NameWithInitials = customerNameTxt_st1.Text,
+                LineName = "Line A",
+                TransportAgent = "Agent X",
+                Company = "Company Y",
+                LeafWeightOfficer = "Officer Z",
+                Supervisor = "Supervisor A",
+                BarcodeDetails = "123456789",
+                NameWithInitials = "John D.",
                 PhoneNumber = "123-456-7890",
                 Date = DateTime.Now,
-
-                BoxCount = finalNBoxes_st1,
-                BagCount = finalNSacks_st1,
-
+                BoxCount = 5,
+                BagCount = 10,
                 MaximumNormalLeafWeight = 150.0f,
-                TotalLeafWeight = finalAcceptedLeafWeight_st1,
-                ActualNormalLeafWeight = finalNormalLeafWeight_st1,
-                TotalGoldLeafWeight = finalGoldenLeafWeight_st1,
-
-                Water = finalWateredWeight_st1,
-                Morapuwata = finalMaturedWeight_st1,
-                Thambimata = finalSpoiledWeight_st1,
-                Reject = finalRejectedWeight_st1,
-                BoxWeight = finalNBoxes_st1*(int)singleBoxWeight,
-
-                FinalGreenLeafCount = finalAvailableNormalLeafWeight_st1,
-                FinalGoldLeafCount = finalAvailableGoldenLeafWeight_st1,
-                RealValue = finalWeightScalerWeight_st1
+                TotalLeafWeight = 140.5f,
+                ActualNormalLeafWeight = 140.5f,
+                TotalGoldLeafWeight = 10.0f,
+                Water = 0.0f,
+                Morapuwata = 1.0f,
+                Thambimata = 0.5f,
+                Reject = 2.0f,
+                BoxWeight = 50.0f,
+                FinalGreenLeafCount = 500,
+                FinalGoldLeafCount = 50,
+                RealValue = 4.2f
             };
             System.Diagnostics.Debug.WriteLine(newTransaction);
             // Call the service to add the transaction
-            await _consoleHandler.AddTransactionAsync(newTransaction);
+            bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
 
-
+            if (_isok)
+            {
+                System.Diagnostics.Debug.WriteLine("Most recent run log updated at::::::::::::");
+            }
 
         }
     }
