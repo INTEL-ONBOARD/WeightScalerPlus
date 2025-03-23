@@ -1537,7 +1537,7 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
             }
 
-
+            //an object like this is reusable.
             var transactions = await _consoleHandler.GetTransactionData();
 
             // Loop through each transaction and print details to the debug console
@@ -1558,7 +1558,7 @@ namespace WeightMaster
 
 
 
-
+            //this goes to the finish
             var Finaltransaction = new FinalTransactionBlockModel
             {
                 linename = "ලංකාගම",
