@@ -120,7 +120,7 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            //StartupTheAppAsync();
+            StartupTheAppAsync();
         }
 
         //used to startup the app with database verifications and closing & opening windows
