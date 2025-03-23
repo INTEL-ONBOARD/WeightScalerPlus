@@ -784,7 +784,7 @@
                         <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
-                            <TextBlock x:Name="weightScalerValTxt_st2" VerticalAlignment="Bottom" Text="37.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBlock x:Name="weightScalerValTxt_st2" VerticalAlignment="Bottom" Text="35.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBlock x:Name="weightScalerStatus_st2" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
