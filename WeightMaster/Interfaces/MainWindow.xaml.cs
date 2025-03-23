@@ -207,6 +207,19 @@ namespace WeightMaster
                         statusLabel.Content = $"Member Database Error: {ex.Message}";
                     });
                 }
+
+                //verifying missing transactions and replacing them
+                //bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                //if (_isoks)
+                //{
+                //    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
+                //}
+                //else
+                //{
+                //    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                //}
+
+
             }
             while (failed);
 
@@ -1181,6 +1194,27 @@ namespace WeightMaster
             }
         }
 
+        //private void SacksWeightDeduction_st1_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        //{
+        //    // Block non-digit characters
+        //    if (!char.IsDigit(e.Text, 0) || !nSacksTxt_st1.Text.Equals(""))
+        //    {
+        //        e.Handled = true;
+        //        return;
+        //    }
+        //    //Get the proposed new text(current text + new input)
+        //    var textBox = (TextBox)sender;
+        //    string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength) + e.Text;
+
+        //    //Check if the proposed text is a valid integer and THE TOTAL BOX WIEGHT(num of boxes* single box weight) doesn't exceeds total weight
+        //    if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1)
+        //    {
+        //        e.Handled = true; // Block the input
+        //        MessageBox.Show((inputNumber * singleBoxWeight).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
+        //    }
+        //}
+
+
         private int _currentTurn_st2 = 1;
         private void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
@@ -1410,17 +1444,26 @@ namespace WeightMaster
 
                     //remove all table rows
                     Station1TablePanel.Children.Clear();
-                }
-                else
-                {
+             }
+             else
+             {
                     MessageBox.Show(
                         "Upload failed, please try again",
                         "Upload Status",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
                     );
-                }
+             }
+            bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+            if (_isoks)
+            {
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
             }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+            }
+        }
         //else 
         //{
         //    MessageBox.Show(
@@ -1431,17 +1474,7 @@ namespace WeightMaster
         //        );
         //}
 
-            bool _isoks= await _consoleHandler.verifyTransactionsCloudCheck();
-            if (_isoks)
-            {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
-            }
-
-        }
+        //}
     }
 }
 

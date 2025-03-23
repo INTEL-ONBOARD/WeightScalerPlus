@@ -155,5 +155,13 @@ namespace WeightMaster.Services
                 return false;
             }
         }
+        // Get all transactions where bag_count is greater than 0
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsWithBagCountGreaterThanZeroAsync()
+        {
+            return await _context.transactionData
+                .Where(t => t.bag_count > 0)
+                .ToListAsync();
+        }
+
     }
 }

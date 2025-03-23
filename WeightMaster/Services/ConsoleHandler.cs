@@ -85,11 +85,16 @@ namespace WeightMaster.Services
             return await _engine.setTransaction(newTransaction); 
         }
         //method to check and verify the local database get synced with the cloud database
-
         public async Task<bool> verifyTransactionsCloudCheck()
         {
             return await _engine.verifyTransactionsCloud();
         }
+        //return the transaction data from the station 2 data record section, this func return the records of the dataa that has weight value over 0
+        public async Task<List<TransactionLogBlockModel>> GetTransactionData()
+        {
+            return await _engine.GetFilteredTransactionData();
+        }
+
 
     }
 }
