@@ -108,7 +108,7 @@
                                     <Border BorderBrush="#B4B4B4" BorderThickness="0,1,0,1" Height="260">
                                         <Grid>
                                             <Image Source="/Interfaces/tick_in_green_circle.png" Margin="36,76,422,59"/>
-                                            <TextBlock FontSize="96" FontWeight="Bold" Text="0" Margin="218,64,11,90"/>
+                                            <TextBlock x:Name="acceptedWeightLbl_cust" FontSize="96" FontWeight="Bold" Text="0" Margin="218,64,11,90"/>
                                             <TextBlock  FontSize="26" FontWeight="SemiBold" Foreground="#888888" Text="පිළිගත් බර(KG)" Margin="228,181,84,29"/>
                                         </Grid>
                                     </Border>

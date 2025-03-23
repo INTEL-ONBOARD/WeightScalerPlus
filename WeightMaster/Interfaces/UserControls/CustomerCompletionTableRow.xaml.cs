@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
@@ -39,6 +40,12 @@ namespace WeightMaster.Interfaces.UserControls
             {
                 RowBorder.Background = (Brush)brushConverter.ConvertFrom("#FFF5D6"); // Light Yellow
             }
+        }
+
+        private void RowButton_st2_Click(object sender, RoutedEventArgs e)
+        {
+            // Handle the click event here
+            MessageBox.Show("Row clicked!");
         }
     }
 }

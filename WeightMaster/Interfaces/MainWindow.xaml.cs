@@ -78,7 +78,7 @@ namespace WeightMaster
  
         public int currentAcceptedSackWeightTxt_st2 = 0;
         //fill this during the api fetch w/ barcode
-        public int currentAcceptedLeafWeight_st2 = 83;
+        public int currentAcceptedLeafWeight_st2 = 82;
         private double currentGoldenLeafWeight_st2 = 0;
         private double currentNormalLeafWeight_st2 = 0;
 
@@ -209,15 +209,29 @@ namespace WeightMaster
                 }
 
                 //verifying missing transactions and replacing them
-                //bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
-                //if (_isoks)
+                //try
                 //{
-                //    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
+                //    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                //    if (_isoks)
+                //    {
+                //        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
+                //    }
+                //    else
+                //    {
+                //        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                //    }
+                //    failed = !_isoks;
+                //    //await Task.Delay(1000);
                 //}
-                //else
+                //catch (Exception ex)
                 //{
-                //    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                //    Dispatcher.Invoke(() =>
+                //    {
+                //        failed = true;
+                //        statusLabel.Content = $"Member Database Error: {ex.Message}";
+                //    });
                 //}
+                
 
 
             }
@@ -495,6 +509,7 @@ namespace WeightMaster
                     Station2Frame.Visibility = Visibility.Collapsed;
                     //change topbar text
                     //TopBarText.Text = "වේදිකාව-1";
+                    TopBarStationName.Text = "දළු කිරීම";
 
                 }
                 else if (RadioBtnStation2.IsChecked == true)
@@ -518,6 +533,7 @@ namespace WeightMaster
 
                     //change topbar text
                     //TopBarText.Text = "වේදිකාව-2";
+                    TopBarStationName.Text = "ගෝනි කිරීම";
                 }
                 else if (RadioBtnAdmin.IsChecked == true)
                 {
@@ -822,6 +838,17 @@ namespace WeightMaster
                 e.Handled = true;
                 return;
             }
+            //to avoid having minus values if leaf weights are zero
+            if (goldenLeafWeightTxt_st1.Text.Equals("") || normalLeafWeightTxt_st1.Text.Equals("") || acceptedLeafWeightTxt_st1.Text.Equals("")) 
+            {
+                MessageBox.Show(
+                        "කරුණාකර සාමාජික දළු බර ඇතුලත් කරන්න",
+                        "ගෝනි බර ඇතුලත් කිරීම",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information
+                    );
+                e.Handled = true;
+            }
             // Get the proposed new text (current text + new input)
             var textBox = (TextBox)sender;
             string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength) + e.Text;
@@ -993,7 +1020,35 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(request + ": " + memberName);
                 customerNameTxt_st2.Text = memberName;
 
-            }
+                //load and populate additional data like previous leaf data, box data like stuff
+                //tbd for transport route & agent
+                lineMasterNameLbl_st2.Text = "john doe hmm";
+                //follow steps when inserting values to avoid collisions
+                totalNSacksTxt_st2.Text = "7";
+                remainingNSacksTxt_st2.Text = "3";
+                nBoxesTxt_st2.Text = "5";
+
+                //update the current values
+                acceptedLeafWeightTxt_st2.Text = "82";
+                currentAcceptedLeafWeight_st2 = 82;
+                normalLeafWeightTxt_st2.Text = "68";
+                currentNormalLeafWeight_st2 = 68;
+                goldenLeafWeightTxt_st2.Text = "10";
+                currentGoldenLeafWeight_st2 = 10;
+
+                maturedTxt_st2.Text = "1";
+                wateredTxt_st2.Text = "1";
+                spoiledTxt_st2.Text = "1";
+                rejectedTxt_st2.Text = "2";
+                currentTotalDeduction_st2 = 5;
+                //.Text = "";
+                //.Text = "";
+                //public int currentAcceptedLeafWeight_st2 = 82;
+                //private double currentGoldenLeafWeight_st2 = 0;
+                //private double currentNormalLeafWeight_st2 = 0;
+
+                //public double currentTotalDeduction_st2 = 0;
+    }
             else
             {
                 //show red line
@@ -1019,26 +1074,42 @@ namespace WeightMaster
         private void wieghtScalerConfirmBtn_st2_Click(object sender, RoutedEventArgs e)
         {
             // Check if the status equals "සමබරයි"
-            if (weightScalerStatus_st2.Text == "සමබරයි")
-            {
-                // Example weight text: "36.5KG"
-                string weightText = weightScalerValTxt_st2.Text.ToUpper().Replace("KG", "").Trim();
-                if (decimal.TryParse(weightText, out decimal weight))
+            
+                if (weightScalerStatus_st2.Text == "සමබරයි")
                 {
-                    // Get the largest integer less than or equal to the specified number
-                    int CeilingValue = (int)Math.Ceiling((double)weight);
-                    // Update the acceptedLeafWeightTxt_st1 TextBox/TextBlock
-                    acceptedSackWeightTxt_st2.Text = CeilingValue.ToString();
-                    currentAcceptedSackWeightTxt_st2 = CeilingValue;
+                if (!acceptedLeafWeightTxt_st2.Text.Equals("") && !normalLeafWeightTxt_st2.Text.Equals("") && !goldenLeafWeightTxt_st2.Text.Equals(""))
+                {
 
-                    //to catch up with Enter key press event(in case of the manual click)
-                    _enterPressCount = 1; // Cycle 0→1→2→0...
+                    // Example weight text: "36.5KG"
+                    string weightText = weightScalerValTxt_st2.Text.ToUpper().Replace("KG", "").Trim();
+                    if (decimal.TryParse(weightText, out decimal weight))
+                    {
+                        // Get the largest integer less than or equal to the specified number
+                        int CeilingValue = (int)Math.Ceiling((double)weight);
+                        // Update the acceptedLeafWeightTxt_st1 TextBox/TextBlock
+                        acceptedSackWeightTxt_st2.Text = CeilingValue.ToString();
+                        currentAcceptedSackWeightTxt_st2 = CeilingValue;
+
+                        //to catch up with Enter key press event(in case of the manual click)
+                        _enterPressCount = 1; // Cycle 0→1→2→0...
+                    }
+                    else
+                    {
+                        MessageBox.Show("Invalid weight value.");
+                    }
+
                 }
                 else
                 {
-                    MessageBox.Show("Invalid weight value.");
+                    MessageBox.Show(
+                            "කරුණාකර සාමාජික දළු බරවල් අතුලත් කරන්න",
+                            "ගෝනි බර ඇතුලත් කිරීම",
+                            MessageBoxButton.OK,
+                            MessageBoxImage.Information
+                        );
                 }
             }
+            
         }
 
         //gold and normal leaf textbox logic
@@ -1105,7 +1176,7 @@ namespace WeightMaster
         private void WeightDeducation_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
             // Check if controls exist (avoids NullReferenceException during initialization)
-            if (wateredTxt_st2 == null || rejectedTxt_st2 == null || maturedTxt_st2 == null || spoiledTxt_st2 == null || currentNormalLeafWeight_st2 == null || nBoxesTxt_st2 == null)
+            if (wateredTxt_st2 == null || rejectedTxt_st2 == null || maturedTxt_st2 == null || spoiledTxt_st2 == null || currentNormalLeafWeight_st2 == null || acceptedSackWeightTxt_st2 == null )
                 return;
             // Parse values (handle empty/invalid input)
             if (!double.TryParse(wateredTxt_st2.Text, out double watered) || watered < 0)
@@ -1118,9 +1189,11 @@ namespace WeightMaster
                 spoiled = 0;
             if (!double.TryParse(nBoxesTxt_st2.Text, out double nBoxes) || spoiled < 0)
                 nBoxes = 0;
+            if (!double.TryParse(acceptedSackWeightTxt_st2.Text, out double acceptedSackWeight) || acceptedSackWeight < 0)
+                acceptedSackWeight = 0;
             double boxWeights = nBoxes * singleBoxWeight;
             // Calculate total
-            double totalDeductions = watered + rejected + matured + spoiled + boxWeights;
+            double totalDeductions = watered + rejected + matured + spoiled + boxWeights + acceptedSackWeight;
 
             //choose deduction type between green leaves or golden leaves based on total
             //if normal weight doesn't exceeds total deduction(no need to update golden leaf weights)
@@ -1144,7 +1217,7 @@ namespace WeightMaster
                 blueText2.Text = currentTotalDeduction_st2.ToString();
             }
 
-            //this logic is used with number of sacks textbox being disable and stuff
+            //this logic is used with number of sacks textbox being disable and stuff(unnecessary for station2)
 /*            if (nBoxesTxt_st2.IsFocused)
             {
                 if (!string.IsNullOrWhiteSpace(nBoxesTxt_st2.Text))
@@ -1194,25 +1267,25 @@ namespace WeightMaster
             }
         }
 
-        //private void SacksWeightDeduction_st1_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        //{
-        //    // Block non-digit characters
-        //    if (!char.IsDigit(e.Text, 0) || !nSacksTxt_st1.Text.Equals(""))
-        //    {
-        //        e.Handled = true;
-        //        return;
-        //    }
-        //    //Get the proposed new text(current text + new input)
-        //    var textBox = (TextBox)sender;
-        //    string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength) + e.Text;
+        private void SacksWeightDeduction_st2_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Block non-digit characters
+            if (!char.IsDigit(e.Text, 0))
+            {
+                e.Handled = true;
+                return;
+            }
+            //Get the proposed new text(current text + new input)
+            var textBox = (TextBox)sender;
+            string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength) + e.Text;
 
-        //    //Check if the proposed text is a valid integer and THE TOTAL BOX WIEGHT(num of boxes* single box weight) doesn't exceeds total weight
-        //    if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1)
-        //    {
-        //        e.Handled = true; // Block the input
-        //        MessageBox.Show((inputNumber * singleBoxWeight).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
-        //    }
-        //}
+            //Check if the proposed text is a valid integer and doesn't exceeds total weight
+            if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
+            {
+                e.Handled = true; // Block the input
+                MessageBox.Show((inputNumber * singleBoxWeight).ToString() + " Deduction Error: This sacks weight exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
+            }
+        }
 
 
         private int _currentTurn_st2 = 1;
@@ -1463,6 +1536,23 @@ namespace WeightMaster
             {
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
             }
+
+            var transactions = await _consoleHandler.GetTransactionData();
+
+            // Loop through each transaction and print details to the debug console
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                var transaction = transactions[i];
+                System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                System.Diagnostics.Debug.WriteLine($"Linename: {transaction.linename}");
+                System.Diagnostics.Debug.WriteLine($"Transport Agent: {transaction.transportagent}");
+                System.Diagnostics.Debug.WriteLine($"Company: {transaction.company}");
+                System.Diagnostics.Debug.WriteLine($"Bag Count: {transaction.bag_count}");
+                System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.total_leaf_weight}");
+                System.Diagnostics.Debug.WriteLine("------------------------------");
+            }
+
+            System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
         }
         //else 
         //{

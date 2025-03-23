@@ -26,20 +26,42 @@ namespace WeightMaster.Interfaces
             InitializeComponent();
             _mainWindow = mainWindow;
             DataContext = this; // Optional: Set DataContext for binding
-            //_mainWindow.PropertyChanged += MainWindow_PropertyChanged; // Listen for changes
+                                //_mainWindow.PropertyChanged += MainWindow_PropertyChanged; // Listen for changes
+                                // Start a background task to repeatedly update the value
+            Task.Run(() =>
+            {
+                while (true) // You can replace this with a more controlled loop if needed
+                {
+                    // Dispatch the UI update to the main thread
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (_mainWindow.Station1Frame.IsVisible) {
+                            acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st1.Text;
+                        }
+                        else if (_mainWindow.Station2Frame.IsVisible) 
+                        {
+                            acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st2.Text;
+                        }
+                    });
+
+                    // Pause for 1 second between updates (adjust as needed)
+                    Thread.Sleep(1000);
+                }
+            });
+
         }
 
-        private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            //if (e.PropertyName == nameof(MainWindow.YourProperty))
-            //{
-            //    // Update UI or logic here when "YourProperty" changes
-            //    Dispatcher.Invoke(() =>
-            //    {
-            //        //YourTextBox.Text = _mainWindow.YourProperty; // Example update
-            //    });
-            //}
-        }
+        //private void MainWindow_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        //{
+        //    //if (e.PropertyName == nameof(MainWindow.YourProperty))
+        //    //{
+        //    //    // Update UI or logic here when "YourProperty" changes
+        //    //    Dispatcher.Invoke(() =>
+        //    //    {
+        //    //        //YourTextBox.Text = _mainWindow.YourProperty; // Example update
+        //    //    });
+        //    //}
+        //}
 
         private void exit(object sender, RoutedEventArgs e)
         {
