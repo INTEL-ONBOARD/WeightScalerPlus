@@ -38,5 +38,6 @@ namespace WeightMaster.Models
 
         public int final_green_leaf_count { get; set; }
         public int final_gold_leaf_count { get; set; }
+
     }
 }
