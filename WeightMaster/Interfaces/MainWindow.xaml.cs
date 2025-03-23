@@ -179,7 +179,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    //await _consoleHandler.verifyMemberDb();
+                    await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -1050,30 +1050,33 @@ namespace WeightMaster
 
             var newTransaction = new TransactionLogBlockModel
             {
-                linename = "ලංකාගම",
-                transportagent = "ජේ.පී දිල්මා දිල්හානි",
+                linename = lineNameCmb_st1.SelectedValue.ToString(),
+                transportagent = lineMasterNameLbl_st1.Text,
                 company = "නව ඇලන්වැලි තේ කම්හල",
-                leaf_weight_officer = "greenleaf null",
-                superviosr = "Administrator",
-                barcode_details = "001",
-                name_with_initials = "කේ.එ.ගුණපාල",
-                phone_number = "0712345678",
-                date = "2025-03-21",
+                leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                superviosr = supervisorCmb_st1.SelectedValue.ToString(),
+                barcode_details = barcodeTxt_st1.Text,
+                name_with_initials = customerNameTxt_st1.Text,
+                phone_number = "123-456-7890",
+                date = DateTime.Now.ToString("yyyy-MM-dd"), // Assuming you want the date in "YYYY-MM-DD" format
 
-                box_count = 3,
-                bag_count = 0,
-                real_value = 4.19999980926513,
-                maximum_nomal_leaf_weight = 69,
-                total_leaf_weight = 60,
-                actual_nomal_leaf_weight = 30,
-                total_gold_leaf_weight = 30,
-                water = 1,
-                morapuwata = 1,
-                thambimata = 1,
-                reject = 1,
-                box_weight = 3,
-                final_green_leaf_count = 23,
-                final_gold_leaf_count = 30
+                box_count = finalNBoxes_st1,
+                bag_count = finalNSacks_st1,
+                real_value = finalWeightScalerWeight_st1,
+
+                maximum_nomal_leaf_weight = 90,
+                total_leaf_weight = finalAcceptedLeafWeight_st1,
+                actual_nomal_leaf_weight = finalNormalLeafWeight_st1,
+                total_gold_leaf_weight = finalGoldenLeafWeight_st1,
+
+                water = finalWateredWeight_st1,
+                morapuwata = finalMaturedWeight_st1,
+                thambimata = finalSpoiledWeight_st1,
+                reject = finalRejectedWeight_st1,
+                box_weight = finalNBoxes_st1 * (int)singleBoxWeight,
+
+                final_green_leaf_count = finalAvailableNormalLeafWeight_st1,
+                final_gold_leaf_count = finalAvailableGoldenLeafWeight_st1
             };
 
             System.Diagnostics.Debug.WriteLine(newTransaction);
