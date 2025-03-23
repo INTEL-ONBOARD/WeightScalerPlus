@@ -176,17 +176,23 @@ namespace WeightMaster.Services
                         if (data != null)
                         {
                             System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
-                             window.weightScalerValTxt_st1.Text = data.Value;
+                             window.weightScalerValTxt_st1.Text = data.Value.ToUpper().Replace("KG", "").Trim();
+                             window.weightScalerValTxt_st2.Text = data.Value.ToUpper().Replace("KG", "").Trim();
 
                             if (data.Stable.Equals("true"))
                             {
                                 window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Green);
                                 window.weightScalerStatus_st1.Text = "සමබරයි";
+                                window.weightScalerStatus_st2.Foreground = new SolidColorBrush(Colors.Green);
+                                window.weightScalerStatus_st2.Text = "සමබරයි";
+
                             }
                             else
                             {
                                 window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Red);
                                 window.weightScalerStatus_st1.Text = "අසමබරයි";
+                                window.weightScalerStatus_st2.Foreground = new SolidColorBrush(Colors.Red);
+                                window.weightScalerStatus_st2.Text = "අසමබරයි";
                             }
                         }
                         else

@@ -98,7 +98,7 @@
                                         <Grid>
                                             <!-- Green Ellipse -->
                                             <Canvas VerticalAlignment="Center" HorizontalAlignment="Left" Height="124" Width="140" Margin="34,0,0,0">
-                                                <Ellipse Width="128" Height="128" Fill="#2ECC71" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                                                <Ellipse x:Name="OutColor" Width="128" Height="128" Fill="#2ECC71" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                                 <Ellipse Width="84" Height="84" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="22" Canvas.Top="23"/>
                                             </Canvas>
                                             <TextBlock FontSize="80" FontWeight="Bold" Text="0.0" Margin="218,64,11,90"/>
