@@ -162,6 +162,16 @@ namespace WeightMaster.Services
                 .Where(t => t.bag_count > 0)
                 .ToListAsync();
         }
+        public async Task<TransactionLogBlockModel> GetTransactionByBarcodeAndDateAsync(string barcodeDetails)
+        {
+            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+            return await _context.transactionData
+                .Where(t => t.bag_count > 0 && t.barcode_details == barcodeDetails && t.date == todayDate)
+                .FirstOrDefaultAsync();
+        }
+
+
 
     }
 }

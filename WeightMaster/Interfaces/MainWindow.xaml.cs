@@ -1566,6 +1566,12 @@ namespace WeightMaster
 
 
             //this goes to the finish
+
+
+        }
+
+        private  async void confirmAll_rounds_st2_Click(object sender, RoutedEventArgs e)
+        {
             var Finaltransaction = new FinalTransactionBlockModel
             {
                 linename = "ලංකාගම",
@@ -1599,10 +1605,32 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ *************** ]::::::::::::::::::::");
             }
 
-        }
 
-        private void confirmAll_rounds_st2_Click(object sender, RoutedEventArgs e)
-        {
+
+            var transactionData = await _consoleHandler.GetTransactionData("001");
+
+            // Print the details in the debug console
+            if (transactionData != null)
+            {
+                System.Diagnostics.Debug.WriteLine("Transaction Data:");
+                System.Diagnostics.Debug.WriteLine($"> Line Name: {transactionData.linename}");
+                System.Diagnostics.Debug.WriteLine($"> Transport Agent: {transactionData.transportagent}");
+                System.Diagnostics.Debug.WriteLine($"> Company: {transactionData.company}");
+                System.Diagnostics.Debug.WriteLine($"> Leaf Weight Officer: {transactionData.leaf_weight_officer}");
+                System.Diagnostics.Debug.WriteLine($"> Supervisor: {transactionData.superviosr}");
+                System.Diagnostics.Debug.WriteLine($"> Barcode Details: {transactionData.barcode_details}");
+                System.Diagnostics.Debug.WriteLine($"> Name with Initials: {transactionData.name_with_initials}");
+                System.Diagnostics.Debug.WriteLine($"> Phone Number: {transactionData.phone_number}");
+                System.Diagnostics.Debug.WriteLine($"> Date: {transactionData.date}");
+                System.Diagnostics.Debug.WriteLine($"> Bag Count: {transactionData.bag_count}");
+                System.Diagnostics.Debug.WriteLine($"> Total Leaf Weight: {transactionData.total_leaf_weight}");
+                // Add more fields as needed
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("No transaction data found.");
+            }
+
 
         }
     }
