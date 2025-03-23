@@ -192,7 +192,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    //await _consoleHandler.verifyMemberDb();
+                    await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -1346,9 +1346,8 @@ namespace WeightMaster
 
         private async void finishButton_st1_Click(object sender, RoutedEventArgs e)
         {
-            // Call the service to add the transaction(if at least one record was present)
-            //if (finalAcceptedLeafWeight_st1 != 0)
-            //{
+
+
             var newTransaction = new TransactionLogBlockModel
             {
                 linename = lineNameCmb_st1.SelectedValue.ToString(),
@@ -1380,67 +1379,7 @@ namespace WeightMaster
                 final_gold_leaf_count = finalAvailableGoldenLeafWeight_st1
             };
 
-            //var newTransaction = new TransactionLogBlockModel
-            //{
-            //    linename = lineNameCmb_st1.SelectedValue.ToString(),
-            //    transportagent = lineMasterNameLbl_st1.Text,
-            //    company = "නව ඇලන්වැලි තේ කම්හල",
-            //    leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
-            //    superviosr = supervisorCmb_st1.SelectedValue.ToString(),
-            //    barcode_details = barcodeTxt_st1.Text,
-            //    name_with_initials = customerNameTxt_st1.Text,
-            //    phone_number = "123-456-7890",
-            //    date = DateTime.Now.ToString("yyyy-MM-dd"), // Assuming you want the date in "YYYY-MM-DD" format
-
-            //    box_count = 20,
-            //    bag_count = 20,
-            //    real_value = 30,
-
-            //    maximum_nomal_leaf_weight = 90,
-            //    total_leaf_weight = 30,
-            //    actual_nomal_leaf_weight = 30,
-            //    total_gold_leaf_weight = 30,
-
-            //    water = 30,
-            //    morapuwata = 30,
-            //    thambimata = 30,
-            //    reject = 30,
-            //    box_weight = 30,
-
-            //    final_green_leaf_count = 30,
-            //    final_gold_leaf_count = 30
-            //};
-
-            //var newTransaction = new TransactionLogBlockModel
-            //{
-            //    linename = "ලංකාගම",
-            //    transportagent = "ජේ.පී දිල්මා දිල්හානි",
-            //    company = "නව ඇලන්වැලි තේ කම්හල",
-            //    leaf_weight_officer = "greenleaf null",
-            //    superviosr = "Administrator",
-            //    barcode_details = "001",
-            //    name_with_initials = "කේ.එ.ගුණපාල",
-            //    phone_number = "0712345678",
-            //    date = "2025-03-21",
-
-            //    box_count = 3,
-            //    bag_count = 0,
-            //    real_value = 4.19999980926513,
-            //    maximum_nomal_leaf_weight = 69,
-            //    total_leaf_weight = 60,
-            //    actual_nomal_leaf_weight = 30,
-            //    total_gold_leaf_weight = 30,
-            //    water = 1,
-            //    morapuwata = 1,
-            //    thambimata = 1,
-            //    reject = 1,
-            //    box_weight = 3,
-            //    final_green_leaf_count = 23,
-            //    final_gold_leaf_count = 30
-            //};
-
-
-            //System.Diagnostics.Debug.WriteLine(newTransaction.ToString());
+            System.Diagnostics.Debug.WriteLine(newTransaction);
             // Call the service to add the transaction
             bool _isok = await _consoleHandler.AddTransactionAsync(newTransaction);
 
@@ -1492,7 +1431,17 @@ namespace WeightMaster
         //        );
         //}
 
-        //}
+            bool _isoks= await _consoleHandler.verifyTransactionsCloudCheck();
+            if (_isoks)
+            {
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+            }
+
+        }
     }
 }
 

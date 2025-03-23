@@ -117,5 +117,50 @@ namespace WeightMaster.Services
                 .OrderByDescending(r => r.LastUpdated)
                 .FirstOrDefaultAsync(); // Fetch the row with the most recent LastUpdated time
         }
+
+        // 1. Get the count of rows where Status is 0
+        // 1. Get the count of rows where Status is false
+        public async Task<int> GetCountOfStatusFalseAsync()
+        {
+            return await _context.RunLog.CountAsync(runLog => runLog.Status == false);
+        }
+
+        // 2. Get the latest RunLog record where Status is 0
+        // 2. Get the latest RunLog record where Status is false
+        public async Task<RunLog> GetLatestRunLogWithStatusFalseAsync()
+        {
+            // Count how many rows match the condition
+            var count = await _context.RunLog
+                .Where(runLog => runLog.Status == false)
+                .CountAsync();
+
+            // Log the count value (you can replace this with your preferred logging mechanism)
+            Console.WriteLine($"Number of RunLogs with Status = false: {count}");
+
+            // After logging, proceed to fetch the first result as usual
+            var latestRunLog = await _context.RunLog
+                .Where(runLog => runLog.Status == false)
+                .OrderByDescending(runLog => runLog.Date)
+                .FirstOrDefaultAsync();
+
+            return latestRunLog;
+
+
+        }
+
+
+        // 3. Update the Status of the passed RunLog to true
+        public async Task UpdateRunLogStatusToTrueAsync(RunLog runLog)
+        {
+            var existingRunLog = await GetRunLogByIdAsync(runLog.Id); // Assuming you're identifying by Id
+
+            if (existingRunLog != null)
+            {
+                existingRunLog.Status = true; // Set the status to true
+                await _context.SaveChangesAsync(); // Save changes to the database
+            }
+        }
+
+
     }
 }
