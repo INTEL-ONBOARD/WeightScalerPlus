@@ -38,9 +38,10 @@ namespace WeightMaster
 
         private int _enterPressCount = 0; // Tracks the number of Enter presses
 
+        private bool jumped = true;
         //public int nSacks_st1 = 0;
         //public int nBoxes_st1 = 0;
-        private double singleBoxWeight = 3;
+        private double singleBoxWeight = 3.5;
 
 
         // Global integer for the total leaf weight(floor value)
@@ -775,9 +776,9 @@ namespace WeightMaster
                 matured = 0;
             if (!double.TryParse(spoiledTxt_st1.Text, out double spoiled) || spoiled < 0)
                 spoiled = 0;
-            if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || spoiled < 0)
+            if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
                 nBoxes = 0;
-            double boxWeights = nBoxes * singleBoxWeight;
+            double boxWeights = Math.Ceiling(nBoxes * singleBoxWeight);
             // Calculate total
             double totalDeductions = watered + rejected + matured + spoiled + boxWeights;
 
@@ -884,10 +885,10 @@ namespace WeightMaster
             string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength) + e.Text;
 
             //Check if the proposed text is a valid integer and THE TOTAL BOX WIEGHT(num of boxes* single box weight) doesn't exceeds total weight
-            if (int.TryParse(proposedText, out int inputNumber) && (inputNumber * singleBoxWeight) > currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1)
+            if (int.TryParse(proposedText, out int inputNumber) && (Math.Ceiling(inputNumber * singleBoxWeight)) > currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1)
             {
                 e.Handled = true; // Block the input
-                MessageBox.Show((inputNumber * singleBoxWeight).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
+                MessageBox.Show((Math.Ceiling(inputNumber * singleBoxWeight)).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
             }
         }
 
@@ -1022,6 +1023,10 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(request + ": " + memberName);
                 customerNameTxt_st2.Text = memberName;
 
+                currentAcceptedLeafWeight_st2 = 82;
+                currentNormalLeafWeight_st2 = 68;
+                currentGoldenLeafWeight_st2 = 10;
+                currentTotalDeduction_st2 = 4;
                 //load and populate additional data like previous leaf data, box data like stuff
                 //tbd for transport route & agent
                 lineMasterNameLbl_st2.Text = "john doe hmm";
@@ -1031,18 +1036,18 @@ namespace WeightMaster
                 nBoxesTxt_st2.Text = "5";
 
                 //update the current values
-                acceptedLeafWeightTxt_st2.Text = "82";
-                currentAcceptedLeafWeight_st2 = 82;
-                normalLeafWeightTxt_st2.Text = "68";
-                currentNormalLeafWeight_st2 = 68;
-                goldenLeafWeightTxt_st2.Text = "10";
-                currentGoldenLeafWeight_st2 = 10;
-
+                
                 maturedTxt_st2.Text = "1";
                 wateredTxt_st2.Text = "1";
                 spoiledTxt_st2.Text = "1";
-                rejectedTxt_st2.Text = "2";
-                currentTotalDeduction_st2 = 5;
+                rejectedTxt_st2.Text = "1";
+
+                acceptedLeafWeightTxt_st2.Text = "82";
+                normalLeafWeightTxt_st2.Text = "68";
+                goldenLeafWeightTxt_st2.Text = "10";
+
+
+
                 //.Text = "";
                 //.Text = "";
                 //public int currentAcceptedLeafWeight_st2 = 82;
@@ -1050,7 +1055,7 @@ namespace WeightMaster
                 //private double currentNormalLeafWeight_st2 = 0;
 
                 //public double currentTotalDeduction_st2 = 0;
-    }
+            }
             else
             {
                 //show red line
@@ -1189,13 +1194,13 @@ namespace WeightMaster
                 matured = 0;
             if (!double.TryParse(spoiledTxt_st2.Text, out double spoiled) || spoiled < 0)
                 spoiled = 0;
-            if (!double.TryParse(nBoxesTxt_st2.Text, out double nBoxes) || spoiled < 0)
-                nBoxes = 0;
+            //if (!double.TryParse(nBoxesTxt_st2.Text, out double nBoxes) || spoiled < 0)
+            //    nBoxes = 0;
             if (!double.TryParse(acceptedSackWeightTxt_st2.Text, out double acceptedSackWeight) || acceptedSackWeight < 0)
                 acceptedSackWeight = 0;
-            double boxWeights = nBoxes * singleBoxWeight;
+            //double boxWeights = nBoxes * singleBoxWeight;
             // Calculate total
-            double totalDeductions = watered + rejected + matured + spoiled + boxWeights + acceptedSackWeight;
+            double totalDeductions = watered + rejected + matured + spoiled + acceptedSackWeight;
 
             //choose deduction type between green leaves or golden leaves based on total
             //if normal weight doesn't exceeds total deduction(no need to update golden leaf weights)
@@ -1285,7 +1290,7 @@ namespace WeightMaster
             if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
             {
                 e.Handled = true; // Block the input
-                MessageBox.Show((inputNumber * singleBoxWeight).ToString() + " Deduction Error: This sacks weight exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
+                MessageBox.Show(inputNumber.ToString() + " Deduction Error: This sacks weight exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
             }
         }
 
@@ -1482,7 +1487,7 @@ namespace WeightMaster
                 morapuwata = finalMaturedWeight_st1,
                 thambimata = finalSpoiledWeight_st1,
                 reject = finalRejectedWeight_st1,
-                box_weight = finalNBoxes_st1 * (int)singleBoxWeight,
+                box_weight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
 
                 final_green_leaf_count = finalAvailableNormalLeafWeight_st1,
                 final_gold_leaf_count = finalAvailableGoldenLeafWeight_st1
