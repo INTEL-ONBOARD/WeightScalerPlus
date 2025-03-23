@@ -1114,6 +1114,23 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
             }
 
+            var transactions = await _consoleHandler.GetTransactionData();
+
+            // Loop through each transaction and print details to the debug console
+            for (int i = 0; i < transactions.Count; i++)
+            {
+                var transaction = transactions[i];
+                System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                System.Diagnostics.Debug.WriteLine($"Linename: {transaction.linename}");
+                System.Diagnostics.Debug.WriteLine($"Transport Agent: {transaction.transportagent}");
+                System.Diagnostics.Debug.WriteLine($"Company: {transaction.company}");
+                System.Diagnostics.Debug.WriteLine($"Bag Count: {transaction.bag_count}");
+                System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.total_leaf_weight}");
+                System.Diagnostics.Debug.WriteLine("------------------------------");
+            }
+
+            System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
+
         }
     }
 }
