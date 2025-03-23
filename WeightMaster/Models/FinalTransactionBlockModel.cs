@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-
 namespace WeightMaster.Models
 {
     public class FinalTransactionBlockModel
@@ -14,27 +13,28 @@ namespace WeightMaster.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public string? LineName { get; set; }
-        public string? TransportAgent { get; set; }
-        public string? Company { get; set; }
-        public string? LeafWeightOfficer { get; set; }
-        public string? Supervisor { get; set; }
-        public string? BarcodeDetails { get; set; }
-        public string? NameWithInitials { get; set; }
-        public string? PhoneNumber { get; set; }
-        public DateTime Date { get; set; }
-        public int BagCount { get; set; }
-        public float MaximumNormalLeafWeight { get; set; }
-        public float TotalLeafWeight { get; set; }
-        public float ActualNormalLeafWeight { get; set; }
-        public float TotalGoldLeafWeight { get; set; }
-        public float Water { get; set; }
-        public float Morapuwata { get; set; }
-        public float Thambimata { get; set; }
-        public float Reject { get; set; }
-        public float BagWeight { get; set; }
-        public int FinalGreenLeafCount { get; set; }
-        public int FinalGoldLeafCount { get; set; }
-        public float RealValue { get; set; }
+
+        public string? linename { get; set; }
+        public string? transportagent { get; set; }
+        public string? company { get; set; }
+        public string? leaf_weight_officer { get; set; }
+        public string? superviosr { get; set; }
+        public string? barcode_details { get; set; }
+        public string? name_with_initials { get; set; }
+        public string? phone_number { get; set; }
+        public string? date { get; set; }
+        public int bag_count { get; set; }
+        public int maximum_nomal_leaf_weight { get; set; }
+        public int total_leaf_weight { get; set; }
+        public int actual_nomal_leaf_weight { get; set; }
+        public int total_gold_leaf_weight { get; set; }
+        public int water { get; set; }
+        public int morapuwata { get; set; }
+        public int thambimata { get; set; }
+        public int reject { get; set; }
+        public int bag_weight { get; set; }
+        public int final_green_leaf_count { get; set; }
+        public int final_gold_leaf_count { get; set; }
+        public float real_value { get; set; }
     }
 }
