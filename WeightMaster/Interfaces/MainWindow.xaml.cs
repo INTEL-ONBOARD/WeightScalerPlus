@@ -1537,6 +1537,7 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
             }
 
+
             var transactions = await _consoleHandler.GetTransactionData();
 
             // Loop through each transaction and print details to the debug console
@@ -1553,6 +1554,46 @@ namespace WeightMaster
             }
 
             System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
+
+
+
+
+
+            var Finaltransaction = new FinalTransactionBlockModel
+            {
+                linename = "ලංකාගම",
+                transportagent = "ජේ.පී දිල්මා දිල්හානි",
+                company = "නව ඇලන්වැලි තේ කම්හල",
+                leaf_weight_officer = "greenleaf null",
+                superviosr = "Administrator",
+                barcode_details = "002",
+                name_with_initials = "කේ.එ.ගුණපාල",
+                phone_number = "0712345678",
+                date = "2025-02-06",
+                bag_count = 3,
+                maximum_nomal_leaf_weight = 69,
+                total_leaf_weight = 60,
+                actual_nomal_leaf_weight = 30,
+                total_gold_leaf_weight = 30,
+                water = 1,
+                morapuwata = 1,
+                thambimata = 1,
+                reject = 1,
+                bag_weight = 3,
+                final_green_leaf_count = 23,
+                final_gold_leaf_count = 30,
+                real_value = 20
+            };
+
+            bool _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+
+            if (_isdone)
+            {
+                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ ***************]::::::::::::");
+
+            }
+
+
         }
         //else 
         //{

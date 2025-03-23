@@ -94,7 +94,10 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionData();
         }
-
+        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction)
+        {
+            return await _engine.SetFinalTransactionAsync(newTransaction);
+        }
 
     }
 }

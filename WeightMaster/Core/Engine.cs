@@ -418,6 +418,85 @@ namespace WeightMaster.Core
         }
 
 
+        public async Task<bool> UpdateBagWeightCollectionAsync(FinalTransactionBlockModel finalTransactionBlockModel)
+        {
+            ApiClient apiClient = new ApiClient();
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true, // Allows case-insensitive mapping
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping // Prevents escaping Unicode characters
+            };
+
+            string url = "http://152.42.249.231:8000/api/method/update_bag_weight_collection";
+
+            try
+            {
+                // Serialize the finalTransactionBlockModel to JSON for viewing the body content
+                var jsonBodyContent = JsonSerializer.Serialize(finalTransactionBlockModel, options);
+
+                // Log the URL and the body content in the debug console
+                System.Diagnostics.Debug.WriteLine($"> URL: {url}");
+                System.Diagnostics.Debug.WriteLine($"> Body: {jsonBodyContent}");
+
+                // Send finalTransactionBlockModel as the body of the POST request
+                var apiResponse = await apiClient.PostAsync<object>(url, finalTransactionBlockModel);
+
+                // If we reach this point, the status code is 2xx, return true
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
+                return false; // Return false if the request failed (status code 4xx or 5xx)
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model)
+        {
+            try
+            {
+                // var transactionService = new TransactionService(new AppDbContext());
+                // bool data = await transactionService.AddTransactionAsync(model);
+                // System.Diagnostics.Debug.WriteLine(":::::" + data);
+
+                var runService = new RunService(new AppDbContext());
+                RunLog runLogs = new RunLog
+                {
+                    Status = true, // Set the status as true (or false)
+                    Date = DateTime.UtcNow, // Set the current date and time
+                    Transaction = null, // No need to set Transaction here for FinalTransactionBlockModel
+                    FinalTransaction = model, // Set the FinalTransaction to the model
+                    LastUpdated = DateTime.UtcNow // Set the last updated time to now
+                };
+                await runService.AddRunLogAsync(runLogs);
+
+                // Call UpdateBagWeightCollectionAsync method
+                bool result = await UpdateBagWeightCollectionAsync(model);
+                if (result)
+                {
+                    return true;
+                }
+                else
+                {
+                    RunLog log = await runService.GetMostRecentRunLogAsync();
+                    log.Status = false;
+                    await runService.UpdateRunLogAsync(log);
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                // await DumpMemberInformation();
+                return false;
+            }
+        }
+
 
     }
 }
