@@ -399,6 +399,23 @@ namespace WeightMaster.Core
         }
 
 
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData()
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.GetTransactionsWithBagCountGreaterThanZeroAsync();
+
+                System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
 
 
 
