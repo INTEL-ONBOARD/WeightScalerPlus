@@ -94,6 +94,11 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionData();
         }
+        //return a songle transaction data from the station 2 data using member code , barcode
+        public async Task<TransactionLogBlockModel> GetTransactionData(string barcode)
+        {
+            return await _engine.GetFilteredTransactionData(barcode);
+        }
         public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction)
         {
             return await _engine.SetFinalTransactionAsync(newTransaction);
