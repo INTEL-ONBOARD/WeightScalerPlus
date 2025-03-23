@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.Extensions.Options;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -349,6 +351,45 @@ namespace WeightMaster.Core
             {
                 System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
                 return false; // Return false if the request failed (status code 4xx or 5xx)
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Error: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> verifyTransactionsCloud()
+        {
+
+            try
+            {
+                var runService = new RunService(new AppDbContext());
+                int falseCount = await runService.GetCountOfStatusFalseAsync();
+                System.Diagnostics.Debug.WriteLine("count >>> "+ falseCount);
+
+                while ( falseCount > 0) {
+                        RunLog que = await runService.GetLatestRunLogWithStatusFalseAsync();
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ run for "+ que.TransactionId+" : cache validating ]::::::::::::");
+
+                    var transService = new TransactionService(new AppDbContext());
+                    TransactionLogBlockModel model = await transService.GetTransactionByIdAsync (que.TransactionId.Value);
+                    
+                        bool result = await UpdateGreenLeafCollectionAsync(model);
+                        if (result)
+                        {
+                            await runService.UpdateRunLogStatusToTrueAsync(que);
+                            
+                        }
+                        else
+                        {
+                            RunLog runlog = await runService.GetMostRecentRunLogAsync();
+                            runlog.Status = false;
+                            await runService.UpdateRunLogAsync(runlog);
+                            return false;
+                        }
+                    }
+                return true;
             }
             catch (Exception ex)
             {

@@ -78,10 +78,18 @@ namespace WeightMaster.Services
         {
             return await _engine.getMemberNumberId(id);
         }
+        //set and update the local and cloud database with the finish button process
 
-        internal async Task<bool> AddTransactionAsync(TransactionLogBlockModel newTransaction)
+        public async Task<bool> AddTransactionAsync(TransactionLogBlockModel newTransaction)
         {
             return await _engine.setTransaction(newTransaction); 
         }
+        //method to check and verify the local database get synced with the cloud database
+
+        public async Task<bool> verifyTransactionsCloudCheck()
+        {
+            return await _engine.verifyTransactionsCloud();
+        }
+
     }
 }
