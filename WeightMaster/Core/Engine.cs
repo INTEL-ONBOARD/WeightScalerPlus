@@ -417,6 +417,7 @@ namespace WeightMaster.Core
             }
         }
 
+
         public async Task<bool> UpdateBagWeightCollectionAsync(FinalTransactionBlockModel finalTransactionBlockModel)
         {
             ApiClient apiClient = new ApiClient();
@@ -495,7 +496,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
 
 
     }

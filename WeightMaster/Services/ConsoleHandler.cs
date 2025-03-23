@@ -98,5 +98,6 @@ namespace WeightMaster.Services
         {
             return await _engine.SetFinalTransactionAsync(newTransaction);
         }
+
     }
 }
