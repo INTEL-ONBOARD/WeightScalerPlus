@@ -188,73 +188,73 @@ namespace WeightMaster.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("ActualNormalLeafWeight")
+                    b.Property<int>("actual_nomal_leaf_weight")
                         .HasColumnType("int");
 
-                    b.Property<int>("BagCount")
+                    b.Property<int>("bag_count")
                         .HasColumnType("int");
 
-                    b.Property<string>("BarcodeDetails")
+                    b.Property<string>("barcode_details")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("BoxCount")
+                    b.Property<int>("box_count")
                         .HasColumnType("int");
 
-                    b.Property<int>("BoxWeight")
+                    b.Property<int>("box_weight")
                         .HasColumnType("int");
 
-                    b.Property<string>("Company")
+                    b.Property<string>("company")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Date")
+                    b.Property<string>("date")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("FinalGoldLeafCount")
+                    b.Property<int>("final_gold_leaf_count")
                         .HasColumnType("int");
 
-                    b.Property<int>("FinalGreenLeafCount")
+                    b.Property<int>("final_green_leaf_count")
                         .HasColumnType("int");
 
-                    b.Property<string>("LeafWeightOfficer")
+                    b.Property<string>("leaf_weight_officer")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("LineName")
+                    b.Property<string>("linename")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("MaximumNormalLeafWeight")
+                    b.Property<int>("maximum_nomal_leaf_weight")
                         .HasColumnType("int");
 
-                    b.Property<int>("Morapuwata")
+                    b.Property<int>("morapuwata")
                         .HasColumnType("int");
 
-                    b.Property<string>("NameWithInitials")
+                    b.Property<string>("name_with_initials")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("phone_number")
                         .HasColumnType("longtext");
 
-                    b.Property<double>("RealValue")
+                    b.Property<double>("real_value")
                         .HasColumnType("double");
 
-                    b.Property<int>("Reject")
+                    b.Property<int>("reject")
                         .HasColumnType("int");
 
-                    b.Property<string>("Supervisor")
+                    b.Property<string>("superviosr")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Thambimata")
+                    b.Property<int>("thambimata")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalGoldLeafWeight")
+                    b.Property<int>("total_gold_leaf_weight")
                         .HasColumnType("int");
 
-                    b.Property<int>("TotalLeafWeight")
+                    b.Property<int>("total_leaf_weight")
                         .HasColumnType("int");
 
-                    b.Property<string>("TransportAgent")
+                    b.Property<string>("transportagent")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("Water")
+                    b.Property<int>("water")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
