@@ -1157,8 +1157,8 @@
                             </Border>
                         </Button>
 
-                        <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}">
+                        <!--finish button-->
+                        <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}" Click="confirmAll_rounds_st2_Click">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="232">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="FINISH" Foreground="White" FontSize="12" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>

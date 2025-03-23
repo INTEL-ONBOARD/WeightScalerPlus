@@ -1595,6 +1595,11 @@ namespace WeightMaster
             }
 
         }
+
+        private void confirmAll_rounds_st2_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
 
