@@ -192,7 +192,7 @@
                                         <!-- White Ellipse -->
                                         <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>
                                         <!-- Button Text -->
-                                        <TextBlock Text="වේදිකාව-1" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
+                                        <TextBlock Text="දළු කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -214,7 +214,7 @@
                                         <!-- White Ellipse -->
                                         <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>
                                         <!-- Button Text -->
-                                        <TextBlock Text="වේදිකාව-2" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
+                                        <TextBlock Text="ගෝනි කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
                                     </StackPanel>
                                 </Border>
                                 <ControlTemplate.Triggers>
@@ -784,7 +784,7 @@
                         <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
-                            <TextBlock x:Name="weightScalerValTxt_st2" VerticalAlignment="Bottom" Text="35.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBlock x:Name="weightScalerValTxt_st2" VerticalAlignment="Bottom" Text="4.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBlock x:Name="weightScalerStatus_st2" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
@@ -910,7 +910,7 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="පිලිගත් දළු බර(KG)" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
                             <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="acceptedLeafWeightTxt_st2" IsReadOnly="True" Text="82" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                <TextBox x:Name="acceptedLeafWeightTxt_st2" IsReadOnly="True" Text="" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             </Border>
                         </Grid>
                         <Grid Margin="208,313,234,323" >
