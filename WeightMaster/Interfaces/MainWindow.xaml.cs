@@ -146,7 +146,7 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            //StartupTheAppAsync();
+            StartupTheAppAsync();
         }
 
         //used to startup the app with database verifications and closing & opening windows
@@ -219,7 +219,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb();
+                    //await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -268,7 +268,11 @@ namespace WeightMaster
 
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
-            
+
+            runtimeService.ExecuteRunExe();
+            runtimeService.StartFileWatcher(); // Start watching the file
+            runtimeService.StartTimer();
+
         }
 
         private void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -676,6 +680,7 @@ namespace WeightMaster
                 customerWindow.Close();
             }
             //hmm you need either to clear all textboxes or restart the app.
+            runtimeService.KillRunExe();
             StartupTheAppAsync();
         }
 

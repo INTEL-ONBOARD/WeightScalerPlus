@@ -35,12 +35,21 @@ namespace WeightMaster.Interfaces
                     // Dispatch the UI update to the main thread
                     Dispatcher.Invoke(() =>
                     {
-                        if (_mainWindow.Station1Frame.IsVisible) {
+                        if (_mainWindow.Station1Frame.IsVisible)
+                        {
                             acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st1.Text;
+
+                            // Update color for Station 1
+                            var brushConverter = new BrushConverter();
+                            OutColor.Fill = (Brush)brushConverter.ConvertFromString("#2ECC71"); // Example: Green
                         }
-                        else if (_mainWindow.Station2Frame.IsVisible) 
+                        else if (_mainWindow.Station2Frame.IsVisible)
                         {
                             acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st2.Text;
+
+                            // Update color for Station 2
+                            var brushConverter = new BrushConverter();
+                            OutColor.Fill = (Brush)brushConverter.ConvertFromString("#E74C3C"); // Example: Red
                         }
                     });
 
@@ -48,6 +57,7 @@ namespace WeightMaster.Interfaces
                     Thread.Sleep(1000);
                 }
             });
+
 
         }
 
