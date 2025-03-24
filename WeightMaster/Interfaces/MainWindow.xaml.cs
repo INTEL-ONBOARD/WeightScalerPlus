@@ -1022,8 +1022,28 @@ namespace WeightMaster
                 int.TryParse(goldenLeafWeightTxt_st1.Text, out int finalAvailableGoldenLeafWeight);
 
                 //preparing values for the finish api command
-                lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
-                supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
+                //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
+                if (lineNameCmb_st1.SelectedValue != null)
+                {
+                    lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
+                }
+                else
+                {
+                    // Handle the case when no item is selected.
+                    // For example, assign a default value or display an error message.
+                    lineName_st1 = ""; // or any appropriate default
+                }
+                //supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
+                if (supervisorCmb_st1.SelectedValue != null)
+                {
+                    supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
+                }
+                else
+                {
+                    // Handle the case when no item is selected.
+                    // For example, assign a default value or display an error message.
+                    supervisor_st1 = ""; // or any appropriate default
+                }
 
                 finalWeightScalerWeight_st1 += finalWeightScalerValue;
                 finalAcceptedLeafWeight_st1 += finalAcceptedLeafWeight;
@@ -1420,18 +1440,49 @@ namespace WeightMaster
                 int.TryParse(goldenLeafWeightTxt_st2.Text, out int finalAvailableGoldenLeafWeight);
 
                 //preparing values for the finish api command
-                lineName_st2 = lineNameCmb_st2.SelectedValue.ToString();
+                //lineName_st2 = lineNameCmb_st2.SelectedValue.ToString();
                 //string searchLineName = lineNameCmb_st2.SelectedItem.ToString(); // replace with the line name you're searching for
                 //var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
                 //if (result != null)
                 //{
-                //    lineMasterNameLbl_st2.Text = result.LineMaster;
+                //    lineName_st2 = result.LineMaster;
                 //}
                 //else
                 //{
-                //    lineMasterNameLbl_st2.Text = "-";
+                //    lineName_st2 = "-";
                 //}
-                supervisor_st2 = supervisorCmb_st1.SelectedValue.ToString();
+                ////supervisor_st2 = supervisorCmb_st1.SelectedValue.ToString();
+                //string searchSupervisorName = supervisorCmb_st2.SelectedItem.ToString(); // replace with the line name you're searching for
+                //string result2 = supervisorData.FirstOrDefault(item => item == searchSupervisorName);
+                //if (result != null)
+                //{
+                //    lineName_st2 = result2;
+                //}
+                //else
+                //{
+                //    lineName_st2 = "-";
+                //}
+                if (lineNameCmb_st2.SelectedValue != null)
+                {
+                    lineName_st2 = lineNameCmb_st2.SelectedValue.ToString();
+                }
+                else
+                {
+                    // Handle the case when no item is selected.
+                    // For example, assign a default value or display an error message.
+                    lineName_st2 = ""; // or any appropriate default
+                }
+                //supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
+                if (supervisorCmb_st2.SelectedValue != null)
+                {
+                    supervisor_st2 = supervisorCmb_st2.SelectedValue.ToString();
+                }
+                else
+                {
+                    // Handle the case when no item is selected.
+                    // For example, assign a default value or display an error message.
+                    supervisor_st2 = ""; // or any appropriate default
+                }
 
                 finalWeightScalerWeight_st2 += finalWeightScalerValue;
                 finalAcceptedLeafWeight_st2 += finalAcceptedLeafWeight;

@@ -101,7 +101,7 @@
                                                 <Ellipse x:Name="OutColor" Width="128" Height="128" Fill="#2ECC71" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                                                 <Ellipse Width="84" Height="84" Fill="White" HorizontalAlignment="Center" VerticalAlignment="Top" Canvas.Left="22" Canvas.Top="23"/>
                                             </Canvas>
-                                            <TextBlock FontSize="80" FontWeight="Bold" Text="0.0" Margin="218,64,11,90"/>
+                                            <TextBlock x:Name="scalerWeightLbl_cust" FontSize="80" FontWeight="Bold" Text="0.0" Margin="218,64,11,90"/>
                                             <TextBlock  FontSize="26" FontWeight="SemiBold" Foreground="#888888" Text="සම්පූර්ණ බර(KG)" Margin="228,175,84,35"/>
                                         </Grid>
                                     </Border>
@@ -117,14 +117,14 @@
                                             <Border BorderBrush="#B4B4B4" BorderThickness="0,0,1,0" Width="292">
                                                 <Grid>
                                                     <Image Source="/Interfaces/sack.png" Margin="55,48,162,142" />
-                                                    <TextBlock FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="127,14,29,126"/>
+                                                    <TextBlock x:Name="nSacks_cust" FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="127,14,29,126"/>
                                                     <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="ගෝනි ගණන(n)" Margin="67,130,49,90"/>
                                                 </Grid>
                                             </Border>
                                             <Border Width="292">
                                                 <Grid>
                                                     <Image Source="/Interfaces/crate.png" Margin="57,54,166,141" />
-                                                    <TextBlock FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="134,14,22,126"/>
+                                                    <TextBlock x:Name="nBoxes_cust" FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="134,14,22,126"/>
                                                     <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="පෙට්ටි ගණන(n)" Margin="67,130,49,90"/>
                                                 </Grid>
                                             </Border>
@@ -151,15 +151,15 @@
                                                     <Border Height="180" BorderBrush="#B4B4B4" BorderThickness="0,0,0,1">
                                                         <Grid>
                                                             <Image Source="/Interfaces/customer.png" Margin="58,39,629,39"/>
-                                                            <TextBlock FontSize="48" FontWeight="Bold" Text="-" Margin="199,39,407,70"/>
-                                                            <TextBlock FontSize="32" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,345,21"/>
+                                                            <TextBlock x:Name="customer_cust" FontSize="38" FontWeight="Bold" Text="-" Margin="199,39,10,70"/>
+                                                            <TextBlock  x:Name="barcode_cust" FontSize="22" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,37,21"/>
                                                         </Grid>
                                                     </Border>
                                                     <Border Height="180">
                                                         <Grid>
                                                             <Image Source="/Interfaces/transport.png" Margin="58,39,629,39"/>
-                                                            <TextBlock FontSize="48" FontWeight="Bold" Text="-" Margin="199,39,407,70"/>
-                                                            <TextBlock FontSize="32" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,345,21"/>
+                                                            <TextBlock x:Name="route_cust" FontSize="38" FontWeight="Bold" Text="-" Margin="199,39,10,70"/>
+                                                            <TextBlock x:Name="agent_cust" FontSize="22" FontWeight="SemiBold" Foreground="#A5A5A5" Text="-" Margin="199,88,37,21"/>
                                                         </Grid>
                                                     </Border>
                                                 </StackPanel>
@@ -171,38 +171,38 @@
                                         <Grid>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,30,800,198">
                                                 <Grid>
-                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock x:Name="watered_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
                                                     <TextBlock Text="වතුරට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,112,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,30,412,198">
                                                 <Grid>
-                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock x:Name="rejected_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
                                                     <TextBlock Text="ප්‍රතික්ෂේපිත(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="106,91,67,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,30,30,198">
                                                 <Grid>
-                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock x:Name="totalBoxWeight_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
                                                     <TextBlock Text="මුළු පෙට්ටි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="106,91,47,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,205,800,23">
                                                 <Grid>
-                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock x:Name="spoiled_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" Width="58" />
                                                     <TextBlock Text="තැම්බුණු(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,69,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,205,412,23">
                                                 <Grid>
-                                                    <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
+                                                    <TextBlock x:Name="matured_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
                                                     <TextBlock Text="මෝරපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="114,91,81,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,205,30,23">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මුළු මලු බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="109,91,75,31"/>
+                                                    <TextBlock Text="මුළු ගෝනි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="109,91,75,31"/>
                                                 </Grid>
                                             </Border>
 

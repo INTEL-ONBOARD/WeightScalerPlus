@@ -312,7 +312,7 @@
                 </Grid>
             </Border>
             <!--Station1Frame-->
-            <Grid x:Name="Station1Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
@@ -849,9 +849,11 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="12" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
                             <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st2_SelectionChanged" Grid.Row="1"  >
+                                <!--
                                 <ComboBoxItem Content="Alaska"/>
                                 <ComboBoxItem Content="Boston"/>
                                 <ComboBoxItem Content="Newyork"/>
+                                -->
                             </ComboBox>
                         </Grid>
                         <!--name w. initials label-->

@@ -35,22 +35,151 @@ namespace WeightMaster.Interfaces
                     // Dispatch the UI update to the main thread
                     Dispatcher.Invoke(() =>
                     {
+
+
                         if (_mainWindow.Station1Frame.IsVisible)
                         {
-                            acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st1.Text;
+                            scalerWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st1.Text;
+                            if (_mainWindow.weightScalerStatus_st1.Text.Equals("සමබරයි"))
+                            {
+                                // Update color for Station 1
+                                var brushConverter = new BrushConverter();
+                                OutColor.Fill = (Brush)brushConverter.ConvertFromString("#2ECC71"); // Example: Green
+                            }
+                            else 
+                            {
+                                // Update color for Station 1
+                                var brushConverter = new BrushConverter();
+                                OutColor.Fill = (Brush)brushConverter.ConvertFromString("#E74C3C"); // Example: Red
+                            }
 
-                            // Update color for Station 1
-                            var brushConverter = new BrushConverter();
-                            OutColor.Fill = (Brush)brushConverter.ConvertFromString("#2ECC71"); // Example: Green
+                            acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
+                            if (_mainWindow.nSacksTxt_st1.Text.Equals(""))
+                            {
+                                nSacks_cust.Text = "0";
+                            }
+                            else 
+                            {
+                                nSacks_cust.Text = _mainWindow.nSacksTxt_st1.Text;
+                            }
+                            
+                            
+                            if (_mainWindow.nBoxesTxt_st1.Text.Equals(""))
+                            {
+                                nBoxes_cust.Text = "0";
+                            }
+                            else
+                            {
+                                nBoxes_cust.Text = _mainWindow.nBoxesTxt_st1.Text;
+                            }
+                            //deductions
+                            if (_mainWindow.wateredTxt_st1.Text.Equals(""))
+                            {
+                                watered_cust.Text = "0";
+                            }
+                            else
+                            {
+                                watered_cust.Text = _mainWindow.wateredTxt_st1.Text;
+                            }
+
+                            if (_mainWindow.spoiledTxt_st1.Text.Equals(""))
+                            {
+                                spoiled_cust.Text = "0";
+                            }
+                            else
+                            {
+                                spoiled_cust.Text = _mainWindow.spoiledTxt_st1.Text;
+                            }
+
+                            if (_mainWindow.maturedTxt_st1.Text.Equals(""))
+                            {
+                                matured_cust.Text = "0";
+                            }
+                            else
+                            {
+                                matured_cust.Text = _mainWindow.maturedTxt_st1.Text;
+                            }
+
+                            if (_mainWindow.rejectedTxt_st1.Text.Equals(""))
+                            {
+                                rejected_cust.Text = "0";
+                            }
+                            else
+                            {
+                                rejected_cust.Text = _mainWindow.rejectedTxt_st1.Text;
+                            }
+
+                            //total sack & box weights
+                            //totalBoxWeight_cust
+                            if (_mainWindow.nBoxesTxt_st1.Text.Equals(""))
+                            {
+                                totalBoxWeight_cust.Text = "0";
+                            }
+                            else
+                            {
+                                if (!double.TryParse(_mainWindow.nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
+                                    nBoxes = 0;
+
+                                double boxWeights = Math.Ceiling(nBoxes * 3.5);
+                                totalBoxWeight_cust.Text = _mainWindow.rejectedTxt_st1.Text;
+                            }
+
+                            //member deteails
+                            if (_mainWindow.barcodeTxt_st1.Text.Equals(""))
+                            {
+                                barcode_cust.Text = "-";
+                            }
+                            else
+                            {
+                                barcode_cust.Text = _mainWindow.barcodeTxt_st1.Text;
+                            }
+                            if (_mainWindow.customerNameTxt_st1.Text.Equals("") || _mainWindow.customerNameTxt_st1.Text.Equals("No name with initials found"))
+                            {
+                                customer_cust.Text = "-";
+                            }
+                            else
+                            {
+                                customer_cust.Text = _mainWindow.customerNameTxt_st1.Text;
+                            }
+
+                            if (_mainWindow.lineNameCmb_st1.SelectedValue != null)
+                            {
+                               route_cust.Text  = _mainWindow.lineNameCmb_st1.SelectedValue.ToString();
+                            }
+                            else
+                            {
+                                // Handle the case when no item is selected.
+                                // For example, assign a default value or display an error message.
+                                route_cust.Text = ""; // or any appropriate default
+                            }
+                            //
+                            if (_mainWindow.customerNameTxt_st1.Text.Equals(""))
+                            {
+                                agent_cust.Text = "-";
+                            }
+                            else
+                            {
+                                agent_cust.Text = _mainWindow.lineMasterNameLbl_st1.Text;
+                            }
+
                         }
+
+                        //station 2___________________________________________________________________________________
                         else if (_mainWindow.Station2Frame.IsVisible)
                         {
-                            acceptedWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st2.Text;
+                            scalerWeightLbl_cust.Text = _mainWindow.weightScalerValTxt_st2.Text;
 
-                            // Update color for Station 2
-                            var brushConverter = new BrushConverter();
-                            OutColor.Fill = (Brush)brushConverter.ConvertFromString("#E74C3C"); // Example: Red
+                            
                         }
+
+
+
+
+
+
+
+
+
                     });
 
                     // Pause for 1 second between updates (adjust as needed)
