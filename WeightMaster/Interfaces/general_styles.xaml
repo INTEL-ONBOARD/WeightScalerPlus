@@ -80,7 +80,7 @@
                 <ControlTemplate TargetType="TextBox">
                     <Grid>
                         <!-- Outer Border -->
-                        <Border Background="White" BorderThickness="1" BorderBrush="#E0E0E0" CornerRadius="8">
+                        <Border Background="White" BorderThickness="1" BorderBrush="#888888" CornerRadius="8">
                             <Grid>
                                 <!-- Placeholder TextBlock -->
                                 <!--
@@ -127,7 +127,7 @@
                 <ControlTemplate TargetType="PasswordBox">
                     <Border Background="White"
             BorderThickness="1"
-            BorderBrush="#E0E0E0"
+            BorderBrush="#888888"
             CornerRadius="8">
                         <ScrollViewer x:Name="PART_ContentHost" 
                     Margin="12,8"
