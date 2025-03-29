@@ -463,6 +463,45 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByLineNameAndDateAsync(string lineName)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.GetTransactionsByLineNameAndDateAsync(lineName);
+
+                System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
+
+
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.GetTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
+
+                System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} and barcode: {barcodeDetails} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName} and barcode {barcodeDetails}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
+
+
+
         public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode)
         {
             try
