@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,21 +12,20 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
 namespace WeightMaster.Interfaces.UserControls
 {
     /// <summary>
-    /// Interaction logic for Station1TableRow.xaml
+    /// Interaction logic for Station1LineTableRow.xaml
     /// </summary>
-    public partial class Station1TableRow : UserControl
+    public partial class Station1LineTableRow : UserControl
     {
-        public Station1TableRow(string roundNo, string sacksCount, string boxCount, string goldLeafWeight, string generalLeafWeight, string acceptedWeight)
+        public Station1LineTableRow(string memberNo, string sacksCount, string boxCount, string goldLeafWeight, string generalLeafWeight, string acceptedWeight)
         {
             InitializeComponent();
 
             // Assign values to the TextBoxes
-            this.roundNo.Text = roundNo;
+            this.memberNo.Text = memberNo;
             this.sacksCount.Text = sacksCount;
             this.boxCount.Text = boxCount;
             this.acceptedWeight.Text = acceptedWeight;
