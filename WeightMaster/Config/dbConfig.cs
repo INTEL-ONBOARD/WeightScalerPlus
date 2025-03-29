@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
+using System.IO;
 using WeightMaster.Models; 
 
 namespace WeightMaster.Config
 {
     public class AppDbContext : DbContext
     {
-        internal object UserBlockModels;
         public DbSet<UserBlockModel> UsersData { get; set; }
         public DbSet<UserLoginModel> UserLoginsLog { get; set; }
         public DbSet<LineMasterBlockModel> lineMasterData { get; set; }
@@ -18,42 +19,29 @@ namespace WeightMaster.Config
         {
             if (!optionsBuilder.IsConfigured)
             {
-                var connectionString = "Server=localhost;Database=weighthandlerdb;User=user;Password=password";
+                string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string configFilePath = Path.Combine(exeDirectory, "dbconfig.txt");
+
+                string connectionString = "Server=localhost;Database=weighthandlerdb;User=user;Password=password"; // Default
+
+                if (File.Exists(configFilePath))
+                {
+                    try
+                    {
+                        connectionString = File.ReadAllText(configFilePath).Trim();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error reading dbconfig.txt: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("dbconfig.txt not found. Using default connection string.");
+                }
+
                 optionsBuilder.UseMySql(connectionString, ServerVersion.Parse("8.0.25"));
             }
         }
-
     }
 }
-
-
-
-//protected override void OnModelCreating(ModelBuilder modelBuilder)
-//{
-//    base.OnModelCreating(modelBuilder);
-
-//    // Seed data for Students
-//    modelBuilder.Entity<Student>().HasData(
-//        new Student
-//        {
-//            Id = 1,
-//            Name = "John Doe",
-//            Age = 20,
-//            Email = "john.doe@example.com"
-//        },
-//        new Student
-//        {
-//            Id = 2,
-//            Name = "Jane Smith",
-//            Age = 22,
-//            Email = "jane.smith@example.com"
-//        },
-//        new Student
-//        {
-//            Id = 3,
-//            Name = "Alice Johnson",
-//            Age = 23,
-//            Email = "alice.johnson@example.com"
-//        }
-//    );
-//}
