@@ -189,6 +189,14 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        public async Task<List<TransactionLogBlockModel>> getDataForPrint()
+        {
+            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+
+            return await _context.transactionData
+                .Where(t => t.bag_count == 0 && t.date == todayDate)
+                .ToListAsync();
+        }
 
 
     }

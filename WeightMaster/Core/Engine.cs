@@ -601,5 +601,42 @@ namespace WeightMaster.Core
                 return false;
             }
         }
+
+        public async Task<List<TransactionLogBlockModel>> getPrintData_1()
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.getDataForPrint();
+
+                System.Diagnostics.Debug.WriteLine("===== Print data");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
+
+        public async Task<List<FinalTransactionBlockModel>> getPrintData_2()
+        {
+            try
+            {
+                var transactionService = new FinalTransactionService(new AppDbContext());
+                var data = await transactionService.getDataForPrint();
+
+                System.Diagnostics.Debug.WriteLine("===== Print data");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
+                return new List<FinalTransactionBlockModel>();
+            }
+        }
+
     }
 }

@@ -114,6 +114,14 @@ namespace WeightMaster.Services
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
         }
 
+        public async Task<List<TransactionLogBlockModel>> print_sta1()
+        {
+            return await _engine.getPrintData_1();
+        }
+        public async Task<List<FinalTransactionBlockModel>> print_sta2()
+        {
+            return await _engine.getPrintData_2();
+        }
 
     }
 }
