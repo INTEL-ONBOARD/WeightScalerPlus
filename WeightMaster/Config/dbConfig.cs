@@ -22,7 +22,7 @@ namespace WeightMaster.Config
                 string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 string configFilePath = Path.Combine(exeDirectory, "dbconfig.txt");
 
-                string connectionString = "Server=localhost;Database=weighthandlerdb;User=user;Password=password"; // Default
+                string connectionString = ""; // Default
 
                 if (File.Exists(configFilePath))
                 {
