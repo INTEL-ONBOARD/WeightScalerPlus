@@ -4,6 +4,8 @@
              xmlns:local="clr-namespace:WeightMaster"
              StartupUri="Interfaces/MainWindow.xaml">
     <Application.Resources>
-         
+        <Style TargetType="{x:Type Control}">
+            <Setter Property="FontFamily" Value="FMBasuru" />
+        </Style>
     </Application.Resources>
 </Application>
