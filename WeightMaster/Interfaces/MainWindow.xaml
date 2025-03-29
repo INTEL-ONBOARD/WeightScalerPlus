@@ -284,8 +284,8 @@
                         <ColumnDefinition Width="183*"/>
                     </Grid.ColumnDefinitions>
                     <Image Source="/Interfaces/teacoop_logo.png" Margin="9,17,418,25"/>
-                    <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,636,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
-                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Text="සමූපකාර තේ කම්හල" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමා  සහිත මො  රවක්කො  රළේ තේ නිපදවනන්ගේ සමුපකා ර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,636,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
+                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Text="සමූපකා ර තේ කම්හල" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="TopBarStationName" Text="දළු කිරීම" HorizontalAlignment="Right" TextAlignment="Right" Foreground="#2F4859" FontSize="26" Margin="0,58,313,27" FontWeight="Bold" Grid.Column="1" Width="216"  />
                     <userContorls:StataionDateAndTime Grid.Column="1" Margin="565,80,313,-4"/>
                     <!--Settings button (when home button is invicible)-->
