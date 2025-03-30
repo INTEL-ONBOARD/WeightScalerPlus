@@ -133,7 +133,7 @@
 
 
         <!--Login Frame-->
-        <Grid x:Name="LoginFrame" Visibility="Visible" Background="White" Margin="38,49,40,49" >
+        <Grid x:Name="LoginFrame" Visibility="Hidden" Background="White" Margin="38,49,40,49" >
             <Border Background="White" CornerRadius="20" Margin="728,36,728,38">
                 <Grid Margin="0,72,0,0">
                     <StackPanel  Margin="20,71,20,361">
@@ -275,7 +275,7 @@
         </Grid>
 
         <!--Station Main Frame-->
-        <Grid x:Name="StationMainFrame" Visibility="Hidden" Background="White" Margin="40,50,40,50" >
+        <Grid x:Name="StationMainFrame" Visibility="Visible" Background="White" Margin="40,50,40,50" >
             <!--Top bar-->
             <Border Background="#FBFBFB" Margin="10,8,10,836" CornerRadius="20">
                 <Grid>
