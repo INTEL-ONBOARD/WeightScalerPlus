@@ -211,6 +211,11 @@ namespace WeightMaster.Core
 
         public async Task DumpMemberInformation()
         {
+
+            int currentCloudCOunt = 0;
+            var service = new MemberService(new AppDbContext());
+            int memberCount = await service.GetMemberCountAsync();
+            
             ApiClient apiClient = new ApiClient();
             var options = new JsonSerializerOptions
             {
@@ -223,16 +228,9 @@ namespace WeightMaster.Core
 
             if (apiResponse != null && apiResponse.Status == "success")
             {
+                currentCloudCOunt  =  apiResponse.Data.Members.Count();
                 var memberService = new MemberService(new AppDbContext());
-                await memberService.ReplaceMembersAsync(apiResponse.Data.Members);
-
-                foreach (var member in apiResponse.Data.Members)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Name: {member.Name}");
-                    System.Diagnostics.Debug.WriteLine($"Custom Member Number: {member.CustomMemberNum}");
-                    System.Diagnostics.Debug.WriteLine($"Custom Name With Initials: {member.CustomNameWithInitials}");
-                    System.Diagnostics.Debug.WriteLine($"Cell Number: {member.CellNumber ?? "N/A"}");
-                }
+                if (currentCloudCOunt != memberCount) await memberService.ReplaceMembersAsync(apiResponse.Data.Members);
             }
             else
             {

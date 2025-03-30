@@ -14,7 +14,8 @@ namespace WeightMaster.Services
         private FileSystemWatcher fileWatcher;
         private DispatcherTimer readTimer;
         private MainWindow window;
-
+        private bool soundTrigger = false;
+        private bool soundTriggerMax = false;
         public Runtime(MainWindow win, string file)
         {
             this.window = win;
@@ -157,34 +158,58 @@ namespace WeightMaster.Services
         {
             try
             {
-                System.Diagnostics.Debug.WriteLine("Attempting to open file...");
+                // System.Diagnostics.Debug.WriteLine("Attempting to open file...");
 
                 using (var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {
-                    System.Diagnostics.Debug.WriteLine("File opened successfully.");
+                    // System.Diagnostics.Debug.WriteLine("File opened successfully.");
 
                     using (var reader = new StreamReader(stream))
                     {
-                        System.Diagnostics.Debug.WriteLine("Reading file...");
+                        // System.Diagnostics.Debug.WriteLine("Reading file...");
 
                         string json = reader.ReadToEnd();
-                        System.Diagnostics.Debug.WriteLine("File content read successfully.");
+                        // System.Diagnostics.Debug.WriteLine("File content read successfully.");
 
                         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                         var data = JsonSerializer.Deserialize<WeightData>(json, options);
 
                         if (data != null)
                         {
-                            System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
-                             window.weightScalerValTxt_st1.Text = data.Value.ToUpper().Replace("KG", "").Trim();
+                            // System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
+                            window.weightScalerValTxt_st1.Text = data.Value.ToUpper().Replace("KG", "").Trim();
                              window.weightScalerValTxt_st2.Text = data.Value.ToUpper().Replace("KG", "").Trim();
 
                             if (data.Stable.Equals("true"))
                             {
-                                window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Green);
+                                if (!window.weightScalerValTxt_st1.Text.ToString().Equals("0.0"))
+                                {
+                                    if (!soundTriggerMax)
+                                    {
+
+                                        soundTriggerMax = true;
+                                    }
+                                }
+                                else
+                                {
+                                    soundTriggerMax = false;
+                                }
+
+                                    window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Green);
                                 window.weightScalerStatus_st1.Text = "සමබරයි";
                                 window.weightScalerStatus_st2.Foreground = new SolidColorBrush(Colors.Green);
                                 window.weightScalerStatus_st2.Text = "සමබරයි";
+                                if (window.weightScalerValTxt_st1.Text.ToString().Equals("0.0")){
+                                    if (!soundTrigger) {
+                                        ConsoleSound.PlayReset();
+                                        soundTrigger = true;
+                                    }
+                                }
+                                else
+                                {
+                                    soundTrigger = false;
+                                }
+
 
                             }
                             else

@@ -545,6 +545,7 @@ namespace WeightMaster
             {
                 customerWindow.Close();
             }
+            runtimeService.KillRunExe();
             this.Close();
         }
 
@@ -564,7 +565,7 @@ namespace WeightMaster
                     {
                         foreach (var lineMaster in lineMasterData)
                         {
-                            System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
+                            //System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
                             lineNameCmb_st1.Items.Add(lineMaster.LineName);
                             lineNameCmb_st2.Items.Add(lineMaster.LineName);
                         }
@@ -591,7 +592,6 @@ namespace WeightMaster
                     {
                         foreach (string supervisor in supervisorData)
                         {
-                            System.Diagnostics.Debug.WriteLine($"supervisor Name: {supervisor}");
                             supervisorCmb_st1.Items.Add(supervisor);
                             supervisorCmb_st2.Items.Add(supervisor);
                         }
@@ -834,7 +834,9 @@ namespace WeightMaster
                 customerWindow.Close();
             }
             //hmm you need either to clear all textboxes or restart the app.
+            System.Diagnostics.Debug.WriteLine("system check 1");
             runtimeService.KillRunExe();
+            System.Diagnostics.Debug.WriteLine("system check 2");
             StartupTheAppAsync();
         }
 
@@ -1043,6 +1045,7 @@ namespace WeightMaster
                 currentGoldenLeafWeight_st1 = 0;
 
                 //to catch up with Enter key press event(in case of the manual click)
+                ConsoleSound.PlayStable();
 
             }
             else 
@@ -1678,6 +1681,7 @@ namespace WeightMaster
                 //            currentAcceptedSackWeightTxt_st2 = CeilingValue;
 
                 //to catch up with Enter key press event(in case of the manual click)
+                ConsoleSound.PlayStable();
             }
             else
             {
@@ -2463,7 +2467,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    //await _consoleHandler.verifyMemberDb();
+                    await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";

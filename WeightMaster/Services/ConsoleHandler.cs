@@ -15,7 +15,7 @@ namespace WeightMaster.Services
 
         public ConsoleHandler()
         {
-            _engine = new Engine();
+            _engine = new Engine(); 
         }
 
         //public async Task GetStudentsAsync()
@@ -99,25 +99,30 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionData(barcode);
         }
+        //add a new transaction for station 2
         public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction)
         {
             return await _engine.SetFinalTransactionAsync(newTransaction);
         }
+        //get data filtered based in the selected line
 
         public async Task<List<TransactionLogBlockModel>> getDataByFilter(string lineName)
         {
             return await _engine.GetFilteredTransactionsByLineNameAndDateAsync(lineName);
         }
+        //get data filtered based in the selected line and the barcode value
 
         public async Task<List<TransactionLogBlockModel>> getDataByFilter(string lineName, string barcodeDetails)
         {
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
         }
+        //return data for the report from thhe station-1
 
         public async Task<List<TransactionLogBlockModel>> print_sta1()
         {
             return await _engine.getPrintData_1();
         }
+        //return data for the report from thhe station-2
         public async Task<List<FinalTransactionBlockModel>> print_sta2()
         {
             return await _engine.getPrintData_2();
