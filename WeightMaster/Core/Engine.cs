@@ -289,10 +289,10 @@ namespace WeightMaster.Core
                 RunLog RunLogs = new RunLog
                 {
                     Status = true, // Set the status as true (or false)
-                    Date = DateTime.UtcNow, // Set the current date and time
+                    Date = DateTime.Now, // Set the current date and time
                     Transaction = model,
                     FinalTransaction = null,
-                    LastUpdated = DateTime.UtcNow // Set the last updated time to now
+                    LastUpdated = DateTime.Now // Set the last updated time to now
                 };
                 await runService.AddRunLogAsync(RunLogs);
                 // System.Diagnostics.Debug.WriteLine(":::::" + data);
@@ -571,10 +571,10 @@ namespace WeightMaster.Core
                 RunLog runLogs = new RunLog
                 {
                     Status = true, // Set the status as true (or false)
-                    Date = DateTime.UtcNow, // Set the current date and time
+                    Date = DateTime.Now, // Set the current date and time
                     Transaction = null, // No need to set Transaction here for FinalTransactionBlockModel
                     FinalTransaction = model, // Set the FinalTransaction to the model
-                    LastUpdated = DateTime.UtcNow // Set the last updated time to now
+                    LastUpdated = DateTime.Now // Set the last updated time to now
                 };
                 await runService.AddRunLogAsync(runLogs);
 

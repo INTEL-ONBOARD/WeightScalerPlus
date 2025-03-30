@@ -164,7 +164,7 @@ namespace WeightMaster.Services
 
         public async Task<List<FinalTransactionBlockModel>> getDataForPrint()
         {
-            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             return await _context.FinaltransactionData
                 .Where(t => t.bag_count > 0 && t.date == todayDate)
