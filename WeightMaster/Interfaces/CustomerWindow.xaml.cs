@@ -56,11 +56,11 @@ namespace WeightMaster.Interfaces
                             acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
                             if (_mainWindow.nSacksTxt_st1.Text.Equals(""))
                             {
-                                nSacks_cust.Text = "0";
+                                acceptedWeightLbl_cust.Text = "0";
                             }
                             else 
                             {
-                                nSacks_cust.Text = _mainWindow.nSacksTxt_st1.Text;
+                                acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
                             }
                             
                             
@@ -184,22 +184,22 @@ namespace WeightMaster.Interfaces
                             acceptedWeightLbl_cust.Text = _mainWindow.acceptedSackWeightTxt_st2.Text;
                             if (_mainWindow.totalNSacksTxt_st2.Text.Equals(""))
                             {
-                                nSacks_cust.Text = "0";
+                                acceptedWeightLbl_cust.Text = "0";
                             }
                             else
                             {
-                                nSacks_cust.Text = _mainWindow.totalNSacksTxt_st2.Text;
+                                acceptedWeightLbl_cust.Text = _mainWindow.acceptedSackWeightTxt_st2.Text;
                             }
 
 
-                            if (_mainWindow.nBoxesTxt_st2.Text.Equals(""))
-                            {
-                                nBoxes_cust.Text = "0";
-                            }
-                            else
-                            {
-                                nBoxes_cust.Text = _mainWindow.nBoxesTxt_st2.Text;
-                            }
+                            //if (_mainWindow.nBoxesTxt_st2.Text.Equals(""))
+                            //{
+                            //    nBoxes_cust.Text = "0";
+                            //}
+                            //else
+                            //{
+                            //    nBoxes_cust.Text = _mainWindow.nBoxesTxt_st2.Text;
+                            //}
                             //deductions
                             if (_mainWindow.wateredTxt_st2.Text.Equals(""))
                             {
@@ -239,18 +239,18 @@ namespace WeightMaster.Interfaces
 
                             //total sack & box weights
                             //totalBoxWeight_cust
-                            if (_mainWindow.nBoxesTxt_st2.Text.Equals(""))
-                            {
-                                totalBoxWeight_cust.Text = "0";
-                            }
-                            else
-                            {
-                                if (!double.TryParse(_mainWindow.nBoxesTxt_st2.Text, out double nBoxes) || nBoxes < 0)
-                                    nBoxes = 0;
+                            //if (_mainWindow.nBoxesTxt_st2.Text.Equals(""))
+                            //{
+                            //    totalBoxWeight_cust.Text = "0";
+                            //}
+                            //else
+                            //{
+                            //    if (!double.TryParse(_mainWindow.nBoxesTxt_st2.Text, out double nBoxes) || nBoxes < 0)
+                            //        nBoxes = 0;
 
-                                double boxWeights = Math.Ceiling(nBoxes * 3.5);
-                                totalBoxWeight_cust.Text = _mainWindow.rejectedTxt_st2.Text;
-                            }
+                            //    double boxWeights = Math.Ceiling(nBoxes * 3.5);
+                            //    totalBoxWeight_cust.Text = _mainWindow.rejectedTxt_st2.Text;
+                            //}
 
                             //member deteails
                             if (_mainWindow.barcodeTxt_st2.Text.Equals(""))
