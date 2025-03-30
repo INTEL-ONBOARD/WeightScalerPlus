@@ -917,9 +917,10 @@ namespace WeightMaster
                 //Station1LineTableRow lr1 = new Station1LineTableRow("001", "0", "0", "0", "", "");
             try
             {
-                var data = await _consoleHandler.getDataByFilter(result.LineName);
+                var data = await _consoleHandler.getDataByFilter("බෝදෙනීය 2");
+                    System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
                     MessageBox.Show("here triggered");
-                if (data.Any())
+                    if (data.Any())
                 {
                         MessageBox.Show("data found");
                         foreach (var transaction in data)

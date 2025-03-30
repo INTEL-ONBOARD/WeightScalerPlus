@@ -183,7 +183,7 @@ namespace WeightMaster.Services
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
         {
             string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
-
+            System.Diagnostics.Debug.WriteLine(">>> "+todayDate+" -- "+barcodeDetails+" -- "+lineName);
             return await _context.transactionData
                 .Where(t => t.linename == lineName && t.barcode_details == barcodeDetails && t.date == todayDate)
                 .ToListAsync();
