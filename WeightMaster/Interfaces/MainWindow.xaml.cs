@@ -24,6 +24,7 @@ using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Models;
 using WeightMaster.Services;
+using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Path = System.IO.Path;
 
@@ -915,11 +916,13 @@ namespace WeightMaster
                 //LineTablePanel_st1.Children.Add();
 
                 //Station1LineTableRow lr1 = new Station1LineTableRow("001", "0", "0", "0", "", "");
-            try
-            {
-                var data = await _consoleHandler.getDataByFilter("බෝදෙනීය 2");
+                System.Diagnostics.Debug.WriteLine("This is a debug message.");
+
+                try
+                {
+                var data = await _consoleHandler.getDataByFilter(result.LineName.ToString());
                     System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
-                    MessageBox.Show("here triggered");
+                MessageBox.Show("here triggered");
                     if (data.Any())
                 {
                         MessageBox.Show("data found");
@@ -1564,6 +1567,23 @@ namespace WeightMaster
                 else {
                     MessageBox.Show("Update failed.");
                 }
+
+                try
+                {
+                    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                    if (_isoks)
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
             else
             {
@@ -2021,6 +2041,7 @@ namespace WeightMaster
                     MessageBox.Show("Upload Failed: "+ex.Message);
                 }
 
+                bool failed = false;
                 //verifying missing transactions and replacing them
                 try
                 {
@@ -2296,14 +2317,20 @@ namespace WeightMaster
                         MessageBoxImage.Information
                     );
              }
-            bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
-            if (_isoks)
+            try
             {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                if (_isoks)
+                {
+                    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                }
             }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
 
             ////an object like this is reusable.
@@ -2332,6 +2359,7 @@ namespace WeightMaster
 
         }
 
+        //(not used in the new version)
         private  async void confirmAll_rounds_st2_Click(object sender, RoutedEventArgs e)
         {
             var Finaltransaction = new FinalTransactionBlockModel
@@ -2551,9 +2579,9 @@ namespace WeightMaster
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
 
-            runtimeService.ExecuteRunExe();
-            runtimeService.StartFileWatcher(); // Start watching the file
-            runtimeService.StartTimer();
+            //runtimeService.ExecuteRunExe();
+            //untimeService.StartFileWatcher(); // Start watching the file
+            //runtimeService.StartTimer();
 
         }
 
