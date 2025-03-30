@@ -1013,6 +1013,7 @@ namespace WeightMaster
                 currentGoldenLeafWeight_st1 = 0;
 
                 //to catch up with Enter key press event(in case of the manual click)
+                ConsoleSound.PlayStable();
 
             }
             else 

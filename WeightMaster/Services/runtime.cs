@@ -14,7 +14,8 @@ namespace WeightMaster.Services
         private FileSystemWatcher fileWatcher;
         private DispatcherTimer readTimer;
         private MainWindow window;
-
+        private bool soundTrigger = false;
+        private bool soundTriggerMax = false;
         public Runtime(MainWindow win, string file)
         {
             this.window = win;
@@ -181,10 +182,34 @@ namespace WeightMaster.Services
 
                             if (data.Stable.Equals("true"))
                             {
-                                window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Green);
+                                if (!window.weightScalerValTxt_st1.Text.ToString().Equals("0.0"))
+                                {
+                                    if (!soundTriggerMax)
+                                    {
+
+                                        soundTriggerMax = true;
+                                    }
+                                }
+                                else
+                                {
+                                    soundTriggerMax = false;
+                                }
+
+                                    window.weightScalerStatus_st1.Foreground = new SolidColorBrush(Colors.Green);
                                 window.weightScalerStatus_st1.Text = "සමබරයි";
                                 window.weightScalerStatus_st2.Foreground = new SolidColorBrush(Colors.Green);
                                 window.weightScalerStatus_st2.Text = "සමබරයි";
+                                if (window.weightScalerValTxt_st1.Text.ToString().Equals("0.0")){
+                                    if (!soundTrigger) {
+                                        ConsoleSound.PlayReset();
+                                        soundTrigger = true;
+                                    }
+                                }
+                                else
+                                {
+                                    soundTrigger = false;
+                                }
+
 
                             }
                             else
