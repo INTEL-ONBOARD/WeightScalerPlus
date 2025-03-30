@@ -321,7 +321,7 @@
                     </Button>
                 </Grid>
             </Border>
-            
+
             <!--Station1Frame-->
             <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
@@ -695,10 +695,10 @@
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,25">
                             <Grid>
-                            <StackPanel x:Name="MemberTurnTablePanel_st1" Width="690" Margin="16,0,17,50">
-                                
-                                
-                            </StackPanel>
+                                <StackPanel x:Name="MemberTurnTablePanel_st1" Width="690" Margin="16,0,17,50">
+
+
+                                </StackPanel>
                                 <!--bottom total values row-->
                                 <Border Width="690" Height="50" Background="#F9F9F9" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="2" Padding="10" Margin="16,168,17,0">
                                     <Grid>
@@ -760,8 +760,8 @@
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,25">
                             <Grid>
                                 <StackPanel x:Name="LineTablePanel_st1" Width="690" Margin="16,0,17,55">
-                                    
-                
+
+
                                 </StackPanel>
                                 <Border Width="690" Height="50" Background="#F9F9F9" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="2" Padding="10" Margin="16,145,17,0">
                                     <Grid>
@@ -945,136 +945,165 @@
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
 
-                        <!--accepted weight-->
-                        <StackPanel Orientation="Horizontal" Margin="17,191,26,387">
-                            <!--total sack count textbox-->
-                            <Grid Width="162" Margin="10,0,10,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="සම්පූ. ගෝ නි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="totalNSacksTxt_st2" IsReadOnly="True" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                                </Border>
-                            </Grid>
-                            <!--remaining sack count textbox-->
-                            <Grid Width="155" Margin="10,0,10,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="ඉතිරි ගෝ නි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="remainingNSacksTxt_st2" IsReadOnly="True" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                                </Border>
-                            </Grid>
-                            <!--total boxes count textbox-->
+                        <!--textboxes stackpanel(visible before confirmation)-->
+                        <StackPanel Orientation="Horizontal" Margin="10,191,0,387">
+                            <!--accepted weight textbox-->
                             <Grid Width="170" Margin="10,0,10,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="පෙට්ටි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="පිළිගත් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="nBoxesTxt_st2" IsReadOnly="True" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox IsReadOnly="True" x:Name="acceptedLeafWeightTxt_st2" Text="" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
-                        </StackPanel>
-
-                        <!--accepted leaf weight-->
-                        <Grid Margin="33,312,413,325" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="පිලිගත් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="acceptedLeafWeightTxt_st2" IsReadOnly="True" Text="" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-                        <Grid Margin="208,313,234,323" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="සා මා න්‍ය දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="normalLeafWeightTxt_st2" IsReadOnly="True" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-                        <Grid Margin="394,312,36,324" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="රන් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="goldenLeafWeightTxt_st2" TextChanged="GoldenAndNormalWeight_st2_TextChanged" PreviewTextInput="GoldenAndNormalWeight_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-
-                        <!--accepted sack weight-->
-                        <Grid Margin="33,402,313,234" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="පිලිගත් ගෝ නි බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="acceptedSackWeightTxt_st2" IsReadOnly="False" TextChanged="WeightDeduction_st2_TextChanged" PreviewTextInput="SacksWeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-
-                        <!-- nBoxes TextBox -->
-                        <Grid Margin="313,402,33,234" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="කිරන ගෝ නි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="scalingNSacksTxt_st2" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-                        <!--
-                        <Grid Margin="304,401,36,242">
-                            <Grid Grid.Column="0" Margin="0,0,0,0">
+                            <!--golden leaf textbox-->
+                            <Grid Width="170" Margin="10,0,10,0">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="කිරන ගෝනි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <userContorls:CustomNumericUpDown Grid.Row="1"  x:Name="nBdfssffdsUpDown"/>
+                                <TextBlock Grid.Row="0" Text="රන් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox Text="" x:Name="goldenLeafWeightTxt_st2" TextChanged="GoldenAndNormalWeight_st2_TextChanged" PreviewTextInput="GoldenAndNormalWeight_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
                             </Grid>
-                        </Grid>
-                        -->
+                            <!--normal leaf textbox-->
+                            <Grid Width="170" Margin="10,0,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="සාමාන්‍ය දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="normalLeafWeightTxt_st2" IsReadOnly="True" Text="" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
 
-                        <!-- matured TextBox -->
-                        <Grid Margin="33,474,313,162" >
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="20"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="මෝ රපුවට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
-                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                <TextBox x:Name="maturedTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
-                        <!--
-                        <Grid Margin="304,484,36,159">
-                            <Grid Grid.Column="0" Margin="0,0,0,0">
+                        <!--Horizontal lining upper middle-->
+                        <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,327,0,373" />
+                        <!--Vertical lining upper middle-->
+                        <Line X1="0" X2="0" Y1="0" Y2="270" Stroke="#F0F0F0" StrokeThickness="2" Margin="197,328,387,120" />
+
+                        <Grid Margin="10,321,10,114">
+
+                            <!--nSacks textbox-->
+                            <Grid Margin="10,147,392,0" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Width="110" />
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="totalNSacksTxt_st2" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                            <!--accepted sacks textbox-->
+                            <Grid Margin="10,20,392,127">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="පිලිගත් ගෝනි බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Center" Width="162" />
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="acceptedSackWeightTxt_st2" IsReadOnly="False" TextChanged="WeightDeduction_st2_TextChanged"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                            <!--watered textbox-->
+                            <Grid Margin="202,21,194,120" >
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="වතුරට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="wateredTxt_st2" Text="" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                            <!--matured leaves textbox-->
+                            <Grid Margin="383,21,10,120">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="මෝරපුවට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <userContorls:CustomNumericUpDown Grid.Row="1"  x:Name="nBdfsoxedsffdsUpDown"/>
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox  x:Name="maturedTxt_st2" Text="" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
                             </Grid>
+                            <!--spoiled textbox-->
+                            <Grid Margin="202,146,193,1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="තැම්බුණු(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Width="96" />
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox Text=""  x:Name="spoiledTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                            <!--rejected textbox-->
+                            <Grid Height="121" VerticalAlignment="Top" Margin="383,146,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="ප්‍රතික්ෂේපිත(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox  x:Name="rejectedTxt_st2" Text=""  TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                        <!--accepted weight-->
+                        <!--total sack count textbox-->
+                        <!--
+                        <StackPanel Orientation="Horizontal" Margin="17,191,26,387">
+                            <Grid Width="162" Margin="10,0,10,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="20"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <TextBlock Grid.Row="0" Text="සම්පූ. ගෝනි ගණන(n)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="totalNSacksTxt_st2" IsReadOnly="True" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                        -->
+                        <!--accepted sack weight-->
+                        <!--
+                        <Grid Margin="33,402,313,234" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="පිලිගත් ගෝනි බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
+                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                <TextBox x:Name="acceptedSackWeightTxt_st2" IsReadOnly="False" TextChanged="WeightDeduction_st2_TextChanged" PreviewTextInput="SacksWeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Border>
                         </Grid>
                         -->
 
+
+                        <!-- matured TextBox -->
+                        <!--
+                        <Grid Margin="33,474,313,162" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="මෝරපුවට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Height="20" VerticalAlignment="Bottom" />
+                            <Border Grid.Row="1" Height="38" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                <TextBox x:Name="maturedTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                            </Border>
+                        </Grid>
+                        -->
+
+
                         <!-- watered TextBox -->
+                        <!--
                         <Grid Margin="313,474,33,162" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
@@ -1085,20 +1114,10 @@
                                 <TextBox x:Name="wateredTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             </Border>
                         </Grid>
-                        <!--
-                        <Grid Margin="32,484,308,159">
-                            <Grid Grid.Column="0" Margin="0,0,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="වතුරට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <userContorls:CustomNumericUpDown Grid.Row="1"  x:Name="nBoxedsffdsUpDown"/>
-                            </Grid>
-                        </Grid>
                         -->
 
                         <!-- spoiled TextBox -->
+                        <!--
                         <Grid Margin="33,546,313,90" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
@@ -1109,20 +1128,10 @@
                                 <TextBox x:Name="spoiledTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             </Border>
                         </Grid>
-                        <!--
-                        <Grid Margin="32,560,308,83">
-                            <Grid Grid.Column="0" Margin="0,0,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="තැම්බුණු(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <userContorls:CustomNumericUpDown Grid.Row="1"  x:Name="nSacksUpDown"/>
-                            </Grid>
-                        </Grid>
                         -->
 
                         <!-- rejected TextBox -->
+                        <!--
                         <Grid Margin="313,546,33,90" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
@@ -1133,23 +1142,7 @@
                                 <TextBox x:Name="rejectedTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                             </Border>
                         </Grid>
-                        <!--
-                        <Grid Margin="304,560,36,83">
-                            <Grid Grid.Column="0" Margin="0,0,0,0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="20"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="ප්‍රතික්ෂේපිත(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                                <userContorls:CustomNumericUpDown Grid.Row="1"  x:Name="nBoxesUpDown"/>
-                            </Grid>
-                        </Grid>
                         -->
-
-                        <!--Horizontal lining upper middle-->
-                        <Line X1="30" X2="560" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,385,0,315" />
-                        <!--Vertical lining upper middle-->
-                        <Line X1="30" X2="560" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,466,32,234" />
 
                         <!--Clear button-->
                         <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="298,644,22,20" Click="clearBtn_st2_Clicked" Style="{StaticResource HoverButton}">
@@ -1167,7 +1160,7 @@
                     </Grid>
                 </Border>
 
-                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,480">
+                <Border BorderThickness="2" Visibility="Hidden" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,480">
                     <!--Station2.1 Table-->
                     <Grid>
                         <!-- Header Row -->
@@ -1196,7 +1189,7 @@
                     </Grid>
                 </Border>
 
-                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,354,10,177">
+                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,177">
                     <!--Station2 Table2-->
                     <Grid>
                         <!-- Header Row -->
@@ -1232,18 +1225,18 @@
                     <Grid>
                         <!--Clear button-->
                         <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="262,18,216,17" Style="{StaticResource HoverButton}" RenderTransformOrigin="0.5,0.5">
-                            <Border Background="#616161" CornerRadius="8" Padding="10" Width="245" Height="36">
-                                <TextBlock Text="CLEAR" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Width="245" Height="36">
+                                <TextBlock Text="ප්‍රවාහන මාර්ග වාර්තාව" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White" FontSize="15" FontWeight="Normal" Width="176" Margin="0,0,0,-2"/>
                             </Border>
                         </Button>
 
                         <!--finish button-->
-                        <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}" Click="confirmAll_rounds_st2_Click">
-                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="232">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="FINISH" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                        <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="10,20,481,19" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="6" Height="36" Width="232">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Text="දෛනික වාර්තාව" Foreground="White" FontSize="15" FontWeight="Normal" Width="136" Height="26" Margin="0,2,0,0"/>
                             </Border>
                         </Button>
-
+                        <!--
                         <Border BorderThickness="2" Background="Black" CornerRadius="20" Height="56" Margin="518,12,8,11">
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0,0,0" Width="164">
                                 <Ellipse Width="20" Height="20" Fill="#D8FFD3" Margin="5,0,5,0"/>
@@ -1254,6 +1247,7 @@
                                 <TextBlock Text="0"  FontSize="24" FontWeight="SemiBold" Foreground="#F8DC80"/>
                             </StackPanel>
                         </Border>
+                        -->
                     </Grid>
                 </Border>
                 <!--
@@ -1419,6 +1413,14 @@
                             <ToggleButton Grid.Column="1"  HorizontalAlignment="Right" VerticalAlignment="Center" Width="50" Height="26"/>
                         </Grid>
 
+
+
+                        <!-- Sync Button -->
+                        <Button Cursor="Hand" Click="SyncButton_Click" Background="Transparent" BorderThickness="0" Margin="372,442,685,313" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
+                                <TextBlock Text="Sync" HorizontalAlignment="Center" Foreground="White"/>
+                            </Border>
+                        </Button>
 
 
                     </Grid>
