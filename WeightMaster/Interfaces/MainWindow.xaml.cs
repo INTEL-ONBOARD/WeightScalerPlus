@@ -1973,11 +1973,15 @@ namespace WeightMaster
                     totalNSacks = 0;
 
                 //re-feed the updated values and helper variables to the same textboxes if there are sacks remaining
-                
+
 
                 //if everything was added successfully(and remaining sacks are zero), clear all textboxes(except table row, member & line master/name details)
                 //(added later)
 
+
+                bool _isdone = false;
+                try
+                {
                     var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
@@ -2011,7 +2015,36 @@ namespace WeightMaster
                         real_value = finalWeightScalerValue //TBDDD****************************************************************************
                     };
 
-                bool _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+                }
+                catch (Exception ex) {
+                    MessageBox.Show("Upload Failed: "+ex.Message);
+                }
+
+                //verifying missing transactions and replacing them
+                try
+                {
+                    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                    if (_isoks)
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                    }
+                    failed = !_isoks;
+                    //await Task.Delay(1000);
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Member Database Error: {ex.Message}";
+                    });
+                }
+
 
                 if (_isdone)
                 {
