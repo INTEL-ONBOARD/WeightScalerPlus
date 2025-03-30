@@ -15,7 +15,7 @@ namespace WeightMaster.Services
 
         public ConsoleHandler()
         {
-            _engine = new Engine();
+            _engine = new Engine(); 
         }
 
         //public async Task GetStudentsAsync()
