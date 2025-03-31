@@ -341,19 +341,18 @@ namespace WeightMaster
         {
             if (IsStation1Active())
             {
-                // Keep original Station 1 configuration
                 return stepIndex switch
                 {
-                    0 => barcodeTxt_st1,
-                    1 => wieghtScalerConfirmBtn_st1,
-                    2 => goldenLeafWeightTxt_st1,
-                    3 => nSacksTxt_st1,
-                    4 => nBoxesTxt_st1,
-                    5 => wateredTxt_st1,
-                    6 => maturedTxt_st1,
-                    7 => spoiledTxt_st1,
-                    8 => rejectedTxt_st1,
-                    9 => confirmAddRowButton_st1,
+                    0 => wieghtScalerConfirmBtn_st1,      // Step1: Button
+                    1 => barcodeTxt_st1,                 // Step2: TextBox
+                    2 => goldenLeafWeightTxt_st1,         // Step3: TextBox
+                    3 => nSacksTxt_st1,                   // Step4: TextBox
+                    4 => nBoxesTxt_st1,                  // Step5: TextBox
+                    5 => wateredTxt_st1,                  // Step6: TextBox
+                    6 => maturedTxt_st1,                  // Step7: TextBox
+                    7 => spoiledTxt_st1,                  // Step8: TextBox
+                    8 => rejectedTxt_st1,                 // Step9: TextBox
+                    9 => confirmAddRowButton_st1,         // Step10: Button
                     _ => null
                 };
             }
@@ -380,19 +379,18 @@ namespace WeightMaster
         {
             if (IsStation1Active())
             {
-                // Keep original Station 1 configuration
                 return stepIndex switch
                 {
-                    0 => true,
-                    1 => false,
-                    2 => true,
-                    3 => true,
-                    4 => true,
-                    5 => true,
-                    6 => true,
-                    7 => true,
-                    8 => true,
-                    9 => false,
+                    0 => false,  // wieghtScalerConfirmBtn_st1 (Button)
+                    1 => true,   // barcodeTxt_st1
+                    2 => true,   // goldenLeafWeightTxt_st1
+                    3 => true,   // nSacksTxt_st1
+                    4 => true,   // nBoxesTxt_st1
+                    5 => true,   // wateredTxt_st1
+                    6 => true,   // maturedTxt_st1
+                    7 => true,   // spoiledTxt_st1
+                    8 => true,   // rejectedTxt_st1
+                    9 => false,  // confirmAddRowButton_st1 (Button)
                     _ => false
                 };
             }
