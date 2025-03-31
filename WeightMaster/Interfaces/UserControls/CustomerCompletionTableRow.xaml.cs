@@ -42,10 +42,10 @@ namespace WeightMaster.Interfaces.UserControls
             }
         }
 
-        private void RowButton_st2_Click(object sender, RoutedEventArgs e)
-        {
-            // Handle the click event here
-            MessageBox.Show("Row clicked!");
-        }
+        //private void RowButton_st2_Click(object sender, RoutedEventArgs e)
+        //{
+        //    // Handle the click event here
+        //    MessageBox.Show("Row clicked!");
+        //}
     }
 }
