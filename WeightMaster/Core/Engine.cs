@@ -563,7 +563,7 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model)
+        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model,string code)
         {
             try
             {
@@ -572,6 +572,9 @@ namespace WeightMaster.Core
                 // System.Diagnostics.Debug.WriteLine(":::::" + data);
 
                 var runService = new RunService(new AppDbContext());
+                TransactionService service = new TransactionService(new AppDbContext());
+                int id_ = (int)await service.GetTransactionIdByBarcodeAsync(code);
+                model.Id = id_;
                 RunLog runLogs = new RunLog
                 {
                     Status = true, // Set the status as true (or false)
@@ -598,7 +601,7 @@ namespace WeightMaster.Core
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error retrieving data: {ex.Message}");
                 // await DumpMemberInformation();
                 return false;
             }

@@ -100,9 +100,9 @@ namespace WeightMaster.Services
             return await _engine.GetFilteredTransactionData(barcode,linename);
         }
         //add a new transaction for station 2
-        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction)
+        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction,string code)
         {
-            return await _engine.SetFinalTransactionAsync(newTransaction);
+            return await _engine.SetFinalTransactionAsync(newTransaction,code);
         }
         //get data filtered based in the selected line
 

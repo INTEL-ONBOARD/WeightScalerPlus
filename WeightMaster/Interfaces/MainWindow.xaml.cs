@@ -1054,6 +1054,13 @@ namespace WeightMaster
                 //to catch up with Enter key press event(in case of the manual click)
                 ConsoleSound.PlayStable();
 
+
+                //enable and disable confirm buttons
+                wieghtScalerConfirmBtn_st1.IsEnabled = false;
+                wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // Gray out
+                confirmAddRowButton_st1.IsEnabled = true;
+                confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+
             }
             else 
             {
@@ -1417,6 +1424,11 @@ namespace WeightMaster
             nSacksTxt_st1.Text = "";
             nBoxesTxt_st1.Text = "";
 
+            wieghtScalerConfirmBtn_st1.IsEnabled = true;
+            confirmAddRowButton_st1.IsEnabled = false;
+            wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+            confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+
         }
 
 
@@ -1502,6 +1514,12 @@ namespace WeightMaster
 
                     // Call the service to add the transaction
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
+
+                    // enable and disable confirm buttons
+                    wieghtScalerConfirmBtn_st1.IsEnabled = true;
+                    confirmAddRowButton_st1.IsEnabled = false;
+                    wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                    confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
                 }
                 catch (Exception ex)
                 {
@@ -1568,7 +1586,61 @@ namespace WeightMaster
                     HandleButtonNavigation(sender);
                 }
                 else {
-                    MessageBox.Show("Update failed.");
+                    int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
+                    Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, normalLeafWeightTxt_st1.Text, goldenLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
+                    // When adding a new row dynamically(no need now)
+                    //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
+                    MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
+                    //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
+
+
+
+                    finalWeightScalerWeight_st1 += weightScalerValue;
+                    finalAcceptedLeafWeight_st1 += acceptedLeafWeight;
+
+                    finalNormalLeafWeight_st1 += (int)currentNormalLeafWeight_st1;
+                    finalGoldenLeafWeight_st1 += (int)currentGoldenLeafWeight_st1;
+
+                    finalNBoxes_st1 += nBoxes;
+                    finalNSacks_st1 += nSacks;
+
+                    finalWateredWeight_st1 += wateredWeight;
+                    finalMaturedWeight_st1 += maturedWeight;
+                    finalSpoiledWeight_st1 += spoiledWeight;
+                    finalRejectedWeight_st1 += rejectedWeight;
+
+                    finalAvailableGoldenLeafWeight_st1 += availableGoldenLeafWeight;
+                    finalAvailableNormalLeafWeight_st1 += availableNormalLeafWeight;
+
+                    //if everything was added successfully, assign updated final values to the total values row
+                    //rowMemberTurns_st1.Text = MemberTurnTablePanel_st1.Children.Count.ToString();
+                    rowNBoxes_st1.Text = finalNBoxes_st1.ToString();
+                    rowNSacks_st1.Text = finalNSacks_st1.ToString();
+                    rowGreenLeafWeights_st1.Text = finalAvailableNormalLeafWeight_st1.ToString();
+                    rowGoldenLeafWeights_st1.Text = finalAvailableGoldenLeafWeight_st1.ToString();
+                    rowTotalLeafWeights_st1.Text = finalAcceptedLeafWeight_st1.ToString(); //only sacks and boxes deducted
+                                                                                           //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
+
+                    //if everything was added successfully, clear all textboxes(except table row, member & line master/name details)
+                    nSacksTxt_st1.Text = "";
+                    nBoxesTxt_st1.Text = "";
+
+                    wateredTxt_st1.Text = "";
+                    rejectedTxt_st1.Text = "";
+                    spoiledTxt_st1.Text = "";
+                    maturedTxt_st1.Text = "";
+
+                    normalLeafWeightTxt_st1.Text = "";
+                    goldenLeafWeightTxt_st1.Text = "";
+                    acceptedLeafWeightTxt_st1.Text = "";
+
+                    currentTotalDeduction_st1 = 0;
+                    currentNormalLeafWeight_st1 = 0;
+                    currentGoldenLeafWeight_st1 = 0;
+                    currentAcceptedLeafWeight_st1 = 0;
+
+                    //handle next enter press step after successful execution
+                    HandleButtonNavigation(sender);
                 }
 
                 try
@@ -1733,6 +1805,10 @@ namespace WeightMaster
 
                 //to catch up with Enter key press event(in case of the manual click)
                 ConsoleSound.PlayStable();
+                confirmAddRowButton_st2.IsEnabled = true;
+                wieghtScalerConfirmBtn_st2.IsEnabled = false;
+                wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+                confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled) 
             }
             else
             {
@@ -1936,6 +2012,10 @@ namespace WeightMaster
             acceptedSackWeightTxt_st2.Text = "";
             totalNSacksTxt_st2.Text = "";
 
+            confirmAddRowButton_st2.IsEnabled = false;
+            wieghtScalerConfirmBtn_st2.IsEnabled = true;
+            wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+            confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
         }
 
 
@@ -2029,12 +2109,17 @@ namespace WeightMaster
                 //(added later)
 
 
+
+
                 bool _isdone = false;
                 try
                 {
+
+
                     var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
+                        Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
                         company = "නව ඇලන්වැලි තේ කම්හල",
@@ -2065,7 +2150,12 @@ namespace WeightMaster
                         real_value = finalWeightScalerValue //TBDDD****************************************************************************
                     };
 
-                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, barcodeTxt_st2.Text.ToString());
+
+                    wieghtScalerConfirmBtn_st2.IsEnabled = true;
+                    confirmAddRowButton_st2.IsEnabled = false;
+                    wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                    confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
                 }
                 catch (Exception ex) {
                     MessageBox.Show("Upload Failed: "+ex.Message);
@@ -2451,40 +2541,41 @@ namespace WeightMaster
                 real_value = finalWeightScalerWeight_st2 //TBDDD****************************************************************************
             };
 
-/*      public int currentAcceptedSackWeightTxt_st2 = 0;
-        //fill this during the api fetch w/ barcode
-        public int currentAcceptedLeafWeight_st2 = 82;
-        private double currentGoldenLeafWeight_st2 = 0;
-        private double currentNormalLeafWeight_st2 = 0;
+            /*      public int currentAcceptedSackWeightTxt_st2 = 0;
+                    //fill this during the api fetch w/ barcode
+                    public int currentAcceptedLeafWeight_st2 = 82;
+                    private double currentGoldenLeafWeight_st2 = 0;
+                    private double currentNormalLeafWeight_st2 = 0;
 
-        public double currentTotalDeduction_st2 = 0;
+                    public double currentTotalDeduction_st2 = 0;
 
-        //used to count the number of rounds(for the table indexing and other purposes if necessary)
-        private int _currentTurn_st2 = 1;
-        //finalized values by each round to send to db/api
-        private float finalWeightScalerWeight_st2 = 0; //this goes as the accepted value to api
-        private int finalAcceptedLeafWeight_st2 = 0;
-        private int finalGoldenLeafWeight_st2 = 0;
-        private int finalNormalLeafWeight_st2 = 0;
+                    //used to count the number of rounds(for the table indexing and other purposes if necessary)
+                    private int _currentTurn_st2 = 1;
+                    //finalized values by each round to send to db/api
+                    private float finalWeightScalerWeight_st2 = 0; //this goes as the accepted value to api
+                    private int finalAcceptedLeafWeight_st2 = 0;
+                    private int finalGoldenLeafWeight_st2 = 0;
+                    private int finalNormalLeafWeight_st2 = 0;
 
-        private int finalNBoxes_st2 = 0;
-        private int finalNSacks_st2 = 0;
+                    private int finalNBoxes_st2 = 0;
+                    private int finalNSacks_st2 = 0;
 
-        private int finalWateredWeight_st2 = 0;
-        private int finalMaturedWeight_st2 = 0;
-        private int finalSpoiledWeight_st2 = 0;
-        private int finalRejectedWeight_st2 = 0;
+                    private int finalWateredWeight_st2 = 0;
+                    private int finalMaturedWeight_st2 = 0;
+                    private int finalSpoiledWeight_st2 = 0;
+                    private int finalRejectedWeight_st2 = 0;
 
-        private int finalAvailableGoldenLeafWeight_st2 = 0;
-        private int finalAvailableNormalLeafWeight_st2 = 0;*/
+                    private int finalAvailableGoldenLeafWeight_st2 = 0;
+                    private int finalAvailableNormalLeafWeight_st2 = 0;
 
-        bool _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+                    bool _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction);
+            
 
             if (_isdone)
             {
                 System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ *************** ]::::::::::::::::::::");
             }
-
+            */
 
 
             var transactionData = await _consoleHandler.GetTransactionData("001","");
@@ -2537,7 +2628,7 @@ namespace WeightMaster
                         statusLabel.Content = "Verifying Database Status(1)...";
                     });
                     // Await the asynchronous operation
-                    await _consoleHandler.VerifyUserDb();
+                    //await _consoleHandler.VerifyUserDb();
                     // Once verification is complete, update the status label again
                     Dispatcher.Invoke(() =>
                     {
@@ -2562,7 +2653,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(2)...";
                     });
-                    await _consoleHandler.VerifyLineMasterDb();
+                    //await _consoleHandler.VerifyLineMasterDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -2585,7 +2676,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb();
+                    //await _consoleHandler.verifyMemberDb();
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -2630,6 +2721,7 @@ namespace WeightMaster
 
 
             }
+            
             while (failed);
 
             IntroFrame.Visibility = Visibility.Collapsed;
@@ -2637,6 +2729,7 @@ namespace WeightMaster
 
             runtimeService.StartFileWatcher(); // Start watching the file
             runtimeService.StartTimer();
+            
 
         }
 

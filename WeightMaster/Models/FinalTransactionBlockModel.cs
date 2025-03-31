@@ -10,10 +10,8 @@ namespace WeightMaster.Models
 {
     public class FinalTransactionBlockModel
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
 
+        public int Id { get; set; }
         public string? linename { get; set; }
         public string? transportagent { get; set; }
         public string? company { get; set; }

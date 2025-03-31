@@ -185,6 +185,18 @@ namespace WeightMaster.Services
 
         }
 
+        public async Task<List<int>> GetMismatchedRecordIdsAsync()
+        {
+            // Get IDs where Id is NOT in FinalTransactionId
+            var mismatchedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            return mismatchedIds;
+        }
+
+
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -226,6 +238,22 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        public async Task<int?> GetTransactionIdByBarcodeAsync(string barcodeDetails)
+        {
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            var transaction = await _context.transactionData
+                .Where(t => excludedIds.Contains(t.Id)  && t.barcode_details == barcodeDetails && t.date == todayDate)
+                .FirstOrDefaultAsync();
+                
+            // Return the Id if the transaction exists; otherwise return null
+            return transaction?.Id;
+        }
 
 
     }
