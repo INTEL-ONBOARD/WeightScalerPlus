@@ -625,27 +625,9 @@ namespace WeightMaster
 
 
 
-            //fetching customer completion data and populating the customer completion table
-            //an object like this is reusable.
-            var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineNameCmb_st2.SelectedItem.ToString());
+            //clear customer completion table upon login
             CustomerCompletionRowPanel.Children.Clear();
-            // Loop through each transaction and print details to the debug console
-            for (int i = 0; i < customerTransactions_st2.Count; i++)
-            {
-                var transaction = customerTransactions_st2[i];
-                //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                //System.Diagnostics.Debug.WriteLine($"barcode_details: {transaction.barcode_details}");
-                //System.Diagnostics.Debug.WriteLine($"name_with_initials: {transaction.name_with_initials}");
-                //System.Diagnostics.Debug.WriteLine($"nSacks: {transaction.bag_count}");
-                //System.Diagnostics.Debug.WriteLine($"remaining sacks: {null}");
-                //System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.real_value}");
-                //System.Diagnostics.Debug.WriteLine($"accepted leaf weight: {transaction.total_leaf_weight}");
-                //System.Diagnostics.Debug.WriteLine($"golden leaf weight: {transaction.final_gold_leaf_count}");
-                CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                CustomerCompletionRowPanel.Children.Add(cctr4);
-            }
 
-            System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
 
             if (!username.Equals("unknown")/*true*/)
             {
@@ -1664,7 +1646,7 @@ namespace WeightMaster
 
         }
 
-        private void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             string searchLineName = lineNameCmb_st2.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
@@ -1686,6 +1668,22 @@ namespace WeightMaster
             else
             {
                 lineName = "";
+            }
+            try
+            {
+                CustomerCompletionRowPanel.Children.Clear();
+                var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineName);
+                for (int i = 0; i < customerTransactions_st2.Count; i++)
+                {
+                    var transaction = customerTransactions_st2[i];
+                    //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                    CustomerCompletionRowPanel.Children.Add(cctr4);
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("customer completion tbl population: " + ex.Message);
             }
 
 
@@ -2169,25 +2167,32 @@ namespace WeightMaster
                 //acceptedLeafWeightTxt_st2.Text = "";
                 //acceptedSackWeightTxt_st2.Text = "";
 
-                //update the customer completion table after an update
-                var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineNameCmb_st2.SelectedItem.ToString());
-                CustomerCompletionRowPanel.Children.Clear();
-                // Loop through each transaction and print details to the debug console
-                for (int i = 0; i < customerTransactions_st2.Count; i++)
+                //update the customer completion table after an update based on Line Name
+                string lineName = "";
+                if (lineNameCmb_st2.SelectedValue != null)
                 {
-                    var transaction = customerTransactions_st2[i];
-                    //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                    //System.Diagnostics.Debug.WriteLine($"barcode_details: {transaction.barcode_details}");
-                    //System.Diagnostics.Debug.WriteLine($"name_with_initials: {transaction.name_with_initials}");
-                    //System.Diagnostics.Debug.WriteLine($"nSacks: {transaction.bag_count}");
-                    //System.Diagnostics.Debug.WriteLine($"remaining sacks: {null}");
-                    //System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.real_value}");
-                    //System.Diagnostics.Debug.WriteLine($"accepted leaf weight: {transaction.total_leaf_weight}");
-                    //System.Diagnostics.Debug.WriteLine($"golden leaf weight: {transaction.final_gold_leaf_count}");
-                    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                    CustomerCompletionRowPanel.Children.Add(cctr4);
+                    lineName = lineNameCmb_st2.SelectedValue.ToString();
                 }
-
+                else
+                {
+                    lineName = "";
+                }
+                try
+                {
+                    CustomerCompletionRowPanel.Children.Clear();
+                    var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineName);
+                    for (int i = 0; i < customerTransactions_st2.Count; i++)
+                    {
+                        var transaction = customerTransactions_st2[i];
+                        //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionRowPanel.Children.Add(cctr4);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("customer completion tbl population: " + ex.Message);
+                }
             }
             else
             {
