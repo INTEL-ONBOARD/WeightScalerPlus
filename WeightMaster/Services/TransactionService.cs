@@ -156,10 +156,12 @@ namespace WeightMaster.Services
             }
         }
         // Get all transactions where bag_count is greater than 0
-        public async Task<List<TransactionLogBlockModel>> GetTransactionsWithBagCountGreaterThanZeroAsync()
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsWithBagCountGreaterThanZeroAsync(string lineName)
         {
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
             return await _context.transactionData
-                .Where(t => t.bag_count > 0)
+                .Where(t => t.bag_count > 0 && t.date == todayDate && t.linename == lineName)
                 .ToListAsync();
         }
         public async Task<TransactionLogBlockModel> GetTransactionByBarcodeAndDateAsync(string barcodeDetails)

@@ -90,14 +90,14 @@ namespace WeightMaster.Services
             return await _engine.verifyTransactionsCloud();
         }
         //return the transaction data from the station 2 data record section, this func return the records of the dataa that has weight value over 0
-        public async Task<List<TransactionLogBlockModel>> GetTransactionData()
+        public async Task<List<TransactionLogBlockModel>> GetTransactionData(string linenames)
         {
-            return await _engine.GetFilteredTransactionData();
+            return await _engine.GetFilteredTransactionData(linenames);
         }
         //return a songle transaction data from the station 2 data using member code , barcode
-        public async Task<TransactionLogBlockModel> GetTransactionData(string barcode)
+        public async Task<TransactionLogBlockModel> GetTransactionData(string barcode,string linename)
         {
-            return await _engine.GetFilteredTransactionData(barcode);
+            return await _engine.GetFilteredTransactionData(barcode,linename);
         }
         //add a new transaction for station 2
         public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction)

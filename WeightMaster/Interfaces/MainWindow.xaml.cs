@@ -170,6 +170,8 @@ namespace WeightMaster
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
             StartupTheAppAsync();
+            runtimeService.ExecuteRunExe();
+
         }
 
 
@@ -625,8 +627,8 @@ namespace WeightMaster
 
             //fetching customer completion data and populating the customer completion table
             //an object like this is reusable.
-            var customerTransactions_st2 = await _consoleHandler.GetTransactionData();
-
+            var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineNameCmb_st2.SelectedItem.ToString());
+            CustomerCompletionRowPanel.Children.Clear();
             // Loop through each transaction and print details to the debug console
             for (int i = 0; i < customerTransactions_st2.Count; i++)
             {
@@ -855,6 +857,8 @@ namespace WeightMaster
             }
             //hmm you need either to clear all textboxes or restart the app.
             System.Diagnostics.Debug.WriteLine("system check 1");
+            runtimeService.KillRunExe();
+            runtimeService.KillRunExe();
             runtimeService.KillRunExe();
             System.Diagnostics.Debug.WriteLine("system check 2");
             StartupTheAppAsync();
@@ -1527,8 +1531,8 @@ namespace WeightMaster
                 }
                 if (_isSuccess)
                 {
-                    int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st1.Text) + Convert.ToInt32(normalLeafWeightTxt_st1.Text));
-                    Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, goldenLeafWeightTxt_st1.Text, normalLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
+                    int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
+                    Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, normalLeafWeightTxt_st1.Text, goldenLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
                     // When adding a new row dynamically(no need now)
                     //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
                     MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
@@ -1622,7 +1626,7 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + ": " + memberName);
                 customerNameTxt_st2.Text = memberName;
 
-                var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text);
+                var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text,"");
 
                 if (memberDetails!=null) {
                     //load and populate additional data like previous leaf data, box data like stuff
@@ -2165,10 +2169,29 @@ namespace WeightMaster
                 //acceptedLeafWeightTxt_st2.Text = "";
                 //acceptedSackWeightTxt_st2.Text = "";
 
+                //update the customer completion table after an update
+                var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineNameCmb_st2.SelectedItem.ToString());
+                CustomerCompletionRowPanel.Children.Clear();
+                // Loop through each transaction and print details to the debug console
+                for (int i = 0; i < customerTransactions_st2.Count; i++)
+                {
+                    var transaction = customerTransactions_st2[i];
+                    //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                    //System.Diagnostics.Debug.WriteLine($"barcode_details: {transaction.barcode_details}");
+                    //System.Diagnostics.Debug.WriteLine($"name_with_initials: {transaction.name_with_initials}");
+                    //System.Diagnostics.Debug.WriteLine($"nSacks: {transaction.bag_count}");
+                    //System.Diagnostics.Debug.WriteLine($"remaining sacks: {null}");
+                    //System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.real_value}");
+                    //System.Diagnostics.Debug.WriteLine($"accepted leaf weight: {transaction.total_leaf_weight}");
+                    //System.Diagnostics.Debug.WriteLine($"golden leaf weight: {transaction.final_gold_leaf_count}");
+                    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                    CustomerCompletionRowPanel.Children.Add(cctr4);
+                }
+
             }
             else
             {
-                MessageBox.Show("සියලු තොරතුරු අතුලත් කරන්න");
+                MessageBox.Show("සියලු තො රතුරු අතුලත් කරන්න");
             }
         }
 
@@ -2461,7 +2484,7 @@ namespace WeightMaster
 
 
 
-            var transactionData = await _consoleHandler.GetTransactionData("001");
+            var transactionData = await _consoleHandler.GetTransactionData("001","");
 
             // Print the details in the debug console
             if (transactionData != null)
@@ -2609,7 +2632,6 @@ namespace WeightMaster
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
 
-            runtimeService.ExecuteRunExe();
             runtimeService.StartFileWatcher(); // Start watching the file
             runtimeService.StartTimer();
 
