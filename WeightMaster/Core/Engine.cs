@@ -358,7 +358,7 @@ namespace WeightMaster.Core
         }
 
         public async Task<bool> verifyTransactionsCloud()
-        {
+            {
             try
             {
                 var runService = new RunService(new AppDbContext());
@@ -371,60 +371,64 @@ namespace WeightMaster.Core
                     {
                         // Fetch the latest run log with status false
                         RunLog que = await runService.GetLatestRunLogWithStatusFalseAsync();
-                        if (que.TransactionId.HasValue)  // Check if TransactionId is not null
+                        if (que != null)
                         {
-                            System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ TRANSACTION RUN FOR " + que.TransactionId + " : CACHE VALIDATING ]::::::::::::");
-
-                            var transService = new TransactionService(new AppDbContext());
-                            TransactionLogBlockModel model = await transService.GetTransactionByIdAsync(que.TransactionId.Value);
-
-                            bool result = await UpdateGreenLeafCollectionAsync(model);
-                            if (result)
+                            if (que.TransactionId.HasValue)  // Check if TransactionId is not null
                             {
-                                await runService.UpdateRunLogStatusToTrueAsync(que);
+                                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ TRANSACTION RUN FOR " + que.TransactionId + " : CACHE VALIDATING ]::::::::::::");
+
+                                var transService = new TransactionService(new AppDbContext());
+                                TransactionLogBlockModel model = await transService.GetTransactionByIdAsync(que.TransactionId.Value);
+
+                                bool result = await UpdateGreenLeafCollectionAsync(model);
+                                if (result)
+                                {
+                                    await runService.UpdateRunLogStatusToTrueAsync(que);
+                                }
+                                else
+                                {
+                                    RunLog runlog = await runService.GetMostRecentRunLogAsync();
+                                    runlog.Status = false;
+                                    await runService.UpdateRunLogAsync(runlog);
+                                    return false;
+                                }
                             }
                             else
                             {
-                                RunLog runlog = await runService.GetMostRecentRunLogAsync();
-                                runlog.Status = false;
-                                await runService.UpdateRunLogAsync(runlog);
-                                return false;
+                                System.Diagnostics.Debug.WriteLine("TransactionId is null for the current run log.");
+                                // Return false or handle this case as needed
                             }
                         }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("TransactionId is null for the current run log.");
-                             // Return false or handle this case as needed
-                        }
-
                         // Handle Final Transaction Validation
                         RunLog queFinal = await runService.GetLatestRunLogWithStatusFalseAsync();
-                        if (queFinal.FinalTransactionId.HasValue)  // Check if FinalTransactionId is not null
+                        if (queFinal != null)
                         {
-                            System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ FINAL RUN FOR " + queFinal.FinalTransactionId + " : CACHE VALIDATING ]::::::::::::");
-
-                            var FinalTransService = new FinalTransactionService(new AppDbContext());
-                            FinalTransactionBlockModel modelFinal = await FinalTransService.GetTransactionByIdAsync(queFinal.FinalTransactionId.Value);
-
-                            bool resultFinal = await UpdateBagWeightCollectionAsync(modelFinal);
-                            if (resultFinal)
+                            if (queFinal.FinalTransactionId.HasValue)  // Check if FinalTransactionId is not null
                             {
-                                await runService.UpdateRunLogStatusToTrueAsync(queFinal);
+                                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ FINAL RUN FOR " + queFinal.FinalTransactionId + " : CACHE VALIDATING ]::::::::::::");
+
+                                var FinalTransService = new FinalTransactionService(new AppDbContext());
+                                FinalTransactionBlockModel modelFinal = await FinalTransService.GetTransactionByIdAsync(queFinal.FinalTransactionId.Value);
+
+                                bool resultFinal = await UpdateBagWeightCollectionAsync(modelFinal);
+                                if (resultFinal)
+                                {
+                                    await runService.UpdateRunLogStatusToTrueAsync(queFinal);
+                                }
+                                else
+                                {
+                                    RunLog runlog = await runService.GetMostRecentRunLogAsync();
+                                    runlog.Status = false;
+                                    await runService.UpdateRunLogAsync(runlog);
+                                    return false;
+                                }
                             }
                             else
                             {
-                                RunLog runlog = await runService.GetMostRecentRunLogAsync();
-                                runlog.Status = false;
-                                await runService.UpdateRunLogAsync(runlog);
-                                return false;
+                                System.Diagnostics.Debug.WriteLine("FinalTransactionId is null for the current run log.");
+                                // Return false or handle this case as needed
                             }
                         }
-                        else
-                        {
-                            System.Diagnostics.Debug.WriteLine("FinalTransactionId is null for the current run log.");
-                             // Return false or handle this case as needed
-                        }
-
                     }
                     catch (Exception innerEx)
                     {

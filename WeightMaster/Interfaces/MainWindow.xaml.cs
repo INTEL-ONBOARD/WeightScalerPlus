@@ -2021,6 +2021,8 @@ namespace WeightMaster
                     MessageBox.Show("Upload Failed: "+ex.Message);
                 }
 
+                bool failed = false;
+
                 //verifying missing transactions and replacing them
                 try
                 {
