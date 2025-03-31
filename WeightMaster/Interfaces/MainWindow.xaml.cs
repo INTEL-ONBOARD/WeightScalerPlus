@@ -1614,11 +1614,9 @@ namespace WeightMaster
 
         private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
-
-            //clear member turn table for the next member
+            //clear member turn table for the next member(this is hidden currently)
             MemberTurnTablePanel_st2.Children.Clear();
 
-                System.Diagnostics.Debug.WriteLine("> calling start");
                 String memberName = await _consoleHandler.GetMemberName(barcodeTxt_st2.Text);
 
                 System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + ": " + memberName);
@@ -1674,6 +1672,19 @@ namespace WeightMaster
             {
                 lineMasterNameLbl_st2.Text = "-";
             }
+
+            //clear(refresh) & repopulate the customer completion table
+            string lineName = "";
+            if (lineNameCmb_st2.SelectedValue != null)
+            {
+                lineName = lineNameCmb_st2.SelectedValue.ToString();
+            }
+            else
+            {
+                lineName = "";
+            }
+
+
         }
 
         private void weightScalerStatusTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
