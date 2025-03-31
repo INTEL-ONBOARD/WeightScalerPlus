@@ -167,11 +167,22 @@ namespace WeightMaster.Services
         }
         public async Task<TransactionLogBlockModel> GetTransactionByBarcodeAndDateAsync(string barcodeDetails)
         {
+
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
+            // Get IDs where Id is NOT in FinalTransactionId
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
             return await _context.transactionData
-                .Where(t => t.bag_count > 0 && t.barcode_details == barcodeDetails && t.date == todayDate)
+                .Where(t => t.bag_count > 0
+                            && t.barcode_details == barcodeDetails
+                            && t.date == todayDate
+                            && excludedIds.Contains(t.Id)) // Ensures only transactions with mismatched IDs are fetched
                 .FirstOrDefaultAsync();
+
         }
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
@@ -202,14 +213,20 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
-        public async Task<List<TransactionLogBlockModel>> GetTransactionsNotInRunLogAsync()
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsNotInRunLogAsync(string lineName)
         {
-            var runLogIds = await _context.RunLog.Select(r => r.TransactionId).ToListAsync();
-
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+            
             return await _context.transactionData
-                .Where(t => !runLogIds.Contains(t.Id))
+                .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == todayDate)
                 .ToListAsync();
         }
+
+
 
     }
 }

@@ -452,7 +452,7 @@ namespace WeightMaster.Core
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionsWithBagCountGreaterThanZeroAsync(lineName);
+                var data = await transactionService.GetTransactionsNotInRunLogAsync(lineName);
 
                 System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
 
