@@ -164,7 +164,7 @@ namespace WeightMaster.Services
         }
         public async Task<TransactionLogBlockModel> GetTransactionByBarcodeAndDateAsync(string barcodeDetails)
         {
-            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             return await _context.transactionData
                 .Where(t => t.bag_count > 0 && t.barcode_details == barcodeDetails && t.date == todayDate)
@@ -173,7 +173,7 @@ namespace WeightMaster.Services
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
         {
-            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             return await _context.transactionData
                 .Where(t => t.linename == lineName && t.date == todayDate)
@@ -182,8 +182,9 @@ namespace WeightMaster.Services
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
         {
-            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
-            System.Diagnostics.Debug.WriteLine(">>> "+todayDate+" -- "+barcodeDetails+" -- "+lineName);
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+            System.Diagnostics.Debug.WriteLine(">>> " + todayDate + " -- " + barcodeDetails + " -- " + lineName);
+
             return await _context.transactionData
                 .Where(t => t.linename == lineName && t.barcode_details == barcodeDetails && t.date == todayDate)
                 .ToListAsync();
@@ -191,7 +192,7 @@ namespace WeightMaster.Services
 
         public async Task<List<TransactionLogBlockModel>> getDataForPrint()
         {
-            string todayDate = DateTime.UtcNow.ToString("yyyy-MM-dd");
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             return await _context.transactionData
                 .Where(t => t.bag_count == 0 && t.date == todayDate)
