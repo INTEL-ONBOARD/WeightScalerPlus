@@ -79,8 +79,8 @@
             <!--customer top bar-->
             <Border Background="White" Margin="0,8,0,804" BorderBrush="#B4B4B4" BorderThickness="0,0,0,1">
                 <Grid>
-                    <TextBlock x:Name="TopbarCustomerCompanyText" FontSize="36" Margin="28,46,373,56" FontWeight="Bold" Foreground="Black" Text="සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය"/>
-                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="28,104,1261,23" FontWeight="Bold" Foreground="#2DAA44" Text="මොරවක්කොරළේ තේ කම්හල"/>
+                    <TextBlock x:Name="TopbarCustomerCompanyText" FontSize="36" Margin="28,46,373,56" FontWeight="Bold" Foreground="Black" Text="සීමා  සහිත මො රවක්කො රළේ තේ නිපදවනන්ගේ සමුපකා ර සමිතිය"/>
+                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="28,104,1261,23" FontWeight="Bold" Foreground="#2DAA44" Text="මො රවක්කො රළේ තේ කම්හල"/>
                     <userContorls:CustomerDateAndTime Margin="1466,46,74,23"/>
                 </Grid>
             </Border>
@@ -118,7 +118,7 @@
                                                 <Grid>
                                                     <Image Source="/Interfaces/sack.png" Margin="55,48,162,142" />
                                                     <TextBlock x:Name="nSacks_cust" FontSize="96" FontWeight="Bold" Foreground="Black" Text="0" Margin="127,14,29,126"/>
-                                                    <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="ගෝනි ගණන(n)" Margin="67,130,49,90"/>
+                                                    <TextBlock FontSize="16" FontWeight="SemiBold" Foreground="#888888" Text="ගෝ  නි ගණන(n)" Margin="67,130,49,90"/>
                                                 </Grid>
                                             </Border>
                                             <Border Width="292">
@@ -190,19 +190,19 @@
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="34,205,800,23">
                                                 <Grid>
                                                     <TextBlock x:Name="spoiled_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" Width="58" />
-                                                    <TextBlock Text="තැම්බුණු(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,69,31"/>
+                                                    <TextBlock Text="තැ ම්බුණු(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="127,91,69,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="422,205,412,23">
                                                 <Grid>
                                                     <TextBlock x:Name="matured_cust" Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මෝරපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="114,91,81,31"/>
+                                                    <TextBlock Text="මෝ රපුවට(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="114,91,81,31"/>
                                                 </Grid>
                                             </Border>
                                             <Border Background="Transparent" CornerRadius="20" BorderThickness="2" BorderBrush="#ECECEC" Margin="804,205,30,23">
                                                 <Grid>
                                                     <TextBlock Text="0" Padding="10" HorizontalAlignment="Center" FontWeight="Bold" FontSize="64" />
-                                                    <TextBlock Text="මුළු ගෝනි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="109,91,75,31"/>
+                                                    <TextBlock Text="මුළු ගෝ  නි බර(KG)" Foreground="#959595" FontWeight="Bold" FontSize="16" Margin="109,91,75,31"/>
                                                 </Grid>
                                             </Border>
 

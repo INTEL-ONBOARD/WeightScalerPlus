@@ -447,12 +447,12 @@ namespace WeightMaster.Core
 
 
 
-        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData()
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string lineName)
         {
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionsWithBagCountGreaterThanZeroAsync();
+                var data = await transactionService.GetTransactionsWithBagCountGreaterThanZeroAsync(lineName);
 
                 System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
 
@@ -504,7 +504,7 @@ namespace WeightMaster.Core
 
 
 
-        public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode)
+        public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode,string linename)
         {
             try
             {
