@@ -24,6 +24,7 @@ using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Models;
 using WeightMaster.Services;
+using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Path = System.IO.Path;
 
@@ -168,7 +169,7 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            //StartupTheAppAsync();
+            StartupTheAppAsync();
         }
 
 
@@ -644,7 +645,7 @@ namespace WeightMaster
 
             System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
 
-            if (/*!username.Equals("unknown")*/true)
+            if (!username.Equals("unknown")/*true*/)
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -827,7 +828,26 @@ namespace WeightMaster
             nSacksTxt_st1.Text = "";
             nBoxesTxt_st1.Text = "";
 
+            //st2
+            wateredTxt_st2.Text = "";
+            rejectedTxt_st2.Text = "";
+            spoiledTxt_st2.Text = "";
+            maturedTxt_st2.Text = "";
+            currentTotalDeduction_st2 = 0;
 
+            normalLeafWeightTxt_st2.Text = "";
+            currentNormalLeafWeight_st2 = 0;
+
+            goldenLeafWeightTxt_st2.Text = "";
+            currentGoldenLeafWeight_st2 = 0;
+
+            acceptedLeafWeightTxt_st2.Text = "";
+            currentAcceptedLeafWeight_st2 = 0;
+            scalerRoundedWeight_st2 = 0;
+
+            acceptedSackWeightTxt_st2.Text = "";
+            totalNSacksTxt_st2.Text = "";
+            //st2 end
 
             if (customerWindow != null)
             {
@@ -915,17 +935,19 @@ namespace WeightMaster
                 //LineTablePanel_st1.Children.Add();
 
                 //Station1LineTableRow lr1 = new Station1LineTableRow("001", "0", "0", "0", "", "");
-            try
-            {
-                var data = await _consoleHandler.getDataByFilter("බෝදෙනීය 2");
+                //System.Diagnostics.Debug.WriteLine("This is a debug message.");
+
+                try
+                {
+                var data = await _consoleHandler.getDataByFilter(result.LineName.ToString());
                     System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
-                    MessageBox.Show("here triggered");
+                //MessageBox.Show("here triggered");
                     if (data.Any())
                 {
-                        MessageBox.Show("data found");
+                        //MessageBox.Show("data found");
                         foreach (var transaction in data)
                     {
-                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.Id.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), "", "");
+                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.Id.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight+transaction.actual_nomal_leaf_weight).ToString());
                             LineTablePanel_st1.Children.Add(lr1);
                             System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
                     }
@@ -1156,7 +1178,7 @@ namespace WeightMaster
                 normalLeafWeightTxt_st1.Text = "0";
                 currentNormalLeafWeight_st1 = 0;
                 //update helper variables
-                MessageBox.Show(""+currentAcceptedLeafWeight_st1+"-"+currentTotalDeduction_st1);
+                //MessageBox.Show(""+currentAcceptedLeafWeight_st1+"-"+currentTotalDeduction_st1);
                 //goldenLeafWeightTxt_st1.Text = (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1).ToString();
                 //currentGoldenLeafWeight_st1 = currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1;
                 goldenLeafWeightTxt_st1.Text = "0";
@@ -1210,7 +1232,7 @@ namespace WeightMaster
                 normalLeafWeightTxt_st1.Text = "0";
                 currentNormalLeafWeight_st1 = 0;
                 //update helper variables
-                MessageBox.Show("" + currentAcceptedLeafWeight_st1 + "-" + currentTotalDeduction_st1);
+                //MessageBox.Show("" + currentAcceptedLeafWeight_st1 + "-" + currentTotalDeduction_st1);
                 goldenLeafWeightTxt_st1.Text = (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1).ToString();
                 currentGoldenLeafWeight_st1 = currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1;
             }
@@ -1347,7 +1369,7 @@ namespace WeightMaster
             if (int.TryParse(proposedText, out int inputNumber) && (Math.Ceiling(inputNumber * singleBoxWeight)) > currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1)
             {
                 e.Handled = true; // Block the input
-                MessageBox.Show((Math.Ceiling(inputNumber * singleBoxWeight)).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
+                //MessageBox.Show((Math.Ceiling(inputNumber * singleBoxWeight)).ToString() + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) + ") weight.");
             }
         }
 
@@ -1564,6 +1586,23 @@ namespace WeightMaster
                 else {
                     MessageBox.Show("Update failed.");
                 }
+
+                try
+                {
+                    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                    if (_isoks)
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                }
             }
             else
             {
@@ -1611,7 +1650,7 @@ namespace WeightMaster
                     currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
                     currentTotalDeduction_st2 = memberDetails.morapuwata+memberDetails.water+memberDetails.reject+memberDetails.thambimata;
 
-                MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
                 }
                 //.Text = "";
                 //.Text = "";
@@ -1776,7 +1815,7 @@ namespace WeightMaster
             if (!double.TryParse(maturedTxt_st2.Text, out double matured) || matured < 0)
                 matured = 0;
 
-                MessageBox.Show("matured: "+matured);
+                //MessageBox.Show("matured: "+matured);
             if (!double.TryParse(spoiledTxt_st2.Text, out double spoiled) || spoiled < 0)
                 spoiled = 0;
             //if (!double.TryParse(nBoxesTxt_st2.Text, out double nBoxes) || spoiled < 0)
@@ -1826,7 +1865,7 @@ namespace WeightMaster
             if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
             {
                 e.Handled = true; // Block the input
-                MessageBox.Show(proposedText + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
+                //MessageBox.Show(proposedText + " Deduction Error: exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
             }
         }
 
@@ -1846,7 +1885,7 @@ namespace WeightMaster
             if (int.TryParse(proposedText, out int inputNumber) && inputNumber > currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
             {
                 e.Handled = true; // Block the input
-                MessageBox.Show(inputNumber.ToString() + " Deduction Error: This sacks weight exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
+                //MessageBox.Show(inputNumber.ToString() + " Deduction Error: This sacks weight exceeds golden and normal leaf(" + (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) + ") weight.");
             }
         }
 
@@ -2022,7 +2061,6 @@ namespace WeightMaster
                 }
 
                 bool failed = false;
-
                 //verifying missing transactions and replacing them
                 try
                 {
@@ -2298,14 +2336,20 @@ namespace WeightMaster
                         MessageBoxImage.Information
                     );
              }
-            bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
-            if (_isoks)
+            try
             {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                if (_isoks)
+                {
+                    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+                }
             }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
 
             ////an object like this is reusable.
@@ -2334,6 +2378,7 @@ namespace WeightMaster
 
         }
 
+        //(not used in the new version)
         private  async void confirmAll_rounds_st2_Click(object sender, RoutedEventArgs e)
         {
             var Finaltransaction = new FinalTransactionBlockModel

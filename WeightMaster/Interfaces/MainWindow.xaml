@@ -381,7 +381,7 @@
                         <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
-                            <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="37.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st1"  BorderThickness="0" Background="Transparent" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st1_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
@@ -862,7 +862,7 @@
                         
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
-                            <TextBox x:Name="weightScalerValTxt_st2" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Bottom" Text="1.7" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBox x:Name="weightScalerValTxt_st2" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st2" BorderThickness="0" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st2_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
