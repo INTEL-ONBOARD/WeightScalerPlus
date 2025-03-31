@@ -161,6 +161,24 @@ namespace WeightMaster.Services
             }
         }
 
+        public async Task<List<RunLog>> GetRunLogsWhereTransactionIdNotInFinalTransactionAsync()
+        {
+            // Get all unique FinalTransaction Ids
+            var finalTransactionIds = await _context.RunLog
+                .Where(runLog => runLog.FinalTransaction != null)
+                .Select(runLog => runLog.FinalTransaction.Id)
+                .Distinct()
+                .ToListAsync();
+
+            // Get all RunLogs where Transaction.Id is not in FinalTransaction
+            var result = await _context.RunLog
+                .Where(runLog => !finalTransactionIds.Contains(runLog.Transaction.Id))
+                .ToListAsync();
+
+            return result;
+        }
+
+
 
     }
 }

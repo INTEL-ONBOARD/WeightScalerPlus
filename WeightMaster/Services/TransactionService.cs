@@ -15,6 +15,7 @@ namespace WeightMaster.Services
         public TransactionService(AppDbContext context)
         {
             _context = context;
+            
         }
 
         // Map TransactionLogBlockModel to a view model or other relevant model
@@ -201,6 +202,14 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsNotInRunLogAsync()
+        {
+            var runLogIds = await _context.RunLog.Select(r => r.TransactionId).ToListAsync();
+
+            return await _context.transactionData
+                .Where(t => !runLogIds.Contains(t.Id))
+                .ToListAsync();
+        }
 
     }
 }
