@@ -169,7 +169,7 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            //StartupTheAppAsync();
+            StartupTheAppAsync();
         }
 
 
@@ -645,7 +645,7 @@ namespace WeightMaster
 
             System.Diagnostics.Debug.WriteLine("All transaction data printed successfully!");
 
-            if (/*!username.Equals("unknown")*/true)
+            if (!username.Equals("unknown")/*true*/)
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -828,7 +828,26 @@ namespace WeightMaster
             nSacksTxt_st1.Text = "";
             nBoxesTxt_st1.Text = "";
 
+            //st2
+            wateredTxt_st2.Text = "";
+            rejectedTxt_st2.Text = "";
+            spoiledTxt_st2.Text = "";
+            maturedTxt_st2.Text = "";
+            currentTotalDeduction_st2 = 0;
 
+            normalLeafWeightTxt_st2.Text = "";
+            currentNormalLeafWeight_st2 = 0;
+
+            goldenLeafWeightTxt_st2.Text = "";
+            currentGoldenLeafWeight_st2 = 0;
+
+            acceptedLeafWeightTxt_st2.Text = "";
+            currentAcceptedLeafWeight_st2 = 0;
+            scalerRoundedWeight_st2 = 0;
+
+            acceptedSackWeightTxt_st2.Text = "";
+            totalNSacksTxt_st2.Text = "";
+            //st2 end
 
             if (customerWindow != null)
             {
@@ -2579,9 +2598,9 @@ namespace WeightMaster
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
 
-            //runtimeService.ExecuteRunExe();
-            //untimeService.StartFileWatcher(); // Start watching the file
-            //runtimeService.StartTimer();
+            runtimeService.ExecuteRunExe();
+            runtimeService.StartFileWatcher(); // Start watching the file
+            runtimeService.StartTimer();
 
         }
 
