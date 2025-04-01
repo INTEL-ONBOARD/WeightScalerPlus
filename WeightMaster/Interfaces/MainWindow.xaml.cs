@@ -27,6 +27,7 @@ using WeightMaster.Services;
 using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Path = System.IO.Path;
+using System.Globalization;
 
 namespace WeightMaster
 {
@@ -48,8 +49,8 @@ namespace WeightMaster
         {
             get
             {
-                if (IsStation1Active()) return 10;
-                if (IsStation2Active()) return 8; // Reduced from 9 to 8 steps
+                if (IsStation1Active()) return 5;  // Changed from 10 to 5
+                if (IsStation2Active()) return 9;
                 return 0;
             }
         }
@@ -291,7 +292,7 @@ namespace WeightMaster
                 }
             }
             _isEnterKey = false;
-        }
+        }   
 
         private int FindStepIndexForControl(FrameworkElement control)
         {
@@ -343,16 +344,11 @@ namespace WeightMaster
             {
                 return stepIndex switch
                 {
-                    0 => wieghtScalerConfirmBtn_st1,      // Step1: Button
-                    1 => barcodeTxt_st1,                 // Step2: TextBox
-                    2 => goldenLeafWeightTxt_st1,         // Step3: TextBox
-                    3 => nSacksTxt_st1,                   // Step4: TextBox
-                    4 => nBoxesTxt_st1,                  // Step5: TextBox
-                    5 => wateredTxt_st1,                  // Step6: TextBox
-                    6 => maturedTxt_st1,                  // Step7: TextBox
-                    7 => spoiledTxt_st1,                  // Step8: TextBox
-                    8 => rejectedTxt_st1,                 // Step9: TextBox
-                    9 => confirmAddRowButton_st1,         // Step10: Button
+                    0 => wieghtScalerConfirmBtn_st1,  // Step1: Button
+                    1 => barcodeTxt_st1,             // Step2: TextBox
+                    2 => nSacksTxt_st1,              // Step3: TextBox
+                    3 => wateredTxt_st1,             // Step4: TextBox
+                    4 => confirmAddRowButton_st1,    // Step5: Button
                     _ => null
                 };
             }
@@ -382,15 +378,10 @@ namespace WeightMaster
                 return stepIndex switch
                 {
                     0 => false,  // wieghtScalerConfirmBtn_st1 (Button)
-                    1 => true,   // barcodeTxt_st1
-                    2 => true,   // goldenLeafWeightTxt_st1
-                    3 => true,   // nSacksTxt_st1
-                    4 => true,   // nBoxesTxt_st1
-                    5 => true,   // wateredTxt_st1
-                    6 => true,   // maturedTxt_st1
-                    7 => true,   // spoiledTxt_st1
-                    8 => true,   // rejectedTxt_st1
-                    9 => false,  // confirmAddRowButton_st1 (Button)
+                    1 => true,   // barcodeTxt_st1 (TextBox)
+                    2 => true,   // nSacksTxt_st1 (TextBox)
+                    3 => true,   // wateredTxt_st1 (TextBox)
+                    4 => false,  // confirmAddRowButton_st1 (Button)
                     _ => false
                 };
             }
@@ -806,6 +797,12 @@ namespace WeightMaster
             currentAcceptedLeafWeight_st1 = 0;
             scalerRoundedWeight_st1 = 0;
 
+            customerNameTxt_st1.Text = "";
+            lineMasterNameLbl_st1.Text = "";
+
+            //lineNameCmb_st1.Items.Clear(); //..or
+            //lineNameCmb_st1.SelectedIndex = -1;
+
             //keep these empty else both textboxes gets disabled by logic.
             nSacksTxt_st1.Text = "";
             nBoxesTxt_st1.Text = "";
@@ -829,6 +826,9 @@ namespace WeightMaster
 
             acceptedSackWeightTxt_st2.Text = "";
             totalNSacksTxt_st2.Text = "";
+
+            customerNameTxt_st2.Text = "";
+            lineMasterNameLbl_st2.Text = "";
             //st2 end
 
             if (customerWindow != null)
@@ -2641,6 +2641,164 @@ namespace WeightMaster
         }
 
 
+
+        //_______Reports_______________________________________________________________________
+        private void printLineReportBtn_Click(object sender, RoutedEventArgs e)
+        {
+            PrintDialog printDialog = new PrintDialog();
+            if (printDialog.ShowDialog() == true)
+            {
+                DrawingVisual visual = new DrawingVisual();
+                using (DrawingContext dc = visual.RenderOpen())
+                {
+                    DrawPage(dc);
+                }
+                printDialog.PrintVisual(visual, "Print Document");
+            }
+        }
+
+        //design & draw line report
+        private void DrawPage(DrawingContext dc)
+        {
+            Typeface typeface = new Typeface("Arial");
+            double fontSize = 10;
+            Brush brush = Brushes.Black;
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            double yPos = 50;
+
+            // Main headers with larger font
+            string[] mainHeaders = {
+                "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
+                "සමූපකාර තේ කම්හල",
+                "S.T."
+            };
+
+            double[] headerSizes = { 14, 14, 12 };
+            double pageWidth = 816; // Standard A4 width at 96 DPI
+
+            // Draw three main headers centered
+            foreach (int i in new[] { 0, 1, 2 })
+            {
+                FormattedText headerText = new FormattedText(
+                    mainHeaders[i],
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    headerSizes[i],
+                    brush,
+                    pixelsPerDip
+                );
+
+                double centerX = (pageWidth - headerText.WidthIncludingTrailingWhitespace) / 2;
+                dc.DrawText(headerText, new Point(centerX, yPos));
+                yPos += headerText.Height + 8; // Add spacing between headers
+            }
+
+            // Existing header content
+            yPos += 20; // Add space after main headers
+
+            // Document number (right-aligned)
+            dc.DrawText(
+                new FormattedText("02997", CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                               typeface, fontSize, brush, pixelsPerDip),
+                new Point(700, yPos));
+
+            // Date (left-aligned)
+            dc.DrawText(
+                new FormattedText(DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
+                               FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, yPos));
+
+            yPos += 40; // Space before table
+
+            // Table Header (updated with new column)
+            string[] headers = { "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "මුළු බර" };
+            double[] headerPositions = { 50, 100, 200, 280, 350, 400, 470, 540, 610, 680, 750 };
+            //double[] headerPositions = { 50, 100, 200, 280, 350, 400, 450, 500, 550 };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                dc.DrawText(
+                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(headerPositions[i], yPos));
+            }
+            yPos += 20;
+
+            // Data Rows (updated with dummy data for new column)
+            List<string[]> data = new List<string[]>
+            {
+                new string[] { "812", "6367", "02", "1", "43", "02", "41", "1", "41", "43", "101" },
+                new string[] { "813", "3187", "1", "1", "12", "01", "11", "1", "41", "43", "101" },
+                new string[] { "814", "2280", "1", "1", "08", "01", "07", "1", "41", "43", "101" },
+                new string[] { "815", "3164", "2", "1", "42", "03", "39", "1", "41", "43", "101" },
+                new string[] { "816", "2084", "3", "1", "54", "03", "51", "1", "41", "43", "101" },
+                new string[] { "817", "54173", "1", "1", "05", "01", "04", "1", "41", "43", "101" },
+                new string[] { "818", "5809", "1", "1", "20", "01", "19", "1", "41", "43", "101" },
+                new string[] { "819", "2633", "1", "1", "19", "01", "18", "1", "41", "43", "101" },
+                new string[] { "820", "2691", "2", "1", "27", "02", "25", "1", "41", "43", "101" },
+                new string[] { "821", "5561", "1", "1", "12", "01", "11", "1", "41", "43", "101" },
+                new string[] { "822", "6197", "1", "1", "10", "01", "09", "1", "41", "43", "101" },
+                new string[] { "823", "6483", "1", "1", "08", "01", "07", "1", "41", "43", "101" },
+                new string[] { "824", "4549", "2", "1", "26", "02", "24", "1", "41", "43", "101" },
+                new string[] { "825", "4823", "1", "1", "18", "01", "17", "1", "41", "43", "101" },
+                new string[] { "826", "2389", "1", "1", "19", "01", "18", "1", "41", "43", "101" },
+                new string[] { "830", "2415", "1", "1", "07", "02", "05", "1", "41", "43", "101" },
+                new string[] { "832", "6441", "5", "1", "108", "07", "101", "1", "41", "43", "101" },
+                new string[] { "833", "54170", "4", "1", "87", "05", "82", "1", "41", "43", "101" },
+                new string[] { "834", "6653", "1", "1", "21", "01", "20", "1", "41", "43", "101" },
+                new string[] { "835", "2605", "1", "1", "16", "01", "15", "1", "41", "43", "101" },
+                new string[] { "836", "1086", "02", "1", "44", "03", "41", "1", "41", "43", "101" },
+                new string[] { "837", "2602", "01", "1", "21", "01", "20", "1", "41", "43", "101" },
+                new string[] { "839", "7005", "1", "1", "08", "01", "07", "1", "41", "43", "101" }
+            };
+
+            foreach (string[] row in data)
+            {
+                string col0 = row.Length > 0 ? row[0] : "";
+                string col1 = row.Length > 1 ? row[1] : "";
+                string col2 = row.Length > 2 ? row[2] : "";
+                string col3 = row.Length > 3 ? row[3] : "";
+                string col4 = row.Length > 4 ? row[4] : "";
+                string col5 = row.Length > 5 ? row[5] : "";
+                string col6 = row.Length > 6 ? row[6] : "";
+                string col7 = row.Length > 7 ? row[7] : "";
+                string col8 = row.Length > 8 ? row[8] : "";
+                string col9 = row.Length > 9 ? row[9] : "";
+                string col10 = row.Length > 10 ? row[10] : "";
+
+                //double[] headerPositions = { 50, 100, 200, 280, 350, 400, 470, 540, 610, 680, 750 };
+                // Draw each column at updated positions
+                dc.DrawText(new FormattedText(col0, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(50, yPos));
+                dc.DrawText(new FormattedText(col1, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(100, yPos));
+                dc.DrawText(new FormattedText(col2, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(200, yPos));
+                dc.DrawText(new FormattedText(col3, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(280, yPos)); // New column position
+                dc.DrawText(new FormattedText(col4, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(350, yPos));
+                dc.DrawText(new FormattedText(col5, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(400, yPos));
+                dc.DrawText(new FormattedText(col6, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(470, yPos));
+                dc.DrawText(new FormattedText(col7, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(540, yPos));
+                dc.DrawText(new FormattedText(col8, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(610, yPos));
+                dc.DrawText(new FormattedText(col9, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(680, yPos));
+                dc.DrawText(new FormattedText(col10, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(750, yPos));
+
+                yPos += 20;
+            }
+        }
+
+
+        private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
 
