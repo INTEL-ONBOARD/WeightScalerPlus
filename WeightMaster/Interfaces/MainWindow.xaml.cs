@@ -2760,7 +2760,7 @@ namespace WeightMaster
                     DrawingVisual visual = new DrawingVisual();
                     using (DrawingContext dc = visual.RenderOpen())
                     {
-                        //DrawPage(dc, lineReportData);
+                        DrawPage(dc, lineReportData);
                     }
                     printDialog.PrintVisual(visual, "Print Document");
                 }

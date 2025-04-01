@@ -164,12 +164,12 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
-        public async Task<List<FinalTransactionBlockModel>> getDataForPrint()
+        public async Task<List<FinalTransactionBlockModel>> getDataForPrint(string linename_)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
             return await _context.FinaltransactionData
-                .Where(t => t.bag_count > 0 && t.date == todayDate)
+                .Where(t => t.bag_count > 0 && t.date == todayDate && t.linename == linename_)
                 .ToListAsync();
 
         }
