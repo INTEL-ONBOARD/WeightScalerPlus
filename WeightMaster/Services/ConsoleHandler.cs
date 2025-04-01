@@ -122,9 +122,9 @@ namespace WeightMaster.Services
             return await _engine.getPrintData_1();
         }
         //return data for the report from thhe station-2
-        public async Task<List<FinalTransactionBlockModel>> print_sta2()
+        public async Task<List<FinalTransactionBlockModel>> print_sta2(string linename)
         {
-            return await _engine.getPrintData_2();
+            return await _engine.getPrintData_2(linename);
         }
 
     }

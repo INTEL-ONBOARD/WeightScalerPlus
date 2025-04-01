@@ -625,12 +625,12 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<List<FinalTransactionBlockModel>> getPrintData_2()
+        public async Task<List<FinalTransactionBlockModel>> getPrintData_2(string linename)
         {
             try
             {
                 var transactionService = new FinalTransactionService(new AppDbContext());
-                var data = await transactionService.getDataForPrint();
+                var data = await transactionService.getDataForPrint(linename);
 
                 System.Diagnostics.Debug.WriteLine("===== Print data");
 
