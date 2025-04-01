@@ -323,7 +323,7 @@
             </Border>
 
             <!--Station1Frame-->
-            <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station1Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,396" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
@@ -832,31 +832,31 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
-                <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,523" BorderThickness="2" BorderBrush="#ECECEC">
+            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+                <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
-                        <Grid Margin="50,102,55,68">
+                        <Grid Margin="50,118,55,52">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox x:Name="supervisorCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1"  >
+                            <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,7"/>
+                            <ComboBox x:Name="supervisorCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" MinHeight="50" FontSize="20"  >
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
                             </ComboBox>
                         </Grid>
                         <!--weight leaf officer textbox-->
-                        <Grid  Margin="50,32,55,161" >
+                        <Grid  Margin="50,25,55,168" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                            <Border Grid.Row="1" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,0,0,5">
-                                <TextBox x:Name="weightLeafOfficerTxt_st2" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Top" Height="23" Margin="0,4,0,0"/>
+                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-12,0,2" />
+                            <Border Grid.Row="1" CornerRadius="10" BorderThickness="2" Padding="2" Margin="0,0,0,5">
+                                <TextBox x:Name="weightLeafOfficerTxt_st2" Background="{x:Null}" BorderThickness="0" Foreground="#FF0078D7" FontSize="20" VerticalAlignment="Top" Height="23" Margin="0,4,0,0" MinHeight="50" BorderBrush="{x:Null}"/>
                             </Border>
                         </Grid>
 
@@ -871,22 +871,19 @@
                     </Grid>
                 </Border>
 
-                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="26,334,1379,80">
-                    <Grid>
+                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="26,426,1379,80">
+                    <Grid Height="402" VerticalAlignment="Top" Margin="0,-61,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
                             <RowDefinition Height="190"/>
                             <RowDefinition Height="90"/>
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                            <Ellipse Width="20" Height="20" Fill="#2ECC71" Margin="20,0,10,0"/>
-                            <TextBlock Text="Connected" Foreground="#B1B1B1" FontSize="15" FontWeight="SemiBold" Margin="5,0,0,0" />
-                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,30,0,0"/>
 
-                        <TextBlock x:Name="goldText2" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="290,43,89,-19" Grid.Row="3" />
-                        <TextBlock x:Name="greenText2" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="322,43,51,-19" Grid.Row="3" />
-                        <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
+                        <TextBlock x:Name="goldText2" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="262,416,117,-392" Grid.Row="3" />
+                        <TextBlock x:Name="greenText2" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="294,416,79,-392" Grid.Row="3" />
+                        <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="338,416,39,-392" Grid.Row="3" />
 
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
@@ -947,13 +944,13 @@
                             <TextBlock Grid.Row="1" x:Name="customerNameTxt_st2" Text="-" FontSize="15" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
                         </Grid>
                         <!-- Transport Route Dropdown -->
-                        <Grid Margin="310,19,36,617" >
+                        <Grid Margin="-383,213,672,409" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,0"/>
-                            <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st2_SelectionChanged" Grid.Row="1"  >
+                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2"/>
+                            <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st2_SelectionChanged" Grid.Row="1" Margin="-9,0,0,-21" MinHeight="50" VerticalContentAlignment="Center" FontSize="20"  >
                                 <!--
                                 <ComboBoxItem Content="Alaska"/>
                                 <ComboBoxItem Content="Boston"/>
@@ -962,13 +959,17 @@
                             </ComboBox>
                         </Grid>
                         <!--name w. initials label-->
-                        <Grid Margin="313,102,33,551" >
+                        <Grid Margin="-383,307,729,346" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="31*"/>
+                                <ColumnDefinition Width="49*"/>
+                            </Grid.ColumnDefinitions>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="15" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" />
+                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" Width="230" Grid.ColumnSpan="2" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
