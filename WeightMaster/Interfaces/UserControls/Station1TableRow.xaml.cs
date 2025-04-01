@@ -31,9 +31,9 @@ namespace WeightMaster.Interfaces.UserControls
             this.roundNo.Text = roundNo;
             this.sacksCount.Text = sacksCount;
             this.boxCount.Text = boxCount;
-            this.acceptedWeight.Text = acceptedWeight;
             this.goldLeafWeight.Text = goldLeafWeight;
             this.generalLeafWeight.Text = generalLeafWeight;
+            this.acceptedWeight.Text = acceptedWeight;
         }
     }
 }
