@@ -2742,7 +2742,7 @@ namespace WeightMaster
             {
                 //fetch line wise data to pass down to report drawing
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2();
-                MessageBox.Show("db call passed here");
+                //MessageBox.Show("db call passed here");
                 //testing the data
                 if (lineReportData != null) 
                 {
@@ -2760,7 +2760,7 @@ namespace WeightMaster
                     DrawingVisual visual = new DrawingVisual();
                     using (DrawingContext dc = visual.RenderOpen())
                     {
-                        //DrawPage(dc, lineReportData);
+                        DrawPage(dc, lineReportData);
                     }
                     printDialog.PrintVisual(visual, "Print Document");
                 }
@@ -2774,23 +2774,28 @@ namespace WeightMaster
         //design & draw line report
         private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
         {
+            // Debug output for verification
+            foreach (var transaction in lineReportData)
+            {
+                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+            }
+
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;
             Brush brush = Brushes.Black;
             double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             double yPos = 50;
 
-            // Main headers with larger font
+            // Main headers
             string[] mainHeaders = {
-                "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-                "සමූපකාර තේ කම්හල",
-                "S.T."
-            };
+        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
+        "සමූපකාර තේ කම්හල",
+        "S.T."
+    };
 
             double[] headerSizes = { 14, 14, 12 };
-            double pageWidth = 816; // Standard A4 width at 96 DPI
+            double pageWidth = 816;
 
-            // Draw three main headers centered
             foreach (int i in new[] { 0, 1, 2 })
             {
                 FormattedText headerText = new FormattedText(
@@ -2805,104 +2810,81 @@ namespace WeightMaster
 
                 double centerX = (pageWidth - headerText.WidthIncludingTrailingWhitespace) / 2;
                 dc.DrawText(headerText, new Point(centerX, yPos));
-                yPos += headerText.Height + 8; // Add spacing between headers
+                yPos += headerText.Height + 8;
             }
 
-            // Existing header content
-            yPos += 20; // Add space after main headers
+            yPos += 20;
 
-            // Document number (right-aligned)
+            // Document number
             dc.DrawText(
                 new FormattedText("02997", CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
                                typeface, fontSize, brush, pixelsPerDip),
                 new Point(700, yPos));
 
-            // Date (left-aligned)
+            // Date
             dc.DrawText(
                 new FormattedText(DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
                                FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                 new Point(50, yPos));
 
-            yPos += 40; // Space before table
+            yPos += 40;
 
-            // Table Header (updated with new column)
-            string[] headers = { "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "මුළු බර" };
-            double[] headerPositions = { 50, 100, 200, 280, 350, 400, 470, 540, 610, 680, 750 };
-            //double[] headerPositions = { 50, 100, 200, 280, 350, 400, 450, 500, 550 };
+            // Table headers
+            string[] headers = { "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන",
+                       "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "මුළු බර" };
+            double[] headerPositions = { 50, 100, 200, 280, 350, 420, 490, 560, 630, 700 };
+
             for (int i = 0; i < headers.Length; i++)
             {
                 dc.DrawText(
-                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new FormattedText(headers[i], CultureInfo.CurrentCulture,
+                                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(headerPositions[i], yPos));
             }
             yPos += 20;
 
-            // Data Rows (updated with dummy data for new column)
-            List<string[]> data = new List<string[]>
+            // Data rows from lineReportData
+            List<string[]> data = new List<string[]>();
+            foreach (var transaction in lineReportData)
             {
-                new string[] { "812", "6367", "02", "1", "43", "02", "41", "1", "41", "43", "101" },
-                new string[] { "813", "3187", "1", "1", "12", "01", "11", "1", "41", "43", "101" },
-                new string[] { "814", "2280", "1", "1", "08", "01", "07", "1", "41", "43", "101" },
-                new string[] { "815", "3164", "2", "1", "42", "03", "39", "1", "41", "43", "101" },
-                new string[] { "816", "2084", "3", "1", "54", "03", "51", "1", "41", "43", "101" },
-                new string[] { "817", "54173", "1", "1", "05", "01", "04", "1", "41", "43", "101" },
-                new string[] { "818", "5809", "1", "1", "20", "01", "19", "1", "41", "43", "101" },
-                new string[] { "819", "2633", "1", "1", "19", "01", "18", "1", "41", "43", "101" },
-                new string[] { "820", "2691", "2", "1", "27", "02", "25", "1", "41", "43", "101" },
-                new string[] { "821", "5561", "1", "1", "12", "01", "11", "1", "41", "43", "101" },
-                new string[] { "822", "6197", "1", "1", "10", "01", "09", "1", "41", "43", "101" },
-                new string[] { "823", "6483", "1", "1", "08", "01", "07", "1", "41", "43", "101" },
-                new string[] { "824", "4549", "2", "1", "26", "02", "24", "1", "41", "43", "101" },
-                new string[] { "825", "4823", "1", "1", "18", "01", "17", "1", "41", "43", "101" },
-                new string[] { "826", "2389", "1", "1", "19", "01", "18", "1", "41", "43", "101" },
-                new string[] { "830", "2415", "1", "1", "07", "02", "05", "1", "41", "43", "101" },
-                new string[] { "832", "6441", "5", "1", "108", "07", "101", "1", "41", "43", "101" },
-                new string[] { "833", "54170", "4", "1", "87", "05", "82", "1", "41", "43", "101" },
-                new string[] { "834", "6653", "1", "1", "21", "01", "20", "1", "41", "43", "101" },
-                new string[] { "835", "2605", "1", "1", "16", "01", "15", "1", "41", "43", "101" },
-                new string[] { "836", "1086", "02", "1", "44", "03", "41", "1", "41", "43", "101" },
-                new string[] { "837", "2602", "01", "1", "21", "01", "20", "1", "41", "43", "101" },
-                new string[] { "839", "7005", "1", "1", "08", "01", "07", "1", "41", "43", "101" }
-            };
+                data.Add(new string[]
+                {
+            transaction.Id.ToString(),                      // අංකය (Index 0)
+            transaction.barcode_details ?? "",               // සාමාජික අංකය (1)
+            transaction.bag_count.ToString(),                // ගෝනි ගණන (2)
+            "1",                                             // පෙට්ටි ගණන (3) - Fixed value
+            transaction.water.ToString(),                    // වතුරට (4)
+            transaction.morapuwata.ToString(),               // මෝරපුවට (5)
+            transaction.thambimata.ToString(),               // තැමිණීමට (6)
+            transaction.reject.ToString(),                   // ප්‍රතික්ෂේපිත (7)
+            transaction.bag_weight.ToString(),               // ගෝනි බර (8)
+            transaction.total_leaf_weight.ToString()        // මුළු බර (9)
+                });
+            }
 
+            // Draw table rows
             foreach (string[] row in data)
             {
-                string col0 = row.Length > 0 ? row[0] : "";
-                string col1 = row.Length > 1 ? row[1] : "";
-                string col2 = row.Length > 2 ? row[2] : "";
-                string col3 = row.Length > 3 ? row[3] : "";
-                string col4 = row.Length > 4 ? row[4] : "";
-                string col5 = row.Length > 5 ? row[5] : "";
-                string col6 = row.Length > 6 ? row[6] : "";
-                string col7 = row.Length > 7 ? row[7] : "";
-                string col8 = row.Length > 8 ? row[8] : "";
-                string col9 = row.Length > 9 ? row[9] : "";
-                string col10 = row.Length > 10 ? row[10] : "";
-
-                //double[] headerPositions = { 50, 100, 200, 280, 350, 400, 470, 540, 610, 680, 750 };
-                // Draw each column at updated positions
-                dc.DrawText(new FormattedText(col0, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                dc.DrawText(new FormattedText(row[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(50, yPos));
-                dc.DrawText(new FormattedText(col1, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                dc.DrawText(new FormattedText(row[1], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(100, yPos));
-                dc.DrawText(new FormattedText(col2, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                dc.DrawText(new FormattedText(row[2], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(200, yPos));
-                dc.DrawText(new FormattedText(col3, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(280, yPos)); // New column position
-                dc.DrawText(new FormattedText(col4, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                dc.DrawText(new FormattedText(row[3], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(280, yPos));
+                dc.DrawText(new FormattedText(row[4], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(350, yPos));
-                dc.DrawText(new FormattedText(col5, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(400, yPos));
-                dc.DrawText(new FormattedText(col6, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(470, yPos));
-                dc.DrawText(new FormattedText(col7, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(540, yPos));
-                dc.DrawText(new FormattedText(col8, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(610, yPos));
-                dc.DrawText(new FormattedText(col9, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(680, yPos));
-                dc.DrawText(new FormattedText(col10, CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(750, yPos));
+                dc.DrawText(new FormattedText(row[5], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(420, yPos));
+                dc.DrawText(new FormattedText(row[6], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(490, yPos));
+                dc.DrawText(new FormattedText(row[7], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(560, yPos));
+                dc.DrawText(new FormattedText(row[8], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(630, yPos));
+                dc.DrawText(new FormattedText(row[9], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(700, yPos));
 
                 yPos += 20;
             }
