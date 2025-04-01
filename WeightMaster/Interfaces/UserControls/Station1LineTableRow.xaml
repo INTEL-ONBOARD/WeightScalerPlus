@@ -17,12 +17,12 @@
                     <ColumnDefinition Width="120" />
                     <ColumnDefinition Width="120" />
                 </Grid.ColumnDefinitions>
-                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Text="#1" x:Name="memberNo"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="20" x:Name="sacksCount"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="0" x:Name="boxCount"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="100kg" x:Name="goldLeafWeight"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="360kg" x:Name="generalLeafWeight"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="460kg" x:Name="acceptedWeight"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text="#1" x:Name="memberNo" Foreground="#FF0078D7"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="20" x:Name="sacksCount" Foreground="#FF0078D7"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="0" x:Name="boxCount" Foreground="#FF0078D7"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="100kg" x:Name="goldLeafWeight" Foreground="#FF0078D7"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="360kg" x:Name="generalLeafWeight" Foreground="#FF0078D7"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="460kg" x:Name="acceptedWeight" Foreground="#FF0078D7"/>
             </Grid>
         </Border>
     </Grid>

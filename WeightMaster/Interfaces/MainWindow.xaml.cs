@@ -2733,7 +2733,10 @@ namespace WeightMaster
 
         }
 
+        private void supervisorCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
 
+        }
     }
 }
 
