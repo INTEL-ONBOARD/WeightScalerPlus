@@ -657,8 +657,8 @@
                         </Grid>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click">
-                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
+                            <Border x:Name="confirmAddRowButtonBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
@@ -1154,8 +1154,8 @@
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st2" Background="Transparent" BorderThickness="0" Click="confirmAddRowButton_st2_Click" Margin="28,643,313,19" Style="{StaticResource HoverButton}">
-                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st2" Background="Transparent" BorderThickness="0" Click="confirmAddRowButton_st2_Click" Margin="28,643,313,19" Style="{StaticResource HoverButton}" IsEnabled="False">
+                            <Border x:Name="confirmAddRowButtonBorder_st2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>

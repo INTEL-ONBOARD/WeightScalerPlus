@@ -22,6 +22,7 @@ namespace WeightMaster.Services
         {
             return new FinalTransactionBlockModel
             {
+                Id = transaction.Id,
                 linename = transaction.linename,
                 transportagent = transaction.transportagent,
                 company = transaction.company,
@@ -106,6 +107,7 @@ namespace WeightMaster.Services
             if (existingTransaction != null)
             {
                 // Update the transaction fields with the provided data
+                existingTransaction.Id = updatedTransaction.Id;
                 existingTransaction.linename = updatedTransaction.linename;
                 existingTransaction.transportagent = updatedTransaction.transportagent;
                 existingTransaction.company = updatedTransaction.company;
