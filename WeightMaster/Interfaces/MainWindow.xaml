@@ -886,7 +886,7 @@
                         <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="338,416,39,-392" Grid.Row="3" />
 
                         <!--scaler weight label-->
-                        <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,0,10,0">
+                        <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,52,10,0">
                             <TextBox x:Name="weightScalerValTxt_st2" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
@@ -903,19 +903,19 @@
                 <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="467,35,763,78" >
                     <Grid>
                         <!-- Member barcode id TextBox -->
-                        <Grid Margin="33,22,308,620">
+                        <Grid Margin="28,35,313,607">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="50"/>
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0" Height="60">
-                                <TextBlock Grid.Row="0" Text="කේත අංකය / සා මා ජික අං." FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Margin="0,0,0,37"/>
-                                <Border Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,0">
-                                    <TextBox x:Name="barcodeTxt_st2" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="14" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-15,0,43"><Run Text=" සා මා ජික "/><Run Text="අංකය"/></TextBlock>
+                                <Border Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,-49">
+                                    <TextBox x:Name="barcodeTxt_st2" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
-                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,0,0" Style="{StaticResource HoverButton}">
+                            <Button Cursor="Hand" Grid.Column="1" Background="Transparent" BorderThickness="0" Margin="10,24,-28,-45" Style="{StaticResource HoverButton}">
                                 <Border Background="#2ECC71" CornerRadius="10" Padding="12">
                                     <Image Source="/Interfaces/qr_icon.png"/>
                                 </Border>
@@ -935,13 +935,13 @@
                         </Grid>
                         -->
                         <!--name w. initials label-->
-                        <Grid Margin="36,102,310,551" >
+                        <Grid Margin="324,22,22,593" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="මුලකරු සමග නම" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
-                            <TextBlock Grid.Row="1" x:Name="customerNameTxt_st2" Text="-" FontSize="15" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" />
+                            <TextBlock Grid.Row="0" Text="මුලකරු සමග නම" FontSize="20" Foreground="Black" HorizontalAlignment="Left" />
+                            <TextBlock Grid.Row="1" x:Name="customerNameTxt_st2" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Center" Margin="0,14,0,-52" Width="220" />
                         </Grid>
                         <!-- Transport Route Dropdown -->
                         <Grid Margin="-383,213,672,409" >
@@ -959,7 +959,7 @@
                             </ComboBox>
                         </Grid>
                         <!--name w. initials label-->
-                        <Grid Margin="-383,307,729,346" >
+                        <Grid Margin="-383,307,729,319" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="31*"/>
                                 <ColumnDefinition Width="49*"/>
@@ -969,7 +969,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" />
-                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,0" Width="230" Grid.ColumnSpan="2" />
+                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,-11" Width="230" Grid.ColumnSpan="2" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
@@ -982,7 +982,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="පිළිගත් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="පිළිගත් දළු බර(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox IsReadOnly="True" x:Name="acceptedLeafWeightTxt_st2" Text="" PreviewTextInput="TextBox_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -993,7 +993,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="රන් දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="රන් දළු බර(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox Text="" x:Name="goldenLeafWeightTxt_st2" TextChanged="GoldenAndNormalWeight_st2_TextChanged" PreviewTextInput="GoldenAndNormalWeight_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1004,7 +1004,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="සාමාන්‍ය දළු බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="සාමාන්‍ය දළු බර(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox x:Name="normalLeafWeightTxt_st2" IsReadOnly="True" Text="" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1024,7 +1024,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Width="110" />
+                                <TextBlock Grid.Row="0" Text="ගෝනි ගණන" FontSize="15" HorizontalAlignment="Left" Width="110" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox x:Name="totalNSacksTxt_st2" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1035,7 +1035,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="පිලිගත් ගෝනි බර(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Center" Width="162" />
+                                <TextBlock Grid.Row="0" Text="පිලිගත් ගෝනි බර(KG)" FontSize="15" HorizontalAlignment="Center" Width="162" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox x:Name="acceptedSackWeightTxt_st2" IsReadOnly="False" TextChanged="WeightDeduction_st2_TextChanged"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1046,7 +1046,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="වතුරට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="වතුරට(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox x:Name="wateredTxt_st2" Text="" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1057,7 +1057,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="මෝරපුවට(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="මෝරපුවට(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox  x:Name="maturedTxt_st2" Text="" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1068,7 +1068,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="තැම්බුණු(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" Width="96" />
+                                <TextBlock Grid.Row="0" Text="තැම්බුණු(KG)" FontSize="15" HorizontalAlignment="Left" Width="96" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox Text=""  x:Name="spoiledTxt_st2" TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -1079,7 +1079,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="ප්‍රතික්ෂේපිත(KG)" FontSize="15" Foreground="#616161" HorizontalAlignment="Left" />
+                                <TextBlock Grid.Row="0" Text="ප්‍රතික්ෂේපිත(KG)" FontSize="15" HorizontalAlignment="Left" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox  x:Name="rejectedTxt_st2" Text=""  TextChanged="WeightDeduction_st2_TextChanged"  PreviewTextInput="WeightDeduction_st2_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
