@@ -2741,7 +2741,7 @@ namespace WeightMaster
             try
             {
                 //fetch line wise data to pass down to report drawing
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2();
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2("");
                 MessageBox.Show("db call passed here");
                 //testing the data
                 if (lineReportData != null) 
