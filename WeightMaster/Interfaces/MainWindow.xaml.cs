@@ -2736,22 +2736,43 @@ namespace WeightMaster
 
 
         //_______Reports_______________________________________________________________________
-        private void printLineReportBtn_Click(object sender, RoutedEventArgs e)
+        private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            PrintDialog printDialog = new PrintDialog();
-            if (printDialog.ShowDialog() == true)
+            try
             {
-                DrawingVisual visual = new DrawingVisual();
-                using (DrawingContext dc = visual.RenderOpen())
+                //fetch line wise data to pass down to report drawing
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2();
+                MessageBox.Show("db call passed here");
+                //testing the data
+                if (lineReportData != null) 
                 {
-                    DrawPage(dc);
+                    MessageBox.Show("response is not null");
                 }
-                printDialog.PrintVisual(visual, "Print Document");
+                foreach (var transaction in lineReportData)
+                {
+                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                }
+
+
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    DrawingVisual visual = new DrawingVisual();
+                    using (DrawingContext dc = visual.RenderOpen())
+                    {
+                        //DrawPage(dc, lineReportData);
+                    }
+                    printDialog.PrintVisual(visual, "Print Document");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
             }
         }
 
         //design & draw line report
-        private void DrawPage(DrawingContext dc)
+        private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
         {
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;

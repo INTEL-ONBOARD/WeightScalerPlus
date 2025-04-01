@@ -1225,17 +1225,18 @@
                 <!--member completion status label-->
                 <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="10" Margin="1083,657,10,80">
                     <Grid>
-                        <!--transport report button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="450,18,29,17" Style="{StaticResource HoverButton}" RenderTransformOrigin="0.5,0.5" Click="printLineReportBtn_Click">
-                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Width="245" Height="36">
-                                <TextBlock Text="ප්‍රවාහන මාර්ග වාර්තාව" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White" FontSize="15" FontWeight="Normal" Width="176" Margin="0,0,0,-2"/>
-                            </Border>
-                        </Button>
 
                         <!--daily report button-->
                         <Button Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="32,20,459,19" Style="{StaticResource HoverButton}" Click="printDailyReportBtn_Click">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="6" Height="36" Width="232">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Text="දෛනික වාර්තාව" Foreground="White" FontSize="15" FontWeight="Normal" Width="136" Height="26" Margin="0,2,0,0"/>
+                            </Border>
+                        </Button>
+
+                        <!--transport report button-->
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="450,18,29,17" Style="{StaticResource HoverButton}" RenderTransformOrigin="0.5,0.5" Click="printLineReportBtn_Click">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Width="245" Height="36">
+                                <TextBlock Text="ප්‍රවාහන මාර්ග වාර්තාව" HorizontalAlignment="Center" VerticalAlignment="Bottom" Foreground="White" FontSize="15" FontWeight="Normal" Width="176" Margin="0,0,0,-2"/>
                             </Border>
                         </Button>
                         <!--
