@@ -2738,10 +2738,17 @@ namespace WeightMaster
         //_______Reports_______________________________________________________________________
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (lineNameCmb_st2.SelectedItem==null) 
+            {
+                MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
+                return;
+            }
+
             try
             {
+                MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
                 //fetch line wise data to pass down to report drawing
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2("");
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
                 //MessageBox.Show("db call passed here");
                 //testing the data
                 //if (lineReportData != null) 
@@ -2774,11 +2781,12 @@ namespace WeightMaster
         //design & draw line report
         private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
         {
-            // Debug output
-            foreach (var transaction in lineReportData)
-            {
-                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-            }
+
+            // Debug output for verification
+            //foreach (var transaction in lineReportData)
+            //{
+            //System.Diagnostics.Debug.WriteLine($"Print: ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+            //}
 
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;
@@ -2788,9 +2796,9 @@ namespace WeightMaster
 
             // Main headers
             string[] mainHeaders = {
-                "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-                "සමූපකාර තේ කම්හල",
-                "S.T."
+        "සීමා සහිත මො රවක්කො රළේ තේ නිපදවන්නන්ගේ සමුපකා ර සමිතිය",
+        "සමූපකා ර තේ කම්හල",
+        "S.T."
     };
 
             double[] headerSizes = { 14, 14, 12 };
