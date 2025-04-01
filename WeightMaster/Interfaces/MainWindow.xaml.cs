@@ -2736,9 +2736,10 @@ namespace WeightMaster
 
 
         //_______Reports_______________________________________________________________________
+
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (lineNameCmb_st2.SelectedItem==null) 
+            if (lineNameCmb_st2.SelectedItem == null)
             {
                 MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
                 return;
@@ -2746,14 +2747,14 @@ namespace WeightMaster
 
             try
             {
-                MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
+                //MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
                 //fetch line wise data to pass down to report drawing
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
                 //MessageBox.Show("db call passed here");
                 //testing the data
-                //if (lineReportData != null) 
+                //if (lineReportData != null)
                 //{
-                //    MessageBox.Show("response is not null");
+                //MessageBox.Show("response is not null");
                 //}
                 foreach (var transaction in lineReportData)
                 {
@@ -2767,7 +2768,7 @@ namespace WeightMaster
                     DrawingVisual visual = new DrawingVisual();
                     using (DrawingContext dc = visual.RenderOpen())
                     {
-                        DrawPage(dc, lineReportData);
+                        DrawPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
                     }
                     printDialog.PrintVisual(visual, "Print Document");
                 }
@@ -2778,15 +2779,14 @@ namespace WeightMaster
             }
         }
 
-        //design & draw line report
+
         private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
         {
-
-            // Debug output for verification
-            //foreach (var transaction in lineReportData)
-            //{
-            //System.Diagnostics.Debug.WriteLine($"Print: ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-            //}
+            // Debug output
+            foreach (var transaction in lineReportData)
+            {
+                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+            }
 
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;
@@ -2796,9 +2796,9 @@ namespace WeightMaster
 
             // Main headers
             string[] mainHeaders = {
-        "සීමා සහිත මො රවක්කො රළේ තේ නිපදවන්නන්ගේ සමුපකා ර සමිතිය",
-        "සමූපකා ර තේ කම්හල",
-        "S.T."
+        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
+        "සමූපකාර තේ කම්හල",
+        lineName
     };
 
             double[] headerSizes = { 14, 14, 12 };
@@ -2837,20 +2837,12 @@ namespace WeightMaster
 
             yPos += 40;
 
-                // Updated table headers with new column and order
-                string[] headers = {
-            "අංකය",
-            "සාමාජික අංකය",
-            "ගෝනි ගණන",
-            "පෙට්ටි ගණන",
-            "මුළු බර",
-            "වතුරට",
-            "මෝරපුවට",
-            "තැමිණීමට",
-            "ප්‍රතික්ෂේපිත",
-            "ගෝනි බර",
-            "දළු බර"
-        };
+            // Table headers
+            string[] headers = {
+            "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන",
+            "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
+            "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
+    };
 
             double[] headerPositions = { 50, 100, 200, 280, 350, 420, 490, 560, 630, 700, 770 };
 
@@ -2863,27 +2855,52 @@ namespace WeightMaster
             }
             yPos += 20;
 
-            // Updated data mapping with new column
+            // Initialize totals
+            int totalBagCount = 0;
+            int totalBoxCount = 0;
+            int totalLeafWeight = 0;
+            int totalWater = 0;
+            int totalMorapuwata = 0;
+            int totalThambimata = 0;
+            int totalReject = 0;
+            int totalBagWeight = 0;
+            int totalDalu = 0;
+
+            // Data rows
             List<string[]> data = new List<string[]>();
             foreach (var transaction in lineReportData)
             {
+                int dalu = transaction.total_leaf_weight - transaction.water - transaction.morapuwata
+                         - transaction.thambimata - transaction.reject - transaction.bag_weight;
+
                 data.Add(new string[]
                 {
-                    transaction.Id.ToString(),                      // අංකය [0]
-                    transaction.barcode_details ?? "",             // සාමාජික අංකය [1]
-                    transaction.bag_count.ToString(),              // ගෝනි ගණන [2]
-                    "0",                                           // පෙට්ටි ගණන [3]
-                    (transaction.total_leaf_weight).ToString(),      // මුළු බර [4]
-                    transaction.water.ToString(),                  // වතුරට [5]
-                    transaction.morapuwata.ToString(),             // මෝරපුවට [6]
-                    transaction.thambimata.ToString(),             // තැමිණීමට [7]
-                    transaction.reject.ToString(),                 // ප්‍රතික්ෂේපිත [8]
-                    transaction.bag_weight.ToString(),             // ගෝනි බර [9]
-                    (transaction.total_leaf_weight - transaction.morapuwata - transaction.thambimata - transaction.reject - transaction.water - transaction.bag_weight).ToString() // දළු බර [10]
+            transaction.Id.ToString(),
+            transaction.barcode_details ?? "",
+            transaction.bag_count.ToString(),
+            "1",
+            transaction.total_leaf_weight.ToString(),
+            transaction.water.ToString(),
+            transaction.morapuwata.ToString(),
+            transaction.thambimata.ToString(),
+            transaction.reject.ToString(),
+            transaction.bag_weight.ToString(),
+            dalu.ToString()
                 });
+
+                // Accumulate totals
+                totalBagCount += transaction.bag_count;
+                totalBoxCount += 1;
+                totalLeafWeight += transaction.total_leaf_weight;
+                totalWater += transaction.water;
+                totalMorapuwata += transaction.morapuwata;
+                totalThambimata += transaction.thambimata;
+                totalReject += transaction.reject;
+                totalBagWeight += transaction.bag_weight;
+                totalDalu += dalu;
             }
 
-            // Draw rows with new column positions
+            // Draw data rows
             foreach (string[] row in data)
             {
                 dc.DrawText(new FormattedText(row[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
@@ -2911,6 +2928,51 @@ namespace WeightMaster
 
                 yPos += 20;
             }
+
+            // Draw totals row
+            string[] totalsRow = {
+        "Total",
+        "",
+        totalBagCount.ToString(),
+        totalBoxCount.ToString(),
+        totalLeafWeight.ToString(),
+        totalWater.ToString(),
+        totalMorapuwata.ToString(),
+        totalThambimata.ToString(),
+        totalReject.ToString(),
+        totalBagWeight.ToString(),
+        totalDalu.ToString()
+    };
+
+            // Draw totals line
+            dc.DrawLine(new Pen(brush, 1), new Point(50, yPos), new Point(770, yPos));
+            yPos += 2;
+
+            // Draw totals text
+            dc.DrawText(new FormattedText(totalsRow[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, yPos));
+            dc.DrawText(new FormattedText(totalsRow[1], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(100, yPos));
+            dc.DrawText(new FormattedText(totalsRow[2], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(200, yPos));
+            dc.DrawText(new FormattedText(totalsRow[3], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(280, yPos));
+            dc.DrawText(new FormattedText(totalsRow[4], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(350, yPos));
+            dc.DrawText(new FormattedText(totalsRow[5], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(420, yPos));
+            dc.DrawText(new FormattedText(totalsRow[6], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(490, yPos));
+            dc.DrawText(new FormattedText(totalsRow[7], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(560, yPos));
+            dc.DrawText(new FormattedText(totalsRow[8], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(630, yPos));
+            dc.DrawText(new FormattedText(totalsRow[9], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(700, yPos));
+            dc.DrawText(new FormattedText(totalsRow[10], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(770, yPos));
+
+            yPos += 20;
         }
 
         private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
