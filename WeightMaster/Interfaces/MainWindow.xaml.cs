@@ -2744,10 +2744,10 @@ namespace WeightMaster
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2("");
                 //MessageBox.Show("db call passed here");
                 //testing the data
-                if (lineReportData != null) 
-                {
-                    MessageBox.Show("response is not null");
-                }
+                //if (lineReportData != null) 
+                //{
+                //    MessageBox.Show("response is not null");
+                //}
                 foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -2772,9 +2772,9 @@ namespace WeightMaster
         }
 
         //design & draw line report
-        private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
+        private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
         {
-            // Debug output for verification
+            // Debug output
             foreach (var transaction in lineReportData)
             {
                 System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -2788,9 +2788,9 @@ namespace WeightMaster
 
             // Main headers
             string[] mainHeaders = {
-        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-        "සමූපකාර තේ කම්හල",
-        "S.T."
+                "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
+                "සමූපකාර තේ කම්හල",
+                "S.T."
     };
 
             double[] headerSizes = { 14, 14, 12 };
@@ -2829,10 +2829,22 @@ namespace WeightMaster
 
             yPos += 40;
 
-            // Table headers
-            string[] headers = { "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන",
-                       "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "මුළු බර" };
-            double[] headerPositions = { 50, 100, 200, 280, 350, 420, 490, 560, 630, 700 };
+                // Updated table headers with new column and order
+                string[] headers = {
+            "අංකය",
+            "සාමාජික අංකය",
+            "ගෝනි ගණන",
+            "පෙට්ටි ගණන",
+            "මුළු බර",
+            "වතුරට",
+            "මෝරපුවට",
+            "තැමිණීමට",
+            "ප්‍රතික්ෂේපිත",
+            "ගෝනි බර",
+            "දළු බර"
+        };
+
+            double[] headerPositions = { 50, 100, 200, 280, 350, 420, 490, 560, 630, 700, 770 };
 
             for (int i = 0; i < headers.Length; i++)
             {
@@ -2843,26 +2855,27 @@ namespace WeightMaster
             }
             yPos += 20;
 
-            // Data rows from lineReportData
+            // Updated data mapping with new column
             List<string[]> data = new List<string[]>();
             foreach (var transaction in lineReportData)
             {
                 data.Add(new string[]
                 {
-            transaction.Id.ToString(),                      // අංකය (Index 0)
-            transaction.barcode_details ?? "",               // සාමාජික අංකය (1)
-            transaction.bag_count.ToString(),                // ගෝනි ගණන (2)
-            "1",                                             // පෙට්ටි ගණන (3) - Fixed value
-            transaction.water.ToString(),                    // වතුරට (4)
-            transaction.morapuwata.ToString(),               // මෝරපුවට (5)
-            transaction.thambimata.ToString(),               // තැමිණීමට (6)
-            transaction.reject.ToString(),                   // ප්‍රතික්ෂේපිත (7)
-            transaction.bag_weight.ToString(),               // ගෝනි බර (8)
-            transaction.total_leaf_weight.ToString()        // මුළු බර (9)
+                    transaction.Id.ToString(),                      // අංකය [0]
+                    transaction.barcode_details ?? "",             // සාමාජික අංකය [1]
+                    transaction.bag_count.ToString(),              // ගෝනි ගණන [2]
+                    "0",                                           // පෙට්ටි ගණන [3]
+                    (transaction.total_leaf_weight).ToString(),      // මුළු බර [4]
+                    transaction.water.ToString(),                  // වතුරට [5]
+                    transaction.morapuwata.ToString(),             // මෝරපුවට [6]
+                    transaction.thambimata.ToString(),             // තැමිණීමට [7]
+                    transaction.reject.ToString(),                 // ප්‍රතික්ෂේපිත [8]
+                    transaction.bag_weight.ToString(),             // ගෝනි බර [9]
+                    (transaction.total_leaf_weight - transaction.morapuwata - transaction.thambimata - transaction.reject - transaction.water - transaction.bag_weight).ToString() // දළු බර [10]
                 });
             }
 
-            // Draw table rows
+            // Draw rows with new column positions
             foreach (string[] row in data)
             {
                 dc.DrawText(new FormattedText(row[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
@@ -2885,11 +2898,12 @@ namespace WeightMaster
                     new Point(630, yPos));
                 dc.DrawText(new FormattedText(row[9], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                     new Point(700, yPos));
+                dc.DrawText(new FormattedText(row[10], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(770, yPos));
 
                 yPos += 20;
             }
         }
-
 
         private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
         {
