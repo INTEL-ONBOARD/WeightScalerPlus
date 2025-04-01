@@ -373,9 +373,9 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0"/>
-                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="290,43,89,-19" Grid.Row="3" />
-                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="322,43,51,-19" Grid.Row="3" />
-                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,43,10,-19" Grid.Row="3" />
+                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="379,360,0,-336" Grid.Row="3" />
+                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="408,357,-35,-333" Grid.Row="3" />
+                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="355,360,21,-336" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,31,10,0">
                             <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
@@ -383,9 +383,9 @@
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st1"  BorderThickness="0" Background="Transparent" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st1_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button x:Name="wieghtScalerConfirmBtn_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click">
-                            <Border x:Name="wieghtScalerConfirmBtnBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="310">
-                                <TextBlock Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" HorizontalAlignment="Center"/>
+                        <Button x:Name="wieghtScalerConfirmBtn_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click" Margin="0,11,0,-11">
+                            <Border x:Name="wieghtScalerConfirmBtnBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="310">
+                                <TextBlock Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
                         </Button>
                     </Grid>
@@ -675,15 +675,23 @@
                         </Grid>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" Background="Transparent" BorderThickness="0" Margin="33,628,308,34" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
-                            <Border x:Name="confirmAddRowButtonBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" Background="Transparent" BorderThickness="0" Margin="33,623,308,24" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
+                            <Border x:Name="confirmAddRowButtonBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="246" RenderTransformOrigin="0.5,0.5">
+                                <Border.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform/>
+                                        <SkewTransform AngleX="0.888"/>
+                                        <RotateTransform/>
+                                        <TranslateTransform X="0.318"/>
+                                    </TransformGroup>
+                                </Border.RenderTransform>
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
                         <!--Clear button-->
-                        <Button Cursor="Hand" x:Name="clearBtn_st1" Background="Transparent" BorderThickness="0" Margin="300,630,20,34" Style="{StaticResource HoverButton}" Click="clearBtn_st1_Clicked">
-                            <Border Background="#616161" CornerRadius="8" Padding="10" Width="262" Height="36">
-                                <TextBlock Text="Clear" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                        <Button Cursor="Hand" x:Name="clearBtn_st1" Background="Transparent" BorderThickness="0" Margin="300,623,20,26" Style="{StaticResource HoverButton}" Click="clearBtn_st1_Clicked">
+                            <Border Background="#616161" CornerRadius="8" Padding="10" Width="262" Height="50">
+                                <TextBlock Text="Clear" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="24" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
                     </Grid>
