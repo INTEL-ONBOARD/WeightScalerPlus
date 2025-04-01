@@ -333,7 +333,7 @@
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="1" Text="අධීක්ෂණය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,19,0,-9"/>
-                            <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" Margin="0,51,0,-56" FontSize="20" SelectionChanged="supervisorCmb_st1_SelectionChanged" MinHeight="50" VerticalContentAlignment="Center"  >
+                            <ComboBox x:Name="supervisorCmb_st1" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" Margin="0,51,0,-56" FontSize="20"  MinHeight="50" VerticalContentAlignment="Center"  >
                                 <!--
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
