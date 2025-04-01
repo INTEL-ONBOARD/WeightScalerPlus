@@ -2749,12 +2749,12 @@ namespace WeightMaster
                 MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
                 //fetch line wise data to pass down to report drawing
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
-                MessageBox.Show("db call passed here");
+                //MessageBox.Show("db call passed here");
                 //testing the data
-                if (lineReportData != null) 
-                {
-                    MessageBox.Show("response is not null");
-                }
+                //if (lineReportData != null)
+                //{
+                //MessageBox.Show("response is not null");
+                //}
                 foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -2781,15 +2781,12 @@ namespace WeightMaster
         //design & draw line report
         private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
         {
-            if (lineReportData == null) 
-            {
-                MessageBox.Show("This is null");
-            }
+
             // Debug output for verification
-            foreach (var transaction in lineReportData)
-            {
-                System.Diagnostics.Debug.WriteLine($"Print: ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-            }
+            //foreach (var transaction in lineReportData)
+            //{
+            //System.Diagnostics.Debug.WriteLine($"Print: ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+            //}
 
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;
@@ -2799,8 +2796,8 @@ namespace WeightMaster
 
             // Main headers
             string[] mainHeaders = {
-        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-        "සමූපකාර තේ කම්හල",
+        "සීමා සහිත මො රවක්කො රළේ තේ නිපදවන්නන්ගේ සමුපකා ර සමිතිය",
+        "සමූපකා ර තේ කම්හල",
         "S.T."
     };
 
@@ -2863,7 +2860,7 @@ namespace WeightMaster
             transaction.Id.ToString(),                      // අංකය (Index 0)
             transaction.barcode_details ?? "",               // සාමාජික අංකය (1)
             transaction.bag_count.ToString(),                // ගෝනි ගණන (2)
-            "1",                                             // පෙට්ටි ගණන (3) - Fixed value
+            "",                                             // පෙට්ටි ගණන (3) - Fixed value
             transaction.water.ToString(),                    // වතුරට (4)
             transaction.morapuwata.ToString(),               // මෝරපුවට (5)
             transaction.thambimata.ToString(),               // තැමිණීමට (6)
