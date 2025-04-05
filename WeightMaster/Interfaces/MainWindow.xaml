@@ -323,7 +323,7 @@
             </Border>
 
             <!--Station1Frame-->
-            <Grid x:Name="Station1Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station1Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,396" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- Transport Method Dropdown -->
@@ -373,17 +373,17 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0"/>
-                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="379,360,0,-336" Grid.Row="3" />
-                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="408,357,-35,-333" Grid.Row="3" />
-                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="355,360,21,-336" Grid.Row="3" />
+                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="362,335,17,-311" Grid.Row="3" />
+                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="416,335,-43,-311" Grid.Row="3" />
+                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="484,335,-108,-311" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,31,10,0">
-                            <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="12.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st1"  BorderThickness="0" Background="Transparent" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st1_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button x:Name="wieghtScalerConfirmBtn_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click" Margin="0,11,0,-11">
+                        <Button x:Name="wieghtScalerConfirmBtn_st1" GotFocus="wieghtScalerConfirmBtn_GotFocus_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click" Margin="0,11,0,-11">
                             <Border x:Name="wieghtScalerConfirmBtnBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="310">
                                 <TextBlock Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -451,8 +451,8 @@
                                     <ColumnDefinition Width="69*"/>
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සා මා ජික "/><Run Text="අංකය"/></TextBlock>
-                                <Border Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
-                                    <TextBox x:Name="barcodeTxt_st1" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                <Border Background="#F7F7F7" x:Name="barcodeTxtBorder_st1" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
+                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -586,7 +586,7 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="සා මා න්‍ය දළු බර" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-1,-20,0,10" Grid.ColumnSpan="3" />
-                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Grid.ColumnSpan="3">
+                                <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="Transparent" BorderThickness="2" Padding="2" Grid.ColumnSpan="3">
                                     <TextBox x:Name="normalLeafWeightTxt_st1" IsReadOnly="True" Text="" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
@@ -608,9 +608,9 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock  x:Name="nSacksLbl_st1" Grid.Row="0" Text="ගෝ නි ගණන" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Width="130" Margin="0,-10,0,0" />
+                                <TextBlock  x:Name="nSacksLbl_st1" Grid.Row="0" Text="ගෝ නි ගණන" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Width="140" Margin="0,-10,0,0" />
                                 <Border x:Name="borderNSacks_st1" Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="nSacksTxt_st1" PreviewTextInput="nSacksTxt_st1_PreviewTextInput" TextChanged="SackDeduction_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="nSacksTxt_st1" GotFocus="nSacksTxt_GotFocus_st1" PreviewTextInput="nSacksTxt_st1_PreviewTextInput" TextChanged="SackDeduction_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!--nBoxes textbox-->
@@ -635,8 +635,8 @@
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <TextBlock Grid.Row="0" Text="වතුරට" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-12,0,5" />
-                                <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
-                                    <TextBox x:Name="wateredTxt_st1" Text="" TextChanged="WeightDeduction_st1_TextChanged"  PreviewTextInput="WeightDeduction_st1_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                <Border Grid.Row="1" x:Name="wateredTxtBorder_st1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
+                                    <TextBox x:Name="wateredTxt_st1" GotFocus="wateredTxt_GotFocus_st1" Text="" TextChanged="WeightDeduction_st1_TextChanged"  PreviewTextInput="WeightDeduction_st1_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!--matured leaves textbox-->
@@ -675,16 +675,8 @@
                         </Grid>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" Background="Transparent" BorderThickness="0" Margin="33,623,308,24" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
-                            <Border x:Name="confirmAddRowButtonBorder_st1" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="246" RenderTransformOrigin="0.5,0.5">
-                                <Border.RenderTransform>
-                                    <TransformGroup>
-                                        <ScaleTransform/>
-                                        <SkewTransform AngleX="0.888"/>
-                                        <RotateTransform/>
-                                        <TranslateTransform X="0.318"/>
-                                    </TransformGroup>
-                                </Border.RenderTransform>
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" GotFocus="confirmAddRowButton_GotFocus_st1" Background="Transparent" BorderThickness="0" Margin="33,623,308,24" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
+                            <Border x:Name="confirmAddRowButtonBorder_st1" BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="246" RenderTransformOrigin="0.5,0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
@@ -832,7 +824,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -843,9 +835,11 @@
                             </Grid.RowDefinitions>
                             <TextBlock Grid.Row="0" Text="අධීක්ෂණය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,7"/>
                             <ComboBox x:Name="supervisorCmb_st2" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" MinHeight="50" FontSize="20"  >
+                                <!--
                                 <ComboBoxItem Content="Katujurunda"/>
                                 <ComboBoxItem Content="Haggala"/>
                                 <ComboBoxItem Content="Nuwara-Eliya"/>
+                                -->
                             </ComboBox>
                         </Grid>
                         <!--weight leaf officer textbox-->
@@ -887,7 +881,7 @@
 
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,52,10,0">
-                            <TextBox x:Name="weightScalerValTxt_st2" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Bottom" Text="0.0" Foreground="Black" FontSize="96" FontWeight="Bold" />
+                            <TextBox x:Name="weightScalerValTxt_st2" BorderThickness="0" IsReadOnly="True" VerticalAlignment="Bottom" Text="5.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
                             <TextBlock VerticalAlignment="Bottom" Text="KG" Foreground="#6B6B6B" FontSize="36" FontWeight="Bold" Height="64" />
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st2" BorderThickness="0" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st2_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
