@@ -503,6 +503,28 @@ namespace WeightMaster.Core
         }
 
 
+        
+
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByBarcodeAndDateAsync(string barcodeDetails)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.GetTransactionsByBarcodeAndDateAsync(barcodeDetails);
+
+                System.Diagnostics.Debug.WriteLine($"Filtered transactions forbarcode: {barcodeDetails} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for barcode {barcodeDetails}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
+
+
+
 
         public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode,string linename)
         {
@@ -642,6 +664,9 @@ namespace WeightMaster.Core
                 return new List<FinalTransactionBlockModel>();
             }
         }
+
+
+
 
     }
 }

@@ -94,6 +94,11 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionData(linenames);
         }
+        //return the transaction data for station-1 based on barcode 
+        public async Task<List<TransactionLogBlockModel>> GetTransactionDataByBarcodeId(string code)
+        {
+            return await _engine.GetFilteredTransactionsByBarcodeAndDateAsync(code);
+        }
         //return a songle transaction data from the station 2 data using member code , barcode
         public async Task<TransactionLogBlockModel> GetTransactionData(string barcode,string linename) //the line name here is useless. give this ""
         {
