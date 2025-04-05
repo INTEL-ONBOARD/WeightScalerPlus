@@ -45,6 +45,8 @@ namespace WeightMaster
         //for Enter and Esc navigation
         private int currentStep_st1 = 0;
         private const int maxStep_st1 = 5;
+        private int currentStep_st2 = 0;
+        private const int maxStep_st2 = 4;
 
         private bool userTyped = true;
         //public int nSacks_st1 = 0;
@@ -177,209 +179,415 @@ namespace WeightMaster
         {
             if (!ValidateCurrentStep()) return;
 
-            if (currentStep_st1 == maxStep_st1)
+            if (Station1Frame.IsVisible)
             {
-                // Handle final step completion
-                //MessageBox.Show("Process completed!");
-                // reset the steps
-                currentStep_st1 = -1;
+                //allow only textbox increments within goToNextStep method
+                if (currentStep_st1 == maxStep_st1 || currentStep_st1 == 1)
+                {
+                    //Handle final step completion
+                    //MessageBox.Show("Process st1 completed!"); //moved to the click event to handle user navigation in case of a mouse click
+                    //// reset the steps
+                    //currentStep_st1 = -1;
+                    //ShowCurrentStep();
+                    //------------keep the return or otherwise step will incremented further by Enter event
+                    //resetting step 5 to 0 and jumping from step 1 to 2 in Buttons is handled by click event to manage jumping in case of handling api failed or success outcomes
+                    //ShowCurrentStep();
+                    return;
+                }
+
+                if (currentStep_st1 >= maxStep_st1) return;
+
+                currentStep_st1++; // this is reassigned at step1's and step5's click events
                 ShowCurrentStep();
-                //return;
             }
+            else if (Station2Frame.IsVisible)
+            {
+                if (currentStep_st2 == maxStep_st2)
+                {
+                    // Handle final step completion
+                    MessageBox.Show("Process st2 completed!");
+                    // reset the steps
+                    currentStep_st2 = 0;
+                    ShowCurrentStep();
+                    //return;
+                }
 
-            if (currentStep_st1 >= maxStep_st1) return;
+                if (currentStep_st2 >= maxStep_st2) return;
 
-            currentStep_st1++;
-            ShowCurrentStep();
+                //allow only textbox increments
+                //MessageBox.Show("incrementing");
+                currentStep_st2++;
+                ShowCurrentStep();
+            }
         }
 
         private void GoToPreviousStep()
         {
-            //avoid entering certain steps(steps with buttons)
-            if (currentStep_st1 == 2)
+            if (Station1Frame.IsVisible)
             {
+                //avoid entering certain steps(steps with buttons)
+                if (currentStep_st1 == 2)
+                {
+                    ShowCurrentStep();
+                    return;
+                }
+
+                if (currentStep_st1 <= 1) return;
+
+                currentStep_st1--;
                 ShowCurrentStep();
-                return;
             }
+            else if (Station2Frame.IsVisible)
+            {
+                //avoid entering certain steps(steps with buttons)
+                //if (currentStep_st2 == 2)
+                //{
+                //    ShowCurrentStep();
+                //    return;
+                //}
+                //if (currentStep_st2 == 4)
+                //{
+                //    ShowCurrentStep();
+                //    return;
+                //}
 
-            if (currentStep_st1 <= 1) return;
+                //if (currentStep_st2 <= 1) return;
 
-            currentStep_st1--;
-            ShowCurrentStep();
+                //currentStep_st2--;
+                //ShowCurrentStep();
+            }
         }
 
         private void ShowCurrentStep()
         {
-            // unfocus all steps
-            wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-            barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-            borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-            wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-            confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
-
-            // Show current step
-            switch (currentStep_st1)
+            if (Station1Frame.IsVisible)
             {
-                case 1:
-                    //wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
-                    wieghtScalerConfirmBtnBorder_st1.Focus();
-                    LoadStep1();
-                    break;
-                case 2:
-                    barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
-                    barcodeTxt_st1.Focus();
-                    barcodeTxt_st1.SelectAll();
-                    LoadStep2();
-                    break;
-                case 3:
-                    borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
-                    nSacksTxt_st1.Focus();
-                    nSacksTxt_st1.SelectAll();
-                    LoadStep3();
-                    break;
-                case 4:
-                    wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
-                    wateredTxt_st1.Focus();
-                    wateredTxt_st1.SelectAll();
-                    LoadStep4();
-                    break;
-                case 5:
-                    //confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
-                    //Keyboard.ClearFocus();
-                    LoadStep5();
-                    break;
+                // unfocus all steps
+                wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+
+                // Show current step
+                switch (currentStep_st1)
+                {
+                    case 1:
+                        //wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        LoadStep1_st1();
+                        wieghtScalerConfirmBtn_st1_Click(wieghtScalerConfirmBtn_st1, new RoutedEventArgs());
+                        break;
+                    case 2:
+                        barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
+                        barcodeTxt_st1.Focus();
+                        barcodeTxt_st1.SelectAll();
+                        LoadStep2_st1();
+                        break;
+                    case 3:
+                        borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
+                        nSacksTxt_st1.Focus();
+                        nSacksTxt_st1.SelectAll();
+                        LoadStep3_st1();
+                        break;
+                    case 4:
+                        wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
+                        wateredTxt_st1.Focus();
+                        wateredTxt_st1.SelectAll();
+                        LoadStep4_st1();
+                        break;
+                    case 5:
+                        //confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        LoadStep5_st1();
+                        confirmAddRowButton_st1_Click(confirmAddRowButton_st1, new RoutedEventArgs());
+                        break;
+                }
+            }
+            if (Station2Frame.IsVisible)
+            {
+                // unfocus all steps
+                wieghtScalerConfirmBtnBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                barcodeTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                //borderNSacks_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                wateredTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+
+                // Show current step
+                switch (currentStep_st2)
+                {
+                    case 1:
+                        barcodeTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
+                        barcodeTxt_st2.Focus();
+                        barcodeTxt_st2.SelectAll();
+                        LoadStep2_st2();
+                        break;
+                    case 2:
+                        //wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        MessageBox.Show("clearing focus in step2 st2");
+                        Keyboard.ClearFocus();
+                        LoadStep1_st2();
+                        weightScalerConfirmBtn_st2_Click(wieghtScalerConfirmBtn_st2, new RoutedEventArgs());
+                        break;
+                    case 3:
+                        wateredTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
+                        wateredTxt_st2.Focus();
+                        wateredTxt_st2.SelectAll();
+                        LoadStep3_st2();
+                        break;
+                    case 4:
+                        //confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        LoadStep4_st2();
+                        MessageBox.Show("clearing focus in step4");
+                        //wateredTxt_st2.Select(0, 0);
+                        Keyboard.ClearFocus();
+                        this.Focus();
+                        break;
+                }
             }
         }
 
         private bool ValidateCurrentStep()
         {
             // Add validation logic for current step before proceeding
-            switch (currentStep_st1)
+            if (Station1Frame.IsVisible)
             {
-                case 1:
-                    return ValidateStep1();
-                case 2:
-                    return ValidateStep2();
-                case 3:
-                    return ValidateStep3();
-                case 4:
-                    return ValidateStep4();
-                case 5:
-                    return ValidateStep5();
-                default:
-                    return true;
+                switch (currentStep_st1)
+                {
+                    case 1:
+                        return ValidateStep1_st1();
+                    case 2:
+                        return ValidateStep2_st1();
+                    case 3:
+                        return ValidateStep3_st1();
+                    case 4:
+                        return ValidateStep4_st1();
+                    case 5:
+                        return ValidateStep5_st1();
+                    default:
+                        return true;
+                }
             }
+            if (Station2Frame.IsVisible)
+            {
+                switch (currentStep_st2)
+                {
+                    case 1:
+                        return ValidateStep1_st2();
+                    case 2:
+                        return ValidateStep2_st2();
+                    case 3:
+                        return ValidateStep3_st2();
+                    case 4:
+                        return ValidateStep4_st2();
+                    default:
+                        return true;
+                }
+            }
+            else { return true; }
         }
 
         private void wieghtScalerConfirmBtn_GotFocus_st1(object sender, RoutedEventArgs e)
         {
             // Call your desired method here
             currentStep_st1 = 1;
-            //ShowCurrentStep();
+            ShowCurrentStep();
         }
         private void barcodeTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
             // Call your desired method here
             currentStep_st1 = 2;
-            //ShowCurrentStep();
+            ShowCurrentStep();
         }
         private void nSacksTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
             // Call your desired method here
             currentStep_st1 = 3;
-            //ShowCurrentStep();
+            ShowCurrentStep();
         }
         private void wateredTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
             // Call your desired method here
             currentStep_st1 = 4;
-            //ShowCurrentStep();
+            ShowCurrentStep();
         }
         private void confirmAddRowButton_GotFocus_st1(object sender, RoutedEventArgs e)
         {
             // Call your desired method here
             currentStep_st1 = 4;
-            //ShowCurrentStep();
+            ShowCurrentStep();
+        }
+
+        private void barcodeTxt_GotFocus_st2(object sender, RoutedEventArgs e)
+        {
+            // Call your desired method here
+            currentStep_st2 = 1;
+            ShowCurrentStep();
+        }
+        private void wieghtScalerConfirmBtn_GotFocus_st2(object sender, RoutedEventArgs e)
+        {
+            // Call your desired method here
+            currentStep_st2 = 1;
+            ShowCurrentStep();
+        }
+        //private void nSacksTxt_GotFocus_st2(object sender, RoutedEventArgs e)
+        //{
+        //    // Call your desired method here
+        //    currentStep_st2 = 3;
+        //    ShowCurrentStep();
+        //}
+        private void wateredTxt_GotFocus_st2(object sender, RoutedEventArgs e)
+        {
+            // Call your desired method here
+            currentStep_st2 = 3;
+            ShowCurrentStep();
+        }
+        private void confirmAddRowButton_GotFocus_st2(object sender, RoutedEventArgs e)
+        {
+            // Call your desired method here
+            currentStep_st2 = 3;
+            ShowCurrentStep();
         }
 
 
-        #region Step-specific Methods
+        #region Step-specific Methods for st1
 
-        private void LoadStep1()
+        private void LoadStep1_st1()
         {
             // Initialization code for Step 1
             Console.WriteLine("Loading Step 1");
-            wieghtScalerConfirmBtn_st1_Click(wieghtScalerConfirmBtn_st1, new RoutedEventArgs());
         }
 
-        private void LoadStep2()
+        private void LoadStep2_st1()
         {
             // Initialization code for Step 2
             Console.WriteLine("Loading Step 2");
         }
 
-        private void LoadStep3()
+        private void LoadStep3_st1()
         {
             // Initialization code for Step 3
             Console.WriteLine("Loading Step 3");
         }
 
-        private void LoadStep4()
+        private void LoadStep4_st1()
         {
             // Initialization code for Step 4
             Console.WriteLine("Loading Step 4");
         }
 
-        private void LoadStep5()
+        private void LoadStep5_st1()
         {
             // Initialization code for Step 4
             Console.WriteLine("Loading Step 5");
-            confirmAddRowButton_st1_Click(confirmAddRowButton_st1, new RoutedEventArgs());
         }
 
-        private bool ValidateStep1()
+        private bool ValidateStep1_st1()
         {
             // Example validation
             return true; // Return false to block navigation
         }
 
-        private bool ValidateStep2()
+        private bool ValidateStep2_st1()
         {
-            //if (string.IsNullOrWhiteSpace(barcodeTxt_st1.Text))
-            //{
-            //    MessageBox.Show("Please enter text in Step 2!");
-            //    return false;
-            //}
+            if (string.IsNullOrWhiteSpace(barcodeTxt_st1.Text))
+            {
+                MessageBox.Show("Please enter text in Step 2!");
+                return false;
+            }
             return true;
         }
 
-        private bool ValidateStep3()
+        private bool ValidateStep3_st1()
         {
-            //if (string.IsNullOrWhiteSpace(nSacksTxt_st1.Text))
-            //{
-            //    MessageBox.Show("Please enter text in Step 3!");
-            //    return false;
-            //}
+            if (string.IsNullOrWhiteSpace(nSacksTxt_st1.Text))
+            {
+                MessageBox.Show("Please enter text in Step 3!");
+                return false;
+            }
             return true;
         }
 
-        private bool ValidateStep4()
+        private bool ValidateStep4_st1()
         {
-            //if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
-            //{
-            //    MessageBox.Show("Please enter text in Step 4!");
-            //    return false;
-            //}
+            if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
+            {
+                MessageBox.Show("Please enter text in Step 4!");
+                return false;
+            }
             return true;
         }
 
-        private bool ValidateStep5()
+        private bool ValidateStep5_st1()
         {
-            //if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
-            //{
-            //    MessageBox.Show("Please enter text in Step 4!");
-            //    return false;
-            //}
+            if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
+            {
+                MessageBox.Show("Please enter text in Step 4!");
+                return false;
+            }
+            return true;
+        }
+        #endregion
+
+        #region Step-specific Methods for st2
+
+        private void LoadStep1_st2()
+        {
+            // Initialization code for Step 1
+            Console.WriteLine("Loading Step 1");
+        }
+
+        private void LoadStep2_st2()
+        {
+            // Initialization code for Step 2
+            Console.WriteLine("Loading Step 2");
+        }
+
+        private void LoadStep3_st2()
+        {
+            // Initialization code for Step 4
+            Console.WriteLine("Loading Step 4");
+        }
+
+        private void LoadStep4_st2()
+        {
+            // Initialization code for Step 4
+            Console.WriteLine("Loading Step 5");
+            confirmAddRowButton_st2_Click(confirmAddRowButton_st2, new RoutedEventArgs());
+        }
+
+        private bool ValidateStep1_st2()
+        {
+            // Example validation
+            if (string.IsNullOrWhiteSpace(barcodeTxt_st2.Text))
+            {
+                MessageBox.Show("Please enter text in Step 1!");
+                return false;
+            }
+            return true; // Return false to block navigation
+        }
+
+        private bool ValidateStep2_st2()
+        {
+
+            return true;
+        }
+
+        private bool ValidateStep3_st2()
+        {
+            if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
+            {
+                MessageBox.Show("Please enter text in Step 4!");
+                return false;
+            }
+            return true;
+        }
+
+        private bool ValidateStep4_st2()
+        {
+            if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
+            {
+                MessageBox.Show("Please enter text in Step 4!");
+                return false;
+            }
             return true;
         }
         #endregion
@@ -971,6 +1179,20 @@ namespace WeightMaster
         }
         private void wieghtScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
         {
+            bool passed = true;
+            if (passed)
+            {
+                // reset the steps
+                currentStep_st1 = 2;
+                ShowCurrentStep(); //if this was called, enter will be pressed automatically
+            }
+            bool failed = false;
+            if (failed)
+            {
+                MessageBox.Show("Step 1 button click failed!");
+                currentStep_st1 = currentStep_st1 - 1;
+                //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
+            }
             //if (!double.TryParse(nSacksTxt_st1.Text, out double nSacks) || nSacks < 0)
             //    nSacks = 0;
             //if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
@@ -1415,6 +1637,22 @@ namespace WeightMaster
 
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
+            bool passed = true;
+            if (passed)
+            {
+                MessageBox.Show("Process st1 finished!");
+                // reset the steps
+                currentStep_st1 = 0;
+                ShowCurrentStep();
+            }
+
+            bool failed = false;
+            if (failed)
+            {
+                MessageBox.Show("Step 5 button click failed!");
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep();
+            }
             //preparing values for the finish api command
             //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
             if (lineNameCmb_st1.SelectedValue != null)
@@ -1781,6 +2019,19 @@ namespace WeightMaster
             
         private void weightScalerConfirmBtn_st2_Click(object sender, RoutedEventArgs e)
         {
+            bool isSuccess = true;
+            if (isSuccess)
+            {
+                currentStep_st2 = 2;
+            }
+            MessageBox.Show("weight getting done st2");
+            bool failed = false;
+            if (failed)
+            {
+                MessageBox.Show("Step 1 button click failed!");
+                currentStep_st2 = currentStep_st2 - 1;
+            }
+
             if (!double.TryParse(weightScalerValTxt_st2.Text, out double scalerWeight) || scalerWeight < 0)
                 scalerWeight = 0;
 
@@ -2017,6 +2268,21 @@ namespace WeightMaster
         //private int _currentTurn_st2 = 1;
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
+            MessageBox.Show("Process st1 finished!");
+            //bool isSuccess = true;
+            //if (isSuccess)
+            //{
+            //    MessageBox.Show("manually changing steps");
+            //    currentStep_st2 = 5;
+            //}
+            MessageBox.Show("round confirmed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            bool hasfailed = false;
+            if (hasfailed)
+            {
+                MessageBox.Show("Step 5 button click failed!");
+                currentStep_st2 = currentStep_st2 - 1;
+            }
+
             //preparing values for the finish api command
             //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
             if (lineNameCmb_st2.SelectedValue != null)
