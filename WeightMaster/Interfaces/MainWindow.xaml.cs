@@ -2265,7 +2265,7 @@ namespace WeightMaster
                 try
                 {
                     CustomerCompletionRowPanel.Children.Clear();
-                    var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineName);
+                    var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
                     for (int i = 0; i < customerTransactions_st2.Count; i++)
                     {
                         var transaction = customerTransactions_st2[i];
