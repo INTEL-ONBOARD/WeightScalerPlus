@@ -1162,7 +1162,7 @@
                         -->
 
                         <!--Add another round button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="298,600,22,64" Click="addRoundBtn_st2_Clicked" Style="{StaticResource HoverButton}">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="298,600,22,64" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Width="262" Height="36">
                                 <Grid>
                                     <Image Source="/Interfaces/plus_button.png" Margin="212,0,6,0"/>

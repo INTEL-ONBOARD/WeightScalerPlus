@@ -1962,46 +1962,49 @@ namespace WeightMaster
             customerNameTxt_st2.Text = memberName;
 
             //#issue No1: member data returns null
-            var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text, "");
-            System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
-            //if (memberDetails == null)
-            //    MessageBox.Show("member data is null");
-
+            var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text, barcodeTxt_st2.Text.ToString());
             if (memberDetails != null)
             {
-                //load and populate additional data like previous leaf data, box data like stuff
-                //tbd for transport route & agent
-                lineNameCmb_st2.SelectedItem = memberDetails.linename;
-                lineMasterNameLbl_st2.Text = memberDetails.transportagent;
-                //follow steps when inserting values to avoid collisions
-                totalNSacksTxt_st2.Text = memberDetails.bag_count.ToString();
+                System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
+                //if (memberDetails == null)
+                //    MessageBox.Show("member data is null");
 
-                //update the current values
+                if (memberDetails != null)
+                {
+                    //load and populate additional data like previous leaf data, box data like stuff
+                    //tbd for transport route & agent
+                    lineNameCmb_st2.SelectedItem = memberDetails.linename;
+                    lineMasterNameLbl_st2.Text = memberDetails.transportagent;
+                    //follow steps when inserting values to avoid collisions
+                    totalNSacksTxt_st2.Text = memberDetails.bag_count.ToString();
 
-                maturedTxt_st2.Text = memberDetails.morapuwata.ToString();
-                wateredTxt_st2.Text = memberDetails.water.ToString();
-                spoiledTxt_st2.Text = memberDetails.thambimata.ToString();
-                rejectedTxt_st2.Text = memberDetails.reject.ToString();
+                    //update the current values
 
-                acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
-                normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
-                goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
+                    maturedTxt_st2.Text = memberDetails.morapuwata.ToString();
+                    wateredTxt_st2.Text = memberDetails.water.ToString();
+                    spoiledTxt_st2.Text = memberDetails.thambimata.ToString();
+                    rejectedTxt_st2.Text = memberDetails.reject.ToString();
 
-                currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
-                currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
-                currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
-                currentTotalDeduction_st2 = memberDetails.morapuwata + memberDetails.water + memberDetails.reject + memberDetails.thambimata;
+                    acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
+                    normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
+                    goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
 
-                //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                    currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
+                    currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
+                    currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
+                    currentTotalDeduction_st2 = memberDetails.morapuwata + memberDetails.water + memberDetails.reject + memberDetails.thambimata;
+
+                    //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                }
+                //.Text = "";
+                //.Text = "";
+                //public int currentAcceptedLeafWeight_st2 = 82;
+                //private double currentGoldenLeafWeight_st2 = 0;
+                //private double currentNormalLeafWeight_st2 = 0;
+
+                //public double currentTotalDeduction_st2 = 0;
+
             }
-            //.Text = "";
-            //.Text = "";
-            //public int currentAcceptedLeafWeight_st2 = 82;
-            //private double currentGoldenLeafWeight_st2 = 0;
-            //private double currentNormalLeafWeight_st2 = 0;
-
-            //public double currentTotalDeduction_st2 = 0;
-
         }
 
         private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
