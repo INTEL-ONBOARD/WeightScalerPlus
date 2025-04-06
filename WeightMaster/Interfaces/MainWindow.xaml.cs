@@ -358,6 +358,7 @@ namespace WeightMaster
                     case 4:
                         //confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
                         LoadStep4_st2();
+                        confirmAddRowButton_st2_Click(confirmAddRowButton_st2, new RoutedEventArgs());
                         //wateredTxt_st2.Select(0, 0);
                         Keyboard.ClearFocus();
                         this.Focus();
@@ -509,41 +510,41 @@ namespace WeightMaster
 
         private bool ValidateStep2_st1()
         {
-            if (string.IsNullOrWhiteSpace(barcodeTxt_st1.Text))
-            {
-                MessageBox.Show("Please enter text in Step 2!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(barcodeTxt_st1.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 2!");
+            //    return false;
+            //}
             return true;
         }
 
         private bool ValidateStep3_st1()
         {
-            if (string.IsNullOrWhiteSpace(nSacksTxt_st1.Text))
-            {
-                MessageBox.Show("Please enter text in Step 3!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(nSacksTxt_st1.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 3!");
+            //    return false;
+            //}
             return true;
         }
 
         private bool ValidateStep4_st1()
         {
-            if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
-            {
-                MessageBox.Show("Please enter text in Step 4!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 4!");
+            //    return false;
+            //}
             return true;
         }
 
         private bool ValidateStep5_st1()
         {
-            if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
-            {
-                MessageBox.Show("Please enter text in Step 4!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(wateredTxt_st1.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 4!");
+            //    return false;
+            //}
             return true;
         }
         #endregion
@@ -572,17 +573,16 @@ namespace WeightMaster
         {
             // Initialization code for Step 4
             Console.WriteLine("Loading Step 5");
-            confirmAddRowButton_st2_Click(confirmAddRowButton_st2, new RoutedEventArgs());
         }
 
         private bool ValidateStep1_st2()
         {
             // Example validation
-            if (string.IsNullOrWhiteSpace(barcodeTxt_st2.Text))
-            {
-                MessageBox.Show("Please enter text in Step 1!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(barcodeTxt_st2.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 1!");
+            //    return false;
+            //}
             return true; // Return false to block navigation
         }
 
@@ -594,21 +594,21 @@ namespace WeightMaster
 
         private bool ValidateStep3_st2()
         {
-            if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
-            {
-                MessageBox.Show("Please enter text in Step 4!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 4!");
+            //    return false;
+            //}
             return true;
         }
 
         private bool ValidateStep4_st2()
         {
-            if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
-            {
-                MessageBox.Show("Please enter text in Step 4!");
-                return false;
-            }
+            //if (string.IsNullOrWhiteSpace(wateredTxt_st2.Text))
+            //{
+            //    MessageBox.Show("Please enter text in Step 4!");
+            //    return false;
+            //}
             return true;
         }
         #endregion
@@ -988,6 +988,8 @@ namespace WeightMaster
             finalAvailableNormalLeafWeight_st1 = 0;
 
             //clear all textboxes with helper variables
+            barcodeTxt_st1.Text = "";
+
             wateredTxt_st1.Text = "";
             rejectedTxt_st1.Text = "";
             spoiledTxt_st1.Text = "";
@@ -1015,6 +1017,8 @@ namespace WeightMaster
             nBoxesTxt_st1.Text = "";
 
             //st2
+            barcodeTxt_st2.Text = "";
+
             wateredTxt_st2.Text = "";
             rejectedTxt_st2.Text = "";
             spoiledTxt_st2.Text = "";
@@ -2101,7 +2105,8 @@ namespace WeightMaster
             bool isSuccess = true;
             if (isSuccess)
             {
-                currentStep_st2 = 2;
+                currentStep_st2 = 3;
+                ShowCurrentStep();
             }
             //MessageBox.Show("weight getting done st2");
             bool failed = false;
