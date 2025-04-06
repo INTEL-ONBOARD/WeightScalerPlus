@@ -1651,6 +1651,8 @@ namespace WeightMaster
 
         private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
+
+            try { 
             //clear member turn table for the next member(this is hidden currently)
             MemberTurnTablePanel_st2.Children.Clear();
 
@@ -1660,44 +1662,53 @@ namespace WeightMaster
                 customerNameTxt_st2.Text = memberName;
 
             //#issue No1: member data returns null
-                var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text,"");
-            System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
-            if (memberDetails == null)
-                MessageBox.Show("member data is null");
+                var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text, "");
+                if (memberDetails != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
+                    if (memberDetails == null)
+                        MessageBox.Show("member data is null");
 
-                if (memberDetails!=null) {
-                    //load and populate additional data like previous leaf data, box data like stuff
-                    //tbd for transport route & agent
-                    lineNameCmb_st2.SelectedItem = memberDetails.linename;
-                    lineMasterNameLbl_st2.Text = memberDetails.transportagent;
-                    //follow steps when inserting values to avoid collisions
-                    totalNSacksTxt_st2.Text = memberDetails.bag_count.ToString();
+                    if (memberDetails != null)
+                    {
+                        //load and populate additional data like previous leaf data, box data like stuff
+                        //tbd for transport route & agent
+                        lineNameCmb_st2.SelectedItem = memberDetails.linename;
+                        lineMasterNameLbl_st2.Text = memberDetails.transportagent;
+                        //follow steps when inserting values to avoid collisions
+                        totalNSacksTxt_st2.Text = memberDetails.bag_count.ToString();
 
-                    //update the current values
+                        //update the current values
 
-                    maturedTxt_st2.Text = memberDetails.morapuwata.ToString();
-                    wateredTxt_st2.Text = memberDetails.water.ToString();
-                    spoiledTxt_st2.Text = memberDetails.thambimata.ToString();
-                    rejectedTxt_st2.Text = memberDetails.reject.ToString();
+                        maturedTxt_st2.Text = memberDetails.morapuwata.ToString();
+                        wateredTxt_st2.Text = memberDetails.water.ToString();
+                        spoiledTxt_st2.Text = memberDetails.thambimata.ToString();
+                        rejectedTxt_st2.Text = memberDetails.reject.ToString();
 
-                    acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
-                    normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
-                    goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
+                        acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
+                        normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
+                        goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
 
-                    currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
-                    currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
-                    currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
-                    currentTotalDeduction_st2 = memberDetails.morapuwata+memberDetails.water+memberDetails.reject+memberDetails.thambimata;
+                        currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
+                        currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
+                        currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
+                        currentTotalDeduction_st2 = memberDetails.morapuwata + memberDetails.water + memberDetails.reject + memberDetails.thambimata;
 
-                //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                        //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                    }
+                    //.Text = "";
+                    //.Text = "";
+                    //public int currentAcceptedLeafWeight_st2 = 82;
+                    //private double currentGoldenLeafWeight_st2 = 0;
+                    //private double currentNormalLeafWeight_st2 = 0;
+
+                    //public double currentTotalDeduction_st2 = 0;
                 }
-                //.Text = "";
-                //.Text = "";
-                //public int currentAcceptedLeafWeight_st2 = 82;
-                //private double currentGoldenLeafWeight_st2 = 0;
-                //private double currentNormalLeafWeight_st2 = 0;
-
-                //public double currentTotalDeduction_st2 = 0;
+            }
+            catch(Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Exception in searing using barcode: " + ex.Message);
+            }
 
         }
 
@@ -1731,14 +1742,13 @@ namespace WeightMaster
                 var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
                 if (customerTransactions_st2 == null)
                     //MessageBox.Show("result is null"); //result returns not null hmm
-                //for (int i = 0; i < customerTransactions_st2.Count; i++)
-                //{
-                //    var transaction = customerTransactions_st2[i];
-                //        MessageBox.Show($"Barcode: {transaction.barcode_details}");
-                //    System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                //    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                //    CustomerCompletionRowPanel.Children.Add(cctr4);
-                //}
+                    for (int i = 0; i < customerTransactions_st2.Count; i++)
+                    {
+                        var transaction = customerTransactions_st2[i];
+                        System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionRowPanel.Children.Add(cctr4);
+                    }
                 foreach (var transaction in customerTransactions_st2)
                 {
                     CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
@@ -2264,7 +2274,7 @@ namespace WeightMaster
                 try
                 {
                     CustomerCompletionRowPanel.Children.Clear();
-                    var customerTransactions_st2 = await _consoleHandler.GetTransactionData(lineName);
+                    var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
                     for (int i = 0; i < customerTransactions_st2.Count; i++)
                     {
                         var transaction = customerTransactions_st2[i];

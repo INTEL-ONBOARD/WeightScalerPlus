@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.IO;
-using WeightMaster.Models; 
+using WeightMaster.Models;
 
 namespace WeightMaster.Config
 {
