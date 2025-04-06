@@ -6,24 +6,38 @@
              xmlns:local="clr-namespace:WeightMaster.Interfaces.UserControls"
              mc:Ignorable="d" 
             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../general_styles.xaml"/>
+                <ResourceDictionary Source="../custom_styles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    
+    
     <Grid>
-        <Border Width="680" Height="50" Margin = "0,10,0,0" Background="#F5F5F5" BorderBrush="#D9D9D9" BorderThickness="0,0,0,2" CornerRadius="10" Padding="2">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100" />
-                    <ColumnDefinition Width="110" />
-                    <ColumnDefinition Width="110" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="120" />
-                    <ColumnDefinition Width="120" />
-                </Grid.ColumnDefinitions>
-                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text="#1" x:Name="memberNo" Foreground="#FF0078D7"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="20" x:Name="sacksCount" Foreground="#FF0078D7"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="0" x:Name="boxCount" Foreground="#FF0078D7"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="100kg" x:Name="goldLeafWeight" Foreground="#FF0078D7"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="360kg" x:Name="generalLeafWeight" Foreground="#FF0078D7"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="460kg" x:Name="acceptedWeight" Foreground="#FF0078D7"/>
-            </Grid>
-        </Border>
+        <Button Cursor="Hand" x:Name="fdshg"  Padding="0" Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
+            <Border Width="680" Height="50" Margin = "0,10,0,0" Background="#F5F5F5" BorderBrush="#D9D9D9" BorderThickness="0,0,0,2" CornerRadius="10" Padding="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="110" />
+                        <ColumnDefinition Width="110" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="120" />
+                        <ColumnDefinition Width="120" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="20" Text="#1" x:Name="memberNo" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="20" x:Name="sacksCount" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="0" x:Name="boxCount" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="100kg" x:Name="goldLeafWeight" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="360kg" x:Name="generalLeafWeight" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" Text="460kg" x:Name="acceptedWeight" Foreground="#FF0078D7"/>
+                </Grid>
+            </Border>
+        </Button>
     </Grid>
 </UserControl>

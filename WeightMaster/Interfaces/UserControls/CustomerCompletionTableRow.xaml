@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Button Cursor="Hand" x:Name="RowButton"  Padding="0" Background="Transparent" BorderThickness="0">
+    <Button Cursor="Hand" x:Name="RowButton"  Padding="0" Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}">
         <Border x:Name="RowBorder" Width="690" Height="50" Margin="0,10,0,0" Background="#F5F5F5" BorderBrush="#D9D9D9" BorderThickness="0,0,0,2" CornerRadius="10" Padding="2">
             <Grid>
                 <Grid.ColumnDefinitions>
