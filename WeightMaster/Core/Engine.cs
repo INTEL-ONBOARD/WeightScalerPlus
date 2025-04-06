@@ -306,8 +306,7 @@ namespace WeightMaster.Core
                     RunLog log = await runService.GetMostRecentRunLogAsync();
                     log.Status = false;
                     await runService.UpdateRunLogAsync(log);
-                    return false;
-
+                    return true;
                 }
             }
             catch (Exception ex)

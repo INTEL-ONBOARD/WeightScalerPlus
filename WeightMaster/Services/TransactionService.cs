@@ -201,8 +201,13 @@ namespace WeightMaster.Services
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
             return await _context.transactionData
-                .Where(t => t.linename == lineName && t.date == todayDate)
+                .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == todayDate)
                 .ToListAsync();
         }
 

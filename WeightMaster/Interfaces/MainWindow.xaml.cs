@@ -2042,7 +2042,8 @@ namespace WeightMaster
             {
                 CustomerCompletionRowPanel.Children.Clear();
                 var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
-                if (customerTransactions_st2 == null)
+                if (customerTransactions_st2 != null)
+                {
                     //MessageBox.Show("result is null"); //result returns not null hmm
                     //for (int i = 0; i < customerTransactions_st2.Count; i++)
                     //{
@@ -2056,7 +2057,9 @@ namespace WeightMaster
                     {
                         CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
+                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
                     }
+                }
             }
             catch (Exception ex)
             {
