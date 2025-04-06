@@ -2504,7 +2504,7 @@ namespace WeightMaster
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Upload Failed: " + ex.Message);
+                    //MessageBox.Show("Upload Failed: " + ex.Message);
                 }
 
                 bool failed = false;
@@ -3249,15 +3249,18 @@ namespace WeightMaster
             List<string[]> data = new List<string[]>();
             foreach (var transaction in lineReportData)
             {
-                int dalu = transaction.total_leaf_weight - transaction.water - transaction.morapuwata
-                         - transaction.thambimata - transaction.reject - transaction.bag_weight;
+                // Determine dynamic box count
+                int boxCount = transaction.bag_count > 0 ? 0 : 0;
+
+                int dalu = transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
 
                 data.Add(new string[]
                 {
             transaction.Id.ToString(),
             transaction.barcode_details ?? "",
             transaction.bag_count.ToString(),
-            "1",
+            boxCount.ToString(),
             transaction.total_leaf_weight.ToString(),
             transaction.water.ToString(),
             transaction.morapuwata.ToString(),
@@ -3269,7 +3272,7 @@ namespace WeightMaster
 
                 // Accumulate totals
                 totalBagCount += transaction.bag_count;
-                totalBoxCount += 1;
+                totalBoxCount += boxCount;
                 totalLeafWeight += transaction.total_leaf_weight;
                 totalWater += transaction.water;
                 totalMorapuwata += transaction.morapuwata;
