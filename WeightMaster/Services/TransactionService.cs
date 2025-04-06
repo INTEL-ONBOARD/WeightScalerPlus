@@ -197,19 +197,54 @@ namespace WeightMaster.Services
         }
 
 
+
+
+
+
+
+
+
+
+        //public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
+        //{
+        //    string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+        //    var excludedIds = await _context.RunLog
+        //        .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+        //        .Select(r => r.TransactionId)
+        //        .ToListAsync();
+
+        //    return await _context.transactionData
+        //        .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == todayDate)
+        //        .ToListAsync();
+        //}
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-            var excludedIds = await _context.RunLog
-                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
-                .Select(r => r.TransactionId)
+            // Step 1: Get all FinalTransactionIds that are not null
+            var finalTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null)
+                .Select(r => r.FinalTransactionId.Value)
                 .ToListAsync();
 
-            return await _context.transactionData
-                .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == todayDate)
+            // Step 2: Get all valid TransactionLogBlockModels not referenced as final transactions
+            var result = await _context.transactionData
+                .Where(t => !finalTransactionIds.Contains(t.Id)
+                            && t.linename == lineName
+                            && t.date == todayDate)
                 .ToListAsync();
+
+            return result;
         }
+
+
+
+
+
+
+
+
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
         {
