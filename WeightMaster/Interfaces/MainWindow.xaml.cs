@@ -2035,7 +2035,8 @@ namespace WeightMaster
             {
                 CustomerCompletionRowPanel.Children.Clear();
                 var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
-                if (customerTransactions_st2 == null)
+                if (customerTransactions_st2 != null)
+                {
                     //MessageBox.Show("result is null"); //result returns not null hmm
                     //for (int i = 0; i < customerTransactions_st2.Count; i++)
                     //{
@@ -2049,7 +2050,9 @@ namespace WeightMaster
                     {
                         CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
+                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
                     }
+                }
             }
             catch (Exception ex)
             {
@@ -2960,7 +2963,7 @@ namespace WeightMaster
                         statusLabel.Content = "Verifying Database Status(1)...";
                     });
                     // Await the asynchronous operation
-                    await _consoleHandler.VerifyUserDb();
+                    //await _consoleHandler.VerifyUserDb();
                     // Once verification is complete, update the status label again
                     Dispatcher.Invoke(() =>
                     {
@@ -2985,7 +2988,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(2)...";
                     });
-                    await _consoleHandler.VerifyLineMasterDb();  //****************************************
+                    //await _consoleHandler.VerifyLineMasterDb();  //****************************************
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -3008,7 +3011,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb(); //****************************************
+                    //await _consoleHandler.verifyMemberDb(); //****************************************
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
