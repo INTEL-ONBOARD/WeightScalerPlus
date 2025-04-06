@@ -1971,7 +1971,7 @@ namespace WeightMaster
             customerNameTxt_st2.Text = memberName;
 
             //#issue No1: member data returns null
-            var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text, barcodeTxt_st2.Text.ToString());
+            var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text.ToString(), barcodeTxt_st2.Text.ToString());
             if (memberDetails != null)
             {
                 System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
@@ -3156,7 +3156,6 @@ namespace WeightMaster
 
         private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
         {
-            // Debug output
             foreach (var transaction in lineReportData)
             {
                 System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -3178,7 +3177,7 @@ namespace WeightMaster
             double[] headerSizes = { 14, 14, 12 };
             double pageWidth = 816;
 
-            foreach (int i in new[] { 0, 1, 2 })
+            for (int i = 0; i < mainHeaders.Length; i++)
             {
                 FormattedText headerText = new FormattedText(
                     mainHeaders[i],
@@ -3213,12 +3212,13 @@ namespace WeightMaster
 
             // Table headers
             string[] headers = {
-            "අංකය", "සාමාජික අංකය", "ගෝනි ගණන", "පෙට්ටි ගණන",
-            "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
-            "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
+        "අංකය", "සාමාජික අංකය", "ගෝනි(n)", "පෙට්ටි(n)",
+        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
+        "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
     };
 
-            double[] headerPositions = { 50, 100, 200, 280, 350, 420, 490, 560, 630, 700, 770 };
+            // Adjusted header X positions for proper right margin
+            double[] headerPositions = { 50, 110, 200, 260, 320, 380, 450, 510, 570, 640, 710 };
 
             for (int i = 0; i < headers.Length; i++)
             {
@@ -3277,77 +3277,37 @@ namespace WeightMaster
             // Draw data rows
             foreach (string[] row in data)
             {
-                dc.DrawText(new FormattedText(row[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(50, yPos));
-                dc.DrawText(new FormattedText(row[1], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(100, yPos));
-                dc.DrawText(new FormattedText(row[2], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(200, yPos));
-                dc.DrawText(new FormattedText(row[3], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(280, yPos));
-                dc.DrawText(new FormattedText(row[4], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(350, yPos));
-                dc.DrawText(new FormattedText(row[5], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(420, yPos));
-                dc.DrawText(new FormattedText(row[6], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(490, yPos));
-                dc.DrawText(new FormattedText(row[7], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(560, yPos));
-                dc.DrawText(new FormattedText(row[8], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(630, yPos));
-                dc.DrawText(new FormattedText(row[9], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(700, yPos));
-                dc.DrawText(new FormattedText(row[10], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                    new Point(770, yPos));
-
+                for (int i = 0; i < row.Length; i++)
+                {
+                    dc.DrawText(
+                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                        new Point(headerPositions[i], yPos));
+                }
                 yPos += 20;
             }
 
-            // Draw totals row
+            // Totals
             string[] totalsRow = {
-        "Total",
-        "",
-        totalBagCount.ToString(),
-        totalBoxCount.ToString(),
-        totalLeafWeight.ToString(),
-        totalWater.ToString(),
-        totalMorapuwata.ToString(),
-        totalThambimata.ToString(),
-        totalReject.ToString(),
-        totalBagWeight.ToString(),
-        totalDalu.ToString()
+        "Total", "", totalBagCount.ToString(), totalBoxCount.ToString(), totalLeafWeight.ToString(),
+        totalWater.ToString(), totalMorapuwata.ToString(), totalThambimata.ToString(), totalReject.ToString(),
+        totalBagWeight.ToString(), totalDalu.ToString()
     };
 
-            // Draw totals line
-            dc.DrawLine(new Pen(brush, 1), new Point(50, yPos), new Point(770, yPos));
+            // Line before totals
+            dc.DrawLine(new Pen(brush, 1), new Point(50, yPos), new Point(790, yPos));
             yPos += 2;
 
-            // Draw totals text
-            dc.DrawText(new FormattedText(totalsRow[0], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, yPos));
-            dc.DrawText(new FormattedText(totalsRow[1], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(100, yPos));
-            dc.DrawText(new FormattedText(totalsRow[2], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(200, yPos));
-            dc.DrawText(new FormattedText(totalsRow[3], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(280, yPos));
-            dc.DrawText(new FormattedText(totalsRow[4], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(350, yPos));
-            dc.DrawText(new FormattedText(totalsRow[5], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(420, yPos));
-            dc.DrawText(new FormattedText(totalsRow[6], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(490, yPos));
-            dc.DrawText(new FormattedText(totalsRow[7], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(560, yPos));
-            dc.DrawText(new FormattedText(totalsRow[8], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(630, yPos));
-            dc.DrawText(new FormattedText(totalsRow[9], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(700, yPos));
-            dc.DrawText(new FormattedText(totalsRow[10], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(770, yPos));
+            // Draw totals
+            for (int i = 0; i < totalsRow.Length; i++)
+            {
+                dc.DrawText(
+                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new Point(headerPositions[i], yPos));
+            }
 
             yPos += 20;
         }
+
 
         private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
         {
