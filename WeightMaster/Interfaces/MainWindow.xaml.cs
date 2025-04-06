@@ -3171,16 +3171,15 @@ namespace WeightMaster
             Brush brush = Brushes.Black;
             double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
             double yPos = 50;
+            double pageWidth = 816;
 
-            // Main headers
+            // Headers
             string[] mainHeaders = {
         "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
         "සමූපකාර තේ කම්හල",
         lineName
     };
-
             double[] headerSizes = { 14, 14, 12 };
-            double pageWidth = 816;
 
             for (int i = 0; i < mainHeaders.Length; i++)
             {
@@ -3199,20 +3198,21 @@ namespace WeightMaster
                 yPos += headerText.Height + 8;
             }
 
+            yPos += 30;
+
+            // Report Issue Index
+            string issueIndex = "IDX-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+            dc.DrawText(
+                new FormattedText("Report Issue Index: " + issueIndex, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                    typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, yPos));
             yPos += 20;
 
-            // Document number
+            // Date Issued
             dc.DrawText(
-                new FormattedText("", CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                               typeface, fontSize, brush, pixelsPerDip),
-                new Point(700, yPos));
-
-            // Date
-            dc.DrawText(
-                new FormattedText(DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
-                               FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new FormattedText("Date Issued: " + DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                 new Point(50, yPos));
-
             yPos += 40;
 
             // Table headers
@@ -3221,39 +3221,31 @@ namespace WeightMaster
         "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
         "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
     };
-
-            // Adjusted header X positions for proper right margin
             double[] headerPositions = { 50, 110, 200, 260, 320, 380, 450, 510, 570, 640, 710 };
+
+            // Draw black background for header
+            dc.DrawRectangle(Brushes.Black, null, new Rect(40, yPos - 5, pageWidth - 80, 25));
 
             for (int i = 0; i < headers.Length; i++)
             {
                 dc.DrawText(
-                    new FormattedText(headers[i], CultureInfo.CurrentCulture,
-                                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                        typeface, fontSize, Brushes.White, pixelsPerDip),
                     new Point(headerPositions[i], yPos));
             }
-            yPos += 20;
 
-            // Initialize totals
-            int totalBagCount = 0;
-            int totalBoxCount = 0;
-            int totalLeafWeight = 0;
-            int totalWater = 0;
-            int totalMorapuwata = 0;
-            int totalThambimata = 0;
-            int totalReject = 0;
-            int totalBagWeight = 0;
-            int totalDalu = 0;
+            yPos += 25;
 
-            // Data rows
+            // Totals
+            int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+            int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+
             List<string[]> data = new List<string[]>();
             foreach (var transaction in lineReportData)
             {
-                // Determine dynamic box count
                 int boxCount = transaction.bag_count > 0 ? 0 : 0;
-
                 int dalu = transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                             + transaction.thambimata + transaction.reject + transaction.bag_weight);
 
                 data.Add(new string[]
                 {
@@ -3270,7 +3262,6 @@ namespace WeightMaster
             dalu.ToString()
                 });
 
-                // Accumulate totals
                 totalBagCount += transaction.bag_count;
                 totalBoxCount += boxCount;
                 totalLeafWeight += transaction.total_leaf_weight;
@@ -3282,39 +3273,60 @@ namespace WeightMaster
                 totalDalu += dalu;
             }
 
-            // Draw data rows
+            // Draw rows
+            bool isAlternate = false;
             foreach (string[] row in data)
             {
+                if (isAlternate)
+                {
+                    dc.DrawRectangle(Brushes.LightGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
+                }
                 for (int i = 0; i < row.Length; i++)
                 {
                     dc.DrawText(
-                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                            typeface, fontSize, brush, pixelsPerDip),
                         new Point(headerPositions[i], yPos));
                 }
                 yPos += 20;
+                isAlternate = !isAlternate;
             }
 
-            // Totals
+            // Totals row background
+            dc.DrawRectangle(Brushes.DarkGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
+
             string[] totalsRow = {
         "Total", "", totalBagCount.ToString(), totalBoxCount.ToString(), totalLeafWeight.ToString(),
         totalWater.ToString(), totalMorapuwata.ToString(), totalThambimata.ToString(), totalReject.ToString(),
         totalBagWeight.ToString(), totalDalu.ToString()
     };
 
-            // Line before totals
-            dc.DrawLine(new Pen(brush, 1), new Point(50, yPos), new Point(790, yPos));
-            yPos += 2;
-
-            // Draw totals
             for (int i = 0; i < totalsRow.Length; i++)
             {
                 dc.DrawText(
-                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                        typeface, fontSize, brush, pixelsPerDip),
                     new Point(headerPositions[i], yPos));
             }
 
-            yPos += 20;
+            yPos += 40;
+
+            // Signature area
+            // Signature area
+            double signY = yPos + 60;
+
+            // Align the signature line to the left (starting at position 50)
+            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(350, signY)); // Signature line
+
+            // Align the "Authorised by" text to the left (starting at position 50)
+            dc.DrawText(
+                new FormattedText("Authorised by", CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, signY + 5)); // Adjusted to the same x-coordinate
+
         }
+
+
 
 
         private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
