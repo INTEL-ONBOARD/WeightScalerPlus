@@ -28,9 +28,9 @@ namespace WeightMaster.Interfaces.UserControls
             this.memberNo.Text = memberNo;
             this.sacksCount.Text = sacksCount;
             this.boxCount.Text = boxCount;
-            this.acceptedWeight.Text = acceptedWeight;
             this.goldLeafWeight.Text = goldLeafWeight;
             this.generalLeafWeight.Text = generalLeafWeight;
+            this.acceptedWeight.Text = acceptedWeight;
         }
     }
 }

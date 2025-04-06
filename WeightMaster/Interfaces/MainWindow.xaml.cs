@@ -205,7 +205,7 @@ namespace WeightMaster
                 if (currentStep_st2 == maxStep_st2)
                 {
                     // Handle final step completion
-                    MessageBox.Show("Process st2 completed!");
+                    //MessageBox.Show("Process st2 completed!");
                     // reset the steps
                     currentStep_st2 = 0;
                     ShowCurrentStep();
@@ -268,6 +268,16 @@ namespace WeightMaster
                 borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                weightScalerBorder_st1.BorderBrush= new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                dataInputBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+
+                if (currentStep_st1 == 1 || currentStep_st1 == 0) 
+                {
+                    weightScalerBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Default
+                } else if (currentStep_st1 == 2 || currentStep_st1 == 3 || currentStep_st1 == 4 || currentStep_st1 == 5) 
+                {
+                    dataInputBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Default
+                }
 
                 // Show current step
                 switch (currentStep_st1)
@@ -310,7 +320,17 @@ namespace WeightMaster
                 //borderNSacks_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 wateredTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                weightScalerBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                dataInputBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
 
+                if (currentStep_st2 == 2)
+                {
+                    weightScalerBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // highlighted
+                }
+                else if (currentStep_st2 == 1 || currentStep_st2 == 3 || currentStep_st2 == 4)
+                {
+                    dataInputBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // highlighted
+                }
                 // Show current step
                 switch (currentStep_st2)
                 {
@@ -321,8 +341,7 @@ namespace WeightMaster
                         LoadStep2_st2();
                         break;
                     case 2:
-                        //wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
-                        MessageBox.Show("clearing focus in step2 st2");
+                        //wieghtScalerConfirmBtnBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
                         Keyboard.ClearFocus();
                         LoadStep1_st2();
                         weightScalerConfirmBtn_st2_Click(wieghtScalerConfirmBtn_st2, new RoutedEventArgs());
@@ -334,9 +353,8 @@ namespace WeightMaster
                         LoadStep3_st2();
                         break;
                     case 4:
-                        //confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        //confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
                         LoadStep4_st2();
-                        MessageBox.Show("clearing focus in step4");
                         //wateredTxt_st2.Select(0, 0);
                         Keyboard.ClearFocus();
                         this.Focus();
@@ -1089,48 +1107,56 @@ namespace WeightMaster
         {
             //clear the linewise table before entering new data
             LineTablePanel_st1.Children.Clear();
-
             //MessageBox.Show("jfsdlfksd");
             //System.Diagnostics.Debug.WriteLine($"fjkdfldsfdskf");
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
             if (result != null)
             {
-                //MessageBox.Show("brrrr");
-                //System.Diagnostics.Debug.WriteLine($"brrrrrrrrr");
                 lineMasterNameLbl_st1.Text = result.LineMaster;
-                //get line wise rows by line name
-                //populate the table
-                //increment the total at last
-                //LineTablePanel_st1.Children.Add();
-
-                //Station1LineTableRow lr1 = new Station1LineTableRow("001", "0", "0", "0", "", "");
-                //System.Diagnostics.Debug.WriteLine("This is a debug message.");
 
                 try
                 {
                 var data = await _consoleHandler.getDataByFilter(result.LineName.ToString());
-                    System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
+                System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
                 //MessageBox.Show("here triggered");
                     if (data.Any())
-                {
+                    {
+                        // to assign into total values row
+                        int rowNBoxes = 0;
+                        int rowNSacks= 0;
+                        int rowGoldenLeafWeight= 0;
+                        int rowNormalLeafWeight = 0;
+                        int rowTotalLeafWeight = 0;
+
                         //MessageBox.Show("data found");
                         foreach (var transaction in data)
-                    {
-                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.Id.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight+transaction.actual_nomal_leaf_weight).ToString());
+                        {
+                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.barcode_details.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight+transaction.actual_nomal_leaf_weight).ToString());
                             LineTablePanel_st1.Children.Add(lr1);
-                            System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
+                            //System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
+                            rowNBoxes += transaction.box_count;
+                            rowNSacks += transaction.bag_count;
+                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
+                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                        }
+                        //assign total column values to the total values row
+                        lineRowNBoxes_st1.Text = rowNBoxes.ToString();
+                        lineRowNSacks_st1.Text = rowNSacks.ToString();
+                        lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
+                        lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
+                        lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
                     }
                 }
-                else
+                catch (Exception ex)
                 {
-                    System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                    System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
                 }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date: {ex.Message}");
-            }
 
                 //// Loop through each transaction and print details to the debug console
                 //for (int i = 0; i < customerTransactions_st2.Count; i++)
@@ -1537,13 +1563,6 @@ namespace WeightMaster
         }
 
 
-
-
-
-
-
-
-
         private void BoxWeightDeduction_st1_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             // Block non-digit characters
@@ -1640,7 +1659,7 @@ namespace WeightMaster
             bool passed = true;
             if (passed)
             {
-                MessageBox.Show("Process st1 finished!");
+                //MessageBox.Show("Process st1 finished!");
                 // reset the steps
                 currentStep_st1 = 0;
                 ShowCurrentStep();
@@ -1649,11 +1668,10 @@ namespace WeightMaster
             bool failed = false;
             if (failed)
             {
-                MessageBox.Show("Step 5 button click failed!");
+                //MessageBox.Show("Step 5 button click failed!");
                 currentStep_st1 = currentStep_st1 - 1;
                 ShowCurrentStep();
             }
-            //preparing values for the finish api command
             //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
             if (lineNameCmb_st1.SelectedValue != null)
             {
@@ -1661,8 +1679,6 @@ namespace WeightMaster
             }
             else
             {
-                // Handle the case when no item is selected.
-                // For example, assign a default value or display an error message.
                 lineName_st1 = ""; // or any appropriate default
             }
             //supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
@@ -1677,12 +1693,12 @@ namespace WeightMaster
 
             if (lineName_st1.Equals("") || supervisor_st1.Equals("")) 
             {
-                MessageBox.Show("සාමාජික අංකය හා ප්‍රවාහන මාර්හය ඇතුලත් කරන්න");
+                MessageBox.Show("අධීක්ෂණය හා ප්‍රවාහන මාර්හය ඇතුලත් කරන්න");
                 return;
             }
 
             
-            //load table rows(test) after successful update
+            //clear and repopulate table rows(test) after successful update
             if (!acceptedLeafWeightTxt_st1.Text.Equals("") && !normalLeafWeightTxt_st1.Text.Equals("") && ((!nSacksTxt_st1.Text.Equals("") && nBoxesTxt_st1.Text.Equals("")) || (nSacksTxt_st1.Text.Equals("") && !nBoxesTxt_st1.Text.Equals(""))))
             {
                 //these are used to both updating the db and incrementing total valles for the table
@@ -1706,7 +1722,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "නව ඇලන්වැලි තේ කම්හල",
+                        company = "මොරවක්කොරළේ තේ කම්හල",
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = barcodeTxt_st1.Text,
@@ -1728,8 +1744,6 @@ namespace WeightMaster
                         final_green_leaf_count = availableNormalLeafWeight,
                         final_gold_leaf_count = availableGoldenLeafWeight
                     };
-
-                    System.Diagnostics.Debug.WriteLine(newTransaction);
 
                     // Call the service to add the transaction
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
@@ -1878,6 +1892,52 @@ namespace WeightMaster
                 {
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
+
+
+                //updating the linewise table to show the confirmed transaction
+                try
+                {
+                    var data = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedValue.ToString());
+                    System.Diagnostics.Debug.WriteLine(lineNameCmb_st1.SelectedValue.ToString());
+                    //MessageBox.Show("here triggered");
+                    if (data.Any())
+                    {
+                        // to assign into total values row
+                        int rowNBoxes = 0;
+                        int rowNSacks = 0;
+                        int rowGoldenLeafWeight = 0;
+                        int rowNormalLeafWeight = 0;
+                        int rowTotalLeafWeight = 0;
+
+                        //MessageBox.Show("data found");
+                        foreach (var transaction in data)
+                        {
+                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.barcode_details.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString());
+                            LineTablePanel_st1.Children.Add(lr1);
+                            //System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
+                            rowNBoxes += transaction.box_count;
+                            rowNSacks += transaction.bag_count;
+                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
+                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                        }
+                        //assign total column values to the total values row
+                        lineRowNBoxes_st1.Text = rowNBoxes.ToString();
+                        lineRowNSacks_st1.Text = rowNSacks.ToString();
+                        lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
+                        lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
+                        lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
+                }
+
             }
             else
             {
@@ -1900,8 +1960,8 @@ namespace WeightMaster
             //#issue No1: member data returns null
                 var memberDetails = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text,"");
             System.Diagnostics.Debug.WriteLine($"Line name: {memberDetails.linename}, Line Name: {memberDetails.Id}, Line Master: {memberDetails.transportagent}");
-            if (memberDetails == null)
-                MessageBox.Show("member data is null");
+            //if (memberDetails == null)
+            //    MessageBox.Show("member data is null");
 
                 if (memberDetails!=null) {
                     //load and populate additional data like previous leaf data, box data like stuff
@@ -2267,7 +2327,7 @@ namespace WeightMaster
         //private int _currentTurn_st2 = 1;
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Process st1 finished!");
+            //MessageBox.Show("Process st1 finished!");
             //bool isSuccess = true;
             //if (isSuccess)
             //{
