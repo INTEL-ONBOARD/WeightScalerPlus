@@ -1766,7 +1766,7 @@ namespace WeightMaster
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
                 }
-                MessageBox.Show("ready to populate"+_isSuccess.ToString());
+                //MessageBox.Show("ready to populate"+_isSuccess.ToString());
                 if (_isSuccess)
                 {
                     int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
@@ -1775,7 +1775,7 @@ namespace WeightMaster
                     //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
                     MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
                     //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-                    MessageBox.Show("data populated");
+                    //MessageBox.Show("data populated");
 
 
                     finalWeightScalerWeight_st1 += weightScalerValue;
