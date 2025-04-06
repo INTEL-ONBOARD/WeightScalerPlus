@@ -2509,7 +2509,6 @@ namespace WeightMaster
                 catch (Exception ex)
                 {
                     //MessageBox.Show("Upload Failed: " + ex.Message);
-                    MessageBox.Show("Upload Failed: " + ex.Message);
                     loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
                 }
                 loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
