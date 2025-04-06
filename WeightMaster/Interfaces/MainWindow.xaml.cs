@@ -2342,7 +2342,7 @@ namespace WeightMaster
             //    MessageBox.Show("manually changing steps");
             //    currentStep_st2 = 5;
             //}
-            MessageBox.Show("round confirmed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            //MessageBox.Show("round confirmed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
             bool hasfailed = false;
             if (hasfailed)
             {
