@@ -451,7 +451,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සා මා ජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border Background="#F7F7F7" x:Name="barcodeTxtBorder_st1" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
-                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -688,7 +688,12 @@
                     </Grid>
                 </Border>
 
-
+                <Border x:Name="loadingDataInputBorder_st1" Visibility="Hidden" BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="467,35,763,78">
+                    <Grid>
+                        <Image  Height="50" Width="50" gif:ImageBehavior.AnimatedSource="/Interfaces/loading.gif"/>
+                        <TextBlock Text="Please wait..." FontSize="20" Foreground="Black" HorizontalAlignment="Center" Margin="0,384,0,284"/>
+                    </Grid>
+                </Border>
 
                 <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,482">
                     <!--Station1 member turn Table-->
@@ -711,12 +716,12 @@
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="5" Margin="5" HorizontalAlignment="Right"  Text=" මුළු දළු බර(KG)"/>
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,65">
-                            <StackPanel x:Name="MemberTurnTablePanel_st1" Width="690" Margin="16,0,17,50">
+                            <StackPanel x:Name="MemberTurnTablePanel_st1" Width="707">
 
 
                             </StackPanel>
                             <!--bottom total values row-->
-                                
+
                         </ScrollViewer>
                         <Border Width="690" Height="50" Background="#C4C4C4" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="6" Padding="10" Margin="16,239,17,10">
                             <Grid>
@@ -899,7 +904,7 @@
                             <Grid Grid.Column="0" Height="60">
                                 <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-15,0,43"><Run Text=" සා මා ජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border x:Name="barcodeTxtBorder_st2" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,-49">
-                                    <TextBox GotFocus="barcodeTxt_GotFocus_st2" x:Name="barcodeTxt_st2" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox GotFocus="barcodeTxt_GotFocus_st2" x:Name="barcodeTxt_st2" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->

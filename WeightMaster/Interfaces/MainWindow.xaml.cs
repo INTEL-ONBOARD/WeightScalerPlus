@@ -1659,6 +1659,9 @@ namespace WeightMaster
 
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
+            //cover the input grid with another grid to avoid misinputs and reconfirming the same request
+            loadingDataInputBorder_st1.Visibility = Visibility.Visible;
+
             bool passed = true;
             if (passed)
             {
@@ -1763,7 +1766,7 @@ namespace WeightMaster
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
                 }
-                MessageBox.Show("ready to populate");
+                MessageBox.Show("ready to populate"+_isSuccess.ToString());
                 if (_isSuccess)
                 {
                     int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
@@ -1814,7 +1817,7 @@ namespace WeightMaster
                     goldenLeafWeightTxt_st1.Text = "";
                     acceptedLeafWeightTxt_st1.Text = "";
 
-                    barcodeTxt_st1.Text = "";
+                    //barcodeTxt_st1.Text = ""; //this fucks up the text change event in barcode which leads to clearing the data in the turn table 
 
                     currentTotalDeduction_st1 = 0;
                     currentNormalLeafWeight_st1 = 0;
@@ -1872,7 +1875,7 @@ namespace WeightMaster
                     goldenLeafWeightTxt_st1.Text = "";
                     acceptedLeafWeightTxt_st1.Text = "";
 
-                    barcodeTxt_st1.Text = "";
+                    //barcodeTxt_st1.Text = ""; //this fucks up the text change event in barcode which leads to clearing the data in the turn table 
 
                     currentTotalDeduction_st1 = 0;
                     currentNormalLeafWeight_st1 = 0;
@@ -1949,6 +1952,8 @@ namespace WeightMaster
             {
                 MessageBox.Show("කරුණාකර සියලු තොරතුරු අතුලත් කරන්න");
             }
+
+            loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
         }
 
         //station2 frame______________________________________________________________________________________________________________________________
@@ -2387,8 +2392,8 @@ namespace WeightMaster
             {
                 int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st2.Text) + Convert.ToInt32(normalLeafWeightTxt_st2.Text));
 
-                Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st2++.ToString(), totalNSacksTxt_st2.Text, "", totalWeight.ToString(), goldenLeafWeightTxt_st2.Text, normalLeafWeightTxt_st2.Text);
-                MemberTurnTablePanel_st2.Children.Add(station1TableRow1);
+                //Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st2++.ToString(), totalNSacksTxt_st2.Text, "", totalWeight.ToString(), goldenLeafWeightTxt_st2.Text, normalLeafWeightTxt_st2.Text);
+                //MemberTurnTablePanel_st2.Children.Add(station1TableRow1);
 
                 float.TryParse(weightScalerValTxt_st2.Text, out float finalWeightScalerValue);
                 int.TryParse(acceptedLeafWeightTxt_st2.Text, out int finalAcceptedLeafWeight);
@@ -2962,7 +2967,7 @@ namespace WeightMaster
                         statusLabel.Content = "Verifying Database Status(1)...";
                     });
                     // Await the asynchronous operation
-                    await _consoleHandler.VerifyUserDb();
+                    //await _consoleHandler.VerifyUserDb();
                     // Once verification is complete, update the status label again
                     Dispatcher.Invoke(() =>
                     {
@@ -2987,7 +2992,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(2)...";
                     });
-                    await _consoleHandler.VerifyLineMasterDb();  //****************************************
+                    //await _consoleHandler.VerifyLineMasterDb();  //****************************************
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -3010,7 +3015,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb(); //****************************************
+                    //await _consoleHandler.verifyMemberDb(); //****************************************
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
