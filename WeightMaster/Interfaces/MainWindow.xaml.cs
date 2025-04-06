@@ -28,6 +28,8 @@ using System.Diagnostics;
 using static System.Net.Mime.MediaTypeNames;
 using Path = System.IO.Path;
 using System.Globalization;
+using System.Net.NetworkInformation;
+
 
 namespace WeightMaster
 {
@@ -2055,7 +2057,7 @@ namespace WeightMaster
                     //}
                     foreach (var transaction in customerTransactions_st2)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
                     }
@@ -2948,36 +2950,82 @@ namespace WeightMaster
         }
 
         //used to startup the app with database verifications and closing & opening windows
+
         private async void StartupTheAppAsync()
         {
-            //closing existing pages
+            // Closing existing pages
             Station1Frame.Visibility = Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
             SettingsFrame.Visibility = Visibility.Collapsed;
             StationMainFrame.Visibility = Visibility.Collapsed;
             IntroFrame.Visibility = Visibility.Visible;
 
-            //repeat until no exception is occured.
+            bool internetAvailable = false;
             bool failed = false;
+
+            // Check internet connection
+            try
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    statusLabel.Content = "Checking Internet Connection...";
+                });
+
+                internetAvailable = await Task.Run(() =>
+                {
+                    try
+                    {
+                        using (var client = new System.Net.WebClient())
+                        using (client.OpenRead("https://www.google.com"))
+                            return true;
+                    }
+                    catch
+                    {
+                        return false;
+                    }
+                });
+
+                if (!internetAvailable)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "No internet connection. Startup aborted.";
+                    });
+
+                    IntroFrame.Visibility = Visibility.Collapsed;
+                    LoginFrame.Visibility = Visibility.Visible;
+
+                    runtimeService.StartFileWatcher();
+                    runtimeService.StartTimer();
+
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    statusLabel.Content = $"Error checking internet: {ex.Message}";
+                });
+                return;
+            }
+
+            // Repeat until no exception occurs
             do
             {
                 try
                 {
-                    //Verifying User Database
-                    // Update status label: "Verifying User Database..."
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "Verifying Database Status(1)...";
                     });
-                    // Await the asynchronous operation
-                    //await _consoleHandler.VerifyUserDb();
-                    // Once verification is complete, update the status label again
+
+                    await _consoleHandler.VerifyUserDb(); // Uncomment when needed
+
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = "DB Verified(1)"; //****************************************
+                        statusLabel.Content = "DB Verified(1)";
                     });
-                    // Optionally, wait a short moment to show the completion status, then hide the IntroFrame
-                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -2988,19 +3036,19 @@ namespace WeightMaster
                     });
                 }
 
-                //Verifying LineMaster Database
                 try
                 {
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "Verifying Database Status(2)...";
                     });
-                    //await _consoleHandler.VerifyLineMasterDb();  //****************************************
+
+                    await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
+
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
                     });
-                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -3011,21 +3059,20 @@ namespace WeightMaster
                     });
                 }
 
-                //Verifying Member Database
                 try
                 {
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "Verifying Database Status(3)...";
                     });
-                    //await _consoleHandler.verifyMemberDb(); //****************************************
+
+                    await _consoleHandler.verifyMemberDb(); // Uncomment when needed
+
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
                         failed = false;
-
                     });
-                    //await Task.Delay(1000);
                 }
                 catch (Exception ex)
                 {
@@ -3036,43 +3083,28 @@ namespace WeightMaster
                     });
                 }
 
-                //verifying missing transactions and replacing them
-                //try
-                //{
-                //    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
-                //    if (_isoks)
-                //    {
-                //        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]::::::::::::");
-                //    }
-                //    else
-                //    {
-                //        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
-                //    }
-                //    failed = !_isoks;
-                //    //await Task.Delay(1000);
-                //}
-                //catch (Exception ex)
-                //{
-                //    Dispatcher.Invoke(() =>
-                //    {
-                //        failed = true;
-                //        statusLabel.Content = $"Member Database Error: {ex.Message}";
-                //    });
-                //}
+                // Transaction verification is commented out, include it when needed
+                // try
+                // {
+                //     bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                //     failed = !_isoks;
+                // }
+                // catch (Exception ex)
+                // {
+                //     Dispatcher.Invoke(() =>
+                //     {
+                //         failed = true;
+                //         statusLabel.Content = $"Transaction Error: {ex.Message}";
+                //     });
+                // }
 
-
-
-            }
-
-            while (failed);
+            } while (failed);
 
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
 
-            runtimeService.StartFileWatcher(); // Start watching the file
+            runtimeService.StartFileWatcher();
             runtimeService.StartTimer();
-
-
         }
 
 
