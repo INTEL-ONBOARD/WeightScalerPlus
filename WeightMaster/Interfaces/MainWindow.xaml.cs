@@ -1897,7 +1897,8 @@ namespace WeightMaster
                     System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
 
-
+                // clear the linewise table to repopulate
+                LineTablePanel_st1.Children.Clear();
                 //updating the linewise table to show the confirmed transaction
                 try
                 {
@@ -2094,7 +2095,7 @@ namespace WeightMaster
             {
                 currentStep_st2 = 2;
             }
-            MessageBox.Show("weight getting done st2");
+            //MessageBox.Show("weight getting done st2");
             bool failed = false;
             if (failed)
             {
