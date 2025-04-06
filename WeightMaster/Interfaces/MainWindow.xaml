@@ -1192,6 +1192,13 @@
                     </Grid>
                 </Border>
 
+                <Border x:Name="loadingDataInputBorder_st2" Visibility="Hidden" BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="467,35,763,78">
+                    <Grid>
+                        <Image  Height="50" Width="50" gif:ImageBehavior.AnimatedSource="/Interfaces/loading.gif"/>
+                        <TextBlock Text="Please wait..." FontSize="20" Foreground="Black" HorizontalAlignment="Center" Margin="0,384,0,284"/>
+                    </Grid>
+                </Border>
+
                 <Border BorderThickness="2" Visibility="Hidden" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,480">
                     <!--Station2.1 Table-->
                     <Grid>

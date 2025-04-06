@@ -1665,8 +1665,6 @@ namespace WeightMaster
 
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
-            //cover the input grid with another grid to avoid misinputs and reconfirming the same request
-            loadingDataInputBorder_st1.Visibility = Visibility.Visible;
 
             bool passed = true;
             if (passed)
@@ -1706,6 +1704,7 @@ namespace WeightMaster
             if (lineName_st1.Equals("") || supervisor_st1.Equals(""))
             {
                 MessageBox.Show("අධීක්ෂණය හා ප්‍රවාහන මාර්හය ඇතුලත් කරන්න");
+                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                 return;
             }
 
@@ -1728,6 +1727,9 @@ namespace WeightMaster
                 int.TryParse(normalLeafWeightTxt_st1.Text, out int availableNormalLeafWeight);
                 int.TryParse(goldenLeafWeightTxt_st1.Text, out int availableGoldenLeafWeight);
                 bool _isSuccess = false;
+
+                //cover the input grid with another grid to avoid misinputs and reconfirming the same request
+                loadingDataInputBorder_st1.Visibility = Visibility.Visible;
                 try
                 {
                     var newTransaction = new TransactionLogBlockModel
@@ -1769,10 +1771,11 @@ namespace WeightMaster
                 catch (Exception ex)
                 {
                     // Handle exception here
-                    MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
+                    loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                 }
                 //MessageBox.Show("ready to populate"+_isSuccess.ToString());
+                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                 if (_isSuccess)
                 {
                     int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
@@ -2018,6 +2021,7 @@ namespace WeightMaster
                 //public double currentTotalDeduction_st2 = 0;
 
             }
+            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
         }
 
         private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2352,6 +2356,8 @@ namespace WeightMaster
         //private int _currentTurn_st2 = 1;
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
+            //loadingDataInputBorder_st2
+
             //MessageBox.Show("Process st1 finished!");
             //bool isSuccess = true;
             //if (isSuccess)
@@ -2455,12 +2461,10 @@ namespace WeightMaster
 
 
 
-
+                loadingDataInputBorder_st2.Visibility = Visibility.Visible;
                 bool _isdone = false;
                 try
                 {
-
-
                     var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
@@ -2505,7 +2509,9 @@ namespace WeightMaster
                 catch (Exception ex)
                 {
                     MessageBox.Show("Upload Failed: " + ex.Message);
+                    loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
                 }
+                loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
 
                 bool failed = false;
                 //verifying missing transactions and replacing them
