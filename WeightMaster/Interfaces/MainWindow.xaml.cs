@@ -1763,6 +1763,7 @@ namespace WeightMaster
                     MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
                 }
+                MessageBox.Show("ready to populate");
                 if (_isSuccess)
                 {
                     int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
@@ -1771,7 +1772,7 @@ namespace WeightMaster
                     //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
                     MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
                     //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-
+                    MessageBox.Show("data populated");
 
 
                     finalWeightScalerWeight_st1 += weightScalerValue;
@@ -1823,11 +1824,11 @@ namespace WeightMaster
                 }
                 else
                 {
-                    int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
-                    Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, normalLeafWeightTxt_st1.Text, goldenLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
+                    //int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
+                    //Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, normalLeafWeightTxt_st1.Text, goldenLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
                     // When adding a new row dynamically(no need now)
                     //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
-                    MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
+                    //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
                     //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
 
 
