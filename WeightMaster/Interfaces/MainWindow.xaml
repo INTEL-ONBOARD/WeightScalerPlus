@@ -952,7 +952,7 @@
                             </ComboBox>
                         </Grid>
                         <!--name w. initials label-->
-                        <Grid Margin="-383,307,729,319" >
+                        <Grid Margin="-383,307,634,319" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="31*"/>
                                 <ColumnDefinition Width="49*"/>
@@ -961,8 +961,8 @@
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" />
-                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,-11" Width="230" Grid.ColumnSpan="2" />
+                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" Width="283" />
+                            <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,-11" Width="327" Grid.ColumnSpan="2" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
                         <Line X1="0" X2="600" Y1="0" Y2="0" Stroke="#F0F0F0" StrokeThickness="2" Margin="0,172,0,529" />
@@ -1167,26 +1167,26 @@
                         -->
 
                         <!--Add another round button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="298,600,22,64" Style="{StaticResource HoverButton}">
-                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Width="262" Height="36">
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="221,644,195,20" Style="{StaticResource HoverButton}">
+                            <Border Background="#FFE1702F" CornerRadius="8" Padding="10" Width="170" Height="36">
                                 <Grid>
                                     <Image Source="/Interfaces/plus_button.png" Margin="212,0,6,0"/>
-                                    <TextBlock Text="ADD NEW ROUND" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                                    <TextBlock Text="ADD" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
                                 </Grid>
                             </Border>
                         </Button>
 
                         <!--Clear button-->
-                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="298,644,22,20" Click="clearBtn_st2_Clicked" Style="{StaticResource HoverButton}">
-                            <Border Background="#616161" CornerRadius="8" Padding="10" Width="262" Height="36">
-                                <TextBlock Text="CLEAR" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="400,644,22,20" Click="clearBtn_st2_Clicked" Style="{StaticResource HoverButton}">
+                            <Border Background="#616161" CornerRadius="8" Padding="10" Width="154" Height="36">
+                                <TextBlock Text="CLEAR" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White" FontSize="15" FontWeight="Normal" Width="92" TextAlignment="Center"/>
                             </Border>
                         </Button>
 
                         <!--Confirm button-->
-                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st2" GotFocus="confirmAddRowButton_GotFocus_st2" Background="Transparent" BorderThickness="0" Click="confirmAddRowButton_st2_Click" Margin="28,643,313,19" Style="{StaticResource HoverButton}" IsEnabled="False">
-                            <Border x:Name="confirmAddRowButtonBorder_st2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="241">
-                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                        <Button Cursor="Hand" x:Name="confirmAddRowButton_st2" GotFocus="confirmAddRowButton_GotFocus_st2" Background="Transparent" BorderThickness="0" Click="confirmAddRowButton_st2_Click" Margin="28,643,375,19" Style="{StaticResource HoverButton}" IsEnabled="False">
+                            <Border x:Name="confirmAddRowButtonBorder_st2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="173">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" Width="109" TextAlignment="Center"/>
                             </Border>
                         </Button>
                     </Grid>
