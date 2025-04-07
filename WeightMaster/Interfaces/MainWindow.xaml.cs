@@ -157,7 +157,7 @@ namespace WeightMaster
             _timer.Tick += Timer_Tick;
             ComponentDispatcher.ThreadPreprocessMessage += ComponentDispatcher_ThreadPreprocessMessage;
 
-            //StartupTheAppAsync();
+            StartupTheAppAsync();
             runtimeService.ExecuteRunExe();
 
         }
@@ -828,7 +828,7 @@ namespace WeightMaster
             CustomerCompletionRowPanel.Children.Clear();
 
 
-            if (/*!username.Equals("unknown")*/true)
+            if (!username.Equals("unknown"))
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -1048,7 +1048,7 @@ namespace WeightMaster
             }
             //hmm you need either to clear all textboxes or restart the app.
             System.Diagnostics.Debug.WriteLine("system check 1");
-            runtimeService.KillRunExe();
+            //runtimeService.KillRunExe();
             //runtimeService.KillRunExe();
             //runtimeService.KillRunExe();
             System.Diagnostics.Debug.WriteLine("system check 2");
