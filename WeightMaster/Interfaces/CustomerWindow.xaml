@@ -79,7 +79,7 @@
             <!--customer top bar-->
             <Border Background="White" Margin="0,8,0,804" BorderBrush="#B4B4B4" BorderThickness="0,0,0,1">
                 <Grid>
-                    <TextBlock x:Name="TopbarCustomerCompanyText" FontSize="36" Margin="28,46,373,56" FontWeight="Bold" Foreground="Black" Text="සීමා  සහිත මො රවක්කො රළේ තේ නිපදවනන්ගේ සමුපකා ර සමිතිය"/>
+                    <TextBlock x:Name="TopbarCustomerCompanyText" FontSize="36" Margin="28,46,373,56" FontWeight="Bold" Foreground="Black" Text="සීමා  සහිත මො රවක්කො රළේ තේ නිපදවන්නන්ගේ සමුපකා ර සමිතිය"/>
                     <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="28,104,1261,23" FontWeight="Bold" Foreground="#2DAA44" Text="මො රවක්කො රළේ තේ කම්හල"/>
                     <userContorls:CustomerDateAndTime Margin="1466,46,74,23"/>
                 </Grid>

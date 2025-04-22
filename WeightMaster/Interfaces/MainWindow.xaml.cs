@@ -1,34 +1,17 @@
 ﻿using Microsoft.Win32;
-using System.ComponentModel;
-using System.Configuration;
-using System.IO;
-using System.Reflection.Emit;
 using System.Runtime.InteropServices;
-using System.Runtime.Intrinsics.X86;
 using System.Text;
-using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Media3D;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using WeightMaster.Core;
 using WeightMaster.Interfaces;
 using WeightMaster.Interfaces.UserControls;
 using WeightMaster.Models;
 using WeightMaster.Services;
-using System.Diagnostics;
-using static System.Net.Mime.MediaTypeNames;
-using Path = System.IO.Path;
 using System.Globalization;
-using System.Net.NetworkInformation;
 
 
 namespace WeightMaster
@@ -46,9 +29,9 @@ namespace WeightMaster
 
         //for Enter and Esc navigation
         private int currentStep_st1 = 0;
-        private const int maxStep_st1 = 5;
+        private const int maxStep_st1 = 7;
         private int currentStep_st2 = 0;
-        private const int maxStep_st2 = 4;
+        private const int maxStep_st2 = 6;
 
         private bool userTyped = true;
         //public int nSacks_st1 = 0;
@@ -105,11 +88,12 @@ namespace WeightMaster
         private int _currentTurn_st2 = 1;
         //finalized values by each round to send to db/api
         private float finalWeightScalerWeight_st2 = 0; //this goes as the accepted value to api
+
+
         private int finalAcceptedLeafWeight_st2 = 0;
         private int finalGoldenLeafWeight_st2 = 0;
         private int finalNormalLeafWeight_st2 = 0;
 
-        private int finalNBoxes_st2 = 0;
         private int finalNSacks_st2 = 0;
         private int finalSackWeight_st2 = 0;
 
@@ -184,7 +168,7 @@ namespace WeightMaster
             if (Station1Frame.IsVisible)
             {
                 //allow only textbox increments within goToNextStep method
-                if (currentStep_st1 == maxStep_st1 || currentStep_st1 == 1)
+                if (currentStep_st1 == maxStep_st1 /*|| currentStep_st1 == 1*/)
                 {
                     //Handle final step completion
                     //MessageBox.Show("Process st1 completed!"); //moved to the click event to handle user navigation in case of a mouse click
@@ -228,7 +212,7 @@ namespace WeightMaster
             if (Station1Frame.IsVisible)
             {
                 //avoid entering certain steps(steps with buttons)
-                if (currentStep_st1 == 2)
+                if (currentStep_st1 == 3)
                 {
                     ShowCurrentStep();
                     return;
@@ -241,6 +225,13 @@ namespace WeightMaster
             }
             else if (Station2Frame.IsVisible)
             {
+                //avoid entering certain steps(steps with button clicks)
+                if (currentStep_st2 == 4)
+                {
+                    currentStep_st2 = 2;
+                    ShowCurrentStep();
+                    return;
+                }
                 //avoid entering certain steps(steps with buttons)
                 //if (currentStep_st2 == 2)
                 //{
@@ -253,10 +244,10 @@ namespace WeightMaster
                 //    return;
                 //}
 
-                //if (currentStep_st2 <= 1) return;
+                if (currentStep_st2 <= 1) return;
 
-                //currentStep_st2--;
-                //ShowCurrentStep();
+                currentStep_st2--;
+                ShowCurrentStep();
             }
         }
 
@@ -265,7 +256,7 @@ namespace WeightMaster
             if (Station1Frame.IsVisible)
             {
                 // unfocus all steps
-                wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
+                weightScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
@@ -273,11 +264,12 @@ namespace WeightMaster
                 weightScalerBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 dataInputBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
 
-                if (currentStep_st1 == 1 || currentStep_st1 == 0)
+                //highlighting the input borders and weight scalers based on the step No.
+                if (currentStep_st1 == 0 || currentStep_st1 == 1 || currentStep_st1 == 2)
                 {
                     weightScalerBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Default
                 }
-                else if (currentStep_st1 == 2 || currentStep_st1 == 3 || currentStep_st1 == 4 || currentStep_st1 == 5)
+                else if (currentStep_st1 == 2 || currentStep_st1 == 3 || currentStep_st1 == 4 || currentStep_st1 == 5 || currentStep_st1 == 6)
                 {
                     dataInputBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // Default
                 }
@@ -286,30 +278,34 @@ namespace WeightMaster
                 switch (currentStep_st1)
                 {
                     case 1:
-                        //wieghtScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        weightScalerConfirmBtnBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        break;
+                    case 2:
                         LoadStep1_st1();
                         wieghtScalerConfirmBtn_st1_Click(wieghtScalerConfirmBtn_st1, new RoutedEventArgs());
                         break;
-                    case 2:
+                    case 3:
                         barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
                         barcodeTxt_st1.Focus();
                         barcodeTxt_st1.SelectAll();
                         LoadStep2_st1();
                         break;
-                    case 3:
+                    case 4:
                         borderNSacks_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
                         nSacksTxt_st1.Focus();
                         nSacksTxt_st1.SelectAll();
                         LoadStep3_st1();
                         break;
-                    case 4:
+                    case 5:
                         wateredTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
                         wateredTxt_st1.Focus();
                         wateredTxt_st1.SelectAll();
                         LoadStep4_st1();
                         break;
-                    case 5:
-                        //confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                    case 6:
+                        confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        break;
+                    case 7:
                         LoadStep5_st1();
                         confirmAddRowButton_st1_Click(confirmAddRowButton_st1, new RoutedEventArgs());
                         break;
@@ -326,6 +322,7 @@ namespace WeightMaster
                 weightScalerBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
                 dataInputBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C4C4C4")); // Default
 
+                //highlighting the input borders and weight scalers based on the step No.
                 if (currentStep_st2 == 2)
                 {
                     weightScalerBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // highlighted
@@ -344,19 +341,24 @@ namespace WeightMaster
                         LoadStep2_st2();
                         break;
                     case 2:
-                        //wieghtScalerConfirmBtnBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        wieghtScalerConfirmBtnBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        break;
+                    case 3:
+                        //MessageBox.Show("clearing focus in step2 st2");
                         Keyboard.ClearFocus();
                         LoadStep1_st2();
                         weightScalerConfirmBtn_st2_Click(wieghtScalerConfirmBtn_st2, new RoutedEventArgs());
                         break;
-                    case 3:
+                    case 4:
                         wateredTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
                         wateredTxt_st2.Focus();
                         wateredTxt_st2.SelectAll();
                         LoadStep3_st2();
                         break;
-                    case 4:
-                        //confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                    case 5:
+                        confirmAddRowButtonBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        break;
+                    case 6:
                         LoadStep4_st2();
                         confirmAddRowButton_st2_Click(confirmAddRowButton_st2, new RoutedEventArgs());
                         //wateredTxt_st2.Select(0, 0);
@@ -409,64 +411,57 @@ namespace WeightMaster
 
         private void wieghtScalerConfirmBtn_GotFocus_st1(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
             currentStep_st1 = 1;
             ShowCurrentStep();
         }
         private void barcodeTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st1 = 2;
+            currentStep_st1 = 3;
             ShowCurrentStep();
         }
         private void nSacksTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st1 = 3;
+            currentStep_st1 = 4;
             ShowCurrentStep();
         }
         private void wateredTxt_GotFocus_st1(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st1 = 4;
+            currentStep_st1 = 5;
             ShowCurrentStep();
         }
         private void confirmAddRowButton_GotFocus_st1(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st1 = 4;
+            currentStep_st1 = 6;
             ShowCurrentStep();
         }
 
         private void barcodeTxt_GotFocus_st2(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
             currentStep_st2 = 1;
             ShowCurrentStep();
         }
         private void wieghtScalerConfirmBtn_GotFocus_st2(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st2 = 1;
-            ShowCurrentStep();
+            //commented 'cause i can handle this via button click event. provided that if there is no other reason to executing when focusing the button instead of clicking
+            //currentStep_st2 = 3;
+            //ShowCurrentStep();
         }
         //private void nSacksTxt_GotFocus_st2(object sender, RoutedEventArgs e)
         //{
-        //    // Call your desired method here
+        //    
         //    currentStep_st2 = 3;
         //    ShowCurrentStep();
         //}
         private void wateredTxt_GotFocus_st2(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st2 = 3;
+            currentStep_st2 = 4;
             ShowCurrentStep();
         }
         private void confirmAddRowButton_GotFocus_st2(object sender, RoutedEventArgs e)
         {
-            // Call your desired method here
-            currentStep_st2 = 3;
-            ShowCurrentStep();
+            //commented 'cause i can handle this via button click event. provided that if there is no other reason to executing when focusing the button instead of clicking
+            //currentStep_st2 = 6;
+            //ShowCurrentStep();
         }
 
 
@@ -958,6 +953,10 @@ namespace WeightMaster
             //supervisorCmb_st1.Items.Clear();
             //supervisorCmb_st2.Items.Clear();
 
+            //clear current steps for both stations
+            currentStep_st1 = 1;
+            currentStep_st2 = 1;
+
             //clear all 04 tables
             MemberTurnTablePanel_st1.Children.Clear();
             MemberTurnTablePanel_st2.Children.Clear();
@@ -1193,7 +1192,7 @@ namespace WeightMaster
                 return;
             if (weightScalerStatus_st1 == null)
                 return;
-            if (wieghtScalerConfirmBtnBorder_st1 == null)
+            if (weightScalerConfirmBtnBorder_st1 == null)
                 return;
             if (wieghtScalerConfirmBtn_st1 == null)
                 return;
@@ -1202,21 +1201,22 @@ namespace WeightMaster
             if (scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි"))
             {
                 wieghtScalerConfirmBtn_st1.IsEnabled = true;
-                wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
             }
             else
             {
                 wieghtScalerConfirmBtn_st1.IsEnabled = false;
-                wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#95D4A1"));
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#95D4A1"));
             }
         }
+
         private void wieghtScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
         {
-            bool passed = true;
+/*            bool passed = true;
             if (passed)
             {
-                // reset the steps
-                currentStep_st1 = 2;
+                // go to next step
+                currentStep_st1 = 3;
                 ShowCurrentStep(); //if this was called, enter will be pressed automatically
             }
             bool failed = false;
@@ -1225,7 +1225,7 @@ namespace WeightMaster
                 MessageBox.Show("Step 1 button click failed!");
                 currentStep_st1 = currentStep_st1 - 1;
                 //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
-            }
+            }*/
             //if (!double.TryParse(nSacksTxt_st1.Text, out double nSacks) || nSacks < 0)
             //    nSacks = 0;
             //if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
@@ -1290,10 +1290,13 @@ namespace WeightMaster
 
                 //enable and disable confirm buttons
                 wieghtScalerConfirmBtn_st1.IsEnabled = false;
-                wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // Gray out
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // Gray out
                 confirmAddRowButton_st1.IsEnabled = true;
                 confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
 
+                // go to next step
+                currentStep_st1 = 3;
+                ShowCurrentStep(); //if this was called, enter will be pressed automatically
             }
             else
             {
@@ -1303,6 +1306,9 @@ namespace WeightMaster
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
+                MessageBox.Show("Step 1 button click failed!"+currentStep_st1);
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep(); //if this was executed, current step becomes highlighting the button hmm
             }
         }
 
@@ -1398,22 +1404,41 @@ namespace WeightMaster
                 currentGoldenLeafWeight_st1 = goldenLeafWeight;
                 currentNormalLeafWeight_st1 = (currentAcceptedLeafWeight_st1 + currentTotalDeduction_st1) - goldenLeafWeight;
             }
-            else
+            else //reset values if total deduction exceeds current golden leaf weight: to prevent errors like what if total deduction is more than the new totalSackWeight after limitation
             {
-                normalLeafWeightTxt_st1.Text = "0";
-                currentNormalLeafWeight_st1 = 0;
+                //normalLeafWeightTxt_st1.Text = "0";
+                //currentNormalLeafWeight_st1 = 0;
+                MessageBox.Show("triggered");
                 //update helper variables
                 //MessageBox.Show(""+currentAcceptedLeafWeight_st1+"-"+currentTotalDeduction_st1);
                 //goldenLeafWeightTxt_st1.Text = (currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1).ToString();
                 //currentGoldenLeafWeight_st1 = currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1;
+
+                //SHOULD i also zero the rounded value? i guess not?
+                wateredTxt_st1.Text = "";
+                spoiledTxt_st1.Text = "";
+                maturedTxt_st1.Text = "";
+                rejectedTxt_st1.Text = "";
+                currentTotalDeduction_st1 = 0;
+
                 goldenLeafWeightTxt_st1.Text = "0";
                 currentGoldenLeafWeight_st1 = 0;
-                //SHOULD i also zero the rounded value? i guess not?
-                //wateredTxt_st1.Text = "0";
-                //spoiledTxt_st1.Text = "0";
-                //maturedTxt_st1.Text = "0";
-                //rejectedTxt_st1.Text = "0";
-                currentTotalDeduction_st1 = 0;
+
+                if (nSacks != 0 && scalerRoundedWeight_st1 > sacksWeightLimit)
+                {
+                    //acceptedLeafWeightTxt_st1.Text = sacksWeightLimit.ToString();
+                    //currentAcceptedLeafWeight_st1 = (int)sacksWeightLimit;
+                    currentNormalLeafWeight_st1 = (int)sacksWeightLimit;
+                    normalLeafWeightTxt_st1.Text = ((int)sacksWeightLimit).ToString();
+                }
+                else
+                {
+                    //acceptedLeafWeightTxt_st1.Text = scalerRoundedWeight_st1.ToString();
+                    //currentAcceptedLeafWeight_st1 = (int)scalerRoundedWeight_st1;
+                    currentNormalLeafWeight_st1 = (int)scalerRoundedWeight_st1;
+                    normalLeafWeightTxt_st1.Text = ((int)scalerRoundedWeight_st1).ToString();
+                }
+                MessageBox.Show("done");
             }
             //for testing purposes
             greenText.Text = currentNormalLeafWeight_st1.ToString();
@@ -1657,7 +1682,7 @@ namespace WeightMaster
 
             wieghtScalerConfirmBtn_st1.IsEnabled = true;
             confirmAddRowButton_st1.IsEnabled = false;
-            wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+            weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
             confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
 
         }
@@ -1670,8 +1695,8 @@ namespace WeightMaster
             if (passed)
             {
                 //MessageBox.Show("Process st1 finished!");
-                // reset the steps
-                currentStep_st1 = 0;
+                // reset the steps and focus the weight button
+                currentStep_st1 = 1;
                 ShowCurrentStep();
             }
 
@@ -1765,14 +1790,20 @@ namespace WeightMaster
                     // enable and disable confirm buttons
                     wieghtScalerConfirmBtn_st1.IsEnabled = true;
                     confirmAddRowButton_st1.IsEnabled = false;
-                    wieghtScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                    weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
                     confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+
+                    //go back to the first step(focusing the barcode)
+                    currentStep_st1 = 1;
+                    ShowCurrentStep();
                 }
                 catch (Exception ex)
                 {
                     // Handle exception here
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
                     loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
+                    currentStep_st1 = currentStep_st1 - 1;
+                    ShowCurrentStep();
                 }
                 //MessageBox.Show("ready to populate"+_isSuccess.ToString());
                 loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
@@ -2001,13 +2032,27 @@ namespace WeightMaster
                     spoiledTxt_st2.Text = memberDetails.thambimata.ToString();
                     rejectedTxt_st2.Text = memberDetails.reject.ToString();
 
-                    acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
+
+                    //was i high when i wrote these?
+                    //acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
+                    //normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
+                    //goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
+
+                    //currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
+                    //currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
+                    //currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
+
+                    //switched values(correct)
+                    acceptedLeafWeightTxt_st2.Text = memberDetails.total_leaf_weight.ToString();
                     normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
                     goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
 
-                    currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
-                    currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
-                    currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
+                    currentAcceptedLeafWeight_st2 = memberDetails.total_leaf_weight;
+                    currentNormalLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
+                    currentGoldenLeafWeight_st2 = memberDetails.total_gold_leaf_weight;
+
+
+
                     currentTotalDeduction_st2 = memberDetails.morapuwata + memberDetails.water + memberDetails.reject + memberDetails.thambimata;
 
                     //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
@@ -2106,10 +2151,10 @@ namespace WeightMaster
 
         private void weightScalerConfirmBtn_st2_Click(object sender, RoutedEventArgs e)
         {
-            bool isSuccess = true;
+/*            bool isSuccess = true;
             if (isSuccess)
             {
-                currentStep_st2 = 3;
+                currentStep_st2 = 4;
                 ShowCurrentStep();
             }
             //MessageBox.Show("weight getting done st2");
@@ -2118,7 +2163,8 @@ namespace WeightMaster
             {
                 MessageBox.Show("Step 1 button click failed!");
                 currentStep_st2 = currentStep_st2 - 1;
-            }
+                ShowCurrentStep() ;
+            }*/
 
             if (!double.TryParse(weightScalerValTxt_st2.Text, out double scalerWeight) || scalerWeight < 0)
                 scalerWeight = 0;
@@ -2143,6 +2189,10 @@ namespace WeightMaster
                 wieghtScalerConfirmBtn_st2.IsEnabled = false;
                 wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
                 confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled) 
+
+                //go to next step
+                currentStep_st2 = 4;
+                ShowCurrentStep();
             }
             else
             {
@@ -2152,6 +2202,8 @@ namespace WeightMaster
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
+                currentStep_st2 = currentStep_st2 - 1;
+                ShowCurrentStep();
             }
 
         }
@@ -2353,19 +2405,74 @@ namespace WeightMaster
         }
 
 
+        //addRoundBtn_st2_Clicked
         //private int _currentTurn_st2 = 1;
+        private async void addRoundBtn_st2_Click(object sender, RoutedEventArgs e)
+        {
+            //load table rows(test)
+            if (lineNameCmb_st2.SelectedValue != null && !barcodeTxt_st2.Text.Equals("") && !acceptedSackWeightTxt_st2.Text.Equals("") && !acceptedLeafWeightTxt_st2.Text.Equals(""))
+            {
+                int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st2.Text) + Convert.ToInt32(normalLeafWeightTxt_st2.Text));
+
+                float.TryParse(weightScalerValTxt_st2.Text, out float finalWeightScalerValue); //gives the sack weight in st2 please mind
+                int.TryParse(acceptedLeafWeightTxt_st2.Text, out int finalAcceptedLeafWeight);
+
+                int.TryParse(totalNSacksTxt_st2.Text, out int finalNSacks);
+
+                int.TryParse(wateredTxt_st2.Text, out int finalWateredWeight);
+                int.TryParse(maturedTxt_st2.Text, out int finalMaturedWeight);
+                int.TryParse(spoiledTxt_st2.Text, out int finalSpoiledWeight);
+                int.TryParse(rejectedTxt_st2.Text, out int finalRejectedWeight);
+
+                int.TryParse(acceptedSackWeightTxt_st2.Text, out int finalSackWeight);
+
+                int.TryParse(normalLeafWeightTxt_st2.Text, out int finalAvailableNormalLeafWeight);
+                int.TryParse(goldenLeafWeightTxt_st2.Text, out int finalAvailableGoldenLeafWeight);
+
+                //calculate new normal and golden weights(without 4 main weight deductions) after sack weight reducion
+                int newFinalNormalLeafWeight_st2 = (int)currentNormalLeafWeight_st2;
+                int newFinaGoldenLeafWeight_st2 = (int)currentGoldenLeafWeight_st2;
+
+                if (finalSackWeight <= finalAvailableGoldenLeafWeight) 
+                {
+
+                }
+                else 
+                {
+                }
+                //-----------------------------------------------------------------------------------------------------
+                finalWeightScalerWeight_st2 = finalWeightScalerValue; //gives the sack weight in st2 please mind
+                finalAcceptedLeafWeight_st2 = finalAcceptedLeafWeight;
+
+                finalNormalLeafWeight_st2 += (int)currentNormalLeafWeight_st2;
+                finalGoldenLeafWeight_st2 += (int)currentGoldenLeafWeight_st2;
+
+                finalNSacks_st2 += finalNSacks;
+
+                //finalWateredWeight_st2 += finalWateredWeight;
+                //finalMaturedWeight_st2 += finalMaturedWeight;
+                //finalSpoiledWeight_st2 += finalSpoiledWeight;
+                //finalRejectedWeight_st2 += finalRejectedWeight;
+
+                finalAvailableGoldenLeafWeight_st2 += finalAvailableGoldenLeafWeight;
+                finalAvailableNormalLeafWeight_st2 += finalAvailableNormalLeafWeight;
+
+            }
+        }
+
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
             //loadingDataInputBorder_st2
 
             //MessageBox.Show("Process st1 finished!");
-            //bool isSuccess = true;
-            //if (isSuccess)
-            //{
-            //    MessageBox.Show("manually changing steps");
-            //    currentStep_st2 = 5;
-            //}
-            //MessageBox.Show("round confirmed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            bool isSuccess = true;
+            if (isSuccess)
+            {
+                //MessageBox.Show("manually changing steps");
+                currentStep_st2 = 1;
+                ShowCurrentStep();
+            }
+            //MessageBox.Show("round confirmed st2");
             bool hasfailed = false;
             if (hasfailed)
             {
@@ -2482,7 +2589,7 @@ namespace WeightMaster
 
                         bag_count = finalNSacks,
 
-                        maximum_nomal_leaf_weight = 90,
+                        maximum_nomal_leaf_weight = 23,
                         total_leaf_weight = finalAcceptedLeafWeight,
                         actual_nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
                         total_gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
@@ -3255,17 +3362,17 @@ namespace WeightMaster
 
                 data.Add(new string[]
                 {
-            transaction.Id.ToString(),
-            transaction.barcode_details ?? "",
-            transaction.bag_count.ToString(),
-            boxCount.ToString(),
-            transaction.total_leaf_weight.ToString(),
-            transaction.water.ToString(),
-            transaction.morapuwata.ToString(),
-            transaction.thambimata.ToString(),
-            transaction.reject.ToString(),
-            transaction.bag_weight.ToString(),
-            dalu.ToString()
+                transaction.Id.ToString(),
+                transaction.barcode_details ?? "",
+                transaction.bag_count.ToString(),
+                boxCount.ToString(),
+                transaction.total_leaf_weight.ToString(),
+                transaction.water.ToString(),
+                transaction.morapuwata.ToString(),
+                transaction.thambimata.ToString(),
+                transaction.reject.ToString(),
+                transaction.bag_weight.ToString(),
+                dalu.ToString()
                 });
 
                 totalBagCount += transaction.bag_count;
