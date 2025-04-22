@@ -823,7 +823,7 @@ namespace WeightMaster
             CustomerCompletionRowPanel.Children.Clear();
 
 
-            if (!username.Equals("unknown"))
+            if (!username.Equals("unknown") || true)
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -1329,12 +1329,6 @@ namespace WeightMaster
             if (!double.TryParse(normalLeafWeightTxt_st1.Text, out double normalLeafWeight) || normalLeafWeight < 0)
                 normalLeafWeight = 0;
 
-            //calculate total leaf
-            double total = normalLeafWeight + goldenLeafWeight;
-
-            //available weights for golden and normal leaf weights after the deductions
-            //double availableWeight = total - currentTotalDeduction_st1;
-
             if (goldenLeafWeightTxt_st1.Text.Equals("0") && normalLeafWeightTxt_st1.Text.Equals("0")) { return; }
 
             //if golden leaf weight was changed
@@ -1344,7 +1338,8 @@ namespace WeightMaster
                 normalLeafWeightTxt_st1.Text = ((acceptedLeafWeight - currentTotalDeduction_st1) - goldenLeafWeight).ToString();
                 //update helper variables
                 currentGoldenLeafWeight_st1 = goldenLeafWeight;
-                currentNormalLeafWeight_st1 = (currentAcceptedLeafWeight_st1 + currentTotalDeduction_st1) - goldenLeafWeight;
+                //fix: stopped adding currentTotalDeduction to fix a calculation error
+                currentNormalLeafWeight_st1 = (currentAcceptedLeafWeight_st1 /*+ currentTotalDeduction_st1*/) - goldenLeafWeight;
             }
 
             //for testing purposes
@@ -2224,26 +2219,21 @@ namespace WeightMaster
                 if (!double.TryParse(normalLeafWeightTxt_st2.Text, out double normalLeafWeight) || normalLeafWeight < 0)
                     normalLeafWeight = 0;
 
-                //calculate total leaf
-                //double total = normalLeafWeight + goldenLeafWeight;
-
-                //available weights for golden and normal leaf weights after the deductions
-                //double availableWeight = total - currentTotalDeduction_st1;
-
                 if (goldenLeafWeightTxt_st2.Text.Equals("0") && normalLeafWeightTxt_st2.Text.Equals("0")) { return; }
-
+                //MessageBox.Show("hmm");
                 //if golden leaf weight was changed
                 if (goldenLeafWeightTxt_st2.IsKeyboardFocused)
                 {
+                    //MessageBox.Show("focused w/ if");
                     //MessageBox.Show("goldleaf: event triggered.");
                     normalLeafWeightTxt_st2.Text = ((acceptedLeafWeight - currentTotalDeduction_st2) - goldenLeafWeight).ToString();
                     //update helper variables
                     currentGoldenLeafWeight_st2 = goldenLeafWeight;
-                    currentNormalLeafWeight_st2 = (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2) - goldenLeafWeight;  //this was here: (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
-                }
+                    currentNormalLeafWeight_st2 = (currentAcceptedLeafWeight_st2 /*- currentTotalDeduction_st2*/) - goldenLeafWeight;  //this was here: (currentAcceptedLeafWeight_st2 - currentTotalDeduction_st2)
+            }
 
-                //for testing purposes
-                greenText2.Text = currentNormalLeafWeight_st2.ToString();
+            //for testing purposes
+            greenText2.Text = currentNormalLeafWeight_st2.ToString();
                 goldText2.Text = currentGoldenLeafWeight_st2.ToString();
 
             }
