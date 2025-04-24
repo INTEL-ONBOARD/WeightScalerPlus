@@ -1477,7 +1477,7 @@ namespace WeightMaster
                 normalLeafWeightTxt_st1.Text = ((currentAcceptedLeafWeight_st1 - currentTotalDeduction_st1) - goldenLeafWeight).ToString();
                 //update helper variables
                 currentGoldenLeafWeight_st1 = goldenLeafWeight;
-                currentNormalLeafWeight_st1 = (currentAcceptedLeafWeight_st1 + currentTotalDeduction_st1) - goldenLeafWeight;
+                currentNormalLeafWeight_st1 = (currentAcceptedLeafWeight_st1 /*+ currentTotalDeduction_st1*/) - goldenLeafWeight;
             }
             else
             {
@@ -2530,8 +2530,6 @@ namespace WeightMaster
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
             //loadingDataInputBorder_st2
-
-            //MessageBox.Show("Process st1 finished!");
             bool isSuccess = true;
             if (isSuccess)
             {
@@ -2543,7 +2541,7 @@ namespace WeightMaster
             bool hasfailed = false;
             if (hasfailed)
             {
-                MessageBox.Show("Step 5 button click failed!");
+                //MessageBox.Show("Step 5 button click failed!");
                 currentStep_st2 = currentStep_st2 - 1;
             }
 
@@ -2566,13 +2564,12 @@ namespace WeightMaster
             }
             else
             {
-                // Handle the case when no item is selected.
-                // For example, assign a default value or display an error message.
-                supervisor_st2 = ""; // or any appropriate default
+                supervisor_st2 = "";
             }
 
             if (lineName_st2.Equals("") || supervisor_st2.Equals(""))
             {
+                currentStep_st2 = currentStep_st2 - 1;
                 MessageBox.Show("සාමාජික අංකය හා අධීක්ෂණ නිලධාරී ඇතුලත් කරන්න");
                 return;
             }
@@ -2639,22 +2636,31 @@ namespace WeightMaster
                 bool _isdone = false;
 
                 //store the last current round in the list for the calculations with previous rounds
-                //addedRoundList.Add(
-                //    new WeightRound_st2Model(
-                //        weightScalerValue,
-                //        acceptedSackWeight,
+                addedRoundList.Add(
+                    new WeightRound_st2Model(
+                        finalWeightScalerValue,
+                        finalAcceptedSackWeight,
 
-                //        currentGoldenLeafWeight_st2,
-                //        currentNormalLeafWeight_st2,
-                //        availableGoldenLeafWeight,
-                //        availableNormalLeafWeight,
+                        currentGoldenLeafWeight_st2,
+                        currentNormalLeafWeight_st2,
+                        finalAvailableGoldenLeafWeight,
+                        finalAvailableNormalLeafWeight,
 
-                //        wateredWeight,
-                //        maturedWeight,
-                //        spoiledWeight,
-                //        rejectedWeight
-                //    )
-                // );
+                        finalWateredWeight,
+                        finalMaturedWeight,
+                        finalSpoiledWeight,
+                        finalRejectedWeight
+                    )
+                 );
+
+                // Sum up each property to upload with the finalTransaciton
+                float totalWeightSaclaerValue = addedRoundList.Sum(r => r.weightScalerWeight);
+                int totalAcceptedSackWeight = addedRoundList.Sum(r => r.acceptedSackWeight);
+                //int finalB = rounds.Sum(r => r.B);
+                //int finalC = rounds.Sum(r => r.C);
+                //int finalD = rounds.Sum(r => r.D);
+                //int finalE = rounds.Sum(r => r.E);
+
                 try
                 {
                     var Finaltransaction = new FinalTransactionBlockModel
@@ -2663,7 +2669,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "නව ඇලන්වැලි තේ කම්හල",
+                        company = "මොරවක්කෝරළේ තේ කම්හල",
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         superviosr = supervisor_st2,
