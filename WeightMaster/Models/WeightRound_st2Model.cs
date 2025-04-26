@@ -41,6 +41,7 @@ namespace WeightMaster.Models
             int rejectedWeight
             )
         {
+            this.weightScalerWeight = weightScalerWeight;
             this.acceptedSackWeight = acceptedSackWeight;
 
             this.currentAcceptedGoldenWeight = currentGoldenWeight;
