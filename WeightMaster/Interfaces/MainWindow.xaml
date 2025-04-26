@@ -372,9 +372,9 @@
                             <RowDefinition Height="50"/>
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0"/>
-                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="244,61,135,-37" Grid.Row="3" />
-                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="298,61,75,-37" Grid.Row="3" />
-                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="366,61,10,-37" Grid.Row="3" />
+                        <TextBlock x:Name="goldText" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold" Margin="189,241,190,-217" Grid.Row="3" />
+                        <TextBlock x:Name="greenText" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold" Margin="243,241,130,-217" Grid.Row="3" />
+                        <TextBlock x:Name="blueText" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Margin="311,241,65,-217" Grid.Row="3" />
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,31,10,0">
                             <TextBox x:Name="weightScalerValTxt_st1" BorderThickness="0" Background="Transparent" IsReadOnly="True" VerticalAlignment="Bottom" Text="35.5" Foreground="Black" FontSize="96" FontWeight="Bold" />
@@ -736,9 +736,9 @@
                                 <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" x:Name="rowMemberTurns_st1" Text="" />
                                 <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowNSacks_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
                                 <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowNBoxes_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowGoldenLeafWeights_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowGreenLeafWeights_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" Foreground="#FF0078D7" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowTotalLeafWeights_st1" Text="0" FontWeight="Bold" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowGoldenLeafWeights_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowGreenLeafWeights_st1" Text="0" Foreground="#FF0078D7" FontWeight="Bold" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" Foreground="#FF0078D7" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="rowTotalLeafWeights_st1" Text="0" FontWeight="Bold" />
                             </Grid>
                         </Border>
                         <!--finish button(not used in the current version)-->
@@ -823,7 +823,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -874,9 +874,9 @@
                         </Grid.RowDefinitions>
                         <StackPanel Orientation="Horizontal" Margin="0,30,0,0"/>
 
-                        <TextBlock x:Name="goldText2" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold"  Grid.Row="3" Margin="291,42,79,-42" />
-                        <TextBlock x:Name="greenText2" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold"  Grid.Row="3" Margin="231,42,134,-17" />
-                        <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Grid.Row="3" Margin="361,42,17,-17" />
+                        <TextBlock x:Name="goldText2" Text="gold" Foreground="gold" FontSize="15" FontWeight="SemiBold"  Grid.Row="3" Margin="291,63,79,-63" />
+                        <TextBlock x:Name="greenText2" Text="green" Foreground="green" FontSize="15" FontWeight="SemiBold"  Grid.Row="3" Margin="231,63,134,-38" />
+                        <TextBlock x:Name="blueText2" Text="blue" Foreground="blue" FontSize="15" FontWeight="SemiBold" Grid.Row="3" Margin="356,67,22,-42" />
 
                         <!--scaler weight label-->
                         <StackPanel Orientation="Horizontal"  Grid.Row="1"  Margin="41,52,10,0">
@@ -1212,7 +1212,7 @@
                                 <ColumnDefinition Width="155" />
                             </Grid.ColumnDefinitions>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="වා ර අංකය"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝ නි ගණන(n)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝ නි බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="2" Margin="5" HorizontalAlignment="Right" Text="මුළු දළු බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="3" Margin="5" HorizontalAlignment="Right" Text="රන්දළු බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right"  Text="සා මන්‍ය දළු බර(KG)"/>

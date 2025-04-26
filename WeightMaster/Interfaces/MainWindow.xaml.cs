@@ -77,8 +77,10 @@ namespace WeightMaster
         //used to send the station1 transactionData directly into station2 finalTransacitonData if wanted.
         private TransactionLogBlockModel currentMemberDetails_st2 = new TransactionLogBlockModel();
 
-        // Now holds a list of round objects for each additional round added for additional sack weight deduction
+        //(IF IT'S A NEW ONE) Now holds a list of round objects for each additional round added for additional sack weight deduction
         private List<WeightRound_st2Model> addedRoundList = new List<WeightRound_st2Model>();
+        //this can hold multiple values from multiple barcodeIDs
+        //Dictionary<string, List<WeightRound_st2Model>> memberHashMap_st2 = new Dictionary<string, List<WeightRound_st2Model>>();
 
         private string lineName_st2 = "";
         private string supervisor_st2 = "";
@@ -2462,10 +2464,6 @@ namespace WeightMaster
                 int.TryParse(maturedTxt_st2.Text, out int maturedWeight);
                 int.TryParse(spoiledTxt_st2.Text, out int spoiledWeight);
                 int.TryParse(rejectedTxt_st2.Text, out int rejectedWeight);
-                
-
-                // Now holds a list of round objects for each additional round added for additional sack weight deduction
-                //private List<WeightRound_st2Model> addedRoundList = new List<WeightRound_st2Model>();
 
                 //store the current round in the list for later usage
                 addedRoundList.Add(
@@ -2484,6 +2482,17 @@ namespace WeightMaster
                         rejectedWeight
                     )
                  );
+
+                //show the newly added round in the table row
+                MemberTurnTablePanel_st2.Children.Clear();
+                int rowIndex = 1;
+                foreach (WeightRound_st2Model round in addedRoundList)
+                {
+                    //Console.WriteLine(round);
+                    Station2TableRow station2TableRow1 = new Station2TableRow(rowIndex++.ToString(), round.acceptedSackWeight.ToString(), (round.availableGoldenLeafWeight+round.availableNormalLeafWeight).ToString(), round.availableGoldenLeafWeight.ToString(), round.availableNormalLeafWeight.ToString());
+                    MemberTurnTablePanel_st2.Children.Add(station2TableRow1);
+                }
+                rowIndex = 1;
 
                 //take the current hidden variable values before them shifting due to clearing
                 int currGoldenLeafWeight = (int)currentGoldenLeafWeight_st2;
@@ -2516,7 +2525,7 @@ namespace WeightMaster
                 //totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
 
                 //update the current values(please do the appropiate deductions before population)
-                MessageBox.Show("before: " + normalLeafWeightTxt_st2.Text);
+                //MessageBox.Show("before: " + normalLeafWeightTxt_st2.Text);
                 maturedTxt_st2.Text = maturedWeight.ToString();
                 wateredTxt_st2.Text = wateredWeight.ToString();
                 spoiledTxt_st2.Text = spoiledWeight.ToString();
@@ -2531,7 +2540,7 @@ namespace WeightMaster
 
                 //deducted value for the next sack deduction
                 currentAcceptedLeafWeight_st2 = currAcceptedLeafWeight - acceptedSackWeight;
-                //FIX THISSSSSSSS
+                //FIX THISSSSSSSS: Yesss donee
                 if (acceptedSackWeight <= currNormalLeafWeight) {
                     currentNormalLeafWeight_st2 = currNormalLeafWeight - acceptedSackWeight;
                     currentGoldenLeafWeight_st2 = currGoldenLeafWeight;
@@ -2590,6 +2599,7 @@ namespace WeightMaster
             {
                 //MessageBox.Show("Step 5 button click failed!");
                 currentStep_st2 = currentStep_st2 - 1;
+                ShowCurrentStep();
             }
 
             //preparing values for the finish api command
@@ -3454,7 +3464,7 @@ namespace WeightMaster
                     DrawingVisual visual = new DrawingVisual();
                     using (DrawingContext dc = visual.RenderOpen())
                     {
-                        DrawPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
+                        DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
                     }
                     printDialog.PrintVisual(visual, "Print Document");
                 }
@@ -3466,7 +3476,7 @@ namespace WeightMaster
         }
 
 
-        private void DrawPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
+        private void DrawLineReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
         {
             foreach (var transaction in lineReportData)
             {
@@ -3635,9 +3645,213 @@ namespace WeightMaster
 
 
 
+        //_________________daily report___________________________________
 
-        private void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
+        private async void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
         {
+            if (lineNameCmb_st2.SelectedItem == null)
+            {
+                MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
+                return;
+            }
+
+            try
+            {
+                //MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
+                //fetch line wise data to pass down to report drawing
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
+                //MessageBox.Show("db call passed here");
+                //testing the data
+                //if (lineReportData != null)
+                //{
+                //MessageBox.Show("response is not null");
+                //}
+                foreach (var transaction in lineReportData)
+                {
+                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                }
+
+
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    DrawingVisual visual = new DrawingVisual();
+                    using (DrawingContext dc = visual.RenderOpen())
+                    {
+                        DrawDailyReportPage(dc, lineReportData);
+                    }
+                    printDialog.PrintVisual(visual, "Print Document");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+            }
+        }
+
+        private void DrawDailyReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
+        {
+            foreach (var transaction in lineReportData)
+            {
+                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+            }
+
+            Typeface typeface = new Typeface("Arial");
+            double fontSize = 10;
+            Brush brush = Brushes.Black;
+            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
+            double yPos = 50;
+            double pageWidth = 816;
+
+            // Headers
+            string[] mainHeaders = {
+        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
+        "සමූපකාර තේ කම්හල",
+    };
+            double[] headerSizes = { 14, 14 };
+
+            for (int i = 0; i < mainHeaders.Length; i++)
+            {
+                FormattedText headerText = new FormattedText(
+                    mainHeaders[i],
+                    CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight,
+                    typeface,
+                    headerSizes[i],
+                    brush,
+                    pixelsPerDip
+                );
+
+                double centerX = (pageWidth - headerText.WidthIncludingTrailingWhitespace) / 2;
+                dc.DrawText(headerText, new Point(centerX, yPos));
+                yPos += headerText.Height + 8;
+            }
+
+            yPos += 30;
+
+            // Report Issue Index
+            string issueIndex = "IDX-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+            dc.DrawText(
+                new FormattedText("Report Issue Index: " + issueIndex, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                    typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, yPos));
+            yPos += 20;
+
+            // Date Issued
+            dc.DrawText(
+                new FormattedText("Date Issued: " + DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, yPos));
+            yPos += 40;
+
+            // Table headers
+            string[] headers = {
+        "අංකය", "සාමාජික අංකය", "ගෝනි(n)", "පෙට්ටි(n)",
+        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
+        "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
+    };
+            double[] headerPositions = { 50, 110, 200, 260, 320, 380, 450, 510, 570, 640, 710 };
+
+            // Draw black background for header
+            dc.DrawRectangle(Brushes.Black, null, new Rect(40, yPos - 5, pageWidth - 80, 25));
+
+            for (int i = 0; i < headers.Length; i++)
+            {
+                dc.DrawText(
+                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                        typeface, fontSize, Brushes.White, pixelsPerDip),
+                    new Point(headerPositions[i], yPos));
+            }
+
+            yPos += 25;
+
+            // Totals
+            int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+            int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+
+            List<string[]> data = new List<string[]>();
+            foreach (var transaction in lineReportData)
+            {
+                int boxCount = transaction.bag_count > 0 ? 0 : 0;
+                int dalu = transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                             + transaction.thambimata + transaction.reject + transaction.bag_weight);
+
+                data.Add(new string[]
+                {
+                transaction.Id.ToString(),
+                transaction.barcode_details ?? "",
+                transaction.bag_count.ToString(),
+                boxCount.ToString(),
+                transaction.total_leaf_weight.ToString(),
+                transaction.water.ToString(),
+                transaction.morapuwata.ToString(),
+                transaction.thambimata.ToString(),
+                transaction.reject.ToString(),
+                transaction.bag_weight.ToString(),
+                dalu.ToString()
+                });
+
+                totalBagCount += transaction.bag_count;
+                totalBoxCount += boxCount;
+                totalLeafWeight += transaction.total_leaf_weight;
+                totalWater += transaction.water;
+                totalMorapuwata += transaction.morapuwata;
+                totalThambimata += transaction.thambimata;
+                totalReject += transaction.reject;
+                totalBagWeight += transaction.bag_weight;
+                totalDalu += dalu;
+            }
+
+            // Draw rows
+            bool isAlternate = false;
+            foreach (string[] row in data)
+            {
+                if (isAlternate)
+                {
+                    dc.DrawRectangle(Brushes.LightGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
+                }
+                for (int i = 0; i < row.Length; i++)
+                {
+                    dc.DrawText(
+                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                            typeface, fontSize, brush, pixelsPerDip),
+                        new Point(headerPositions[i], yPos));
+                }
+                yPos += 20;
+                isAlternate = !isAlternate;
+            }
+
+            // Totals row background
+            dc.DrawRectangle(Brushes.DarkGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
+
+            string[] totalsRow = {
+        "Total", "", totalBagCount.ToString(), totalBoxCount.ToString(), totalLeafWeight.ToString(),
+        totalWater.ToString(), totalMorapuwata.ToString(), totalThambimata.ToString(), totalReject.ToString(),
+        totalBagWeight.ToString(), totalDalu.ToString()
+    };
+
+            for (int i = 0; i < totalsRow.Length; i++)
+            {
+                dc.DrawText(
+                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
+                        typeface, fontSize, brush, pixelsPerDip),
+                    new Point(headerPositions[i], yPos));
+            }
+
+            yPos += 40;
+
+            // Signature area
+            // Signature area
+            double signY = yPos + 60;
+
+            // Align the signature line to the left (starting at position 50)
+            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(350, signY)); // Signature line
+
+            // Align the "Authorised by" text to the left (starting at position 50)
+            dc.DrawText(
+                new FormattedText("Authorised by", CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(50, signY + 5)); // Adjusted to the same x-coordinate
 
         }
     }
