@@ -42,6 +42,7 @@ namespace WeightMaster
 
         //___________________st1____________________________________________________________________________________________|
 
+        private string memberId_st1 = ""; //stores member id with all digits to send back to api.
         private string lineName_st1 = "";
         private string supervisor_st1 = "";
         private double scalerRoundedWeight_st1 = 0;
@@ -80,7 +81,7 @@ namespace WeightMaster
         //(IF IT'S A NEW ONE) Now holds a list of round objects for each additional round added for additional sack weight deduction
         private List<WeightRound_st2Model> addedRoundList = new List<WeightRound_st2Model>();
         //this can hold multiple values from multiple barcodeIDs
-        //Dictionary<string, List<WeightRound_st2Model>> memberHashMap_st2 = new Dictionary<string, List<WeightRound_st2Model>>();
+        private Dictionary<string, List<WeightRound_st2Model>> memberHashMap_st2 = new Dictionary<string, List<WeightRound_st2Model>>();
 
         private string lineName_st2 = "";
         private string supervisor_st2 = "";
@@ -291,7 +292,7 @@ namespace WeightMaster
                         break;
                     case 2:
                         LoadStep1_st1();
-                        wieghtScalerConfirmBtn_st1_Click(wieghtScalerConfirmBtn_st1, new RoutedEventArgs());
+                        weightScalerConfirmBtn_st1_Click(weightScalerConfirmBtn_st1, new RoutedEventArgs());
                         break;
                     case 3:
                         barcodeTxtBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
@@ -356,7 +357,7 @@ namespace WeightMaster
                         //MessageBox.Show("clearing focus in step2 st2");
                         Keyboard.ClearFocus();
                         LoadStep1_st2();
-                        weightScalerConfirmBtn_st2_Click(wieghtScalerConfirmBtn_st2, new RoutedEventArgs());
+                        weightScalerConfirmBtn_st2_Click(weightScalerConfirmBtn_st2, new RoutedEventArgs());
                         break;
                     case 4:
                         wateredTxtBorder_st2.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // focused
@@ -832,7 +833,7 @@ namespace WeightMaster
             CustomerCompletionRowPanel.Children.Clear();
 
 
-            if (!username.Equals("unknown") || true)
+            if (!username.Equals("unknown"))
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -884,6 +885,11 @@ namespace WeightMaster
                 //clearing login textboxes otherwise there are visible even after a logout
                 UsernameTextBox.Text = "";
                 PasswordBoxControl.Password = "";
+
+                //updating current Enter step
+                currentStep_st1 = 1;
+                currentStep_st2 = 1;
+                ShowCurrentStep();
             }
             else
             {
@@ -1068,18 +1074,17 @@ namespace WeightMaster
 
         private async void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string request = barcodeTxt_st1.Text;
-            //String memberName = await _consoleHandler.GetMemberName(request);
-            //System.Diagnostics.Debug.WriteLine(request+": "+ memberName);
-            //customerNameTxt_st1.Text = memberName;
+            memberId_st1 = barcodeTxt_st1.Text;
+            //converts the member id to a 05-digit number by adding remaining zeros to the left.
+            memberId_st1 = barcodeTxt_st1.Text.PadLeft(5, '0');
             string memberName = null;
             try
             {
-                memberName = await _consoleHandler.GetMemberName(request);
+                memberName = await _consoleHandler.GetMemberName(memberId_st1);
                 customerNameTxt_st1.Text = memberName;
                 if (memberName.Equals("No name with initials found"))
                 {
-                    customerNameTxt_st1.Text = "...";
+                    customerNameTxt_st1.Text = "-";
                 }
             }
             catch (Exception ex)
@@ -1203,38 +1208,46 @@ namespace WeightMaster
                 return;
             if (weightScalerConfirmBtnBorder_st1 == null)
                 return;
-            if (wieghtScalerConfirmBtn_st1 == null)
+            if (weightScalerConfirmBtn_st1 == null)
                 return;
             if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerVal) || scalerVal < 0)
                 scalerVal = 0;
             if (scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි"))
             {
-                wieghtScalerConfirmBtn_st1.IsEnabled = true;
+                weightScalerConfirmBtn_st1.IsEnabled = true;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
             }
             else
             {
-                wieghtScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#95D4A1"));
             }
         }
 
-        private void wieghtScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
+        private void weightScalerConfirmBtn_st1_Click(object sender, RoutedEventArgs e)
         {
-/*            bool passed = true;
-            if (passed)
+            /*            bool passed = true;
+                        if (passed)
+                        {
+                            // go to next step
+                            currentStep_st1 = 3;
+                            ShowCurrentStep(); //if this was called, enter will be pressed automatically
+                        }
+                        bool failed = false;
+                        if (failed)
+                        {
+                            MessageBox.Show("Step 1 button click failed!");
+                            currentStep_st1 = currentStep_st1 - 1;
+                            //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
+                        }*/
+
+            if (!weightScalerConfirmBtn_st1.IsEnabled)
             {
-                // go to next step
-                currentStep_st1 = 3;
-                ShowCurrentStep(); //if this was called, enter will be pressed automatically
-            }
-            bool failed = false;
-            if (failed)
-            {
-                MessageBox.Show("Step 1 button click failed!");
+                //MessageBox.Show("the button is currently disabled");
                 currentStep_st1 = currentStep_st1 - 1;
-                //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
-            }*/
+                ShowCurrentStep();
+                return;
+            }
             //if (!double.TryParse(nSacksTxt_st1.Text, out double nSacks) || nSacks < 0)
             //    nSacks = 0;
             //if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
@@ -1298,7 +1311,7 @@ namespace WeightMaster
 
 
                 //enable and disable confirm buttons
-                wieghtScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // Gray out
                 confirmAddRowButton_st1.IsEnabled = true;
                 confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
@@ -1315,7 +1328,7 @@ namespace WeightMaster
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
                 );
-                MessageBox.Show("Step 1 button click failed!"+currentStep_st1);
+                //MessageBox.Show("Step 1 button click failed!"+currentStep_st1);
                 currentStep_st1 = currentStep_st1 - 1;
                 ShowCurrentStep(); //if this was executed, current step becomes highlighting the button hmm
             }
@@ -1581,7 +1594,7 @@ namespace WeightMaster
             if (/*goldenLeafWeightTxt_st1.Text.Equals("") ||*/ normalLeafWeightTxt_st1.Text.Equals("") || acceptedLeafWeightTxt_st1.Text.Equals(""))
             {
                 MessageBox.Show(
-                        "කරුණාකර සාමාජික දළු බර ඇතුලත් කරන්න",
+                        "සාමාජික දළු බර ඇතුලත් කරන්න",
                         "ගෝනි බර ඇතුලත් කිරීම",
                         MessageBoxButton.OK,
                         MessageBoxImage.Information
@@ -1684,7 +1697,7 @@ namespace WeightMaster
             //clear the member id
 
 
-            wieghtScalerConfirmBtn_st1.IsEnabled = true;
+            weightScalerConfirmBtn_st1.IsEnabled = true;
             confirmAddRowButton_st1.IsEnabled = false;
             weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
             confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
@@ -1695,7 +1708,7 @@ namespace WeightMaster
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
 
-            bool passed = true;
+/*            bool passed = true;
             if (passed)
             {
                 //MessageBox.Show("Process st1 finished!");
@@ -1710,6 +1723,13 @@ namespace WeightMaster
                 //MessageBox.Show("Step 5 button click failed!");
                 currentStep_st1 = currentStep_st1 - 1;
                 ShowCurrentStep();
+            }*/
+            if (!confirmAddRowButton_st1.IsEnabled)
+            {
+                //MessageBox.Show("the button is currently disabled");
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep();
+                return;
             }
             //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
             if (lineNameCmb_st1.SelectedValue != null)
@@ -1734,6 +1754,8 @@ namespace WeightMaster
             {
                 MessageBox.Show("අධීක්ෂණය හා ප්‍රවාහන මාර්හය ඇතුලත් කරන්න");
                 loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep();
                 return;
             }
 
@@ -1768,14 +1790,14 @@ namespace WeightMaster
                         company = "මොරවක්කොරළේ තේ කම්හල",
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
-                        barcode_details = barcodeTxt_st1.Text,
+                        barcode_details = memberId_st1,
                         name_with_initials = customerNameTxt_st1.Text,
                         phone_number = "123-456-7890",
                         date = DateTime.Now.ToString("yyyy-MM-dd"),
                         box_count = nBoxes,
                         bag_count = nSacks,
                         real_value = weightScalerValue,
-                        maximum_nomal_leaf_weight = 23,
+                        maximum_nomal_leaf_weight = (int)scalerRoundedWeight_st1,
                         total_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
                         actual_nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
                         total_gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
@@ -1792,7 +1814,7 @@ namespace WeightMaster
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
 
                     // enable and disable confirm buttons
-                    wieghtScalerConfirmBtn_st1.IsEnabled = true;
+                    weightScalerConfirmBtn_st1.IsEnabled = true;
                     confirmAddRowButton_st1.IsEnabled = false;
                     weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
                     confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
@@ -1809,6 +1831,11 @@ namespace WeightMaster
                     currentStep_st1 = currentStep_st1 - 1;
                     ShowCurrentStep();
                 }
+
+                //go back to 1st step in Enter Press logic
+                currentStep_st1 = 1;
+                ShowCurrentStep();
+
                 //MessageBox.Show("ready to populate"+_isSuccess.ToString());
                 loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                 if (_isSuccess)
@@ -1995,6 +2022,8 @@ namespace WeightMaster
             else
             {
                 MessageBox.Show("කරුණාකර සියලු තොරතුරු අතුලත් කරන්න");
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep();
             }
 
             loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
@@ -2004,15 +2033,21 @@ namespace WeightMaster
 
         private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
+            string memberId = barcodeTxt_st2.Text.PadLeft(5, '0');;
+
             //clear member turn table for the next member(this is hidden currently)
             MemberTurnTablePanel_st2.Children.Clear();
             //clear all weight deduction rounds for the next id
             addedRoundList.Clear();
 
-            String memberName = await _consoleHandler.GetMemberName(barcodeTxt_st2.Text);
-
-            System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + ": " + memberName);
+            String memberName = await _consoleHandler.GetMemberName(memberId);
+            System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 +" as "+memberId+ ": " + memberName);
             customerNameTxt_st2.Text = memberName;
+            if (memberName.Equals("No name with initials found"))
+            {
+                customerNameTxt_st1.Text = "-";
+            }
+
 
             //clear previous data if there are any
             currentMemberDetails_st2 = null;
@@ -2035,7 +2070,7 @@ namespace WeightMaster
             currentTotalDeduction_st2 = 0;
 
             //get user data to populate textboxes and such 
-            currentMemberDetails_st2 = await _consoleHandler.GetTransactionData(barcodeTxt_st2.Text.ToString(), barcodeTxt_st2.Text.ToString());
+            currentMemberDetails_st2 = await _consoleHandler.GetTransactionData(memberId, memberId);
             if (currentMemberDetails_st2 != null)
             {
                 System.Diagnostics.Debug.WriteLine($"Line name: {currentMemberDetails_st2.linename}, Line Name: {currentMemberDetails_st2.Id}, Line Master: {currentMemberDetails_st2.transportagent}");
@@ -2093,6 +2128,77 @@ namespace WeightMaster
 
             }
             System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+
+            //load the last round from the dictionary(hashmap) if it exists
+            if (memberHashMap_st2.TryGetValue(memberId, out var weightRounds) && weightRounds.Count > 0)
+            {
+                var lastItem = weightRounds[weightRounds.Count - 1]; //weightRounds[^1];
+
+                //load and populate additional data like previous leaf data, box data like stuff
+                //follow steps when inserting values to avoid collisions
+                //totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
+
+                maturedTxt_st2.Text = "";
+                wateredTxt_st2.Text = "";
+                spoiledTxt_st2.Text = "";
+                rejectedTxt_st2.Text = "";
+
+                acceptedLeafWeightTxt_st2.Text = "";
+                normalLeafWeightTxt_st2.Text = "";
+                goldenLeafWeightTxt_st2.Text = "";
+
+                currentAcceptedLeafWeight_st2 = 0;
+                currentNormalLeafWeight_st2 = 0;
+                currentGoldenLeafWeight_st2 = 0;
+
+                currentTotalDeduction_st2 = 0;
+
+
+                //update the current values
+                maturedTxt_st2.Text = lastItem.maturedWeight.ToString();
+                wateredTxt_st2.Text = lastItem.wateredWeight.ToString();
+                spoiledTxt_st2.Text = lastItem.spoiledWeight.ToString();
+                rejectedTxt_st2.Text = lastItem.rejectedWeight.ToString();
+
+                //switched values(correct)
+                acceptedLeafWeightTxt_st2.Text = lastItem.currentAcceptedLeafWeight.ToString();
+                normalLeafWeightTxt_st2.Text = lastItem.availableNormalLeafWeight.ToString();
+                goldenLeafWeightTxt_st2.Text = lastItem.availableGoldenLeafWeight.ToString();
+
+                currentAcceptedLeafWeight_st2 = lastItem.currentAcceptedLeafWeight;
+                currentNormalLeafWeight_st2 = lastItem.currentAcceptedNormalLeafWeight;
+                currentGoldenLeafWeight_st2 = lastItem.currentAcceptedGoldenWeight;
+
+
+                //gives the wrong deductions placed at the begining.
+                //currentTotalDeduction_st2 = currentMemberDetails_st2.morapuwata + currentMemberDetails_st2.water + currentMemberDetails_st2.reject + currentMemberDetails_st2.thambimata;
+                currentTotalDeduction_st2 = lastItem.currentTotalDeduction;
+
+                //populate the table also
+                MemberTurnTablePanel_st2.Children.Clear();
+                // Check if the key exists and retrieve the list
+                if (memberHashMap_st2.TryGetValue(memberId, out List<WeightRound_st2Model> addedRoundList))
+                {
+                    // Loop through each item in the list
+                    int rowIndex = 1;
+                    foreach (WeightRound_st2Model round in addedRoundList)
+                    {
+                        Station2TableRow station2TableRow1 = new Station2TableRow(rowIndex++.ToString(), round.acceptedSackWeight.ToString(), (round.availableGoldenLeafWeight + round.availableNormalLeafWeight).ToString(), round.availableGoldenLeafWeight.ToString(), round.availableNormalLeafWeight.ToString());
+                        MemberTurnTablePanel_st2.Children.Add(station2TableRow1);
+                    }
+                    rowIndex = 1;
+                }
+                else
+                {
+                    Console.WriteLine($"No entries found for key: {memberId}");
+                }
+            }
+            else
+            {
+                // Clear UI or show a message
+                //MessageBox.Show($"No data found for ID: {memberId}");
+            }
         }
 
         private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2158,18 +2264,18 @@ namespace WeightMaster
                 return;
             if (wieghtScalerConfirmBtnBorder_st2 == null)
                 return;
-            if (wieghtScalerConfirmBtn_st2 == null)
+            if (weightScalerConfirmBtn_st2 == null)
                 return;
             if (!double.TryParse(weightScalerValTxt_st2.Text, out double scalerVal) || scalerVal < 0)
                 scalerVal = 0;
             if (scalerVal > 0 || weightScalerStatus_st2.Text.Equals("සමබරයි"))
             {
-                wieghtScalerConfirmBtn_st2.IsEnabled = true;
+                weightScalerConfirmBtn_st2.IsEnabled = true;
                 wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
             }
             else
             {
-                wieghtScalerConfirmBtn_st2.IsEnabled = false;
+                weightScalerConfirmBtn_st2.IsEnabled = false;
                 wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#95D4A1"));
             }
         }
@@ -2194,6 +2300,15 @@ namespace WeightMaster
 
             //this click event should trigger after the data population via barcode id
             //so don't input the data to the textbox by this click before data weights population to prevent getting negative values and to follow the correct steps.
+
+            if (!weightScalerConfirmBtn_st2.IsEnabled)
+            {
+                //MessageBox.Show("the button is currently disabled");
+                currentStep_st2 = currentStep_st2 - 1;
+                ShowCurrentStep();
+                return;
+            }
+
             if (acceptedLeafWeightTxt_st2.Text.Equals("") || acceptedLeafWeightTxt_st2.Text.Equals("0")) 
             {
                 MessageBox.Show(
@@ -2225,7 +2340,7 @@ namespace WeightMaster
                 //to catch up with Enter key press event(in case of the manual click)
                 ConsoleSound.PlayStable();
                 confirmAddRowButton_st2.IsEnabled = true;
-                wieghtScalerConfirmBtn_st2.IsEnabled = false;
+                weightScalerConfirmBtn_st2.IsEnabled = false;
                 wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
                 confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled) 
 
@@ -2391,25 +2506,14 @@ namespace WeightMaster
             }
         }
 
-        //clear button st1
-        //private void clearBtn_st2_Clicked(object sender, RoutedEventArgs e)
-        //{
-        //    wateredTxt_st2.Text = "0";
-        //    rejectedTxt_st2.Text = "0";
-        //    spoiledTxt_st2.Text = "0";
-        //    maturedTxt_st2.Text = "0";
-        //    normalLeafWeightTxt_st2.Text = "0";
-        //    goldenLeafWeightTxt_st2.Text = "0";
-        //    //keep these empty else both textboxes gets disabled by logic.
-        //    nSacksTxt_st1.Text = "";
-        //    nBoxesTxt_st1.Text = "";
-        //}
 
         //clear button st2
         private void clearBtn_st2_Clicked(object sender, RoutedEventArgs e)
         {
+            string memberId = currentMemberDetails_st2.barcode_details;
+
             //clear any rounds if there are any
-            addedRoundList.Clear();
+            //addedRoundList.Clear();
 
             //clear textboxes and helper variables
             wateredTxt_st2.Text = "";
@@ -2429,11 +2533,96 @@ namespace WeightMaster
             scalerRoundedWeight_st2 = 0;
 
             acceptedSackWeightTxt_st2.Text = "";
-            totalNSacksTxt_st2.Text = "";
+            //totalNSacksTxt_st2.Text = "";
+
+
+
+
+            //load the last round
+            if (memberHashMap_st2.TryGetValue(memberId, out var weightRounds) && weightRounds.Count > 0)
+            {
+                var lastItem =  weightRounds[weightRounds.Count - 1]; //weightRounds[^1];
+
+                // Update UI controls with the last item's values
+                //txtWeightScaler.Text = lastItem.weightScalerWeight.ToString();
+                //txtSackWeight.Text = lastItem.acceptedSackWeight.ToString();
+                //txtGoldenLeaf.Text = lastItem.currentAcceptedGoldenWeight.ToString("F2");
+                //txtNormalLeaf.Text = lastItem.currentAcceptedNormalLeafWeight.ToString("F2");
+
+                //load and populate additional data like previous leaf data, box data like stuff
+                //follow steps when inserting values to avoid collisions
+                //totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
+
+                //update the current values
+                maturedTxt_st2.Text = lastItem.maturedWeight.ToString();
+                wateredTxt_st2.Text = lastItem.wateredWeight.ToString();
+                spoiledTxt_st2.Text = lastItem.spoiledWeight.ToString();
+                rejectedTxt_st2.Text = lastItem.rejectedWeight.ToString();
+                //adding this because now you can see the previous weight that you have captured and you can edit it.
+                acceptedSackWeightTxt_st2.Text = lastItem.acceptedSackWeight.ToString();
+                //switched values(correct)
+                acceptedLeafWeightTxt_st2.Text = lastItem.currentAcceptedLeafWeight.ToString();
+                normalLeafWeightTxt_st2.Text = lastItem.availableNormalLeafWeight.ToString();
+                goldenLeafWeightTxt_st2.Text = lastItem.availableGoldenLeafWeight.ToString();
+
+                currentAcceptedLeafWeight_st2 = lastItem.currentAcceptedLeafWeight;
+                currentNormalLeafWeight_st2 = lastItem.currentAcceptedNormalLeafWeight;
+                currentGoldenLeafWeight_st2 = lastItem.currentAcceptedGoldenWeight;
+
+
+
+                currentTotalDeduction_st2 = currentMemberDetails_st2.morapuwata + currentMemberDetails_st2.water + currentMemberDetails_st2.reject + currentMemberDetails_st2.thambimata;
+            }
+            else
+            {
+                // Clear UI or show a message
+                //MessageBox.Show($"No data found for ID: {memberId}");
+            }
+
+            //remove the last round so the new round can take it's place
+            if (memberHashMap_st2.TryGetValue(memberId, out var list))
+            {
+                if (list.Count > 0)
+                {
+                    list.RemoveAt(list.Count - 1); // Remove last list item
+                    Console.WriteLine($"Last item removed for key: {memberId}");
+                }
+
+                if (list.Count == 0)
+                {
+                    memberHashMap_st2.Remove(memberId); // Clean up value empty list along with the key id
+                    Console.WriteLine($"Key '{memberId}' removed (list is now empty)");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Key '{memberId}' does not exist.");
+            }
+
+
+            //repopulate the table with updated round details
+            //show the newly added round in the table row based on member id/barcode text
+            MemberTurnTablePanel_st2.Children.Clear();
+            // Check if the key exists and retrieve the list
+            if (memberHashMap_st2.TryGetValue(memberId, out List<WeightRound_st2Model> addedRoundList))
+            {
+                // Loop through each item in the list
+                int rowIndex = 1;
+                foreach (WeightRound_st2Model round in addedRoundList)
+                {
+                    Station2TableRow station2TableRow1 = new Station2TableRow(rowIndex++.ToString(), round.acceptedSackWeight.ToString(), (round.availableGoldenLeafWeight + round.availableNormalLeafWeight).ToString(), round.availableGoldenLeafWeight.ToString(), round.availableNormalLeafWeight.ToString());
+                    MemberTurnTablePanel_st2.Children.Add(station2TableRow1);
+                }
+                rowIndex = 1;
+            }
+            else
+            {
+                Console.WriteLine($"No entries found for key: {memberId}");
+            }
 
             //disable the upload button and enable the weightScaler button to get a new input for the next user
             confirmAddRowButton_st2.IsEnabled = false;
-            wieghtScalerConfirmBtn_st2.IsEnabled = true;
+            weightScalerConfirmBtn_st2.IsEnabled = true;
             wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
             confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
         }
@@ -2441,6 +2630,12 @@ namespace WeightMaster
 
         private void addRoundBtn_st2_Click(object sender, RoutedEventArgs e)
         {
+            if (barcodeTxt_st2.Text.Equals(""))
+            {
+                MessageBox.Show("සාමාජික අංකය ඇතුලත් කරන්න");
+                return;
+            }
+
             if (acceptedSackWeightTxt_st2.Text.Equals("") || acceptedSackWeightTxt_st2.Text.Equals("0")) 
             {
                 MessageBox.Show("පිලිගත් ගෝනි බර ඇතුලත් කරන්න");
@@ -2451,6 +2646,7 @@ namespace WeightMaster
             {
                 //int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st2.Text) + Convert.ToInt32(normalLeafWeightTxt_st2.Text));
 
+                string memberId = currentMemberDetails_st2.barcode_details;
                 float.TryParse(weightScalerValTxt_st2.Text, out float weightScalerValue); //gives the sack weight in st2 please mind
                 int.TryParse(acceptedLeafWeightTxt_st2.Text, out int acceptedLeafWeight);
                 int.TryParse(acceptedSackWeightTxt_st2.Text, out int acceptedSackWeight);
@@ -2466,7 +2662,7 @@ namespace WeightMaster
                 int.TryParse(rejectedTxt_st2.Text, out int rejectedWeight);
 
                 //store the current round in the list for later usage
-                addedRoundList.Add(
+/*                addedRoundList.Add(
                     new WeightRound_st2Model(
                         weightScalerValue,
                         acceptedSackWeight,
@@ -2481,9 +2677,35 @@ namespace WeightMaster
                         spoiledWeight,
                         rejectedWeight
                     )
-                 );
+                 );*/
 
-                //show the newly added round in the table row
+                //store the current round in the list to add to the dictionary
+                var newRound = new WeightRound_st2Model(
+                    weightScalerValue,
+                    acceptedSackWeight,
+
+                    currentGoldenLeafWeight_st2,
+                    currentNormalLeafWeight_st2,
+                    availableGoldenLeafWeight,
+                    availableNormalLeafWeight,
+
+                    wateredWeight,
+                    maturedWeight,
+                    spoiledWeight,
+                    rejectedWeight
+                );
+                // add the [list item] OR create the [list with the item] into the dictionary
+                if (memberHashMap_st2.TryGetValue(memberId, out var existingList))
+                {
+                    existingList.Add(newRound); // Add to the existing list
+                }
+                else
+                {
+                    // Create a new list and add the item
+                    memberHashMap_st2.Add(memberId, new List<WeightRound_st2Model> { newRound });
+                }
+
+/*                //show the newly added round in the table row
                 MemberTurnTablePanel_st2.Children.Clear();
                 int rowIndex = 1;
                 foreach (WeightRound_st2Model round in addedRoundList)
@@ -2492,7 +2714,28 @@ namespace WeightMaster
                     Station2TableRow station2TableRow1 = new Station2TableRow(rowIndex++.ToString(), round.acceptedSackWeight.ToString(), (round.availableGoldenLeafWeight+round.availableNormalLeafWeight).ToString(), round.availableGoldenLeafWeight.ToString(), round.availableNormalLeafWeight.ToString());
                     MemberTurnTablePanel_st2.Children.Add(station2TableRow1);
                 }
-                rowIndex = 1;
+                rowIndex = 1;*/
+
+                //show the newly added round in the table row based on member id/barcode text
+                MemberTurnTablePanel_st2.Children.Clear();
+                // Check if the key exists and retrieve the list
+                if (memberHashMap_st2.TryGetValue(memberId, out List<WeightRound_st2Model> addedRoundList))
+                {
+                    // Loop through each item in the list
+                    int rowIndex = 1;
+                    foreach (WeightRound_st2Model round in addedRoundList)
+                    {
+                        Station2TableRow station2TableRow1 = new Station2TableRow(rowIndex++.ToString(), round.acceptedSackWeight.ToString(), (round.availableGoldenLeafWeight + round.availableNormalLeafWeight).ToString(), round.availableGoldenLeafWeight.ToString(), round.availableNormalLeafWeight.ToString());
+                        MemberTurnTablePanel_st2.Children.Add(station2TableRow1);
+                    }
+                    rowIndex = 1;
+                }
+                else
+                {
+                    Console.WriteLine($"No entries found for key: {memberId}");
+                }
+
+
 
                 //take the current hidden variable values before them shifting due to clearing
                 int currGoldenLeafWeight = (int)currentGoldenLeafWeight_st2;
@@ -2575,10 +2818,10 @@ namespace WeightMaster
                 //MessageBox.Show("final: " + normalLeafWeightTxt_st2.Text);
                 //MessageBox.Show("final: " + normalLeafWeightTxt_st2.Text);
 
-                //disable the upload button and enable the weightScaler button to get a new input for the next user
-                confirmAddRowButton_st2.IsEnabled = false;
-                wieghtScalerConfirmBtn_st2.IsEnabled = true;
-                wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                //enable the upload button and weightScaler button to get either edit the current sack weight or confirm existing rounds
+                confirmAddRowButton_st2.IsEnabled = true;
+                weightScalerConfirmBtn_st2.IsEnabled = true;
+                wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // green(enabled)
                 confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
             }
         }
@@ -2586,20 +2829,28 @@ namespace WeightMaster
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
             //loadingDataInputBorder_st2
-            bool isSuccess = true;
-            if (isSuccess)
+            /*            bool isSuccess = true;
+                        if (isSuccess)
+                        {
+                            //MessageBox.Show("manually changing steps");
+                            currentStep_st2 = 1;
+                            ShowCurrentStep();
+                        }
+                        //MessageBox.Show("round confirmed st2");
+                        bool hasfailed = false;
+                        if (hasfailed)
+                        {
+                            //MessageBox.Show("Step 5 button click failed!");
+                            currentStep_st2 = currentStep_st2 - 1;
+                            ShowCurrentStep();
+                        }*/
+
+            if (!confirmAddRowButton_st2.IsEnabled)
             {
-                //MessageBox.Show("manually changing steps");
-                currentStep_st2 = 1;
-                ShowCurrentStep();
-            }
-            //MessageBox.Show("round confirmed st2");
-            bool hasfailed = false;
-            if (hasfailed)
-            {
-                //MessageBox.Show("Step 5 button click failed!");
+                //MessageBox.Show("the button is currently disabled");
                 currentStep_st2 = currentStep_st2 - 1;
                 ShowCurrentStep();
+                return;
             }
 
             //preparing values for the finish api command
@@ -2628,16 +2879,20 @@ namespace WeightMaster
             {
                 currentStep_st2 = currentStep_st2 - 1;
                 MessageBox.Show("සාමාජික අංකය හා අධීක්ෂණ නිලධාරී ඇතුලත් කරන්න");
+                currentStep_st2 = currentStep_st2 - 1;
+                ShowCurrentStep();
                 return;
             }
 
-            //load table rows(test)
+
             if (lineNameCmb_st2.SelectedValue != null && !barcodeTxt_st2.Text.Equals("") && !acceptedSackWeightTxt_st2.Text.Equals("") && !acceptedLeafWeightTxt_st2.Text.Equals(""))
             {
                 int totalWeight = (Convert.ToInt32(goldenLeafWeightTxt_st2.Text) + Convert.ToInt32(normalLeafWeightTxt_st2.Text));
 
                 //Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st2++.ToString(), totalNSacksTxt_st2.Text, "", totalWeight.ToString(), goldenLeafWeightTxt_st2.Text, normalLeafWeightTxt_st2.Text);
                 //MemberTurnTablePanel_st2.Children.Add(station1TableRow1);
+
+                string memberId = currentMemberDetails_st2.barcode_details;
 
                 float.TryParse(weightScalerValTxt_st2.Text, out float finalWeightScalerValue);
                 int.TryParse(acceptedLeafWeightTxt_st2.Text, out int finalAcceptedLeafWeight);
@@ -2692,9 +2947,29 @@ namespace WeightMaster
                 loadingDataInputBorder_st2.Visibility = Visibility.Visible;
                 bool _isdone = false;
 
-                //store the last current round in the list for the calculations with previous rounds
-                addedRoundList.Add(
-                    new WeightRound_st2Model(
+                //store the last current round in the list for the calculations with previous rounds(old)
+                //addedRoundList.Add(
+                //    new WeightRound_st2Model
+                //    (
+                //        finalWeightScalerValue,
+                //        finalAcceptedSackWeight,
+
+                //        currentGoldenLeafWeight_st2,
+                //        currentNormalLeafWeight_st2,
+                //        finalAvailableGoldenLeafWeight,
+                //        finalAvailableNormalLeafWeight,
+
+                //        finalWateredWeight,
+                //        finalMaturedWeight,
+                //        finalSpoiledWeight,
+                //        finalRejectedWeight
+                //    )
+                // );
+
+                //(new)
+                //add the last final round to the list
+                WeightRound_st2Model finalRound = new WeightRound_st2Model
+                    (
                         finalWeightScalerValue,
                         finalAcceptedSackWeight,
 
@@ -2707,16 +2982,40 @@ namespace WeightMaster
                         finalMaturedWeight,
                         finalSpoiledWeight,
                         finalRejectedWeight
-                    )
-                 );
+                    );
+
+                // Check if the key exists
+                if (memberHashMap_st2.ContainsKey(memberId))
+                {
+                    // Key exists: Add the item to the existing list
+                    memberHashMap_st2[memberId].Add(finalRound);
+                }
+                else
+                {
+                    // Key does NOT exist: Create a new list, add the item, and add to the dictionary
+                    memberHashMap_st2.Add(memberId, new List<WeightRound_st2Model> { finalRound });
+                }
+
+
+
 
                 // Sum up each property to upload with the finalTransaciton
-                float totalWeightSaclaerValue = addedRoundList.Sum(r => r.weightScalerWeight);
-                int totalAcceptedSackWeight = addedRoundList.Sum(r => r.acceptedSackWeight);
-                //int finalB = rounds.Sum(r => r.B);
-                //int finalC = rounds.Sum(r => r.C);
-                //int finalD = rounds.Sum(r => r.D);
-                //int finalE = rounds.Sum(r => r.E);
+                //float totalWeightSaclaerValue = addedRoundList.Sum(r => r.weightScalerWeight);
+                //int totalAcceptedSackWeight = addedRoundList.Sum(r => r.acceptedSackWeight);
+
+                // Sum up each property to upload with the finalTransaciton
+                float totalWeightSaclaerValue = 0;
+                int totalAcceptedSackWeight = 0;
+
+                if (memberHashMap_st2.TryGetValue(memberId, out List<WeightRound_st2Model> weightRounds))
+                {
+                    totalWeightSaclaerValue = weightRounds.Sum(round => round.weightScalerWeight);
+                    totalAcceptedSackWeight = weightRounds.Sum(round => round.acceptedSackWeight);
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Key '{memberId}' not found.");
+                }
 
                 try
                 {
@@ -2729,15 +3028,16 @@ namespace WeightMaster
                         company = "මොරවක්කෝරළේ තේ කම්හල",
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
-                        superviosr = supervisor_st2,
-                        barcode_details = barcodeTxt_st2.Text,
+                        //superviosr = supervisor_st2,
+                        superviosr = currentMemberDetails_st2.superviosr,
+                        barcode_details = currentMemberDetails_st2.barcode_details,
                         name_with_initials = customerNameTxt_st2.Text,
                         phone_number = "0712345678",
                         date = DateTime.Now.ToString("yyyy-MM-dd"),
 
                         bag_count = finalNSacks,
 
-                        maximum_nomal_leaf_weight = 23,
+                        maximum_nomal_leaf_weight = currentMemberDetails_st2.maximum_nomal_leaf_weight,
                         total_leaf_weight = currentMemberDetails_st2.total_leaf_weight,
                         actual_nomal_leaf_weight = currentMemberDetails_st2.actual_nomal_leaf_weight,
                         total_gold_leaf_weight = currentMemberDetails_st2.total_gold_leaf_weight,
@@ -2747,13 +3047,15 @@ namespace WeightMaster
                         thambimata = finalSpoiledWeight,
                         reject = finalRejectedWeight,
 
-                        bag_weight = finalAcceptedSackWeight,
+                        bag_weight = totalAcceptedSackWeight,
 
                         final_green_leaf_count = finalAvailableNormalLeafWeight,
                         final_gold_leaf_count = finalAvailableGoldenLeafWeight,
                         real_value = totalWeightSaclaerValue
                     };
 
+                    //removes the key value pair upon a successful insertion.
+                    memberHashMap_st2.Remove(memberId);
                     /*var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
@@ -2788,9 +3090,9 @@ namespace WeightMaster
                         real_value = finalWeightScalerValue //TBDDD****************************************************************************
                     };*/
 
-                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, barcodeTxt_st2.Text.ToString());
+                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, currentMemberDetails_st2.barcode_details);
 
-                    wieghtScalerConfirmBtn_st2.IsEnabled = true;
+                    weightScalerConfirmBtn_st2.IsEnabled = true;
                     confirmAddRowButton_st2.IsEnabled = false;
                     wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
                     confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
@@ -2799,7 +3101,13 @@ namespace WeightMaster
                 {
                     //MessageBox.Show("Upload Failed: " + ex.Message);
                     loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
+                    currentStep_st2 = currentStep_st2 - 1;
+                    ShowCurrentStep();
                 }
+
+                currentStep_st2 = 1;
+                ShowCurrentStep();
+
                 loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
 
                 bool failed = false;
@@ -2853,7 +3161,7 @@ namespace WeightMaster
 
                     barcodeTxt_st2.Text = "";
                 }
-                else
+                else //hrrngh what is this
                 {
                     System.Diagnostics.Debug.WriteLine("upload failed... please try again");
                     //MessageBox.Show("upload failed... please try again,");
@@ -2949,6 +3257,8 @@ namespace WeightMaster
             else
             {
                 MessageBox.Show("සියලු තො රතුරු අතුලත් කරන්න");
+                currentStep_st2 = currentStep_st2 - 1;
+                ShowCurrentStep();
             }
         }
 
@@ -3628,18 +3938,24 @@ namespace WeightMaster
 
             yPos += 40;
 
-            // Signature area
-            // Signature area
+            // Signature areas - Modified section
             double signY = yPos + 60;
+            double signatureLineLength = 300; // Length of each signature line
 
-            // Align the signature line to the left (starting at position 50)
-            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(350, signY)); // Signature line
-
-            // Align the "Authorised by" text to the left (starting at position 50)
+            // Supervisor Signature (left side)
+            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(50 + signatureLineLength, signY));
             dc.DrawText(
-                new FormattedText("Authorised by", CultureInfo.CurrentCulture,
+                new FormattedText("Authorised by (Supervisor)", CultureInfo.CurrentCulture,
                     FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, signY + 5)); // Adjusted to the same x-coordinate
+                new Point(50, signY + 5));
+
+            // Leaf Weighting Officer Signature (right side)
+            double rightSignatureStartX = pageWidth - 50 - signatureLineLength; // 50px margin from right
+            dc.DrawLine(new Pen(brush, 1), new Point(rightSignatureStartX, signY), new Point(rightSignatureStartX + signatureLineLength, signY));
+            dc.DrawText(
+                new FormattedText("Authorised by (Leaf Weighting Officer)", CultureInfo.CurrentCulture,
+                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
+                new Point(rightSignatureStartX, signY + 5));
 
         }
 

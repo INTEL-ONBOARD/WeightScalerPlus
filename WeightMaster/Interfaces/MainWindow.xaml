@@ -382,7 +382,7 @@
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st1"  BorderThickness="0" Background="Transparent" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st1_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button x:Name="wieghtScalerConfirmBtn_st1" GotFocus="wieghtScalerConfirmBtn_GotFocus_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="wieghtScalerConfirmBtn_st1_Click" Margin="0,11,0,-16">
+                        <Button x:Name="weightScalerConfirmBtn_st1" GotFocus="wieghtScalerConfirmBtn_GotFocus_st1" Cursor="Hand"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="weightScalerConfirmBtn_st1_Click" Margin="0,11,0,-16">
                             <Border x:Name="weightScalerConfirmBtnBorder_st1" BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="310">
                                 <TextBlock Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                             </Border>
@@ -675,7 +675,7 @@
 
                         <!--Confirm button-->
                         <Button Cursor="Hand" x:Name="confirmAddRowButton_st1" GotFocus="confirmAddRowButton_GotFocus_st1" Background="Transparent" BorderThickness="0" Margin="33,623,308,24" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click" IsEnabled="False">
-                            <Border x:Name="confirmAddRowButtonBorder_st1" BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="246" RenderTransformOrigin="0.5,0.5">
+                            <Border x:Name="confirmAddRowButtonBorder_st1" BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="50" Width="245" RenderTransformOrigin="0.5,0.5">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Confirm" Foreground="White" FontSize="24" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
@@ -823,7 +823,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -885,7 +885,7 @@
                         </StackPanel>
                         <TextBox x:Name="weightScalerStatus_st2" BorderThickness="0" IsReadOnly="True" TextChanged="weightScalerStatusTxt_st2_TextChanged" VerticalAlignment="Top" Grid.Row="2" Text="සමබරයි" Foreground="#4E56FF" FontSize="45" FontWeight="SemiBold" Margin="51,0,0,0" />
                         <!--Confirm buttonn-->
-                        <Button Cursor="Hand" x:Name="wieghtScalerConfirmBtn_st2" GotFocus="wieghtScalerConfirmBtn_GotFocus_st2"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="weightScalerConfirmBtn_st2_Click">
+                        <Button Cursor="Hand" x:Name="weightScalerConfirmBtn_st2" GotFocus="wieghtScalerConfirmBtn_GotFocus_st2"  Grid.Row="3"  Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="weightScalerConfirmBtn_st2_Click">
                             <Border x:Name="wieghtScalerConfirmBtnBorder_st2" BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="40" Width="310">
                                 <TextBlock Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" HorizontalAlignment="Center"/>
                             </Border>

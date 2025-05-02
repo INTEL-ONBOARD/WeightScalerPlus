@@ -29,7 +29,7 @@ namespace WeightMaster.Models
 
 
         public WeightRound_st2Model(
-            float weightScalerWeight,
+            float weightScalerValue,
             int acceptedSackWeight, 
             double currentGoldenWeight, 
             double currentNormalLeafWeight, 
@@ -41,7 +41,7 @@ namespace WeightMaster.Models
             int rejectedWeight
             )
         {
-            this.weightScalerWeight = weightScalerWeight;
+            this.weightScalerWeight = weightScalerValue;
             this.acceptedSackWeight = acceptedSackWeight;
 
             this.currentAcceptedGoldenWeight = currentGoldenWeight;
@@ -55,6 +55,7 @@ namespace WeightMaster.Models
             this.spoiledWeight = spoiledWeight;
             this.rejectedWeight = rejectedWeight;
 
+            this.currentAcceptedLeafWeight = (int)(currentGoldenWeight + currentNormalLeafWeight);
             this.currentTotalDeduction = wateredWeight + maturedWeight + spoiledWeight + rejectedWeight;
         }
 
