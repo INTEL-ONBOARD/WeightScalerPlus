@@ -2821,8 +2821,8 @@ namespace WeightMaster
                 //enable the upload button and weightScaler button to get either edit the current sack weight or confirm existing rounds
                 confirmAddRowButton_st2.IsEnabled = true;
                 weightScalerConfirmBtn_st2.IsEnabled = true;
-                wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // green(enabled)
-                confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+                wieghtScalerConfirmBtnBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                confirmAddRowButtonBorder_st2.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
             }
         }
 
@@ -3743,6 +3743,9 @@ namespace WeightMaster
 
         //_______Reports_______________________________________________________________________
 
+
+
+        //________________Line Report
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lineNameCmb_st2.SelectedItem == null)
@@ -3753,15 +3756,7 @@ namespace WeightMaster
 
             try
             {
-                //MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
-                //fetch line wise data to pass down to report drawing
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
-                //MessageBox.Show("db call passed here");
-                //testing the data
-                //if (lineReportData != null)
-                //{
-                //MessageBox.Show("response is not null");
-                //}
                 foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -3961,8 +3956,7 @@ namespace WeightMaster
 
 
 
-        //_________________daily report___________________________________
-
+        //_________________Daily Report___________________________________
         private async void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lineNameCmb_st2.SelectedItem == null)
