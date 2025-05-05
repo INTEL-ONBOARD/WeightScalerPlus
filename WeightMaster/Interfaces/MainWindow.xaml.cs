@@ -13,6 +13,7 @@ using WeightMaster.Models;
 using WeightMaster.Services;
 using System.Globalization;
 using System.Windows.Documents;
+using System.Windows.Shapes;
 
 
 namespace WeightMaster
@@ -1796,7 +1797,7 @@ namespace WeightMaster
                         date = DateTime.Now.ToString("yyyy-MM-dd"),
                         box_count = nBoxes,
                         bag_count = nSacks,
-                        real_value = weightScalerValue,
+                        real_value = (float)Math.Round(weightScalerValue, 2),
                         maximum_nomal_leaf_weight = (int)scalerRoundedWeight_st1,
                         total_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
                         actual_nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
@@ -3746,212 +3747,312 @@ namespace WeightMaster
 
 
         //________________Line Report
+        /*        private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
+                {
+                    if (lineNameCmb_st2.SelectedItem == null)
+                    {
+                        MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
+                        return;
+                    }
+
+                    try
+                    {
+                        List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
+                        foreach (var transaction in lineReportData)
+                        {
+                            System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                        }
+
+
+                        PrintDialog printDialog = new PrintDialog();
+                        if (printDialog.ShowDialog() == true)
+                        {
+                            DrawingVisual visual = new DrawingVisual();
+                            using (DrawingContext dc = visual.RenderOpen())
+                            {
+                                DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
+                            }
+                            printDialog.PrintVisual(visual, "Print Document");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+                    }
+                }*/
+
+
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
+
             if (lineNameCmb_st2.SelectedItem == null)
             {
                 MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
                 return;
             }
-
+            string lineName = lineNameCmb_st2.SelectedItem.ToString();
             try
             {
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
-                foreach (var transaction in lineReportData)
+/*                foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                }
-
-
+                }*/
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
-                    DrawingVisual visual = new DrawingVisual();
-                    using (DrawingContext dc = visual.RenderOpen())
+                    // Initialize totals to zero
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+                    int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
+                        totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+                    // Only calculate totals if there's data
+                    if (lineReportData.Any())
                     {
-                        DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
+                        foreach (var transaction in lineReportData)
+                        {
+                            totalBagCount += transaction.bag_count;
+                            totalLeafWeight += transaction.total_leaf_weight;
+                            totalWater += transaction.water;
+                            totalMorapuwata += transaction.morapuwata;
+                            totalThambimata += transaction.thambimata;
+                            totalReject += transaction.reject;
+                            totalBagWeight += transaction.bag_weight;
+                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                        }
                     }
-                    printDialog.PrintVisual(visual, "Print Document");
+
+                    // Pagination setup - ensure at least 1 page even for empty data
+                    int pageSize = 30;
+                    int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
+                    FixedDocument fixedDoc = new FixedDocument();
+                    fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
+                    for (int page = 0; page < totalPages; page++)
+                    {
+                        var pageData = lineReportData.Count == 0
+                            ? new List<FinalTransactionBlockModel>()  // Empty page
+                            : lineReportData
+                                .Skip(page * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+                        FixedPage fixedPage = new FixedPage();
+                        Canvas canvas = CreateLineReportPage(
+                            pageData: pageData,
+                            pageNumber: page + 1,
+                            totalPages: totalPages,
+                            isLastPage: page == totalPages - 1,
+                            totals: new TotalRow(
+                                totalBagCount, totalBoxCount, totalLeafWeight,
+                                totalWater, totalMorapuwata, totalThambimata,
+                                totalReject, totalBagWeight, totalDalu
+                            ), lineName
+                        );
+
+                        fixedPage.Children.Add(canvas);
+                        PageContent pageContent = new PageContent();
+                        pageContent.Child = fixedPage;
+                        fixedDoc.Pages.Add(pageContent);
+                    }
+
+                    printDialog.PrintDocument(fixedDoc.DocumentPaginator, "Multi-Page Report");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Report error: " + ex.Message);
             }
         }
 
-
-        private void DrawLineReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData, string lineName)
+        private Canvas CreateLineReportPage(List<FinalTransactionBlockModel> pageData, int pageNumber,
+            int totalPages, bool isLastPage, TotalRow totals, string lineName)
         {
-            foreach (var transaction in lineReportData)
-            {
-                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-            }
-
+            Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
+            double yPos = 50;
             Typeface typeface = new Typeface("Arial");
             double fontSize = 10;
             Brush brush = Brushes.Black;
-            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            double yPos = 50;
-            double pageWidth = 816;
 
-            // Headers
-            string[] mainHeaders = {
-        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-        "සමූපකාර තේ කම්හල",
-        lineName
-    };
-            double[] headerSizes = { 14, 14, 12 };
-
-            for (int i = 0; i < mainHeaders.Length; i++)
-            {
-                FormattedText headerText = new FormattedText(
-                    mainHeaders[i],
-                    CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight,
-                    typeface,
-                    headerSizes[i],
-                    brush,
-                    pixelsPerDip
-                );
-
-                double centerX = (pageWidth - headerText.WidthIncludingTrailingWhitespace) / 2;
-                dc.DrawText(headerText, new Point(centerX, yPos));
-                yPos += headerText.Height + 8;
-            }
-
+            // Add main headers
+            AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
+            yPos += 30;
+            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            yPos += 30;
+            AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName, 14, 816 / 2, yPos, true);
             yPos += 30;
 
-            // Report Issue Index
-            string issueIndex = "IDX-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
-            dc.DrawText(
-                new FormattedText("Report Issue Index: " + issueIndex, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                    typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, yPos));
+            // Report metadata
+            AddText(canvas, $"Report Issue Index: IDX-{Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper()}",
+                fontSize, 50, yPos);
             yPos += 20;
-
-            // Date Issued
-            dc.DrawText(
-                new FormattedText("Date Issued: " + DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, yPos));
+            AddText(canvas, $"Date Issued: {DateTime.Now:yyyy.MM.dd}", fontSize, 50, yPos);
             yPos += 40;
 
-            // Table headers
-            string[] headers = {
-        "අංකය", "සාමාජික අංකය", "ගෝනි(n)", "පෙට්ටි(n)",
-        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
-        "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
-    };
-            double[] headerPositions = { 50, 110, 200, 260, 320, 380, 450, 510, 570, 640, 710 };
+            // Table header
+            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)",
+        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර" };
+            double[] headerPositions = { 50, 100, 220, 270, 330, 380, 450, 510, 590, 660, 730 };
 
-            // Draw black background for header
-            dc.DrawRectangle(Brushes.Black, null, new Rect(40, yPos - 5, pageWidth - 80, 25));
-
+            // Draw header background
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
             for (int i = 0; i < headers.Length; i++)
             {
-                dc.DrawText(
-                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                        typeface, fontSize, Brushes.White, pixelsPerDip),
-                    new Point(headerPositions[i], yPos));
+                bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
+                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
+                    rightAlign: isNumericColumn, brush: Brushes.White);
             }
-
             yPos += 25;
 
-            // Totals
-            int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
-            int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0, totalBagWeight = 0, totalDalu = 0;
-
-            List<string[]> data = new List<string[]>();
-            foreach (var transaction in lineReportData)
-            {
-                int boxCount = transaction.bag_count > 0 ? 0 : 0;
-                int dalu = transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                             + transaction.thambimata + transaction.reject + transaction.bag_weight);
-
-                data.Add(new string[]
-                {
-                transaction.Id.ToString(),
-                transaction.barcode_details ?? "",
-                transaction.bag_count.ToString(),
-                boxCount.ToString(),
-                transaction.total_leaf_weight.ToString(),
-                transaction.water.ToString(),
-                transaction.morapuwata.ToString(),
-                transaction.thambimata.ToString(),
-                transaction.reject.ToString(),
-                transaction.bag_weight.ToString(),
-                dalu.ToString()
-                });
-
-                totalBagCount += transaction.bag_count;
-                totalBoxCount += boxCount;
-                totalLeafWeight += transaction.total_leaf_weight;
-                totalWater += transaction.water;
-                totalMorapuwata += transaction.morapuwata;
-                totalThambimata += transaction.thambimata;
-                totalReject += transaction.reject;
-                totalBagWeight += transaction.bag_weight;
-                totalDalu += dalu;
-            }
-
-            // Draw rows
+            // Data rows
             bool isAlternate = false;
-            foreach (string[] row in data)
+            foreach (var transaction in pageData)
             {
                 if (isAlternate)
                 {
-                    dc.DrawRectangle(Brushes.LightGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
+                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
                 }
-                for (int i = 0; i < row.Length; i++)
-                {
-                    dc.DrawText(
-                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                            typeface, fontSize, brush, pixelsPerDip),
-                        new Point(headerPositions[i], yPos));
-                }
+
+                AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
                 isAlternate = !isAlternate;
             }
-
-            // Totals row background
-            dc.DrawRectangle(Brushes.DarkGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
-
-            string[] totalsRow = {
-        "Total", "", totalBagCount.ToString(), totalBoxCount.ToString(), totalLeafWeight.ToString(),
-        totalWater.ToString(), totalMorapuwata.ToString(), totalThambimata.ToString(), totalReject.ToString(),
-        totalBagWeight.ToString(), totalDalu.ToString()
-    };
-
-            for (int i = 0; i < totalsRow.Length; i++)
+            AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
+            AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 120);
+            // Totals and signatures (last page only)
+            if (isLastPage)
             {
-                dc.DrawText(
-                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                        typeface, fontSize, brush, pixelsPerDip),
-                    new Point(headerPositions[i], yPos));
+                // Totals row
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 330, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 380, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 450, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 510, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 590, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 660, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 730, yPos, rightAlign: true);
+
+                // Signatures
+                //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
+                //AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 60);
             }
 
-            yPos += 40;
+            // Page number
+            AddText(canvas, $"Page {pageNumber} of {totalPages}", fontSize, 700, 1000);
 
-            // Signature areas - Modified section
-            double signY = yPos + 60;
-            double signatureLineLength = 300; // Length of each signature line
+            return canvas;
+        }
 
-            // Supervisor Signature (left side)
-            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(50 + signatureLineLength, signY));
-            dc.DrawText(
-                new FormattedText("Authorised by (Supervisor)", CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, signY + 5));
+        // Helper methods
+        private void AddText(Canvas canvas, string text, double fontSize, double x, double y,
+    bool centerX = false, Brush brush = null, bool rightAlign = false)
+        {
+            var txt = new TextBlock
+            {
+                Text = text,
+                FontFamily = new FontFamily("Arial"),
+                FontSize = fontSize,
+                Foreground = brush ?? Brushes.Black
+            };
 
-            // Leaf Weighting Officer Signature (right side)
-            double rightSignatureStartX = pageWidth - 50 - signatureLineLength; // 50px margin from right
-            dc.DrawLine(new Pen(brush, 1), new Point(rightSignatureStartX, signY), new Point(rightSignatureStartX + signatureLineLength, signY));
-            dc.DrawText(
-                new FormattedText("Authorised by (Leaf Weighting Officer)", CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(rightSignatureStartX, signY + 5));
+            txt.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
 
+            if (centerX)
+            {
+                Canvas.SetLeft(txt, x - txt.DesiredSize.Width / 2);
+            }
+            else if (rightAlign)
+            {
+                Canvas.SetLeft(txt, x - txt.DesiredSize.Width);
+            }
+            else
+            {
+                Canvas.SetLeft(txt, x);
+            }
+
+            Canvas.SetTop(txt, y);
+            canvas.Children.Add(txt);
+        }
+
+        private void AddRectangle(Canvas canvas, double x, double y, double width,
+            double height, Brush fill)
+        {
+            var rect = new Rectangle
+            {
+                Width = width,
+                Height = height,
+                Fill = fill
+            };
+            Canvas.SetLeft(rect, x);
+            Canvas.SetTop(rect, y);
+            canvas.Children.Add(rect);
+        }
+
+        private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
+            double[] positions, double y, double fontSize)
+        {
+            // Left-aligned columns
+            AddText(canvas, transaction.Id.ToString(), fontSize, positions[0], y);
+            AddText(canvas, transaction.barcode_details ?? "", fontSize, positions[1], y);
+
+            // Right-aligned numeric columns
+            AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
+            AddText(canvas, "0", fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
+            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
+            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
+            AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
+            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
+            AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
+                transaction.morapuwata + transaction.thambimata +
+                transaction.reject + transaction.bag_weight)).ToString(),
+                fontSize, positions[10], y, rightAlign: true);
+        }
+
+        private void AddSignatureLine(Canvas canvas, string label, double x, double y)
+        {
+            var line = new Line
+            {
+                X1 = x,
+                X2 = x + 300,
+                Y1 = y,
+                Y2 = y,
+                Stroke = Brushes.Black,
+                StrokeThickness = 1
+            };
+            canvas.Children.Add(line);
+            AddText(canvas, label, 10, x, y + 5);
+        }
+
+        // Helper record for totals
+        private class TotalRow
+        {
+            public int BagCount { get; }
+            public int BoxCount { get; }
+            public int LeafWeight { get; }
+            public int Water { get; }
+            public int Morapuwata { get; }
+            public int Thambimata { get; }
+            public int Reject { get; }
+            public int BagWeight { get; }
+            public int Dalu { get; }
+
+            public TotalRow(int bagCount, int boxCount, int leafWeight, int water,
+                           int morapuwata, int thambimata, int reject, int bagWeight, int dalu)
+            {
+                BagCount = bagCount;
+                BoxCount = boxCount;
+                LeafWeight = leafWeight;
+                Water = water;
+                Morapuwata = morapuwata;
+                Thambimata = thambimata;
+                Reject = reject;
+                BagWeight = bagWeight;
+                Dalu = dalu;
+            }
         }
 
 
@@ -3964,42 +4065,163 @@ namespace WeightMaster
                 MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
                 return;
             }
-
+            //string lineName = lineNameCmb_st2.SelectedItem.ToString();
             try
             {
-                //MessageBox.Show(lineNameCmb_st2.SelectedItem.ToString());
-                //fetch line wise data to pass down to report drawing
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
-                //MessageBox.Show("db call passed here");
-                //testing the data
-                //if (lineReportData != null)
-                //{
-                //MessageBox.Show("response is not null");
-                //}
-                foreach (var transaction in lineReportData)
-                {
-                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                }
-
-
+                /*                foreach (var transaction in lineReportData)
+                                {
+                                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                                }*/
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
-                    DrawingVisual visual = new DrawingVisual();
-                    using (DrawingContext dc = visual.RenderOpen())
+                    // Initialize totals to zero
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+                    int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
+                        totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+                    // Only calculate totals if there's data
+                    if (lineReportData.Any())
                     {
-                        DrawDailyReportPage(dc, lineReportData);
+                        foreach (var transaction in lineReportData)
+                        {
+                            totalBagCount += transaction.bag_count;
+                            totalLeafWeight += transaction.total_leaf_weight;
+                            totalWater += transaction.water;
+                            totalMorapuwata += transaction.morapuwata;
+                            totalThambimata += transaction.thambimata;
+                            totalReject += transaction.reject;
+                            totalBagWeight += transaction.bag_weight;
+                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                        }
                     }
-                    printDialog.PrintVisual(visual, "Print Document");
+
+                    // Pagination setup - ensure at least 1 page even for empty data
+                    int pageSize = 30;
+                    int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
+                    FixedDocument fixedDoc = new FixedDocument();
+                    fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
+                    for (int page = 0; page < totalPages; page++)
+                    {
+                        var pageData = lineReportData.Count == 0
+                            ? new List<FinalTransactionBlockModel>()  // Empty page
+                            : lineReportData
+                                .Skip(page * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+                        FixedPage fixedPage = new FixedPage();
+                        Canvas canvas = CreateDailyReportPage(
+                            pageData: pageData,
+                            pageNumber: page + 1,
+                            totalPages: totalPages,
+                            isLastPage: page == totalPages - 1,
+                            totals: new TotalRow(
+                                totalBagCount, totalBoxCount, totalLeafWeight,
+                                totalWater, totalMorapuwata, totalThambimata,
+                                totalReject, totalBagWeight, totalDalu
+                            )
+                        );
+
+                        fixedPage.Children.Add(canvas);
+                        PageContent pageContent = new PageContent();
+                        pageContent.Child = fixedPage;
+                        fixedDoc.Pages.Add(pageContent);
+                    }
+
+                    printDialog.PrintDocument(fixedDoc.DocumentPaginator, "Multi-Page Report");
                 }
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine("Report error: " + ex.Message);
             }
         }
 
-        private void DrawDailyReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
+        private Canvas CreateDailyReportPage(List<FinalTransactionBlockModel> pageData, int pageNumber,
+    int totalPages, bool isLastPage, TotalRow totals)
+        {
+            Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
+            double yPos = 50;
+            Typeface typeface = new Typeface("Arial");
+            double fontSize = 10;
+            Brush brush = Brushes.Black;
+
+            // Add main headers
+            AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
+            yPos += 30;
+            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            yPos += 30;
+            AddText(canvas, "දෛනික වාර්තාව", 14, 816 / 2, yPos, true);
+            yPos += 30;
+
+            // Report metadata
+            AddText(canvas, $"Report Issue Index: IDX-{Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper()}",
+                fontSize, 50, yPos);
+            yPos += 20;
+            AddText(canvas, $"Date Issued: {DateTime.Now:yyyy.MM.dd}", fontSize, 50, yPos);
+            yPos += 40;
+
+            // Table header
+            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)",
+        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර" };
+            double[] headerPositions = { 50, 100, 220, 270, 330, 380, 450, 510, 590, 660, 730 };
+
+            // Draw header background
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
+            for (int i = 0; i < headers.Length; i++)
+            {
+                bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
+                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
+                    rightAlign: isNumericColumn, brush: Brushes.White);
+            }
+            yPos += 25;
+
+            // Data rows
+            bool isAlternate = false;
+            foreach (var transaction in pageData)
+            {
+                if (isAlternate)
+                {
+                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
+                }
+
+                AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
+                yPos += 20;
+                isAlternate = !isAlternate;
+            }
+            AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
+            AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 120);
+            // Totals and signatures (last page only)
+            if (isLastPage)
+            {
+                // Totals row
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 330, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 380, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 450, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 510, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 590, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 660, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 730, yPos, rightAlign: true);
+
+                // Signatures
+                //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
+                //AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 60);
+            }
+
+            // Page number
+            AddText(canvas, $"Page {pageNumber} of {totalPages}", fontSize, 700, 1000);
+
+            return canvas;
+        }
+
+
+        /*private void DrawDailyReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
         {
             foreach (var transaction in lineReportData)
             {
@@ -4163,7 +4385,7 @@ namespace WeightMaster
                     FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
                 new Point(50, signY + 5)); // Adjusted to the same x-coordinate
 
-        }
+        }*/
     }
 }
 
