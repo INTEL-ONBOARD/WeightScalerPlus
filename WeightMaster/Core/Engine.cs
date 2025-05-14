@@ -563,7 +563,7 @@ namespace WeightMaster.Core
 
 
 
-        public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode,string linename)
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode,string linename)
         {
             try
             {
@@ -577,7 +577,7 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new TransactionLogBlockModel(){ };
+                return new List<TransactionLogBlockModel>(){ };
                 ;
             }
         }

@@ -165,7 +165,7 @@ namespace WeightMaster.Services
                 .Where(t => t.bag_count > 0 && t.date == todayDate && t.linename == lineName)
                 .ToListAsync();
         }
-        public async Task<TransactionLogBlockModel> GetTransactionByBarcodeAndDateAsync(string barcodeDetails,string lineName)
+        public async Task<List<TransactionLogBlockModel>> GetTransactionByBarcodeAndDateAsync(string barcodeDetails,string lineName)
         {
 
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -181,7 +181,7 @@ namespace WeightMaster.Services
                             && t.barcode_details == barcodeDetails
                             && t.date == todayDate
                             && excludedIds.Contains(t.Id)) // Ensures only transactions with mismatched IDs are fetched
-                .FirstOrDefaultAsync();
+                .ToListAsync();
 
         }
 

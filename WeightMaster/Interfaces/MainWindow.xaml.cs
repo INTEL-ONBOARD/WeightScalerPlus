@@ -2034,6 +2034,8 @@ namespace WeightMaster
 
         private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("barcode change event detected!");
+
             string memberId = barcodeTxt_st2.Text.PadLeft(5, '0');;
 
             //clear member turn table for the next member(this is hidden currently)
@@ -2071,64 +2073,73 @@ namespace WeightMaster
             currentTotalDeduction_st2 = 0;
 
             //get user data to populate textboxes and such 
-            currentMemberDetails_st2 = await _consoleHandler.GetTransactionData(memberId, memberId);
-            if (currentMemberDetails_st2 != null)
+            List<TransactionLogBlockModel> new_Data_load = await _consoleHandler.GetTransactionData(memberId, memberId);
+            System.Diagnostics.Debug.WriteLine("**************************************************");
+            if (new_Data_load != null)
             {
-                System.Diagnostics.Debug.WriteLine($"Line name: {currentMemberDetails_st2.linename}, Line Name: {currentMemberDetails_st2.Id}, Line Master: {currentMemberDetails_st2.transportagent}");
-                //if (memberDetails == null)
-                //    MessageBox.Show("member data is null");
-
-                if (currentMemberDetails_st2 != null)
+                foreach (TransactionLogBlockModel model in new_Data_load)
                 {
-                    //load and populate additional data like previous leaf data, box data like stuff
-                    //tbd for transport route & agent
-                    lineNameCmb_st2.SelectedItem = currentMemberDetails_st2.linename;
-                    lineMasterNameLbl_st2.Text = currentMemberDetails_st2.transportagent;
-                    //follow steps when inserting values to avoid collisions
-                    totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
-
-                    //update the current values
-
-                    maturedTxt_st2.Text = currentMemberDetails_st2.morapuwata.ToString();
-                    wateredTxt_st2.Text = currentMemberDetails_st2.water.ToString();
-                    spoiledTxt_st2.Text = currentMemberDetails_st2.thambimata.ToString();
-                    rejectedTxt_st2.Text = currentMemberDetails_st2.reject.ToString();
-
-
-                    //was i high when i wrote these?
-                    //acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
-                    //normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
-                    //goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
-
-                    //currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
-                    //currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
-                    //currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
-
-                    //switched values(correct)
-                    acceptedLeafWeightTxt_st2.Text = currentMemberDetails_st2.total_leaf_weight.ToString();
-                    normalLeafWeightTxt_st2.Text = currentMemberDetails_st2.final_green_leaf_count.ToString();
-                    goldenLeafWeightTxt_st2.Text = currentMemberDetails_st2.final_gold_leaf_count.ToString();
-
-                    currentAcceptedLeafWeight_st2 = currentMemberDetails_st2.total_leaf_weight;
-                    currentNormalLeafWeight_st2 = currentMemberDetails_st2.actual_nomal_leaf_weight;
-                    currentGoldenLeafWeight_st2 = currentMemberDetails_st2.total_gold_leaf_weight;
-
-
-
-                    currentTotalDeduction_st2 = currentMemberDetails_st2.morapuwata + currentMemberDetails_st2.water + currentMemberDetails_st2.reject + currentMemberDetails_st2.thambimata;
-
-                    //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+                    System.Diagnostics.Debug.WriteLine($"Line name: {model.linename}, Line id: {model.Id}, Line Master: {model.transportagent}");
                 }
-                //.Text = "";
-                //.Text = "";
-                //public int currentAcceptedLeafWeight_st2 = 82;
-                //private double currentGoldenLeafWeight_st2 = 0;
-                //private double currentNormalLeafWeight_st2 = 0;
-
-                //public double currentTotalDeduction_st2 = 0;
-
             }
-            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+
+            //if (currentMemberDetails_st2 != null)
+            //{
+            //    System.Diagnostics.Debug.WriteLine($"Line name: {currentMemberDetails_st2.linename}, Line Name: {currentMemberDetails_st2.Id}, Line Master: {currentMemberDetails_st2.transportagent}");
+            //    //if (memberDetails == null)
+            //    //    MessageBox.Show("member data is null");
+
+            //    if (currentMemberDetails_st2 != null)
+            //    {
+            //        //load and populate additional data like previous leaf data, box data like stuff
+            //        //tbd for transport route & agent
+            //        lineNameCmb_st2.SelectedItem = currentMemberDetails_st2.linename;
+            //        lineMasterNameLbl_st2.Text = currentMemberDetails_st2.transportagent;
+            //        //follow steps when inserting values to avoid collisions
+            //        totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
+
+            //        //update the current values
+
+            //        maturedTxt_st2.Text = currentMemberDetails_st2.morapuwata.ToString();
+            //        wateredTxt_st2.Text = currentMemberDetails_st2.water.ToString();
+            //        spoiledTxt_st2.Text = currentMemberDetails_st2.thambimata.ToString();
+            //        rejectedTxt_st2.Text = currentMemberDetails_st2.reject.ToString();
+
+
+            //        //was i high when i wrote these?
+            //        //acceptedLeafWeightTxt_st2.Text = memberDetails.actual_nomal_leaf_weight.ToString();
+            //        //normalLeafWeightTxt_st2.Text = memberDetails.final_green_leaf_count.ToString();
+            //        //goldenLeafWeightTxt_st2.Text = memberDetails.final_gold_leaf_count.ToString();
+
+            //        //currentAcceptedLeafWeight_st2 = memberDetails.actual_nomal_leaf_weight;
+            //        //currentNormalLeafWeight_st2 = memberDetails.final_green_leaf_count;
+            //        //currentGoldenLeafWeight_st2 = memberDetails.final_gold_leaf_count;
+
+            //        //switched values(correct)
+            //        acceptedLeafWeightTxt_st2.Text = currentMemberDetails_st2.total_leaf_weight.ToString();
+            //        normalLeafWeightTxt_st2.Text = currentMemberDetails_st2.final_green_leaf_count.ToString();
+            //        goldenLeafWeightTxt_st2.Text = currentMemberDetails_st2.final_gold_leaf_count.ToString();
+
+            //        currentAcceptedLeafWeight_st2 = currentMemberDetails_st2.total_leaf_weight;
+            //        currentNormalLeafWeight_st2 = currentMemberDetails_st2.actual_nomal_leaf_weight;
+            //        currentGoldenLeafWeight_st2 = currentMemberDetails_st2.total_gold_leaf_weight;
+
+
+
+            //        currentTotalDeduction_st2 = currentMemberDetails_st2.morapuwata + currentMemberDetails_st2.water + currentMemberDetails_st2.reject + currentMemberDetails_st2.thambimata;
+
+            //        //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
+            //    }
+            //    //.Text = "";
+            //    //.Text = "";
+            //    //public int currentAcceptedLeafWeight_st2 = 82;
+            //    //private double currentGoldenLeafWeight_st2 = 0;
+            //    //private double currentNormalLeafWeight_st2 = 0;
+
+            //    //public double currentTotalDeduction_st2 = 0;
+
+            //}
+            System.Diagnostics.Debug.WriteLine("**************************************************");
 
 
             //load the last round from the dictionary(hashmap) if it exists
