@@ -14,6 +14,7 @@ using WeightMaster.Services;
 using System.Globalization;
 using System.Windows.Documents;
 using System.Windows.Shapes;
+using Newtonsoft.Json.Linq;
 
 
 namespace WeightMaster
@@ -41,7 +42,7 @@ namespace WeightMaster
         private double singleBoxWeight = 3.5;
 
 
-        //___________________st1____________________________________________________________________________________________|
+        //___________________st1 global variables____________________________________________________________________________________________|
 
         private string memberId_st1 = ""; //stores member id with all digits to send back to api.
         private string lineName_st1 = "";
@@ -74,9 +75,10 @@ namespace WeightMaster
         private int finalAvailableNormalLeafWeight_st1 = 0;
         //private int finalAvailableLeafWeight = 0;
 
-        //___________________st2____________________________________________________________________________________________|
-
-        //used to send the station1 transactionData directly into station2 finalTransacitonData if wanted.
+        //___________________st2 global variables____________________________________________________________________________________________|
+        //stores multiple rounds of st1 transactionData from a single member to sum them up and insert to finalTransaction data seperately
+        private List<TransactionLogBlockModel> currentMemberDetailsList_st2 = new List<TransactionLogBlockModel>();
+        //used to send the summed up station1 transactionData directly into station2 finalTransacitonData if wanted.
         private TransactionLogBlockModel currentMemberDetails_st2 = new TransactionLogBlockModel();
 
         //(IF IT'S A NEW ONE) Now holds a list of round objects for each additional round added for additional sack weight deduction
@@ -834,7 +836,7 @@ namespace WeightMaster
             CustomerCompletionRowPanel.Children.Clear();
 
 
-            if (!username.Equals("unknown"))
+            if (!username.Equals("unknown") || true)
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -2051,6 +2053,7 @@ namespace WeightMaster
 
 
             //clear previous data if there are any
+            currentMemberDetailsList_st2.Clear();
             currentMemberDetails_st2 = null;
             lineMasterNameLbl_st2.Text = "-";
             totalNSacksTxt_st2.Text = "";
@@ -2070,25 +2073,85 @@ namespace WeightMaster
 
             currentTotalDeduction_st2 = 0;
 
-            //get user data to populate textboxes and such 
-            currentMemberDetails_st2 = await _consoleHandler.GetTransactionData(memberId, memberId);
+            //gets the transaction list by id
+            currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
+
+
+            if (currentMemberDetailsList_st2.Count != 0) {
+
+                currentMemberDetails_st2 = new TransactionLogBlockModel();
+
+                //get member details
+                currentMemberDetails_st2.linename = currentMemberDetailsList_st2[0].linename;
+                currentMemberDetails_st2.transportagent = currentMemberDetailsList_st2[0].transportagent;
+                currentMemberDetails_st2.company = currentMemberDetailsList_st2[0].company;
+                currentMemberDetails_st2.leaf_weight_officer = currentMemberDetailsList_st2[0].leaf_weight_officer;
+                currentMemberDetails_st2.superviosr = currentMemberDetailsList_st2[0].superviosr;
+
+                currentMemberDetails_st2.barcode_details = currentMemberDetailsList_st2[0].barcode_details;
+                currentMemberDetails_st2.name_with_initials = currentMemberDetailsList_st2[0].name_with_initials;
+                currentMemberDetails_st2.phone_number = currentMemberDetailsList_st2[0].phone_number;
+                currentMemberDetails_st2.date = currentMemberDetailsList_st2[0].date;
+
+                //prepare values to addition by making them zero and 
+                currentMemberDetails_st2.box_count = 0;
+                currentMemberDetails_st2.bag_count = 0;
+                currentMemberDetails_st2.real_value = 0;
+
+                currentMemberDetails_st2.maximum_nomal_leaf_weight = 0;
+                currentMemberDetails_st2.total_leaf_weight = 0;
+                currentMemberDetails_st2.actual_nomal_leaf_weight = 0;
+                currentMemberDetails_st2.total_gold_leaf_weight = 0;
+
+                currentMemberDetails_st2.water = 0;
+                currentMemberDetails_st2.morapuwata = 0;
+                currentMemberDetails_st2.thambimata = 0;
+                currentMemberDetails_st2.reject = 0;
+
+                currentMemberDetails_st2.final_green_leaf_count = 0;
+                currentMemberDetails_st2.final_gold_leaf_count = 0;
+                //MessageBox.Show($"item count {currentMemberDetailsList_st2.Count}");
+                foreach (var st1Round in currentMemberDetailsList_st2)
+                {
+                    currentMemberDetails_st2.box_count += st1Round.box_count;
+                    currentMemberDetails_st2.bag_count += st1Round.bag_count;
+                    currentMemberDetails_st2.real_value += st1Round.real_value;
+
+                    currentMemberDetails_st2.maximum_nomal_leaf_weight += st1Round.maximum_nomal_leaf_weight;
+                    currentMemberDetails_st2.total_leaf_weight += st1Round.total_leaf_weight;
+                    currentMemberDetails_st2.actual_nomal_leaf_weight += st1Round.actual_nomal_leaf_weight;
+                    currentMemberDetails_st2.total_gold_leaf_weight += st1Round.total_gold_leaf_weight;
+
+                    currentMemberDetails_st2.water += st1Round.water;
+                    currentMemberDetails_st2.morapuwata += st1Round.morapuwata;
+                    currentMemberDetails_st2.thambimata += st1Round.thambimata;
+                    currentMemberDetails_st2.reject += st1Round.reject;
+
+                    currentMemberDetails_st2.final_green_leaf_count += st1Round.final_green_leaf_count;
+                    currentMemberDetails_st2.final_gold_leaf_count += st1Round.final_gold_leaf_count;
+
+                }
+            } else{/*MessageBox.Show("is null");*/}
+
+            //get user data to populate textboxes and such
+            //currentMemberDetails_st2 = await _consoleHandler.GetTransactionData(memberId, memberId);
             if (currentMemberDetails_st2 != null)
             {
                 System.Diagnostics.Debug.WriteLine($"Line name: {currentMemberDetails_st2.linename}, Line Name: {currentMemberDetails_st2.Id}, Line Master: {currentMemberDetails_st2.transportagent}");
                 //if (memberDetails == null)
                 //    MessageBox.Show("member data is null");
 
-                if (currentMemberDetails_st2 != null)
-                {
+                //if (currentMemberDetails_st2 != null)
+                //{
                     //load and populate additional data like previous leaf data, box data like stuff
                     //tbd for transport route & agent
                     lineNameCmb_st2.SelectedItem = currentMemberDetails_st2.linename;
                     lineMasterNameLbl_st2.Text = currentMemberDetails_st2.transportagent;
+
                     //follow steps when inserting values to avoid collisions
                     totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
 
                     //update the current values
-
                     maturedTxt_st2.Text = currentMemberDetails_st2.morapuwata.ToString();
                     wateredTxt_st2.Text = currentMemberDetails_st2.water.ToString();
                     spoiledTxt_st2.Text = currentMemberDetails_st2.thambimata.ToString();
@@ -2118,7 +2181,7 @@ namespace WeightMaster
                     currentTotalDeduction_st2 = currentMemberDetails_st2.morapuwata + currentMemberDetails_st2.water + currentMemberDetails_st2.reject + currentMemberDetails_st2.thambimata;
 
                     //MessageBox.Show(currentAcceptedLeafWeight_st2 + "= " + currentNormalLeafWeight_st2 + " + " + currentGoldenLeafWeight_st2 + "| total deduction: "+currentTotalDeduction_st2);
-                }
+                //}
                 //.Text = "";
                 //.Text = "";
                 //public int currentAcceptedLeafWeight_st2 = 82;
@@ -2128,7 +2191,7 @@ namespace WeightMaster
                 //public double currentTotalDeduction_st2 = 0;
 
             }
-            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+            //System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 
 
             //load the last round from the dictionary(hashmap) if it exists
@@ -2324,8 +2387,13 @@ namespace WeightMaster
             if (!double.TryParse(weightScalerValTxt_st2.Text, out double scalerWeight) || scalerWeight < 0)
                 scalerWeight = 0;
 
-            //int bagWeightLimit = 23;
-            int ceilingValue = (int)Math.Ceiling(scalerWeight);
+            //get scaler value to only one decimal place.
+            double tempScalerWeight = Math.Truncate(scalerWeight * 10) / 10;
+
+            //if the value is more than 2.1, it's rounded to 3.0. if it's less or equal than 2.1, it's rounded to 2.0
+            int ceilingValue = ToCustomInt(tempScalerWeight);
+            //int ceilingValue = (int)Math.Ceiling(scalerWeight);
+
             // Check if the status equals "සමබරයි and it's not zero"
             if (weightScalerStatus_st2.Text == "සමබරයි" && scalerWeight != 0)
             {
@@ -3055,6 +3123,42 @@ namespace WeightMaster
                         real_value = totalWeightSaclaerValue
                     };
 
+                    //to fill out missing st1 round values with dummy data(except Id) summed up in barcode textChanged to fix runLog
+                    var DummyFinaltransaction = new FinalTransactionBlockModel
+                    {
+                        //linename = lineNameCmb_st2.SelectedValue.ToString(),
+                        Id = 0,
+                        linename = "-",
+                        transportagent = "-",
+                        company = "-",
+                        leaf_weight_officer = "-",
+
+                        superviosr = "-",
+                        barcode_details = "-",
+                        //barcode_details = currentMemberDetails_st2.barcode_details,
+                        name_with_initials = "",
+                        phone_number = "0712345678",
+                        date = DateTime.Now.ToString("yyyy-MM-dd"),
+
+                        bag_count = 0,
+
+                        maximum_nomal_leaf_weight = 0,
+                        total_leaf_weight = 0,
+                        actual_nomal_leaf_weight = 0,
+                        total_gold_leaf_weight = 0,
+
+                        water = 0,
+                        morapuwata = 0,
+                        thambimata = 0,
+                        reject = 0,
+
+                        bag_weight = 0,
+
+                        final_green_leaf_count = 0,
+                        final_gold_leaf_count = 0,
+                        real_value = 0
+                    };
+
                     //removes the key value pair upon a successful insertion.
                     memberHashMap_st2.Remove(memberId);
                     /*var Finaltransaction = new FinalTransactionBlockModel
@@ -3092,6 +3196,13 @@ namespace WeightMaster
                     };*/
 
                     _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, currentMemberDetails_st2.barcode_details);
+
+                    
+                    for (int i=1; i< currentMemberDetailsList_st2.Count; i++) 
+                    {
+                        _isdone = await _consoleHandler.AddFinalTransactionAsync(DummyFinaltransaction, currentMemberDetails_st2.barcode_details);
+                        bool isSuccess = await _consoleHandler.verifyTransactionsCloudCheck();
+                    }
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
                     confirmAddRowButton_st2.IsEnabled = false;
@@ -4218,6 +4329,24 @@ namespace WeightMaster
             AddText(canvas, $"Page {pageNumber} of {totalPages}", fontSize, 700, 1000);
 
             return canvas;
+        }
+
+        //weight scaler utils
+        int ToCustomInt(double value)
+        {
+            // 1) Get the integer part (e.g. Floor(2.3) == 2)
+            int integerPart = (int)Math.Floor(value);                              // :contentReference[oaicite:0]{index=0}
+
+            // 2) Isolate the first decimal digit:
+            //    Multiply by 10 and truncate to get e.g. Truncate(2.3 * 10) == 23
+            //    Then mod 10 yields 3 (the tenths digit)
+            int tenthsDigit = (int)(Math.Truncate(value * 10) % 10);               // :contentReference[oaicite:1]{index=1}
+
+            // 3) Apply your rule:
+            //    If tenths digit > 1, bump up; else stay at integerPart
+            return tenthsDigit > 1
+                ? integerPart + 1
+                : integerPart;
         }
 
 
