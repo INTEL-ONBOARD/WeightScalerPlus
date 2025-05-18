@@ -264,14 +264,43 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
-        public async Task<List<TransactionLogBlockModel>> getDataForPrint()
+        //public async Task<List<TransactionLogBlockModel>> getDataForPrint()
+        //{
+        //    string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+        //    return await _context.transactionData
+        //        .Where(t => t.bag_count == 0 && t.date == todayDate)
+        //        .ToListAsync();
+        //}
+
+
+        public async Task<List<FinalTransactionBlockModel>> getDataForPrint()
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-            return await _context.transactionData
+            return await _context.FinaltransactionData
                 .Where(t => t.bag_count == 0 && t.date == todayDate)
+                .GroupBy(t => t.linename)
+                .Select(g => new FinalTransactionBlockModel
+                {
+                    linename = g.Key,
+                    bag_count = g.Sum(x => x.bag_count),
+                    maximum_nomal_leaf_weight = g.Sum(x => x.maximum_nomal_leaf_weight),
+                    total_leaf_weight = g.Sum(x => x.total_leaf_weight),
+                    actual_nomal_leaf_weight = g.Sum(x => x.actual_nomal_leaf_weight),
+                    total_gold_leaf_weight = g.Sum(x => x.total_gold_leaf_weight),
+                    water = g.Sum(x => x.water),
+                    morapuwata = g.Sum(x => x.morapuwata),
+                    thambimata = g.Sum(x => x.thambimata),
+                    reject = g.Sum(x => x.reject),
+                    bag_weight = g.Sum(x => x.bag_weight),
+                    final_green_leaf_count = g.Sum(x => x.final_green_leaf_count),
+                    final_gold_leaf_count = g.Sum(x => x.final_gold_leaf_count),
+                    real_value = g.Sum(x => x.real_value),
+                })
                 .ToListAsync();
         }
+
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsNotInRunLogAsync(string lineName)
         {

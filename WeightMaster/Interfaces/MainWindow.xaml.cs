@@ -762,6 +762,15 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++");
+            List <FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta1();
+                           foreach (var transaction in lineReportData)
+                            {
+                                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                            }
+
+            System.Diagnostics.Debug.WriteLine("+++++++++++++++++++++++++++");
+
             try
             {
                 // Update status label to indicate that fetching has started
