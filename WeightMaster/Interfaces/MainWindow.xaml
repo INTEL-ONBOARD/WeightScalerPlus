@@ -99,7 +99,7 @@
 
 
         <!--Intro Frame-->
-        <Grid x:Name="IntroFrame" Visibility="Hidden" Background="White" Margin="38,49,40,49" >
+        <Grid x:Name="IntroFrame" Visibility="Visible" Background="White" Margin="38,49,40,49" >
             <Border Background="White" CornerRadius="20" Margin="728,36,728,86">
 
                 <Grid Margin="20">
