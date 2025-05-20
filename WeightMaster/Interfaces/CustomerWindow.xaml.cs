@@ -53,8 +53,8 @@ namespace WeightMaster.Interfaces
                                 OutColor.Fill = (Brush)brushConverter.ConvertFromString("#E74C3C"); // Example: Red
                             }
 
-                            //acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
-                            if (_mainWindow.acceptedLeafWeightTxt_st1.Text.Equals(""))
+                            acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
+                            if (_mainWindow.nSacksTxt_st1.Text.Equals(""))
                             {
                                 acceptedWeightLbl_cust.Text = "0";
                             }
@@ -62,17 +62,8 @@ namespace WeightMaster.Interfaces
                             {
                                 acceptedWeightLbl_cust.Text = _mainWindow.acceptedLeafWeightTxt_st1.Text;
                             }
-
-                            //sacks and boxes
-                            if (_mainWindow.nSacksTxt_st1.Text.Equals(""))
-                            {
-                                nSacks_cust.Text = "0";
-                            }
-                            else
-                            {
-                                nSacks_cust.Text = _mainWindow.nSacksTxt_st1.Text;
-                            }
-
+                            
+                            
                             if (_mainWindow.nBoxesTxt_st1.Text.Equals(""))
                             {
                                 nBoxes_cust.Text = "0";
@@ -81,7 +72,6 @@ namespace WeightMaster.Interfaces
                             {
                                 nBoxes_cust.Text = _mainWindow.nBoxesTxt_st1.Text;
                             }
-
                             //deductions
                             if (_mainWindow.wateredTxt_st1.Text.Equals(""))
                             {

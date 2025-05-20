@@ -563,7 +563,7 @@ namespace WeightMaster.Core
 
 
 
-        public async Task<TransactionLogBlockModel> GetFilteredTransactionData(string barcode,string linename)
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode,string linename)
         {
             try
             {
@@ -577,7 +577,7 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new TransactionLogBlockModel(){ };
+                return new List<TransactionLogBlockModel>(){ };
                 ;
             }
         }
@@ -666,21 +666,21 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<List<TransactionLogBlockModel>> getPrintData_1()
+        public async Task<List<FinalTransactionBlockModel>> getPrintData_1()
         {
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
                 var data = await transactionService.getDataForPrint();
 
-                System.Diagnostics.Debug.WriteLine("===== Print data");
+                //System.Diagnostics.Debug.WriteLine("===== Print data");
 
                 return data;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new List<TransactionLogBlockModel>();
+                return new List<FinalTransactionBlockModel>();
             }
         }
 
@@ -691,7 +691,7 @@ namespace WeightMaster.Core
                 var transactionService = new FinalTransactionService(new AppDbContext());
                 var data = await transactionService.getDataForPrint(linename);
 
-                System.Diagnostics.Debug.WriteLine("===== Print data");
+                //System.Diagnostics.Debug.WriteLine("===== Print data");
 
                 return data;
             }

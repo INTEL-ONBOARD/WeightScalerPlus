@@ -100,7 +100,7 @@ namespace WeightMaster.Services
             return await _engine.GetFilteredTransactionsByBarcodeAndDateAsync(code);
         }
         //return a songle transaction data from the station 2 data using member code , barcode
-        public async Task<TransactionLogBlockModel> GetTransactionData(string barcode,string linename) //the line name here is useless. give this ""
+        public async Task<List<TransactionLogBlockModel>> GetTransactionData(string barcode,string linename) //the line name here is useless. give this ""
         {
             return await _engine.GetFilteredTransactionData(barcode,linename);
         }
@@ -122,7 +122,7 @@ namespace WeightMaster.Services
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
         }
         //return data for the report from thhe station-1
-        public async Task<List<TransactionLogBlockModel>> print_sta1()
+        public async Task<List<FinalTransactionBlockModel>> print_sta1()
         {
             return await _engine.getPrintData_1();
         }
