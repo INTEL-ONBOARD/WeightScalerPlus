@@ -1762,6 +1762,15 @@ namespace WeightMaster
                 return;
             }
 
+            if (barcodeTxt_st1.Text.Equals(""))
+            {
+                MessageBox.Show("සාමාජික අංකය ඇතුලත් කරන්න");
+                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
+                currentStep_st1 = currentStep_st1 - 1;
+                ShowCurrentStep();
+                return;
+            }
+
 
             //clear and repopulate table rows(test) after successful update
             if (!acceptedLeafWeightTxt_st1.Text.Equals("") && !normalLeafWeightTxt_st1.Text.Equals("") && ((!nSacksTxt_st1.Text.Equals("") && nBoxesTxt_st1.Text.Equals("")) || (nSacksTxt_st1.Text.Equals("") && !nBoxesTxt_st1.Text.Equals(""))))
