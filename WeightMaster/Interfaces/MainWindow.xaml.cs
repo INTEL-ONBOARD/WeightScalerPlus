@@ -836,7 +836,7 @@ namespace WeightMaster
             CustomerCompletionRowPanel.Children.Clear();
 
 
-            if (!username.Equals("unknown") || true)
+            if (!username.Equals("unknown") /*|| true*/)
             {
                 statusLabel.Content = "Login Success!";
                 statusLabel.Content = "";
@@ -2073,8 +2073,10 @@ namespace WeightMaster
 
             currentTotalDeduction_st2 = 0;
 
-            //gets the transaction list by id
-            currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
+            //gets the transaction list by id(for testing purposes)
+            //currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
+            //GetTransactionDataByBarcodeId
+            currentMemberDetailsList_st2 = await _consoleHandler.GetTransactionDataByBarcodeId(memberId);
 
 
             if (currentMemberDetailsList_st2.Count != 0) {
@@ -4029,7 +4031,8 @@ namespace WeightMaster
                 isAlternate = !isAlternate;
             }
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
-            AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 120);
+            AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 315, yPos + 120);
+            AddSignatureLine(canvas, "Authorised by (Bag Weighting Officer)", 570, yPos + 120);
             // Totals and signatures (last page only)
             if (isLastPage)
             {
@@ -4128,7 +4131,7 @@ namespace WeightMaster
             var line = new Line
             {
                 X1 = x,
-                X2 = x + 300,
+                X2 = x + 220,
                 Y1 = y,
                 Y2 = y,
                 Stroke = Brushes.Black,
@@ -4276,7 +4279,7 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)",
+            string[] headers = { "අංකය", "මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)",
         "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර" };
             double[] headerPositions = { 50, 100, 220, 270, 330, 380, 450, 510, 590, 660, 730 };
 
