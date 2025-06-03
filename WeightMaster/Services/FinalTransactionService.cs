@@ -173,6 +173,12 @@ namespace WeightMaster.Services
                 .ToListAsync();
 
         }
+        public async Task<List<FinalTransactionBlockModel>> getDataForPrintOnCustomDate(string linename_,string date_)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.bag_count > 0 && t.date == date_ && t.linename == linename_)
+                .ToListAsync();
+        }
 
     }
 }

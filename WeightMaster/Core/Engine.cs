@@ -702,6 +702,24 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<List<FinalTransactionBlockModel>> getPrintData_2_onCustomDate(string linename,string date_)
+        {
+            try
+            {
+                var transactionService = new FinalTransactionService(new AppDbContext());
+                var data = await transactionService.getDataForPrintOnCustomDate(linename,date_);
+
+                //System.Diagnostics.Debug.WriteLine("===== Print data");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
+                return new List<FinalTransactionBlockModel>();
+            }
+        }
+
 
 
 

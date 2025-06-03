@@ -131,6 +131,9 @@ namespace WeightMaster.Services
         {
             return await _engine.getPrintData_2(linename);
         }
-
+        public async Task<List<FinalTransactionBlockModel>> print_sta2_onCustomDate(string linename,string date_)
+        {
+            return await _engine.getPrintData_2_onCustomDate(linename,date_);
+        }
     }
 }
