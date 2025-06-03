@@ -121,11 +121,11 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
         }
-        //return data for the report from thhe station-1
-        public async Task<List<FinalTransactionBlockModel>> print_sta1()
-        {
-            return await _engine.getPrintData_1();
-        }
+        ////return data for the report from thhe station-1
+        //public async Task<List<FinalTransactionBlockModel>> print_sta1()
+        //{
+        //    return await _engine.getPrintData_1();
+        //}
         //return data for the report from thhe station-2
         public async Task<List<FinalTransactionBlockModel>> print_sta2(string linename)
         {
