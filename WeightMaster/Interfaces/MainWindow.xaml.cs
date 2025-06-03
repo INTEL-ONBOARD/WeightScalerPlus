@@ -3973,7 +3973,7 @@ namespace WeightMaster
             string lineName = lineNameCmb_admin.SelectedItem.ToString();
             try
             {
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineName);
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
 /*                foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -4285,7 +4285,7 @@ namespace WeightMaster
             foreach (var lineMaster in lineMasterData)
             {
                 //get a single line with multiple rows
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineMaster.LineName);
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
                 
                 //create an obj per each line of the daily report
                 DailyReportRowBlockModel lineRow = new DailyReportRowBlockModel();
