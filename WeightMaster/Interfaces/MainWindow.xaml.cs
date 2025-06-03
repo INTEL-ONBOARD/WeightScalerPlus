@@ -102,7 +102,6 @@ namespace WeightMaster
         //finalized values by each round to send to db/api
         private float finalWeightScalerWeight_st2 = 0; //this goes as the accepted value to api
 
-
         //private int finalAcceptedLeafWeight_st2 = 0;
         //private int finalGoldenLeafWeight_st2 = 0;
         //private int finalNormalLeafWeight_st2 = 0;
@@ -117,6 +116,11 @@ namespace WeightMaster
 
         //private int finalAvailableGoldenLeafWeight_st2 = 0;
         //private int finalAvailableNormalLeafWeight_st2 = 0;
+
+
+        //admin global variables_______________________________________________________________________________
+        //default date if no date was selected at first
+        string reportDate = DateTime.Now.ToString("yyyy-MM-dd");
 
 
         //barcode related__________________________________________________________________
@@ -778,6 +782,7 @@ namespace WeightMaster
                             //System.Diagnostics.Debug.WriteLine($"ID: {lineMaster.id}, Line Name: {lineMaster.LineName}, Line Master: {lineMaster.LineMaster}");
                             lineNameCmb_st1.Items.Add(lineMaster.LineName);
                             lineNameCmb_st2.Items.Add(lineMaster.LineName);
+                            lineNameCmb_admin.Items.Add(lineMaster.LineName);
                         }
                     }
                 }
@@ -796,7 +801,7 @@ namespace WeightMaster
                 if (supervisorData == null)
                 {
                     statusLabel.Content = "Fetching supervisor data...";
-                    System.Diagnostics.Debug.WriteLine("> fetching supervisor data");
+                    //System.Diagnostics.Debug.WriteLine("> fetching supervisor data");
                     supervisorData = await _consoleHandler.getUsernames();
                     if (supervisorData != null && supervisorData.Any())
                     {
@@ -853,6 +858,7 @@ namespace WeightMaster
                         StationMainFrame.Visibility = Visibility.Visible;
                         Station1Frame.Visibility = Visibility.Visible;
                         Station2Frame.Visibility = Visibility.Collapsed;
+                        AdminFrame.Visibility = Visibility.Collapsed;
                         //change topbar text
                         //TopBarText.Text = "වේදිකාව-1";
                         TopBarStationName.Text = "දළු කිරීම";
@@ -871,6 +877,7 @@ namespace WeightMaster
                         StationMainFrame.Visibility = Visibility.Visible;
                         Station2Frame.Visibility = Visibility.Visible;
                         Station1Frame.Visibility = Visibility.Collapsed;
+                        AdminFrame.Visibility = Visibility.Collapsed;
 
                         //change topbar text";
                         TopBarStationName.Text = "ගෝනි කිරීම";
@@ -881,13 +888,37 @@ namespace WeightMaster
                     }
                     else if (clickedButton.Name == "LoginAdminButton")
                     {
+                        //validate admin to access
+                        if (!UsernameTextBox.Text.Equals("admin@slt.lk"))
+                        {
+                            MessageBox.Show(UsernameTextBox.Text+" හට ප්‍රධාන පාලක අවසර නැත");
+                            return;
+                        }
+                        if (!VisiblePasswordTextBox.Text.Equals("admin@1234"))
+                        {
+                            MessageBox.Show(" නිවැරදි ප්‍රධාන පාලක මුරපදය ඇතුලත් කරන්න");
+                            return;
+                        }
+
+                        //load the username as the leaf weight officer
+                        weightLeafOfficerTxt_admin.Text = username;
+
                         //PageAdmin.Visibility = Visibility.Visible;
+                        LoginFrame.Visibility = Visibility.Collapsed;
+                        StationMainFrame.Visibility = Visibility.Visible;
+                        Station2Frame.Visibility = Visibility.Visible;
+                        Station1Frame.Visibility = Visibility.Collapsed;
+                        AdminFrame.Visibility = Visibility.Visible;
+
+                        TopBarStationName.Text = "ප්‍රධා න පා ලක";
+                        reportDateTxt_admin.Text = reportDate;
                     }
                 }
 
                 //clearing login textboxes otherwise there are visible even after a logout
                 UsernameTextBox.Text = "";
                 PasswordBoxControl.Password = "";
+                VisiblePasswordTextBox.Text = "";
 
                 //updating current Enter step
                 currentStep_st1 = 1;
@@ -962,6 +993,7 @@ namespace WeightMaster
             StationMainFrame.Visibility = Visibility.Collapsed;
             Station1Frame.Visibility = Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
+            AdminFrame.Visibility = Visibility.Collapsed;
 
             //clear existing data
             //clear weight leaf cmb officer data
@@ -3711,6 +3743,7 @@ namespace WeightMaster
             // Closing existing pages
             Station1Frame.Visibility = Visibility.Collapsed;
             Station2Frame.Visibility = Visibility.Collapsed;
+            AdminFrame.Visibility = Visibility.Collapsed;
             SettingsFrame.Visibility = Visibility.Collapsed;
             StationMainFrame.Visibility = Visibility.Collapsed;
             IntroFrame.Visibility = Visibility.Visible;
@@ -3862,6 +3895,19 @@ namespace WeightMaster
             runtimeService.StartTimer();
         }
 
+        //__________adminFrame-----------------------------------------------------------------
+        private void ReportCalender_admin_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ReportCalender_admin.SelectedDate.HasValue)
+            {
+                // Format as "yyyy-MM-dd" and assign to the TextBlock
+                reportDateTxt_admin.Text = ReportCalender_admin.SelectedDate.Value.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                reportDateTxt_admin.Text = reportDate;
+            }
+        }
 
 
         //_______Reports_______________________________________________________________________
@@ -3907,15 +3953,27 @@ namespace WeightMaster
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
 
-            if (lineNameCmb_st2.SelectedItem == null)
+            if (lineNameCmb_admin.SelectedItem == null)
             {
                 MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
                 return;
             }
-            string lineName = lineNameCmb_st2.SelectedItem.ToString();
+            //get the selected date
+            if (ReportCalender_admin.SelectedDate.HasValue)
+            {
+                reportDate = ReportCalender_admin.SelectedDate.Value.ToString("yyyy-MM-dd");
+                // Now reportDate holds e.g. "2025-06-15". default is today's date in default as initialized in the global variable
+            }
+            else
+            {
+                //replacing the date with today's date as default(already handled in the global variable)
+                //MessageBox.Show("දිනයක් තෝරාගන්න");
+                //return;
+            }
+            string lineName = lineNameCmb_admin.SelectedItem.ToString();
             try
             {
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineName);
 /*                foreach (var transaction in lineReportData)
                 {
                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -4135,6 +4193,28 @@ namespace WeightMaster
                 fontSize, positions[10], y, rightAlign: true);
         }
 
+        private void AddDailyTransactionRow(Canvas canvas, DailyReportRowBlockModel transaction,
+            double[] positions, double y, double fontSize)
+        {
+            // Left-aligned columns
+            AddText(canvas, transaction.Id.ToString(), fontSize, positions[0], y);
+            AddText(canvas, transaction.linename ?? "", fontSize, positions[1], y);
+
+            // Right-aligned numeric columns
+            AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
+            AddText(canvas, "0", fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
+            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
+            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
+            AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
+            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
+            AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
+                transaction.morapuwata + transaction.thambimata +
+                transaction.reject + transaction.bag_weight)).ToString(),
+                fontSize, positions[10], y, rightAlign: true);
+        }
+
         private void AddSignatureLine(Canvas canvas, string label, double x, double y)
         {
             var line = new Line
@@ -4183,15 +4263,66 @@ namespace WeightMaster
         //_________________Daily Report___________________________________
         private async void printDailyReportBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (lineNameCmb_st2.SelectedItem == null)
+            //get the selected date
+            if (ReportCalender_admin.SelectedDate.HasValue)
             {
-                MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
-                return;
+                reportDate = ReportCalender_admin.SelectedDate.Value.ToString("yyyy-MM-dd");
+                // Now reportDate holds e.g. "2025-06-15". default is today's date in defalut as initialized in the global variable
             }
+            else
+            {
+                //replacing the date with today's date as default(already handled in the global variable)
+                //MessageBox.Show("දිනයක් තෝරාගන්න");
+                //return;
+            }
+
+            List<DailyReportRowBlockModel> dailyReportData = new List<DailyReportRowBlockModel>();
+
+            //get all lines to fetch data seperately
+            List<LineMasterBlockModel> lines = null;
+            lines = await _consoleHandler.getLineMasterData();
+            int dailyId = 1;
+            foreach (var lineMaster in lineMasterData)
+            {
+                //get a single line with multiple rows
+                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineMaster.LineName);
+                
+                //create an obj per each line of the daily report
+                DailyReportRowBlockModel lineRow = new DailyReportRowBlockModel();
+                //assgin non-numeric vals using the first row before summing up
+                //currentMemberDetailsList_st2[0].linename;
+                lineRow.Id = dailyId;
+                lineRow.linename = lineMaster.LineName;
+                //MessageBox.Show(lineMaster.LineName);
+                //sum up only numbers through the loop to a single row
+                foreach (var tRow in lineReportData)
+                {
+                    lineRow.bag_count += tRow.bag_count;
+                    lineRow.maximum_nomal_leaf_weight = tRow.maximum_nomal_leaf_weight;
+                    lineRow.total_leaf_weight += tRow.total_leaf_weight;
+                    lineRow.actual_nomal_leaf_weight += tRow.actual_nomal_leaf_weight;
+                    lineRow.total_gold_leaf_weight += tRow.total_gold_leaf_weight;
+                    lineRow.water += tRow.water;
+                    lineRow.morapuwata += tRow.morapuwata;
+                    lineRow.thambimata += tRow.thambimata;
+                    lineRow.reject += tRow.reject;
+                    lineRow.bag_weight += tRow.bag_weight;
+                    lineRow.final_green_leaf_count += tRow.final_green_leaf_count;
+                    lineRow.final_gold_leaf_count += tRow.final_gold_leaf_count;
+                    lineRow.real_value += tRow.real_value;
+                }
+                //add that row to the daily report row list
+                dailyReportData.Add(lineRow);
+
+                dailyId++;
+            }
+            dailyId = 1;
+            //MessageBox.Show("completed");
+            //return;
             //string lineName = lineNameCmb_st2.SelectedItem.ToString();
             try
             {
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
+                //List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
                 /*                foreach (var transaction in lineReportData)
                                 {
                                     System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
@@ -4204,9 +4335,9 @@ namespace WeightMaster
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
                         totalReject = 0, totalBagWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
-                    if (lineReportData.Any())
+                    if (dailyReportData.Any())
                     {
-                        foreach (var transaction in lineReportData)
+                        foreach (var transaction in dailyReportData)
                         {
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
@@ -4222,15 +4353,15 @@ namespace WeightMaster
 
                     // Pagination setup - ensure at least 1 page even for empty data
                     int pageSize = 30;
-                    int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
+                    int totalPages = dailyReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)dailyReportData.Count / pageSize);
                     FixedDocument fixedDoc = new FixedDocument();
                     fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
 
                     for (int page = 0; page < totalPages; page++)
                     {
-                        var pageData = lineReportData.Count == 0
-                            ? new List<FinalTransactionBlockModel>()  // Empty page
-                            : lineReportData
+                        var pageData = dailyReportData.Count == 0
+                            ? new List<DailyReportRowBlockModel>()  // Empty page
+                            : dailyReportData
                                 .Skip(page * pageSize)
                                 .Take(pageSize)
                                 .ToList();
@@ -4263,7 +4394,7 @@ namespace WeightMaster
             }
         }
 
-        private Canvas CreateDailyReportPage(List<FinalTransactionBlockModel> pageData, int pageNumber,
+        private Canvas CreateDailyReportPage(List<DailyReportRowBlockModel> pageData, int pageNumber,
     int totalPages, bool isLastPage, TotalRow totals)
         {
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
@@ -4311,7 +4442,7 @@ namespace WeightMaster
                     AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
                 }
 
-                AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
+                AddDailyTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
                 isAlternate = !isAlternate;
             }

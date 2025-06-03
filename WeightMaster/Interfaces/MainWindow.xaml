@@ -11,7 +11,7 @@
         Title="MainWindow" Height="1080" Width="1920"
         WindowStyle="None"
         AllowsTransparency="True"
-        Topmost="True"
+        Topmost="False"
         Background="White"
         WindowStartupLocation="CenterScreen">
 
@@ -1262,7 +1262,7 @@
                     <Grid>
 
                         <!--daily report button-->
-                        <Button Visibility="Hidden" Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="32,20,459,19" Style="{StaticResource HoverButton}" Click="printDailyReportBtn_Click">
+                        <Button Visibility="Visible" Cursor="Hand" x:Name="confirmAll_rounds_st2" Background="Transparent" BorderThickness="0" Margin="32,20,459,19" Style="{StaticResource HoverButton}" Click="printDailyReportBtn_Click">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="6" Height="36" Width="232">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Top" Text="දෛනික වාර්තාව" Foreground="White" FontSize="15" FontWeight="Normal" Width="136" Height="26" Margin="0,2,0,0"/>
                             </Border>
@@ -1307,6 +1307,124 @@
                 -->
 
             </Grid>
+
+            <!--AdminFrame-->
+            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+                <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
+                    <Grid>
+
+                        <!--weight leaf officer textbox-->
+                        <Grid  Margin="47,38,47,577" >
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="20"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,27" Grid.RowSpan="2" />
+                            <Border Grid.Row="1" CornerRadius="10" BorderThickness="2" Padding="2" Margin="0,20,0,-15">
+                                <TextBox x:Name="weightLeafOfficerTxt_admin" IsReadOnly="True" Background="#F7F7F7" BorderThickness="0" Foreground="#FF1E7CD2" FontSize="20" VerticalAlignment="Top" Height="32" Margin="0,4,0,0"/>
+                            </Border>
+                        </Grid>
+
+                        <Calendar x:Name="ReportCalender_admin"  SelectedDatesChanged="ReportCalender_admin_SelectedDatesChanged" HorizontalAlignment="Left" Height="345" Margin="10,217,0,0" VerticalAlignment="Top" Width="380" Style="{DynamicResource CalendarStyle1}" CalendarButtonStyle="{DynamicResource CalendarButtonStyle1}" CalendarDayButtonStyle="{DynamicResource CalendarDayButtonStyle1}" CalendarItemStyle="{DynamicResource CalendarItemStyle1}"/>
+                        <!--default val comes from a global var-->
+                        <TextBlock x:Name="reportDateTxt_admin" Grid.Row="0" Text="" FontSize="28" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Center" Margin="0,608,0,42" FontFamily="Times New Roman" Width="267"/>
+                        <!--Confirm button-->
+                        <!--
+                        <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="48,192,46,27" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="310">
+                                <TextBlock Text="CONFIRM" Foreground="White" FontSize="15" FontWeight="Normal" HorizontalAlignment="Center"/>
+                            </Border>
+                        </Button>
+                        -->
+                    </Grid>
+                </Border>
+
+                <!--Right section-->
+                <Border x:Name="dataInputBorder_admin" BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="467,35,39,78">
+                    <Grid>
+
+                        <!--Daily report-->
+                        <TextBlock Grid.Row="0" Text="දෛනික වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="118,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල සියලු ප්‍රවාහන මාර්ග කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="118,188,0,432" FontFamily="Times New Roman" Width="489"/>
+
+                        <!--Print line report button-->
+                        <Button Cursor="Hand" x:Name="printDailyBtn_admin" Click="printDailyReportBtn_Click" Background="Transparent" BorderThickness="0" Margin="180,484,818,178" Style="{StaticResource HoverButton}" IsEnabled="True">
+                            <Border BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="312">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PRINT" Foreground="White" FontSize="15" FontWeight="Normal" Width="109" TextAlignment="Center"/>
+                            </Border>
+                        </Button>
+
+
+                        <!--Vertical lining upper middle-->
+                        <Line X1="0" X2="0" Y1="0" Y2="400" Stroke="#F0F0F0" StrokeThickness="2" Margin="644,110,655,120" />
+
+                        <!--Line report-->
+                        <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ග වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="724,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල එක ප්‍රවාහන මාර්ගයක සිදු වූ සියලු සාමාජිකයින්ගේ කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="724,181,0,426" FontFamily="Times New Roman" Width="489"/>
+                        <!-- Transport Route Dropdown -->
+                        <Grid Margin="724,306,132,317" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="44*"/>
+                                <ColumnDefinition Width="269*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="25"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2" FontFamily="Times New Roman" Grid.ColumnSpan="2"/>
+                            <ComboBox x:Name="lineNameCmb_admin" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" FontSize="20" MinHeight="50" VerticalContentAlignment="Center" MinWidth="10" Grid.ColumnSpan="2"  >
+                                <!--
+                                <ComboBoxItem Content="Katujurunda"/>
+                                <ComboBoxItem Content="Haggala"/>
+                                <ComboBoxItem Content="Nuwara-Eliya"/>
+                                -->
+                            </ComboBox>
+                        </Grid>
+                        <!--Print line report button-->
+                        <Button Cursor="Hand" Click="printLineReportBtn_Click" x:Name="printTransportBtn_admin" Background="Transparent" BorderThickness="0" Margin="812,484,186,178" Style="{StaticResource HoverButton}" IsEnabled="True">
+                            <Border BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="312">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PRINT" Foreground="White" FontSize="15" FontWeight="Normal" Width="109" TextAlignment="Center"/>
+                            </Border>
+                        </Button>
+
+
+
+
+
+
+
+
+                    </Grid>
+                </Border>
+
+                <Border x:Name="loadingDataInputBorder_admin" Visibility="Hidden" BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="467,35,763,78">
+                    <Grid>
+                        <Image  Height="50" Width="50" gif:ImageBehavior.AnimatedSource="/Interfaces/loading.gif"/>
+                        <TextBlock Text="Please wait..." FontSize="20" Foreground="Black" HorizontalAlignment="Center" Margin="0,384,0,284"/>
+                    </Grid>
+                </Border>
+
+
+                <!--
+                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="10" Margin="1083,663,10,78">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Cursor="Hand" x:Name="dailyReportButton_st1" Margin="10,0,60,0" Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="308">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="දෛනික වා ර්තා ව" Foreground="White" FontSize="14" FontWeight="Normal" Width="136" Height="16"/>
+                            </Border>
+                        </Button>
+                        <Button Cursor="Hand" x:Name="lineWiseReportButton_st1" Background="Transparent" BorderThickness="0" Style="{StaticResource HoverButton}" Click="confirmAddRowButton_st1_Click">
+                            <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="333">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="ප්‍රවා හන මා ර්ග වා ර්තා ව " Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
+                            </Border>
+                        </Button>
+                    </StackPanel>
+                </Border>
+                -->
+
+            </Grid>
+
+
 
             <!--SettingsFrame-->
             <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
