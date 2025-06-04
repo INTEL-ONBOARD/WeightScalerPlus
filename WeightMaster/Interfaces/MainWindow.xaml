@@ -1314,7 +1314,7 @@
                     <Grid>
 
                         <!--weight leaf officer textbox-->
-                        <Grid  Margin="47,38,47,577" >
+                        <Grid  Margin="27,38,47,577" >
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
@@ -1326,8 +1326,9 @@
                         </Grid>
 
                         <Calendar x:Name="ReportCalender_admin"  SelectedDatesChanged="ReportCalender_admin_SelectedDatesChanged" HorizontalAlignment="Left" Height="345" Margin="10,217,0,0" VerticalAlignment="Top" Width="380" Style="{DynamicResource CalendarStyle1}" CalendarButtonStyle="{DynamicResource CalendarButtonStyle1}" CalendarDayButtonStyle="{DynamicResource CalendarDayButtonStyle1}" CalendarItemStyle="{DynamicResource CalendarItemStyle1}"/>
+                        <TextBlock Grid.Row="0" Text="දිනය" FontSize="20" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Center" Margin="0,594,0,78" Width="56"/>
                         <!--default val comes from a global var-->
-                        <TextBlock x:Name="reportDateTxt_admin" Grid.Row="0" Text="" FontSize="28" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Center" Margin="0,608,0,42" FontFamily="Times New Roman" Width="267"/>
+                        <TextBlock x:Name="reportDateTxt_admin" Grid.Row="0" TextAlignment="Center" Text="" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Center" Margin="0,630,0,38" Width="268"/>
                         <!--Confirm button-->
                         <!--
                         <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="48,192,46,27" Style="{StaticResource HoverButton}">
@@ -1344,11 +1345,11 @@
                     <Grid>
 
                         <!--Daily report-->
-                        <TextBlock Grid.Row="0" Text="දෛනික වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="118,80,0,570" FontFamily="Times New Roman" Width="489"/>
-                        <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල සියලු ප්‍රවාහන මාර්ග කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="118,188,0,432" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="දෛනික වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="118,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල සියලු ප්‍රවාහන මාර්ග කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="118,188,0,432" FontFamily="Times New Roman" Width="489"/>
 
                         <!--Print line report button-->
-                        <Button Cursor="Hand" x:Name="printDailyBtn_admin" Click="printDailyReportBtn_Click" Background="Transparent" BorderThickness="0" Margin="180,484,818,178" Style="{StaticResource HoverButton}" IsEnabled="True">
+                        <Button Cursor="Hand" x:Name="printDailyBtn_admin" Click="printDailyReportBtn_Click" Background="Transparent" BorderThickness="0" Margin="199,484,769,178" Style="{StaticResource HoverButton}" IsEnabled="True">
                             <Border BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="312">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PRINT" Foreground="White" FontSize="15" FontWeight="Normal" Width="109" TextAlignment="Center"/>
                             </Border>
@@ -1359,10 +1360,10 @@
                         <Line X1="0" X2="0" Y1="0" Y2="400" Stroke="#F0F0F0" StrokeThickness="2" Margin="644,110,655,120" />
 
                         <!--Line report-->
-                        <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ග වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="724,80,0,570" FontFamily="Times New Roman" Width="489"/>
-                        <TextBlock Grid.Row="0" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල එක ප්‍රවාහන මාර්ගයක සිදු වූ සියලු සාමාජිකයින්ගේ කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="724,181,0,426" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="ප්‍රවා හන මා ර්ග වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="724,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල එක ප්‍රවාහන මාර්ගයක සිදු වූ සියලු සාමාජිකයින්ගේ කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="724,181,0,426" FontFamily="Times New Roman" Width="489"/>
                         <!-- Transport Route Dropdown -->
-                        <Grid Margin="724,306,132,317" >
+                        <Grid Margin="798,306,132,317" >
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="44*"/>
                                 <ColumnDefinition Width="269*"/>
@@ -1381,8 +1382,8 @@
                             </ComboBox>
                         </Grid>
                         <!--Print line report button-->
-                        <Button Cursor="Hand" Click="printLineReportBtn_Click" x:Name="printTransportBtn_admin" Background="Transparent" BorderThickness="0" Margin="812,484,186,178" Style="{StaticResource HoverButton}" IsEnabled="True">
-                            <Border BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="312">
+                        <Button Cursor="Hand" Click="printLineReportBtn_Click" x:Name="printTransportBtn_admin" Background="Transparent" BorderThickness="0" Margin="798,484,142,178" Style="{StaticResource HoverButton}" IsEnabled="True">
+                            <Border BorderBrush="#C4C4C4" BorderThickness="2" Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="357">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="PRINT" Foreground="White" FontSize="15" FontWeight="Normal" Width="109" TextAlignment="Center"/>
                             </Border>
                         </Button>
