@@ -763,7 +763,7 @@ namespace WeightMaster
             this.Close();
         }
 
-        List<LineMasterBlockModel> lineMasterData = null;
+        List<LineBlockModel> lineMasterData = null;
         List<String> supervisorData = null;
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
@@ -3872,7 +3872,7 @@ namespace WeightMaster
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(4)...";
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(4)..." : "Reverifying Database Status(4)...";
                     });
                     await _consoleHandler.verifyMembers();  // Uncomment when needed
                     //System.Diagnostics.Debug.WriteLine("================");
@@ -3889,6 +3889,32 @@ namespace WeightMaster
                         statusLabel.Content = $"Member(API_v2) Database Error: {ex.Message}";
                     });
                 }
+
+                //newly added api for lines
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(5)..." : "Reverifying Database Status(5)...";
+                    });
+                    await _consoleHandler.VerifyLines();  // Uncomment when needed
+                    //System.Diagnostics.Debug.WriteLine("================");
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(5)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Lines(API_v2) Database Error: {ex.Message}";
+                    });
+                }
+                //VerifyLines()
+
+
                 //await _consoleHandler.verifyMembers();
                 //System.Diagnostics.Debug.WriteLine("================");
 
@@ -4302,7 +4328,7 @@ namespace WeightMaster
             List<DailyReportRowBlockModel> dailyReportData = new List<DailyReportRowBlockModel>();
 
             //get all lines to fetch data seperately
-            List<LineMasterBlockModel> lines = null;
+            List<LineBlockModel> lines = null;
             lines = await _consoleHandler.getLineMasterData();
             int dailyId = 1;
             foreach (var lineMaster in lineMasterData)
