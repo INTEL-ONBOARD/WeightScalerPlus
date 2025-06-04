@@ -54,20 +54,18 @@ namespace WeightMaster.Services
             await _engine.DumpLineMastersInformationAsync();
         }
 
-        //get data from the linemaster db return as a list
-        public async Task<List<LineMasterBlockModel>> getLineMasterData()
+        //get data from the linemaster db return as a list -v2
+        public async Task<List<LineBlockModel>> getLineMasterData()
         {
             return await _engine.getLineMasterData();
         }
-
-
 
         //verify the memberdb
         public async Task verifyMemberDb()
         {
             await _engine.DumpMemberInformation();
         }
-        //get member name by id
+        //get member name by id - v2
         public async Task<string> GetMemberName(String id)
         {
             return await _engine.getMemberNameById(id);
@@ -142,5 +140,10 @@ namespace WeightMaster.Services
         {
             await _engine.getMemberData();
         }
+        public async Task VerifyLines()
+        {
+            await _engine.getLineDataAsync();
+        }
+
     }
 }

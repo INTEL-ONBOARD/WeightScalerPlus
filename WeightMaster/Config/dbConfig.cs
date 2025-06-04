@@ -15,6 +15,7 @@ namespace WeightMaster.Config
         public DbSet<FinalTransactionBlockModel> FinaltransactionData { get; set; }
         public DbSet<RunLog> RunLog { get; set; }
         public DbSet<memDbLog> memDbLog { get; set; }
+        public DbSet<LineBlockModel> lineDbLog { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

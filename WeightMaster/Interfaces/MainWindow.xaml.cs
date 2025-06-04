@@ -769,7 +769,7 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
 
-            await _consoleHandler.verifyMembers();
+            await _consoleHandler.VerifyLines();
             System.Diagnostics.Debug.WriteLine("================");
 
             try

@@ -101,6 +101,27 @@ namespace WeightMaster.Migrations
                     b.ToTable("FinaltransactionData");
                 });
 
+            modelBuilder.Entity("WeightMaster.Models.LineBlockModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LineMaster")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LineName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("lineDbLog");
+                });
+
             modelBuilder.Entity("WeightMaster.Models.LineMasterBlockModel", b =>
                 {
                     b.Property<int>("id")

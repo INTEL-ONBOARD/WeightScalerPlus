@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace WeightMaster.Models
 {
-    
     public class LineMasterBlockModel
     {
         public int id {  get; set; }
