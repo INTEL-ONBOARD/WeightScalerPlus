@@ -742,11 +742,13 @@
                             </Grid>
                         </Border>
                         <!--finish button(not used in the current version)-->
+                        <!--
                         <Button Cursor="Hand" Visibility="Hidden" x:Name="confirmAll_rounds_st1" Background="Transparent" BorderThickness="0" Margin="33,628,361,34" Style="{StaticResource HoverButton}" Click="finishButton_st1_Click">
                             <Border Background="#2ECC71" CornerRadius="8" Padding="10" Height="36" Width="319">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" Text="Finish" Foreground="White" FontSize="15" FontWeight="Normal" Margin="58,-4,58,-3"/>
                             </Border>
                         </Button>
+                        -->
 
                         <!--cancel button(not used in the current version)-->
                         <Button Cursor="Hand" Visibility="Hidden" x:Name="cancelAll_rounds_st1" Background="Transparent" BorderThickness="0" Margin="367,630,20,34" Style="{StaticResource HoverButton}">
