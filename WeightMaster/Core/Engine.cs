@@ -8,7 +8,9 @@ using System.Net.Http;
 using System.Security.Policy;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows.Documents;
 using WeightMaster.Config;
 using WeightMaster.Models;
 using WeightMaster.Services;
@@ -801,8 +803,29 @@ namespace WeightMaster.Core
             try
             {
                 var postService = new PostService(new AppDbContext());
+                var postStatusService = new PostStatusService(new AppDbContext());
+
                 await postService.UpdatePostAsync(id, post);
                 System.Diagnostics.Debug.WriteLine($"Post with ID {id} updated successfully.");
+
+                bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                if (isAvailable)
+                {
+                    GreenLeafPostModel? model =  await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                    if (model != null) { bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                        if (isupdated)
+                        {
+                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
+                        }
+                        else
+                        {
+                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
+
+                        }
+                    }
+                }
+
+
                 return true;
             }
             catch (Exception ex)
@@ -875,6 +898,41 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<bool> PostGreenLeafToExternalApiAsync(GreenLeafPostModel postModel)
+        {
+            var client = new CustomApiClient();
+            var url = "https://teacoopapi.codehub.lk/api/v1/greenleaf";
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Ensures camelCase for JSON
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+
+            try
+            {
+                // Log serialized JSON for debugging
+                var jsonBody = JsonSerializer.Serialize(postModel, options);
+                System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
+                System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
+
+                var response = await client.PostAsync<object>(url, postModel);
+
+                // If it gets here, it was successful (status code 2xx)
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> HTTP Error: {ex.Message}");
+                return false;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> General Error: {ex.Message}");
+                return false;
+            }
+        }
 
 
     }

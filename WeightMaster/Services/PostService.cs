@@ -90,15 +90,30 @@ namespace WeightMaster.Services
             try
             {
                 var postModel = MapPostToModel(newPost);
+
+                // Save the GreenLeafPost
                 await _context.GreenLeafPosts.AddAsync(postModel);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); // This will populate postModel.Id with the auto-generated value
+
+                // Create the related PostStatus entry with default Status = 0
+                var postStatus = new PostStatusModel
+                {
+                    PostId = postModel.Id, // Use the newly generated ID
+                    Status = false           
+                };
+
+                await _context.PostStatus.AddAsync(postStatus);
+                await _context.SaveChangesAsync(); // Save the status record
+
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
+                System.Diagnostics.Debug.WriteLine($"Error adding post and status: {ex.Message}");
                 return false;
             }
         }
+
 
         public async Task<List<GreenLeafPostModel>> GetPostsByDateAsync(string date)
         {
