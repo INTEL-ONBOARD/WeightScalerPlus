@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeightMaster.Migrations
 {
     /// <inheritdoc />
-    public partial class v2updatenew : Migration
+    public partial class v2update : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,6 +56,53 @@ namespace WeightMaster.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FinaltransactionData", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "GreenLeafPosts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    LeafHandoverDate = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Factory = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TransportLineName = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    TransportAgent = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    LeafWeightOfficer = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Supervisor = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    MemberNumber = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    PreMemberNumber = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    BagCount = table.Column<int>(type: "int", nullable: false),
+                    BoxCount = table.Column<int>(type: "int", nullable: false),
+                    RealWeight = table.Column<double>(type: "double", nullable: false),
+                    TotalWeight = table.Column<double>(type: "double", nullable: false),
+                    NomalLeafWeight = table.Column<double>(type: "double", nullable: false),
+                    GoldLeafWeight = table.Column<double>(type: "double", nullable: false),
+                    Wathurata = table.Column<double>(type: "double", nullable: false),
+                    Morapuwata = table.Column<double>(type: "double", nullable: false),
+                    Thambimata = table.Column<double>(type: "double", nullable: false),
+                    Rejected = table.Column<double>(type: "double", nullable: false),
+                    BagWeight = table.Column<double>(type: "double", nullable: false),
+                    BoxWeight = table.Column<double>(type: "double", nullable: false),
+                    FinalGreenLeafCount = table.Column<int>(type: "int", nullable: false),
+                    FinalGoldLeafCount = table.Column<int>(type: "int", nullable: false),
+                    CreatedUser = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UpdatedUser = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GreenLeafPosts", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -266,6 +313,9 @@ namespace WeightMaster.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "GreenLeafPosts");
+
             migrationBuilder.DropTable(
                 name: "lineDbLog");
 
