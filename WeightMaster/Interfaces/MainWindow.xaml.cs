@@ -1128,7 +1128,9 @@ namespace WeightMaster
             memberId_st1 = barcodeTxt_st1.Text;
             //converts the member id to a 05-digit number by adding remaining zeros to the left.
             memberId_st1 = barcodeTxt_st1.Text.PadLeft(5, '0');
+            //to clear out previous values by assigning null
             string memberName = null;
+            greenLeafPostModel_st1 = null;
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId_st1);
@@ -1140,6 +1142,13 @@ namespace WeightMaster
 
                 memberData_st1 = await _consoleHandler.getMember(memberId_st1);
                 //MessageBox.Show(memberData_st1.CustomPreMemberNum);
+
+                //new api (if exists(not null), do an update after adding the new transaction)
+                greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
+                /*if (greenLeafPostModel_st1 == null)
+                {
+                    MessageBox.Show("is null");
+                }*/
             }
             catch (Exception ex)
             {
@@ -1879,44 +1888,92 @@ namespace WeightMaster
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
 
                     //call new api v2
-                    var newGRPM = new GreenLeafPostModel
+                    //save only if the table row doesn't already exists
+                    if (greenLeafPostModel_st1 == null)
                     {
-                        Id = 0,
-                        LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        Factory = "3",
+                        //MessageBox.Show("is null");
+                        var newGRPM = new GreenLeafPostModel
+                        {
+                            Id = 0,
+                            LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            Factory = "3",
 
-                        TransportLineName = lineName_st1,
-                        TransportAgent = lineMasterNameLbl_st1.Text,
-                        LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                        Supervisor = supervisor_st1,
-                        MemberNumber = memberId_st1,
-                        PreMemberNumber = memberData_st1.CustomPreMemberNum, //done
+                            TransportLineName = lineName_st1,
+                            TransportAgent = lineMasterNameLbl_st1.Text,
+                            LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
+                            Supervisor = supervisor_st1,
+                            MemberNumber = memberId_st1,
+                            PreMemberNumber = memberData_st1.CustomPreMemberNum, //done
 
-                        BagCount = nSacks,
-                        BoxCount = nBoxes,
+                            BagCount = nSacks,
+                            BoxCount = nBoxes,
 
-                        RealWeight = (float)Math.Round(weightScalerValue, 2),
-                        TotalWeight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
+                            RealWeight = (float)Math.Round(weightScalerValue, 2),
+                            TotalWeight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
 
-                        NomalLeafWeight = (int)currentNormalLeafWeight_st1,
-                        GoldLeafWeight = (int)currentGoldenLeafWeight_st1,
+                            NomalLeafWeight = (int)currentNormalLeafWeight_st1,
+                            GoldLeafWeight = (int)currentGoldenLeafWeight_st1,
 
-                        Wathurata = wateredWeight,
-                        Morapuwata = maturedWeight,
-                        Thambimata = spoiledWeight,
-                        Rejected = rejectedWeight,
+                            Wathurata = wateredWeight,
+                            Morapuwata = maturedWeight,
+                            Thambimata = spoiledWeight,
+                            Rejected = rejectedWeight,
 
-                        BagWeight = 0,
-                        BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
+                            BagWeight = 0,
+                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
 
-                        FinalGreenLeafCount = availableNormalLeafWeight,
-                        FinalGoldLeafCount = availableGoldenLeafWeight,
+                            FinalGreenLeafCount = availableNormalLeafWeight,
+                            FinalGoldLeafCount = availableGoldenLeafWeight,
 
-                        CreatedUser = userEmail,
-                        UpdatedUser = ""
-                    };
+                            CreatedUser = userEmail,
+                            UpdatedUser = ""
+                        };
 
-                    await _consoleHandler.SaveData(newGRPM);
+                        await _consoleHandler.SaveData(newGRPM);
+                    }
+                    else //add the current values to the existing record and update it instead of adding a new one
+                    {
+                        //MessageBox.Show("is null");
+                        var newGRPM = new GreenLeafPostModel
+                        {
+                            Id = 0,
+                            LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                            Factory = "3",
+
+                            TransportLineName = lineName_st1,
+                            TransportAgent = lineMasterNameLbl_st1.Text,
+                            LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
+                            Supervisor = supervisor_st1,
+                            MemberNumber = memberId_st1,
+                            PreMemberNumber = memberData_st1.CustomPreMemberNum, //done
+
+                            BagCount = nSacks + greenLeafPostModel_st1.BagCount,
+                            BoxCount = nBoxes + greenLeafPostModel_st1.BoxCount,
+
+                            RealWeight = (float)Math.Round(weightScalerValue, 2) + greenLeafPostModel_st1.RealWeight,
+                            TotalWeight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.TotalWeight,
+
+                            NomalLeafWeight = (int)currentNormalLeafWeight_st1 + greenLeafPostModel_st1.NomalLeafWeight,
+                            GoldLeafWeight = (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.GoldLeafWeight,
+
+                            Wathurata = wateredWeight + greenLeafPostModel_st1.Wathurata,
+                            Morapuwata = maturedWeight + greenLeafPostModel_st1.Morapuwata,
+                            Thambimata = spoiledWeight + greenLeafPostModel_st1.Thambimata,
+                            Rejected = rejectedWeight + greenLeafPostModel_st1.Rejected,
+
+                            BagWeight = 0 + greenLeafPostModel_st1.BagWeight,
+                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight) + greenLeafPostModel_st1.BoxWeight,
+
+                            FinalGreenLeafCount = availableNormalLeafWeight + greenLeafPostModel_st1.FinalGreenLeafCount,
+                            FinalGoldLeafCount = availableGoldenLeafWeight + greenLeafPostModel_st1.FinalGoldLeafCount,
+
+                            CreatedUser = userEmail,
+                            UpdatedUser = ""
+                        };
+
+                        await _consoleHandler.UpdateData(greenLeafPostModel_st1.Id, newGRPM);
+                    }
+                    
 
 
                     // enable and disable confirm buttons
