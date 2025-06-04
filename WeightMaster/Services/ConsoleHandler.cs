@@ -160,7 +160,7 @@ namespace WeightMaster.Services
         {
             return await _engine.getLatestPost();
         }
-        public async Task<List<GreenLeafPostModel>> GetRecent(string memberid,string date_)
+        public async Task<List<GreenLeafPostModel>> getDatabyMemberiDandDate(string memberid,string date_)
         {
             return await _engine.getPostsByMemberAndDate(memberid,date_);
         }
