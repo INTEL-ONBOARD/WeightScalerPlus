@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeightMaster.Migrations
 {
     /// <inheritdoc />
-    public partial class migrarion : Migration
+    public partial class v2updatenew : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -94,6 +94,27 @@ namespace WeightMaster.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MembersData", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "memDbLog",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    CustomMemberNum = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CustomPreMemberNum = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CustomNameWithInitials = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    CellNumber = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_memDbLog", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -233,6 +254,9 @@ namespace WeightMaster.Migrations
 
             migrationBuilder.DropTable(
                 name: "MembersData");
+
+            migrationBuilder.DropTable(
+                name: "memDbLog");
 
             migrationBuilder.DropTable(
                 name: "RunLog");

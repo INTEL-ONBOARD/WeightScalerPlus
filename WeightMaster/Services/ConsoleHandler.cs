@@ -66,7 +66,6 @@ namespace WeightMaster.Services
         public async Task verifyMemberDb()
         {
             await _engine.DumpMemberInformation();
-
         }
         //get member name by id
         public async Task<string> GetMemberName(String id)
@@ -134,6 +133,14 @@ namespace WeightMaster.Services
         public async Task<List<FinalTransactionBlockModel>> print_sta2_onCustomDate(string linename,string date_)
         {
             return await _engine.getPrintData_2_onCustomDate(linename,date_);
+        }
+
+
+
+        //Version2 new exposed methods
+        public async Task verifyMembers()
+        {
+            await _engine.getMemberData();
         }
     }
 }

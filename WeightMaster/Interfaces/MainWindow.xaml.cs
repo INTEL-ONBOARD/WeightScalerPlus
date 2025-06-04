@@ -768,6 +768,10 @@ namespace WeightMaster
 
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
+
+            await _consoleHandler.verifyMembers();
+            System.Diagnostics.Debug.WriteLine("================");
+
             try
             {
                 // Update status label to indicate that fetching has started

@@ -192,6 +192,7 @@ namespace WeightMaster.Core
             }
         }
 
+
         internal async Task<List<LineMasterBlockModel>> getLineMasterData()
         {
             try
@@ -243,7 +244,7 @@ namespace WeightMaster.Core
         {
             try
             {
-                var memService = new MemberService(new AppDbContext());
+                var memService = new MemService(new AppDbContext());
                 String data = await memService.GetCustomNameWithInitialsAsync(id);
                 System.Diagnostics.Debug.WriteLine("----------> " + data);
 
@@ -263,7 +264,7 @@ namespace WeightMaster.Core
         {
             try
             {
-                var memService = new MemberService(new AppDbContext());
+                var memService = new MemService(new AppDbContext());
                 String data = await memService.GetCellNumberByCustomMemberNumAsync(id);
                 System.Diagnostics.Debug.WriteLine(">>>>!" + data);
                 return data;
@@ -539,9 +540,6 @@ namespace WeightMaster.Core
             }
         }
 
-
-        
-
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByBarcodeAndDateAsync(string barcodeDetails)
         {
             try
@@ -559,9 +557,6 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-
-
-
 
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode,string linename)
         {
@@ -581,9 +576,6 @@ namespace WeightMaster.Core
                 ;
             }
         }
-
-
-
         public async Task<bool> UpdateBagWeightCollectionAsync(FinalTransactionBlockModel finalTransactionBlockModel)
         {
             ApiClient apiClient = new ApiClient();
@@ -720,6 +712,41 @@ namespace WeightMaster.Core
             }
         }
 
+
+
+
+
+
+        public async Task getMemberData()
+        {
+            int currentCloudCount = 0;
+            var service = new MemService(new AppDbContext());
+            int memberCount = await service.GetMemberCountAsync();
+
+            var apiClient = new CustomApiClient(); // Use your token-aware API client
+            string url = "https://teacoopapi.codehub.lk/api/v1/members/thirdparty-members";
+
+            // Make GET request
+            MemberResponse? apiResponse = await apiClient.GetAsync<MemberResponse>(url);
+
+            if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+            {
+                currentCloudCount = apiResponse.Data.Count;
+                if (currentCloudCount != memberCount)
+                {
+                    await service.ReplaceMembersAsync(apiResponse.Data);
+                    Console.WriteLine("> Member data replaced successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("> No update required. Local and cloud member counts match.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data received or response indicates failure.");
+            }
+        }
 
 
 

@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250604000515_v2-update")]
-    partial class v2update
+    [Migration("20250604065659_v2-update-new")]
+    partial class v2updatenew
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -320,6 +320,34 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserLoginsLog");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.memDbLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CellNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomMemberNum")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomNameWithInitials")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomPreMemberNum")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("memDbLog");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.RunLog", b =>

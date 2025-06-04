@@ -319,6 +319,34 @@ namespace WeightMaster.Migrations
                     b.ToTable("UserLoginsLog");
                 });
 
+            modelBuilder.Entity("WeightMaster.Models.memDbLog", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CellNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomMemberNum")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomNameWithInitials")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("CustomPreMemberNum")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("memDbLog");
+                });
+
             modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
                 {
                     b.HasOne("WeightMaster.Models.FinalTransactionBlockModel", "FinalTransaction")
