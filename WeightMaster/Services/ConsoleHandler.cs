@@ -144,6 +144,18 @@ namespace WeightMaster.Services
         {
             await _engine.getLineDataAsync();
         }
+        public async Task SaveData(GreenLeafPostModel s)
+        {
+           await _engine.addPost(s);
+        }
+        public async Task<bool> UpdateData(int id , GreenLeafPostModel s)
+        {
+            return await _engine.updatePost(id ,s);
+        }
+        public async Task<GreenLeafPostModel?> GetData(int id)
+        {
+            return await _engine.getPostById(id);
+        }
 
     }
 }

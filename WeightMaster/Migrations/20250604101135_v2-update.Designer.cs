@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250604074405_v2-update-new")]
-    partial class v2updatenew
+    [Migration("20250604101135_v2-update")]
+    partial class v2update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -102,6 +102,100 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FinaltransactionData");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.GreenLeafPostModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BagCount")
+                        .HasColumnType("int");
+
+                    b.Property<double>("BagWeight")
+                        .HasColumnType("double");
+
+                    b.Property<int>("BoxCount")
+                        .HasColumnType("int");
+
+                    b.Property<double>("BoxWeight")
+                        .HasColumnType("double");
+
+                    b.Property<string>("CreatedUser")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Factory")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("FinalGoldLeafCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FinalGreenLeafCount")
+                        .HasColumnType("int");
+
+                    b.Property<double>("GoldLeafWeight")
+                        .HasColumnType("double");
+
+                    b.Property<string>("LeafHandoverDate")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LeafWeightOfficer")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("MemberNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("Morapuwata")
+                        .HasColumnType("double");
+
+                    b.Property<double>("NomalLeafWeight")
+                        .HasColumnType("double");
+
+                    b.Property<string>("PreMemberNumber")
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("RealWeight")
+                        .HasColumnType("double");
+
+                    b.Property<double>("Rejected")
+                        .HasColumnType("double");
+
+                    b.Property<string>("Supervisor")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("Thambimata")
+                        .HasColumnType("double");
+
+                    b.Property<double>("TotalWeight")
+                        .HasColumnType("double");
+
+                    b.Property<string>("TransportAgent")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("TransportLineName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("UpdatedUser")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<double>("Wathurata")
+                        .HasColumnType("double");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GreenLeafPosts");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.LineBlockModel", b =>
