@@ -3396,25 +3396,25 @@ namespace WeightMaster
                         MemberNumber = currentMemberDetails_st2.barcode_details,
                         PreMemberNumber = greenLeafPostModel_st2.PreMemberNumber, //done  //TBD-------------------------------------------------------------------------------------------
 
-                        BagCount = finalNSacks,
-                        BoxCount = greenLeafPostModel_st2.BoxCount, //fix this?  //TBD-------------------------------------------------------------------------------------------
+                        BagCount = greenLeafPostModel_st2.BagCount,
+                        BoxCount = greenLeafPostModel_st2.BoxCount, //done  //TBD-------------------------------------------------------------------------------------------
 
-                        RealWeight = greenLeafPostModel_st2.RealWeight, //done?     //TBD-------------------------------------------------------------------------------------------
-                        TotalWeight = currentMemberDetails_st2.total_leaf_weight,
+                        RealWeight = greenLeafPostModel_st2.RealWeight,//(added boxWeight)     //done     //TBD-------------------------------------------------------------------------------------------
+                        TotalWeight = greenLeafPostModel_st2.TotalWeight, //(added boxWeight) 
 
-                        NomalLeafWeight = currentMemberDetails_st2.actual_nomal_leaf_weight,
-                        GoldLeafWeight = currentMemberDetails_st2.total_gold_leaf_weight,
+                        NomalLeafWeight = greenLeafPostModel_st2.NomalLeafWeight,
+                        GoldLeafWeight = greenLeafPostModel_st2.GoldLeafWeight,
 
-                        Wathurata = finalWateredWeight,
-                        Morapuwata = finalMaturedWeight,
-                        Thambimata = finalSpoiledWeight,
-                        Rejected = finalRejectedWeight,
+                        Wathurata = finalWateredWeight, //HANDLE //no deductions w/ boxes included
+                        Morapuwata = finalMaturedWeight, //HANDLE
+                        Thambimata = finalSpoiledWeight, //HANDLE
+                        Rejected = finalRejectedWeight, //HANDLE
 
-                        BagWeight = totalAcceptedSackWeight,
-                        BoxWeight = greenLeafPostModel_st2.BoxWeight, //done?  //TBD-------------------------------------------------------------------------------------------
+                        BagWeight = totalAcceptedSackWeight, //handle
+                        BoxWeight = greenLeafPostModel_st2.BoxWeight, //done  //TBD-------------------------------------------------------------------------------------------
 
-                        FinalGreenLeafCount = finalAvailableNormalLeafWeight,
-                        FinalGoldLeafCount = finalAvailableGoldenLeafWeight,
+                        FinalGreenLeafCount = finalAvailableNormalLeafWeight, //HANDLE
+                        FinalGoldLeafCount = finalAvailableGoldenLeafWeight,  //HANDLE
 
                         CreatedUser = greenLeafPostModel_st2.CreatedUser, //done //TBD-------------------------------------------------------------------------------------------
                         UpdatedUser = userEmail
