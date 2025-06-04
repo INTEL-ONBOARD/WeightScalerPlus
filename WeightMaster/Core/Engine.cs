@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -842,6 +843,21 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<GreenLeafPostModel?> getPostByMemberAndDate(string memberNumber, string date)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var post = await postService.GetPostByMemberAndDateAsyncSingle(memberNumber, date);
+                System.Diagnostics.Debug.WriteLine($"> Found post: {post?.Id}");
+                return post;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving post by member and date: {ex.Message}");
+                return null;
+            }
+        }
 
 
 
