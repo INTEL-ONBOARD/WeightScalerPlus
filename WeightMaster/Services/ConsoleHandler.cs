@@ -144,26 +144,32 @@ namespace WeightMaster.Services
         {
             await _engine.getLineDataAsync();
         }
+        //station 1 use only
         public async Task SaveData(GreenLeafPostModel s)
         {
            await _engine.addPost(s);
         }
+        //update the SaveData on st1 record
         public async Task<bool> UpdateData(int id , GreenLeafPostModel s)
         {
             return await _engine.updatePost(id ,s);
         }
+        //get id and blueprint in st2
         public async Task<GreenLeafPostModel?> GetData(int id)
         {
             return await _engine.getPostById(id);
         }
+        //useless for now
         public async Task<GreenLeafPostModel?> GetRecent()
         {
             return await _engine.getLatestPost();
         }
+        //get id and blueprint in st2 with DATE! with a list
         public async Task<List<GreenLeafPostModel>> getDatabyMemberiDandDate(string memberid,string date_)
         {
             return await _engine.getPostsByMemberAndDate(memberid,date_);
         }
+        //get id and blueprint in st2 with DATE! with a single record
         public async Task<GreenLeafPostModel> getDatabyMemberiDandDateSingle(string memberid, string date_)
         {
             return await _engine.getPostByMemberAndDate(memberid, date_);
