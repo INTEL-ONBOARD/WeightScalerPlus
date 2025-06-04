@@ -700,11 +700,6 @@ namespace WeightMaster.Core
             }
         }
 
-
-
-
-
-
         public async Task getMemberData()
         {
             int currentCloudCount = 0;
@@ -765,6 +760,54 @@ namespace WeightMaster.Core
             else
             {
                 Console.WriteLine("No data received or response indicates failure.");
+            }
+        }
+
+        public async Task<GreenLeafPostModel?> getPostById(int id)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var post = await postService.GetPostByIdAsync(id);
+                System.Diagnostics.Debug.WriteLine("Post fetched successfully.");
+                return post;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error fetching post by ID {id}: {ex.Message}");
+                return null;
+            }
+        }
+
+        public async Task<bool> addPost(GreenLeafPostModel post)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var success = await postService.AddPostAsync(post);
+                System.Diagnostics.Debug.WriteLine("Post added successfully.");
+                return success;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error adding post: {ex.Message}");
+                return false;
+            }
+        }
+
+        public async Task<bool> updatePost(int id, GreenLeafPostModel post)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                await postService.UpdatePostAsync(id, post);
+                System.Diagnostics.Debug.WriteLine($"Post with ID {id} updated successfully.");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating post with ID {id}: {ex.Message}");
+                return false;
             }
         }
 
