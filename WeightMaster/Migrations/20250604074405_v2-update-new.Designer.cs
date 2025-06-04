@@ -12,7 +12,7 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250604065659_v2-update-new")]
+    [Migration("20250604074405_v2-update-new")]
     partial class v2updatenew
     {
         /// <inheritdoc />
@@ -102,6 +102,27 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("FinaltransactionData");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.LineBlockModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("LineMaster")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("LineName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("lineDbLog");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.LineMasterBlockModel", b =>

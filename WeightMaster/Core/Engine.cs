@@ -128,10 +128,6 @@ namespace WeightMaster.Core
             }
         }
 
-
-
-
-
         public async Task<List<string>> GetUsernamesAsync()
         {
             try
@@ -148,13 +144,6 @@ namespace WeightMaster.Core
                 return null;
             }
         }
-
-
-
-
-
-
-
 
         public async Task DumpLineMastersInformationAsync()
         {
@@ -193,12 +182,12 @@ namespace WeightMaster.Core
         }
 
 
-        internal async Task<List<LineMasterBlockModel>> getLineMasterData()
+        internal async Task<List<LineBlockModel>> getLineMasterData()
         {
             try
             {
-                var lineService = new LineMasterService(new AppDbContext());
-                var data = await lineService.GetLineMasterDataAsync();
+                var lineService = new LineService(new AppDbContext());
+                var data = await lineService.GetLineDataAsync();
                 System.Diagnostics.Debug.WriteLine("Running!");
 
                 return data;  
@@ -206,7 +195,7 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
-                return new List<LineMasterBlockModel>();
+                return new List<LineBlockModel>();
             }
         }
 
@@ -247,7 +236,6 @@ namespace WeightMaster.Core
                 var memService = new MemService(new AppDbContext());
                 String data = await memService.GetCustomNameWithInitialsAsync(id);
                 System.Diagnostics.Debug.WriteLine("----------> " + data);
-
                 return data;
             }
             catch (Exception ex)
@@ -740,6 +728,38 @@ namespace WeightMaster.Core
                 else
                 {
                     Console.WriteLine("> No update required. Local and cloud member counts match.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No data received or response indicates failure.");
+            }
+        }
+
+        public async Task getLineDataAsync()
+        {
+            int currentCloudCount = 0;
+
+            var service = new LineService(new AppDbContext());
+            int localCount = await service.GetLineCountAsync();
+
+            var apiClient = new CustomApiClient(); // Use token-aware client
+            string url = "https://teacoopapi.codehub.lk/api/v1/linemaster/thirdparty-linemaster"; // Replace with actual endpoint
+
+            LineResponse? apiResponse = await apiClient.GetAsync<LineResponse>(url);
+
+            if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+            {
+                currentCloudCount = apiResponse.Data.Count;
+
+                if (currentCloudCount != localCount)
+                {
+                    await service.ReplaceLineDataAsync(apiResponse.Data);
+                    Console.WriteLine("> Line data replaced successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("> No update required. Local and cloud line counts match.");
                 }
             }
             else
