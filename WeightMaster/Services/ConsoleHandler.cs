@@ -185,8 +185,10 @@ namespace WeightMaster.Services
         {
             return await _engine.GetMemberByCustomMemberNumAsync(customMemberNum);
         }
-
-
+        public async Task cloudsync()
+        {
+            await _engine.cloudSync();
+        }
 
     }
 }

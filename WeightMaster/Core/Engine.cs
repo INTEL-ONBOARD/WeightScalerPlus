@@ -835,6 +835,44 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<bool> cloudSync()
+        {
+            try
+            {
+                var postStatusService = new PostStatusService(new AppDbContext());
+                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC STARTED!");
+
+                bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                if (isAvailable)
+                {
+                    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                    if (model != null)
+                    {
+                        bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                        if (isupdated)
+                        {
+                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
+                        }
+                        else
+                        {
+                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
+
+                        }
+                    }
+                }
+
+                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC FINISHED!");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC FAILED!");
+                return false;
+            }
+        }
+
+
+
         public async Task<GreenLeafPostModel?> getLatestPost()
         {
             try
