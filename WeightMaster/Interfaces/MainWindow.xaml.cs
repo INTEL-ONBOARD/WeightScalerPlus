@@ -769,9 +769,6 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
 
-            await _consoleHandler.verifyMembers();
-            System.Diagnostics.Debug.WriteLine("================");
-
             try
             {
                 // Update status label to indicate that fetching has started
@@ -3803,17 +3800,16 @@ namespace WeightMaster
             }
 
             // Repeat until no exception occurs
+            bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
             do
             {
                 try
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = "Verifying Database Status(1)...";
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(1)..." : "Reverifying Database Status(1)...";
                     });
-
                     await _consoleHandler.VerifyUserDb(); // Uncomment when needed
-
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(1)";
@@ -3832,11 +3828,9 @@ namespace WeightMaster
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = "Verifying Database Status(2)...";
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(2)..." : "Reverifying Database Status(2)...";
                     });
-
                     await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
-
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -3855,11 +3849,9 @@ namespace WeightMaster
                 {
                     Dispatcher.Invoke(() =>
                     {
-                        statusLabel.Content = "Verifying Database Status(3)...";
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(3)...";
                     });
-
                     await _consoleHandler.verifyMemberDb(); // Uncomment when needed
-
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -3874,6 +3866,31 @@ namespace WeightMaster
                         statusLabel.Content = $"Member Database Error: {ex.Message}";
                     });
                 }
+
+                //newly added api for members
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(4)...";
+                    });
+                    await _consoleHandler.verifyMembers();  // Uncomment when needed
+                    //System.Diagnostics.Debug.WriteLine("================");
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(4)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Member(API_v2) Database Error: {ex.Message}";
+                    });
+                }
+                //await _consoleHandler.verifyMembers();
+                //System.Diagnostics.Debug.WriteLine("================");
 
                 // Transaction verification is commented out, include it when needed
                 // try
@@ -3891,6 +3908,8 @@ namespace WeightMaster
                 // }
 
             } while (failed);
+            //resetting value for next execution 
+            firstItr = true;
 
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
