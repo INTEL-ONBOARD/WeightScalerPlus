@@ -154,7 +154,10 @@ namespace WeightMaster.Services
         {
             return await _engine.updatePost(id ,s);
         }
-        //get id and blueprint in st2
+
+
+
+        //get id and blueprint in st2 useless for now
         public async Task<GreenLeafPostModel?> GetData(int id)
         {
             return await _engine.getPostById(id);
@@ -164,6 +167,10 @@ namespace WeightMaster.Services
         {
             return await _engine.getLatestPost();
         }
+
+
+
+
         //get id and blueprint in st2 with DATE! with a list
         public async Task<List<GreenLeafPostModel>> getDatabyMemberiDandDate(string memberid,string date_)
         {
