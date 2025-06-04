@@ -156,5 +156,14 @@ namespace WeightMaster.Services
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<List<GreenLeafPostModel>> GetPostsByMemberAndDateAsync(string memberNumber, string handoverDate)
+        {
+            return await _context.GreenLeafPosts
+                .Where(p => p.MemberNumber == memberNumber && p.LeafHandoverDate == handoverDate)
+                .ToListAsync();
+        }
+
+
     }
 }

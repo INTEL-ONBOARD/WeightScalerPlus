@@ -826,6 +826,23 @@ namespace WeightMaster.Core
                 return null;
             }
         }
+        public async Task<List<GreenLeafPostModel>> getPostsByMemberAndDate(string memberNumber, string date)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var posts = await postService.GetPostsByMemberAndDateAsync(memberNumber, date);
+                System.Diagnostics.Debug.WriteLine($"> Found {posts.Count} post(s)");
+                return posts;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving posts by member and date: {ex.Message}");
+                return new List<GreenLeafPostModel>();
+            }
+        }
+
+
 
 
     }
