@@ -144,7 +144,6 @@ namespace WeightMaster.Services
         {
             await _engine.getLineDataAsync();
         }
-
         public async Task SaveData(GreenLeafPostModel s)
         {
            await _engine.addPost(s);
@@ -165,10 +164,11 @@ namespace WeightMaster.Services
         {
             return await _engine.getPostsByMemberAndDate(memberid,date_);
         }
-
-        public async Task<GreenLeafPostModel> getDatabyMemberiDandDateSingle (string memberid, string date_)
+        public async Task<GreenLeafPostModel> getDatabyMemberiDandDateSingle(string memberid, string date_)
         {
             return await _engine.getPostByMemberAndDate(memberid, date_);
         }
+
+
     }
 }
