@@ -21,7 +21,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="general_styles.xaml"/>
                 <ResourceDictionary Source="custom_styles.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
+            </ResourceDictionary.MergedDictionaries>c:\users\kkwenuja\source\repos\intel-onboard\weightscalerplus\weightmaster\interfaces\mainwindow.xaml.cs
+c:\users\kkwenuja\source\repos\intel-onboard\weightscalerplus\weightmaster\interfaces\mainwindow.xaml
+
         </ResourceDictionary>
     </Window.Resources>
 

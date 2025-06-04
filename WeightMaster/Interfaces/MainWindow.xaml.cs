@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Windows.Documents;
 using System.Windows.Shapes;
 using Newtonsoft.Json.Linq;
+using System.Threading.Tasks;
 
 
 namespace WeightMaster
@@ -3655,9 +3656,17 @@ namespace WeightMaster
 
         }
 
-        private void SyncButton_Click(object sender, RoutedEventArgs e)
+        private async Task SyncButton_Click(object sender, RoutedEventArgs e)
         {
-
+            try
+            {
+                await _consoleHandler.cloudsync();
+                statusLabel.Content = "Cloud syncing...";
+            }
+            catch
+            {
+                statusLabel.Content = "Cloud syncing failed...";
+            }
         }
 
         //protected override void OnClosed(EventArgs e)
