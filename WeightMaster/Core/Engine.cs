@@ -840,7 +840,7 @@ namespace WeightMaster.Core
             try
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
-                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC STARTED!");
+                System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
 
                 bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
                 if (isAvailable)
@@ -861,12 +861,12 @@ namespace WeightMaster.Core
                     }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC FINISHED!");
+                System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
                 return true;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"======> CLOUD SYNC FAILED!");
+                System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FAILED!");
                 return false;
             }
         }
