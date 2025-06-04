@@ -859,6 +859,22 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<memDbLog?> GetMemberByCustomMemberNumAsync(string customMemberNum)
+        {
+            try
+            {
+                var memService = new MemService(new AppDbContext());
+                var member = await memService.GetMemberByCustomMemberNumAsync(customMemberNum);
+                System.Diagnostics.Debug.WriteLine($"> Found member: {member?.CustomMemberNum} - {member?.CustomNameWithInitials}");
+                return member;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving member by CustomMemberNum: {ex.Message}");
+                return null;
+            }
+        }
+
 
 
     }

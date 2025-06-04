@@ -175,6 +175,12 @@ namespace WeightMaster.Services
             return await _engine.getPostByMemberAndDate(memberid, date_);
         }
 
+        public async Task<memDbLog> getMember(string customMemberNum)
+        {
+            return await _engine.GetMemberByCustomMemberNumAsync(customMemberNum);
+        }
+
+
 
     }
 }

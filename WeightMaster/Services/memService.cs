@@ -93,5 +93,11 @@ namespace WeightMaster.Services
 
             return member?.CellNumber ?? "";
         }
+        public async Task<memDbLog?> GetMemberByCustomMemberNumAsync(string customMemberNum)
+        {
+            return await _context.memDbLog
+                .FirstOrDefaultAsync(m => m.CustomMemberNum == customMemberNum);
+        }
+
     }
 }
