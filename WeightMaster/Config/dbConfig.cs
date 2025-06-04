@@ -17,6 +17,8 @@ namespace WeightMaster.Config
         public DbSet<memDbLog> memDbLog { get; set; }
         public DbSet<LineBlockModel> lineDbLog { get; set; }
         public DbSet<GreenLeafPostModel> GreenLeafPosts { get; set; }
+        public DbSet<PostStatusModel> PostStatus { get; set; }
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

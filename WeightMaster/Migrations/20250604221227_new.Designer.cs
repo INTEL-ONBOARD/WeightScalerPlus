@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250604101135_v2-update")]
-    partial class v2update
+    [Migration("20250604221227_new")]
+    partial class @new
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -264,6 +264,25 @@ namespace WeightMaster.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("MembersData");
+                });
+
+            modelBuilder.Entity("WeightMaster.Models.PostStatusModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostStatus");
                 });
 
             modelBuilder.Entity("WeightMaster.Models.RunLog", b =>

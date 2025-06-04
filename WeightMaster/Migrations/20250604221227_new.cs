@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeightMaster.Migrations
 {
     /// <inheritdoc />
-    public partial class v2update : Migration
+    public partial class @new : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -183,6 +183,21 @@ namespace WeightMaster.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "PostStatus",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    PostId = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PostStatus", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "transactionData",
                 columns: table => new
                 {
@@ -327,6 +342,9 @@ namespace WeightMaster.Migrations
 
             migrationBuilder.DropTable(
                 name: "memDbLog");
+
+            migrationBuilder.DropTable(
+                name: "PostStatus");
 
             migrationBuilder.DropTable(
                 name: "RunLog");

@@ -263,6 +263,25 @@ namespace WeightMaster.Migrations
                     b.ToTable("MembersData");
                 });
 
+            modelBuilder.Entity("WeightMaster.Models.PostStatusModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("PostId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Status")
+                        .HasColumnType("tinyint(1)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PostStatus");
+                });
+
             modelBuilder.Entity("WeightMaster.Models.RunLog", b =>
                 {
                     b.Property<int>("Id")
