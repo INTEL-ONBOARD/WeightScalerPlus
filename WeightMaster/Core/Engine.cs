@@ -811,6 +811,21 @@ namespace WeightMaster.Core
             }
         }
 
+        public async Task<GreenLeafPostModel?> getLatestPost()
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var latestPost = await postService.GetLatestPostAsync();
+                System.Diagnostics.Debug.WriteLine($"> Latest post ID: {latestPost?.Id}");
+                return latestPost;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving latest post: {ex.Message}");
+                return null;
+            }
+        }
 
 
     }

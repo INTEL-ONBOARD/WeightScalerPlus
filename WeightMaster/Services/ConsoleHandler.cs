@@ -156,6 +156,11 @@ namespace WeightMaster.Services
         {
             return await _engine.getPostById(id);
         }
+        public async Task<GreenLeafPostModel?> GetRecent()
+        {
+            return await _engine.getLatestPost();
+        }
+        
 
     }
 }

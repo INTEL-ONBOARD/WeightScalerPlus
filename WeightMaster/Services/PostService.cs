@@ -114,6 +114,14 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        public async Task<GreenLeafPostModel?> GetLatestPostAsync()
+        {
+            return await _context.GreenLeafPosts
+                .OrderByDescending(p => p.Id)
+                .FirstOrDefaultAsync();
+        }
+
+
         public async Task UpdatePostAsync(int id, GreenLeafPostModel updatedPost)
         {
             var existingPost = await GetPostByIdAsync(id);
