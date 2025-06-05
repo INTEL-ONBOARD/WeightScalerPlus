@@ -851,11 +851,11 @@ namespace WeightMaster.Core
                         bool isupdated = await PostGreenLeafToExternalApiAsync(model);
                         if (isupdated)
                         {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
+                            await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
                         }
                         else
                         {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
+                            await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
 
                         }
                     }
@@ -879,7 +879,7 @@ namespace WeightMaster.Core
             {
                 var postService = new PostService(new AppDbContext());
                 var latestPost = await postService.GetLatestPostAsync();
-                System.Diagnostics.Debug.WriteLine($"> Latest post ID: {latestPost?.Id}");
+                System.Diagnostics.Debug.WriteLine($"> Latest post ID: {latestPost?.id}");
                 return latestPost;
             }
             catch (Exception ex)
@@ -910,7 +910,7 @@ namespace WeightMaster.Core
             {
                 var postService = new PostService(new AppDbContext());
                 var post = await postService.GetPostByMemberAndDateAsyncSingle(memberNumber, date);
-                System.Diagnostics.Debug.WriteLine($"> Found post: {post?.Id}");
+                System.Diagnostics.Debug.WriteLine($"> Found post: {post?.id}");
                 return post;
             }
             catch (Exception ex)

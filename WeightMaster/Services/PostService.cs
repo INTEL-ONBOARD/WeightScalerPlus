@@ -17,36 +17,35 @@ namespace WeightMaster.Services
             _context = context;
         }
 
-        // Map to ensure decoupled cloning of model instances
         private GreenLeafPostModel MapPostToModel(GreenLeafPostModel post)
         {
             return new GreenLeafPostModel
             {
-                Id = post.Id,
-                LeafHandoverDate = post.LeafHandoverDate,
-                Factory = post.Factory,
-                TransportLineName = post.TransportLineName,
-                TransportAgent = post.TransportAgent,
-                LeafWeightOfficer = post.LeafWeightOfficer,
-                Supervisor = post.Supervisor,
-                MemberNumber = post.MemberNumber,
-                PreMemberNumber = post.PreMemberNumber,
-                BagCount = post.BagCount,
-                BoxCount = post.BoxCount,
-                RealWeight = post.RealWeight,
-                TotalWeight = post.TotalWeight,
-                NomalLeafWeight = post.NomalLeafWeight,
-                GoldLeafWeight = post.GoldLeafWeight,
-                Wathurata = post.Wathurata,
-                Morapuwata = post.Morapuwata,
-                Thambimata = post.Thambimata,
-                Rejected = post.Rejected,
-                BagWeight = post.BagWeight,
-                BoxWeight = post.BoxWeight,
-                FinalGreenLeafCount = post.FinalGreenLeafCount,
-                FinalGoldLeafCount = post.FinalGoldLeafCount,
-                CreatedUser = post.CreatedUser,
-                UpdatedUser = post.UpdatedUser
+                id = post.id,
+                leaf_handover_date = post.leaf_handover_date,
+                factory = post.factory,
+                transportlinename = post.transportlinename,
+                transportagent = post.transportagent,
+                leaf_weight_officer = post.leaf_weight_officer,
+                supervisor = post.supervisor,
+                membernumber = post.membernumber,
+                premembernumber = post.premembernumber,
+                bag_count = post.bag_count,
+                box_count = post.box_count,
+                real_weight = post.real_weight,
+                total_weight = post.total_weight,
+                nomal_leaf_weight = post.nomal_leaf_weight,
+                gold_leaf_weight = post.gold_leaf_weight,
+                wathurata = post.wathurata,
+                morapuwata = post.morapuwata,
+                thambimata = post.thambimata,
+                rejected = post.rejected,
+                bag_weight = post.bag_weight,
+                box_weight = post.box_weight,
+                final_green_leaf_count = post.final_green_leaf_count,
+                final_gold_leaf_count = post.final_gold_leaf_count,
+                created_user = post.created_user,
+                updated_user = post.updated_user
             };
         }
 
@@ -72,7 +71,7 @@ namespace WeightMaster.Services
 
         public async Task<GreenLeafPostModel> GetPostByIdAsync(int id)
         {
-            return await _context.GreenLeafPosts.FirstOrDefaultAsync(p => p.Id == id);
+            return await _context.GreenLeafPosts.FirstOrDefaultAsync(p => p.id == id);
         }
 
         public async Task DeletePostByIdAsync(int id)
@@ -91,19 +90,17 @@ namespace WeightMaster.Services
             {
                 var postModel = MapPostToModel(newPost);
 
-                // Save the GreenLeafPost
                 await _context.GreenLeafPosts.AddAsync(postModel);
-                await _context.SaveChangesAsync(); // This will populate postModel.Id with the auto-generated value
+                await _context.SaveChangesAsync();
 
-                // Create the related PostStatus entry with default Status = 0
                 var postStatus = new PostStatusModel
                 {
-                    PostId = postModel.Id, // Use the newly generated ID
-                    Status = false           
+                    PostId = postModel.id,
+                    Status = false
                 };
 
                 await _context.PostStatus.AddAsync(postStatus);
-                await _context.SaveChangesAsync(); // Save the status record
+                await _context.SaveChangesAsync();
 
                 return true;
             }
@@ -114,59 +111,56 @@ namespace WeightMaster.Services
             }
         }
 
-
         public async Task<List<GreenLeafPostModel>> GetPostsByDateAsync(string date)
         {
             return await _context.GreenLeafPosts
-                .Where(p => p.LeafHandoverDate == date)
+                .Where(p => p.leaf_handover_date == date)
                 .ToListAsync();
         }
 
         public async Task<List<GreenLeafPostModel>> GetPostsByTransportAgentAsync(string agent)
         {
             return await _context.GreenLeafPosts
-                .Where(p => p.TransportAgent == agent)
+                .Where(p => p.transportagent == agent)
                 .ToListAsync();
         }
 
         public async Task<GreenLeafPostModel?> GetLatestPostAsync()
         {
             return await _context.GreenLeafPosts
-                .OrderByDescending(p => p.Id)
+                .OrderByDescending(p => p.id)
                 .FirstOrDefaultAsync();
         }
-
 
         public async Task UpdatePostAsync(int id, GreenLeafPostModel updatedPost)
         {
             var existingPost = await GetPostByIdAsync(id);
             if (existingPost != null)
             {
-                // Update properties
-                existingPost.LeafHandoverDate = updatedPost.LeafHandoverDate;
-                existingPost.Factory = updatedPost.Factory;
-                existingPost.TransportLineName = updatedPost.TransportLineName;
-                existingPost.TransportAgent = updatedPost.TransportAgent;
-                existingPost.LeafWeightOfficer = updatedPost.LeafWeightOfficer;
-                existingPost.Supervisor = updatedPost.Supervisor;
-                existingPost.MemberNumber = updatedPost.MemberNumber;
-                existingPost.PreMemberNumber = updatedPost.PreMemberNumber;
-                existingPost.BagCount = updatedPost.BagCount;
-                existingPost.BoxCount = updatedPost.BoxCount;
-                existingPost.RealWeight = updatedPost.RealWeight;
-                existingPost.TotalWeight = updatedPost.TotalWeight;
-                existingPost.NomalLeafWeight = updatedPost.NomalLeafWeight;
-                existingPost.GoldLeafWeight = updatedPost.GoldLeafWeight;
-                existingPost.Wathurata = updatedPost.Wathurata;
-                existingPost.Morapuwata = updatedPost.Morapuwata;
-                existingPost.Thambimata = updatedPost.Thambimata;
-                existingPost.Rejected = updatedPost.Rejected;
-                existingPost.BagWeight = updatedPost.BagWeight;
-                existingPost.BoxWeight = updatedPost.BoxWeight;
-                existingPost.FinalGreenLeafCount = updatedPost.FinalGreenLeafCount;
-                existingPost.FinalGoldLeafCount = updatedPost.FinalGoldLeafCount;
-                existingPost.CreatedUser = updatedPost.CreatedUser;
-                existingPost.UpdatedUser = updatedPost.UpdatedUser;
+                existingPost.leaf_handover_date = updatedPost.leaf_handover_date;
+                existingPost.factory = updatedPost.factory;
+                existingPost.transportlinename = updatedPost.transportlinename;
+                existingPost.transportagent = updatedPost.transportagent;
+                existingPost.leaf_weight_officer = updatedPost.leaf_weight_officer;
+                existingPost.supervisor = updatedPost.supervisor;
+                existingPost.membernumber = updatedPost.membernumber;
+                existingPost.premembernumber = updatedPost.premembernumber;
+                existingPost.bag_count = updatedPost.bag_count;
+                existingPost.box_count = updatedPost.box_count;
+                existingPost.real_weight = updatedPost.real_weight;
+                existingPost.total_weight = updatedPost.total_weight;
+                existingPost.nomal_leaf_weight = updatedPost.nomal_leaf_weight;
+                existingPost.gold_leaf_weight = updatedPost.gold_leaf_weight;
+                existingPost.wathurata = updatedPost.wathurata;
+                existingPost.morapuwata = updatedPost.morapuwata;
+                existingPost.thambimata = updatedPost.thambimata;
+                existingPost.rejected = updatedPost.rejected;
+                existingPost.bag_weight = updatedPost.bag_weight;
+                existingPost.box_weight = updatedPost.box_weight;
+                existingPost.final_green_leaf_count = updatedPost.final_green_leaf_count;
+                existingPost.final_gold_leaf_count = updatedPost.final_gold_leaf_count;
+                existingPost.created_user = updatedPost.created_user;
+                existingPost.updated_user = updatedPost.updated_user;
 
                 await _context.SaveChangesAsync();
             }
@@ -175,16 +169,14 @@ namespace WeightMaster.Services
         public async Task<List<GreenLeafPostModel>> GetPostsByMemberAndDateAsync(string memberNumber, string handoverDate)
         {
             return await _context.GreenLeafPosts
-                .Where(p => p.MemberNumber == memberNumber && p.LeafHandoverDate == handoverDate)
+                .Where(p => p.membernumber == memberNumber && p.leaf_handover_date == handoverDate)
                 .ToListAsync();
         }
 
         public async Task<GreenLeafPostModel?> GetPostByMemberAndDateAsyncSingle(string memberNumber, string handoverDate)
         {
             return await _context.GreenLeafPosts
-                .FirstOrDefaultAsync(p => p.MemberNumber == memberNumber && p.LeafHandoverDate == handoverDate);
+                .FirstOrDefaultAsync(p => p.membernumber == memberNumber && p.leaf_handover_date == handoverDate);
         }
-
-
     }
 }

@@ -18,17 +18,13 @@ namespace WeightMaster.Utiles
 
             //int totalDeduction = 0;
 
-            double TotalWeight = g.TotalWeight;
+            double TotalWeight = g.total_weight;
 
-            double NomalLeafWeight = g.NomalLeafWeight;
-            double GoldLeafWeight = g.GoldLeafWeight;
+            double NomalLeafWeight = g.nomal_leaf_weight;
+            double GoldLeafWeight = g.gold_leaf_weight;
 
-            int FinalGoldLeafCount = g.FinalGoldLeafCount;
-            int FinalGreenLeafCount = g.FinalGreenLeafCount;
-
-
-
-
+            int FinalGoldLeafCount = g.final_gold_leaf_count;
+            int FinalGreenLeafCount = g.final_green_leaf_count;
 
         }
     }

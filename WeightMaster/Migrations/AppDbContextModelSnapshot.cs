@@ -103,94 +103,94 @@ namespace WeightMaster.Migrations
 
             modelBuilder.Entity("WeightMaster.Models.GreenLeafPostModel", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("id"));
 
-                    b.Property<int>("BagCount")
+                    b.Property<int>("bag_count")
                         .HasColumnType("int");
 
-                    b.Property<double>("BagWeight")
+                    b.Property<double>("bag_weight")
                         .HasColumnType("double");
 
-                    b.Property<int>("BoxCount")
+                    b.Property<int>("box_count")
                         .HasColumnType("int");
 
-                    b.Property<double>("BoxWeight")
+                    b.Property<double>("box_weight")
                         .HasColumnType("double");
 
-                    b.Property<string>("CreatedUser")
+                    b.Property<string>("created_user")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Factory")
+                    b.Property<string>("factory")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("FinalGoldLeafCount")
+                    b.Property<int>("final_gold_leaf_count")
                         .HasColumnType("int");
 
-                    b.Property<int>("FinalGreenLeafCount")
+                    b.Property<int>("final_green_leaf_count")
                         .HasColumnType("int");
 
-                    b.Property<double>("GoldLeafWeight")
+                    b.Property<double>("gold_leaf_weight")
                         .HasColumnType("double");
 
-                    b.Property<string>("LeafHandoverDate")
+                    b.Property<string>("leaf_handover_date")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("LeafWeightOfficer")
+                    b.Property<string>("leaf_weight_officer")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("MemberNumber")
+                    b.Property<string>("membernumber")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<double>("Morapuwata")
+                    b.Property<double>("morapuwata")
                         .HasColumnType("double");
 
-                    b.Property<double>("NomalLeafWeight")
+                    b.Property<double>("nomal_leaf_weight")
                         .HasColumnType("double");
 
-                    b.Property<string>("PreMemberNumber")
+                    b.Property<string>("premembernumber")
                         .HasColumnType("longtext");
 
-                    b.Property<double>("RealWeight")
+                    b.Property<double>("real_weight")
                         .HasColumnType("double");
 
-                    b.Property<double>("Rejected")
+                    b.Property<double>("rejected")
                         .HasColumnType("double");
 
-                    b.Property<string>("Supervisor")
+                    b.Property<string>("supervisor")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<double>("Thambimata")
+                    b.Property<double>("thambimata")
                         .HasColumnType("double");
 
-                    b.Property<double>("TotalWeight")
+                    b.Property<double>("total_weight")
                         .HasColumnType("double");
 
-                    b.Property<string>("TransportAgent")
+                    b.Property<string>("transportagent")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("TransportLineName")
+                    b.Property<string>("transportlinename")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("UpdatedUser")
+                    b.Property<string>("updated_user")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<double>("Wathurata")
+                    b.Property<double>("wathurata")
                         .HasColumnType("double");
 
-                    b.HasKey("Id");
+                    b.HasKey("id");
 
                     b.ToTable("GreenLeafPosts");
                 });

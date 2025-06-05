@@ -1893,87 +1893,89 @@ namespace WeightMaster
                     //save only if the table row doesn't already exists
                     if (greenLeafPostModel_st1 == null)
                     {
-                        //MessageBox.Show("is null");
                         var newGRPM = new GreenLeafPostModel
                         {
-                            Id = 0,
-                            LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                            Factory = "3",
+                            id = 0,
+                            leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                            factory = "3",
 
-                            TransportLineName = lineName_st1,
-                            TransportAgent = lineMasterNameLbl_st1.Text,
-                            LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                            Supervisor = supervisor_st1,
-                            MemberNumber = memberId_st1,
-                            PreMemberNumber = memberData_st1.CustomPreMemberNum, //done
+                            transportlinename = lineName_st1,
+                            transportagent = lineMasterNameLbl_st1.Text,
+                            leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                            supervisor = supervisor_st1,
+                            membernumber = memberId_st1,
+                            premembernumber = memberData_st1.CustomPreMemberNum,
 
-                            BagCount = nSacks,
-                            BoxCount = nBoxes,
+                            bag_count = nSacks,
+                            box_count = nBoxes,
 
-                            RealWeight = (float)Math.Round(weightScalerValue, 2),
-                            TotalWeight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
+                            real_weight = Math.Round(weightScalerValue, 2),
+                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
 
-                            NomalLeafWeight = (int)currentNormalLeafWeight_st1,
-                            GoldLeafWeight = (int)currentGoldenLeafWeight_st1,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
+                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
 
-                            Wathurata = wateredWeight,
-                            Morapuwata = maturedWeight,
-                            Thambimata = spoiledWeight,
-                            Rejected = rejectedWeight,
+                            wathurata = wateredWeight,
+                            morapuwata = maturedWeight,
+                            thambimata = spoiledWeight,
+                            rejected = rejectedWeight,
 
-                            BagWeight = 0,
-                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
+                            bag_weight = 0,
+                            box_weight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
 
-                            FinalGreenLeafCount = availableNormalLeafWeight,
-                            FinalGoldLeafCount = availableGoldenLeafWeight,
+                            final_green_leaf_count = availableNormalLeafWeight,
+                            final_gold_leaf_count = availableGoldenLeafWeight,
 
-                            CreatedUser = userEmail,
-                            UpdatedUser = ""
+                            created_user = userEmail,
+                            updated_user = ""
                         };
+                    
 
-                        await _consoleHandler.SaveData(newGRPM);
+
+                    await _consoleHandler.SaveData(newGRPM);
                     }
                     else //add the current values to the existing record and update it instead of adding a new one
                     {
                         //MessageBox.Show("is null");
                         var newGRPM = new GreenLeafPostModel
                         {
-                            Id = 0,
-                            LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                            Factory = "3",
+                            id = 0,
+                            leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                            factory = "3",
 
-                            TransportLineName = lineName_st1,
-                            TransportAgent = lineMasterNameLbl_st1.Text,
-                            LeafWeightOfficer = weightLeafOfficerTxt_st1.Text,
-                            Supervisor = supervisor_st1,
-                            MemberNumber = memberId_st1,
-                            PreMemberNumber = memberData_st1.CustomPreMemberNum, //done
+                            transportlinename = lineName_st1,
+                            transportagent = lineMasterNameLbl_st1.Text,
+                            leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                            supervisor = supervisor_st1,
+                            membernumber = memberId_st1,
+                            premembernumber = memberData_st1.CustomPreMemberNum,
 
-                            BagCount = nSacks + greenLeafPostModel_st1.BagCount,
-                            BoxCount = nBoxes + greenLeafPostModel_st1.BoxCount,
+                            bag_count = nSacks + greenLeafPostModel_st1.bag_count,
+                            box_count = nBoxes + greenLeafPostModel_st1.box_count,
 
-                            RealWeight = (float)Math.Round(weightScalerValue, 2) + greenLeafPostModel_st1.RealWeight,
-                            TotalWeight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.TotalWeight,
+                            real_weight = Math.Round(weightScalerValue, 2) + greenLeafPostModel_st1.real_weight,
+                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.total_weight,
 
-                            NomalLeafWeight = (int)currentNormalLeafWeight_st1 + greenLeafPostModel_st1.NomalLeafWeight,
-                            GoldLeafWeight = (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.GoldLeafWeight,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + greenLeafPostModel_st1.nomal_leaf_weight,
+                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.gold_leaf_weight,
 
-                            Wathurata = wateredWeight + greenLeafPostModel_st1.Wathurata,
-                            Morapuwata = maturedWeight + greenLeafPostModel_st1.Morapuwata,
-                            Thambimata = spoiledWeight + greenLeafPostModel_st1.Thambimata,
-                            Rejected = rejectedWeight + greenLeafPostModel_st1.Rejected,
+                            wathurata = wateredWeight + greenLeafPostModel_st1.wathurata,
+                            morapuwata = maturedWeight + greenLeafPostModel_st1.morapuwata,
+                            thambimata = spoiledWeight + greenLeafPostModel_st1.thambimata,
+                            rejected = rejectedWeight + greenLeafPostModel_st1.rejected,
 
-                            BagWeight = 0 + greenLeafPostModel_st1.BagWeight,
-                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight) + greenLeafPostModel_st1.BoxWeight,
+                            bag_weight = 0 + greenLeafPostModel_st1.bag_weight,
+                            box_weight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight) + greenLeafPostModel_st1.box_weight,
 
-                            FinalGreenLeafCount = availableNormalLeafWeight + greenLeafPostModel_st1.FinalGreenLeafCount,
-                            FinalGoldLeafCount = availableGoldenLeafWeight + greenLeafPostModel_st1.FinalGoldLeafCount,
+                            final_green_leaf_count = availableNormalLeafWeight + greenLeafPostModel_st1.final_green_leaf_count,
+                            final_gold_leaf_count = availableGoldenLeafWeight + greenLeafPostModel_st1.final_gold_leaf_count,
 
-                            CreatedUser = userEmail,
-                            UpdatedUser = ""
+                            created_user = userEmail,
+                            updated_user = ""
                         };
 
-                        await _consoleHandler.UpdateData(greenLeafPostModel_st1.Id, newGRPM);
+
+                        await _consoleHandler.UpdateData(greenLeafPostModel_st1.id, newGRPM);
                     }
                     
 
@@ -3387,40 +3389,41 @@ namespace WeightMaster
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
-                        Id = 0,
-                        LeafHandoverDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                        Factory = "3",
+                        id = 0,
+                        leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                        factory = "3",
 
-                        TransportLineName = lineName_st2,
-                        TransportAgent = lineMasterNameLbl_st2.Text,
-                        LeafWeightOfficer = weightLeafOfficerTxt_st2.Text,
-                        Supervisor = currentMemberDetails_st2.superviosr,
-                        MemberNumber = currentMemberDetails_st2.barcode_details,
-                        PreMemberNumber = greenLeafPostModel_st2.PreMemberNumber, //done  //TBD-------------------------------------------------------------------------------------------
+                        transportlinename = lineName_st2,
+                        transportagent = lineMasterNameLbl_st2.Text,
+                        leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
+                        supervisor = currentMemberDetails_st2.superviosr,
+                        membernumber = currentMemberDetails_st2.barcode_details,
+                        premembernumber = greenLeafPostModel_st2.premembernumber,
 
-                        BagCount = greenLeafPostModel_st2.BagCount,
-                        BoxCount = greenLeafPostModel_st2.BoxCount, //done  //TBD-------------------------------------------------------------------------------------------
+                        bag_count = greenLeafPostModel_st2.bag_count,
+                        box_count = greenLeafPostModel_st2.box_count,
 
-                        RealWeight = greenLeafPostModel_st2.RealWeight,//(added boxWeight)     //done     //TBD-------------------------------------------------------------------------------------------
-                        TotalWeight = greenLeafPostModel_st2.TotalWeight, //(added boxWeight) 
+                        real_weight = greenLeafPostModel_st2.real_weight,
+                        total_weight = greenLeafPostModel_st2.total_weight,
 
-                        NomalLeafWeight = greenLeafPostModel_st2.NomalLeafWeight,
-                        GoldLeafWeight = greenLeafPostModel_st2.GoldLeafWeight,
+                        nomal_leaf_weight = greenLeafPostModel_st2.nomal_leaf_weight,
+                        gold_leaf_weight = greenLeafPostModel_st2.gold_leaf_weight,
 
-                        Wathurata = finalWateredWeight, //HANDLE //no deductions w/ boxes included
-                        Morapuwata = finalMaturedWeight, //HANDLE
-                        Thambimata = finalSpoiledWeight, //HANDLE
-                        Rejected = finalRejectedWeight, //HANDLE
+                        wathurata = finalWateredWeight,
+                        morapuwata = finalMaturedWeight,
+                        thambimata = finalSpoiledWeight,
+                        rejected = finalRejectedWeight,
 
-                        BagWeight = totalAcceptedSackWeight, //handle
-                        BoxWeight = greenLeafPostModel_st2.BoxWeight, //done  //TBD-------------------------------------------------------------------------------------------
+                        bag_weight = totalAcceptedSackWeight,
+                        box_weight = greenLeafPostModel_st2.box_weight,
 
-                        FinalGreenLeafCount = finalAvailableNormalLeafWeight, //HANDLE
-                        FinalGoldLeafCount = finalAvailableGoldenLeafWeight,  //HANDLE
+                        final_green_leaf_count = finalAvailableNormalLeafWeight,
+                        final_gold_leaf_count = finalAvailableGoldenLeafWeight,
 
-                        CreatedUser = greenLeafPostModel_st2.CreatedUser, //done //TBD-------------------------------------------------------------------------------------------
-                        UpdatedUser = userEmail
+                        created_user = greenLeafPostModel_st2.created_user,
+                        updated_user = userEmail
                     };
+
 
                     await _consoleHandler.UpdateData(1, newGRPM);
 
@@ -3656,7 +3659,7 @@ namespace WeightMaster
 
         }
 
-        private async Task SyncButton_Click(object sender, RoutedEventArgs e)
+        private async void SyncButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {

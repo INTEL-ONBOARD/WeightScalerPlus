@@ -63,46 +63,46 @@ namespace WeightMaster.Migrations
                 name: "GreenLeafPosts",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    LeafHandoverDate = table.Column<string>(type: "longtext", nullable: false)
+                    leaf_handover_date = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Factory = table.Column<string>(type: "longtext", nullable: false)
+                    factory = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TransportLineName = table.Column<string>(type: "longtext", nullable: false)
+                    transportlinename = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    TransportAgent = table.Column<string>(type: "longtext", nullable: false)
+                    transportagent = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    LeafWeightOfficer = table.Column<string>(type: "longtext", nullable: false)
+                    leaf_weight_officer = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Supervisor = table.Column<string>(type: "longtext", nullable: false)
+                    supervisor = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    MemberNumber = table.Column<string>(type: "longtext", nullable: false)
+                    membernumber = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PreMemberNumber = table.Column<string>(type: "longtext", nullable: true)
+                    premembernumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    BagCount = table.Column<int>(type: "int", nullable: false),
-                    BoxCount = table.Column<int>(type: "int", nullable: false),
-                    RealWeight = table.Column<double>(type: "double", nullable: false),
-                    TotalWeight = table.Column<double>(type: "double", nullable: false),
-                    NomalLeafWeight = table.Column<double>(type: "double", nullable: false),
-                    GoldLeafWeight = table.Column<double>(type: "double", nullable: false),
-                    Wathurata = table.Column<double>(type: "double", nullable: false),
-                    Morapuwata = table.Column<double>(type: "double", nullable: false),
-                    Thambimata = table.Column<double>(type: "double", nullable: false),
-                    Rejected = table.Column<double>(type: "double", nullable: false),
-                    BagWeight = table.Column<double>(type: "double", nullable: false),
-                    BoxWeight = table.Column<double>(type: "double", nullable: false),
-                    FinalGreenLeafCount = table.Column<int>(type: "int", nullable: false),
-                    FinalGoldLeafCount = table.Column<int>(type: "int", nullable: false),
-                    CreatedUser = table.Column<string>(type: "longtext", nullable: false)
+                    bag_count = table.Column<int>(type: "int", nullable: false),
+                    box_count = table.Column<int>(type: "int", nullable: false),
+                    real_weight = table.Column<double>(type: "double", nullable: false),
+                    total_weight = table.Column<double>(type: "double", nullable: false),
+                    nomal_leaf_weight = table.Column<double>(type: "double", nullable: false),
+                    gold_leaf_weight = table.Column<double>(type: "double", nullable: false),
+                    wathurata = table.Column<double>(type: "double", nullable: false),
+                    morapuwata = table.Column<double>(type: "double", nullable: false),
+                    thambimata = table.Column<double>(type: "double", nullable: false),
+                    rejected = table.Column<double>(type: "double", nullable: false),
+                    bag_weight = table.Column<double>(type: "double", nullable: false),
+                    box_weight = table.Column<double>(type: "double", nullable: false),
+                    final_green_leaf_count = table.Column<int>(type: "int", nullable: false),
+                    final_gold_leaf_count = table.Column<int>(type: "int", nullable: false),
+                    created_user = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    UpdatedUser = table.Column<string>(type: "longtext", nullable: false)
+                    updated_user = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GreenLeafPosts", x => x.Id);
+                    table.PrimaryKey("PK_GreenLeafPosts", x => x.id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
