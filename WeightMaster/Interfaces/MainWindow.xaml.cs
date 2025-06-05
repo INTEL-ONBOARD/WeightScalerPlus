@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Windows.Documents;
 using System.Windows.Shapes;
 using Newtonsoft.Json.Linq;
+using WeightMaster.Utiles;
 
 
 namespace WeightMaster
@@ -1131,7 +1132,7 @@ namespace WeightMaster
             memberId_st1 = barcodeTxt_st1.Text.PadLeft(5, '0');
             //to clear out previous values by assigning null
             string memberName = null;
-            greenLeafPostModel_st1 = null;
+            //greenLeafPostModel_st1 = null; //this was done 'cause i need to call getDatabyMemberiDandDateSingle() in confirm button w/o affecting the turn table flow(by preventing barcodeTxt="" at confirm button click)
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId_st1);
@@ -1144,7 +1145,7 @@ namespace WeightMaster
                 memberData_st1 = await _consoleHandler.getMember(memberId_st1);
                 //MessageBox.Show(memberData_st1.CustomPreMemberNum);
 
-                //new api (if exists(not null), do an update after adding the new transaction)
+                //new api (if exists(not null), do an update after adding the new transaction at confirm button click evt)
                 greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
                 /*if (greenLeafPostModel_st1 == null)
                 {
@@ -1880,7 +1881,7 @@ namespace WeightMaster
                         morapuwata = maturedWeight,
                         thambimata = spoiledWeight,
                         reject = rejectedWeight,
-                        box_weight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
+                        box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight), //
                         final_green_leaf_count = availableNormalLeafWeight,
                         final_gold_leaf_count = availableGoldenLeafWeight
                     };
@@ -1921,7 +1922,7 @@ namespace WeightMaster
                             Rejected = rejectedWeight,
 
                             BagWeight = 0,
-                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight),
+                            BoxWeight = (int)Math.Ceiling(nBoxes * singleBoxWeight),
 
                             FinalGreenLeafCount = availableNormalLeafWeight,
                             FinalGoldLeafCount = availableGoldenLeafWeight,
@@ -1963,7 +1964,7 @@ namespace WeightMaster
                             Rejected = rejectedWeight + greenLeafPostModel_st1.Rejected,
 
                             BagWeight = 0 + greenLeafPostModel_st1.BagWeight,
-                            BoxWeight = (int)Math.Ceiling(finalNBoxes_st1 * singleBoxWeight) + greenLeafPostModel_st1.BoxWeight,
+                            BoxWeight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + greenLeafPostModel_st1.BoxWeight,
 
                             FinalGreenLeafCount = availableNormalLeafWeight + greenLeafPostModel_st1.FinalGreenLeafCount,
                             FinalGoldLeafCount = availableGoldenLeafWeight + greenLeafPostModel_st1.FinalGoldLeafCount,
@@ -1974,8 +1975,11 @@ namespace WeightMaster
 
                         await _consoleHandler.UpdateData(greenLeafPostModel_st1.Id, newGRPM);
                     }
-                    
 
+                    
+                    //new api (if exists(not null), do an update after adding the new transaction)
+                    //this was called here after saveData() because i can't clear barcodeTxt. this will clear the turn table which runs w/o a direct api.
+                    greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
 
                     // enable and disable confirm buttons
                     weightScalerConfirmBtn_st1.IsEnabled = true;
@@ -3421,7 +3425,10 @@ namespace WeightMaster
                         UpdatedUser = userEmail
                     };
 
+                    Supporter.handleEquationSt2(newGRPM, totalAcceptedSackWeight);
+
                     await _consoleHandler.UpdateData(1, newGRPM);
+                    await _consoleHandler.cloudsync();
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
                     confirmAddRowButton_st2.IsEnabled = false;
