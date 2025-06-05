@@ -142,7 +142,7 @@ namespace WeightMaster.Services
             if (postStatus != null)
             {
                 return await _context.GreenLeafPosts
-                    .FirstOrDefaultAsync(post => post.Id == postStatus.PostId);
+                    .FirstOrDefaultAsync(post => post.id == postStatus.PostId);
             }
 
             return null;

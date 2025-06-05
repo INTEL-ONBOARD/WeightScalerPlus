@@ -808,22 +808,22 @@ namespace WeightMaster.Core
                 await postService.UpdatePostAsync(id, post);
                 System.Diagnostics.Debug.WriteLine($"Post with ID {id} updated successfully.");
 
-                bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                if (isAvailable)
-                {
-                    GreenLeafPostModel? model =  await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                    if (model != null) { bool isupdated = await PostGreenLeafToExternalApiAsync(model);
-                        if (isupdated)
-                        {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
-                        }
-                        else
-                        {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
+                //bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                //if (isAvailable)
+                //{
+                //    GreenLeafPostModel? model =  await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                //    if (model != null) { bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                //        if (isupdated)
+                //        {
+                //            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
+                //        }
+                //        else
+                //        {
+                //            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
 
-                        }
-                    }
-                }
+                //        }
+                //    }
+                //}
 
 
                 return true;
@@ -851,11 +851,11 @@ namespace WeightMaster.Core
                         bool isupdated = await PostGreenLeafToExternalApiAsync(model);
                         if (isupdated)
                         {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, true);
+                            await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
                         }
                         else
                         {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.Id, false);
+                            await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
 
                         }
                     }
@@ -879,7 +879,7 @@ namespace WeightMaster.Core
             {
                 var postService = new PostService(new AppDbContext());
                 var latestPost = await postService.GetLatestPostAsync();
-                System.Diagnostics.Debug.WriteLine($"> Latest post ID: {latestPost?.Id}");
+                System.Diagnostics.Debug.WriteLine($"> Latest post ID: {latestPost?.id}");
                 return latestPost;
             }
             catch (Exception ex)
@@ -910,7 +910,7 @@ namespace WeightMaster.Core
             {
                 var postService = new PostService(new AppDbContext());
                 var post = await postService.GetPostByMemberAndDateAsyncSingle(memberNumber, date);
-                System.Diagnostics.Debug.WriteLine($"> Found post: {post?.Id}");
+                System.Diagnostics.Debug.WriteLine($"> Found post: {post?.id}");
                 return post;
             }
             catch (Exception ex)
@@ -943,34 +943,52 @@ namespace WeightMaster.Core
 
             var options = new JsonSerializerOptions
             {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase, // Ensures camelCase for JSON
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
                 Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             };
 
             try
             {
-                // Log serialized JSON for debugging
+                // Serialize the request body for logging
                 var jsonBody = JsonSerializer.Serialize(postModel, options);
                 System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
                 System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
 
+                // Make the API call
                 var response = await client.PostAsync<object>(url, postModel);
 
-                // If it gets here, it was successful (status code 2xx)
+                // Log success
+                System.Diagnostics.Debug.WriteLine($"> POST succeeded to: {url}");
                 return true;
             }
             catch (HttpRequestException ex)
             {
                 System.Diagnostics.Debug.WriteLine($"> HTTP Error: {ex.Message}");
+
+                if (ex.Data != null)
+                {
+                    foreach (var key in ex.Data.Keys)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"> Extra HTTP Error Info: {key}: {ex.Data[key]}");
+                    }
+                }
+
                 return false;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"> General Error: {ex.Message}");
+
+                if (ex.InnerException != null)
+                {
+                    System.Diagnostics.Debug.WriteLine($"> Inner Exception: {ex.InnerException.Message}");
+                }
+
                 return false;
             }
         }
+
 
 
     }

@@ -14,7 +14,7 @@ namespace WeightMaster.Utiles
         {
 
 
-            double TotalWeight = g.TotalWeight; //const
+            double TotalWeight = g.total_weight; //const
             //double NomalLeafWeight = g.NomalLeafWeight; //const
             //double GoldLeafWeight = g.GoldLeafWeight; //const
 
@@ -44,31 +44,31 @@ namespace WeightMaster.Utiles
                 acceptedSackWeight = 0;*/
             //double boxWeights = nBoxes * singleBoxWeight;
             // Calculate total
-            double totalDeductions = g.Wathurata + g.Rejected + g.Morapuwata + g.Thambimata + acceptedSackWeight + g.BoxWeight;
+            double totalDeductions = g.wathurata + g.rejected + g.morapuwata + g.thambimata + acceptedSackWeight; //box weight doesn't sum up to the total decuctions the way i did calculation in st1 in both apis
 
             //choose deduction type between green leaves or golden leaves based on total
             //if normal weight doesn't exceeds total deduction(no need to update golden leaf weights)
-            if (totalDeductions <= g.NomalLeafWeight)
+            if (totalDeductions <= g.nomal_leaf_weight)
             {
-                newG.FinalGreenLeafCount = (int)(g.NomalLeafWeight - totalDeductions);
-                newG.FinalGoldLeafCount = (int)g.GoldLeafWeight;
-                MessageBox.Show($"green:{newG.FinalGreenLeafCount} = normal:{g.NomalLeafWeight} - deduc:{totalDeductions}");
+                newG.final_green_leaf_count = (int)(g.nomal_leaf_weight - totalDeductions);
+                newG.final_gold_leaf_count = (int)g.gold_leaf_weight;
+                MessageBox.Show($"green:{newG.final_green_leaf_count} = normal:{g.nomal_leaf_weight} - deduc:{totalDeductions}");
                 //update helper value
                 //currentTotalDeduction_st2 = totalDeductions;
             }
             //if normal weight doesn't exceeds total deduction(now you need to update both golden leaf weights & normal leaf weights)
-            else if (totalDeductions > g.NomalLeafWeight)
+            else if (totalDeductions > g.nomal_leaf_weight)
             {
-                newG.FinalGreenLeafCount = 0;
-                newG.FinalGoldLeafCount = (int)(g.GoldLeafWeight - (totalDeductions - g.NomalLeafWeight));
+                newG.final_green_leaf_count = 0;
+                newG.final_gold_leaf_count = (int)(g.gold_leaf_weight - (totalDeductions - g.nomal_leaf_weight));
                 //update helper value
                 //currentTotalDeduction_st2 = totalDeductions;
                 
             }
             MessageBox.Show($"" +
-                $"avail. green leaf:{newG.FinalGreenLeafCount} \n" +
-                $"avail. gold leaf:{newG.FinalGoldLeafCount} \n " +
-                $"bag weight: {newG.BagWeight}" +
+                $"avail. green leaf:{newG.final_green_leaf_count} \n" +
+                $"avail. gold leaf:{newG.final_gold_leaf_count} \n " +
+                $"bag weight: {newG.bag_weight}" +
                 $"");
 
 
