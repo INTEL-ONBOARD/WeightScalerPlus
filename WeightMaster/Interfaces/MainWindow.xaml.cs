@@ -3950,7 +3950,7 @@ namespace WeightMaster
             bool failed = false;
 
             // Check internet connection
-            /*try
+            try
             {
                 Dispatcher.Invoke(() =>
                 {
@@ -3994,7 +3994,7 @@ namespace WeightMaster
                     statusLabel.Content = $"Error checking internet: {ex.Message}";
                 });
                 return;
-            }*/
+            }
 
             // Repeat until no exception occurs
             bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
