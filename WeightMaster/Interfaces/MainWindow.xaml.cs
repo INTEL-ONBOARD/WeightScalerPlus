@@ -3996,7 +3996,7 @@ namespace WeightMaster
                 return;
             }
 
-            // Repeat until no exception occurs
+            // Repeat until no exception occursss
             bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
             do
             {
