@@ -167,11 +167,11 @@ namespace WeightMaster.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    CustomMemberNum = table.Column<string>(type: "longtext", nullable: false)
+                    CustomMemberNum = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CustomPreMemberNum = table.Column<string>(type: "longtext", nullable: false)
+                    CustomPreMemberNum = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CustomNameWithInitials = table.Column<string>(type: "longtext", nullable: false)
+                    CustomNameWithInitials = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     CellNumber = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")

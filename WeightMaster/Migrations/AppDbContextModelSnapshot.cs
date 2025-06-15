@@ -465,15 +465,12 @@ namespace WeightMaster.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomMemberNum")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomNameWithInitials")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomPreMemberNum")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

@@ -718,7 +718,7 @@ namespace WeightMaster.Core
             if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
             {
                 currentCloudCount = apiResponse.Data.Count;
-                if (currentCloudCount != memberCount)
+                if (currentCloudCount > memberCount)
                 {
                     await service.ReplaceMembersAsync(apiResponse.Data);
                     Console.WriteLine("> Member data replaced successfully.");
@@ -746,11 +746,11 @@ namespace WeightMaster.Core
 
             LineResponse? apiResponse = await apiClient.GetAsync<LineResponse>(url);
 
-            if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+            if (apiResponse.Success)
             {
                 currentCloudCount = apiResponse.Data.Count;
 
-                if (currentCloudCount != localCount)
+                if (currentCloudCount > localCount)
                 {
                     await service.ReplaceLineDataAsync(apiResponse.Data);
                     Console.WriteLine("> Line data replaced successfully.");
