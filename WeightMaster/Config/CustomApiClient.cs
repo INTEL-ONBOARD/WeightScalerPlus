@@ -12,7 +12,7 @@ public class CustomApiClient
     private string _accessToken;
     private DateTime _tokenExpiry;
 
-    private const string LoginUrl = "https://teacoopapi.codehub.lk/api/v1/thirdPartyLogin";
+    private const string LoginUrl = "https://api.teacoop.lk/api/v1/thirdPartyLogin";
     private const string Username = "teacoop@codehub.lk";
     private const string Password = "teacoop@1234";
 
