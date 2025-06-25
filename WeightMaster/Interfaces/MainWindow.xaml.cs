@@ -4870,7 +4870,7 @@ namespace WeightMaster
                 yPos += 20;
                 isAlternate = !isAlternate;
             }
-
+                //test
             // Totals row background
             dc.DrawRectangle(Brushes.DarkGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
 
