@@ -3950,54 +3950,54 @@ namespace WeightMaster
             bool failed = false;
 
             // Check internet connection
-            try
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    statusLabel.Content = "Checking Internet Connection...";
-                });
+            //try
+            //{
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        statusLabel.Content = "Checking Internet Connection...";
+            //    });
 
-                internetAvailable = await Task.Run(() =>
-                {
-                    try
-                    {
-                        using (var client = new System.Net.WebClient())
-                        using (client.OpenRead("https://www.google.com"))
-                            return true;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                });
+            //    internetAvailable = await Task.Run(() =>
+            //    {
+            //        try
+            //        {
+            //            using (var client = new System.Net.WebClient())
+            //            using (client.OpenRead("https://www.google.com"))
+            //                return true;
+            //        }
+            //        catch
+            //        {
+            //            return false;
+            //        }
+            //    });
 
-                if (!internetAvailable)
-                {
-                    Dispatcher.Invoke(() =>
-                    {
-                        statusLabel.Content = "No internet connection. Startup aborted.";
-                    });
+            //    if (!internetAvailable)
+            //    {
+            //        Dispatcher.Invoke(() =>
+            //        {
+            //            statusLabel.Content = "No internet connection. Startup aborted.";
+            //        });
 
-                    IntroFrame.Visibility = Visibility.Collapsed;
-                    LoginFrame.Visibility = Visibility.Visible;
+            //        IntroFrame.Visibility = Visibility.Collapsed;
+            //        LoginFrame.Visibility = Visibility.Visible;
 
-                    runtimeService.StartFileWatcher();
-                    runtimeService.StartTimer();
+            //        runtimeService.StartFileWatcher();
+            //        runtimeService.StartTimer();
 
-                    return;
-                }
-            }
-            catch (Exception ex)
-            {
-                Dispatcher.Invoke(() =>
-                {
-                    statusLabel.Content = $"Error checking internet: {ex.Message}";
-                });
-                return;
-            }
+            //        return;
+            //    }
+            //}
+            //catch (Exception ex)
+            //{
+            //    Dispatcher.Invoke(() =>
+            //    {
+            //        statusLabel.Content = $"Error checking internet: {ex.Message}";
+            //    });
+            //    return;
+            //}
 
             // Repeat until no exception occursss
-            bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
+            /*bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
             do
             {
                 try
@@ -4133,7 +4133,7 @@ namespace WeightMaster
             } while (failed);
             //resetting value for next execution 
             firstItr = true;
-
+*/
             IntroFrame.Visibility = Visibility.Collapsed;
             LoginFrame.Visibility = Visibility.Visible;
 
