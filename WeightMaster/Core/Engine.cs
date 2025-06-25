@@ -710,7 +710,7 @@ namespace WeightMaster.Core
             int memberCount = await service.GetMemberCountAsync();
 
             var apiClient = new CustomApiClient(); // Use your token-aware API client
-            string url = "https://teacoopapi.codehub.lk/api/v1/members/thirdparty-members";
+            string url = "https://api.teacoop.lk/api/v1/members/thirdparty-members";
 
             // Make GET request
             MemberResponse? apiResponse = await apiClient.GetAsync<MemberResponse>(url);
@@ -718,7 +718,7 @@ namespace WeightMaster.Core
             if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
             {
                 currentCloudCount = apiResponse.Data.Count;
-                if (currentCloudCount != memberCount)
+                if (currentCloudCount > memberCount)
                 {
                     await service.ReplaceMembersAsync(apiResponse.Data);
                     Console.WriteLine("> Member data replaced successfully.");
@@ -742,15 +742,15 @@ namespace WeightMaster.Core
             int localCount = await service.GetLineCountAsync();
 
             var apiClient = new CustomApiClient(); // Use token-aware client
-            string url = "https://teacoopapi.codehub.lk/api/v1/linemaster/thirdparty-linemaster"; // Replace with actual endpoint
+            string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster"; // Replace with actual endpoint
 
             LineResponse? apiResponse = await apiClient.GetAsync<LineResponse>(url);
 
-            if (apiResponse != null && apiResponse.Success && apiResponse.Data != null)
+            if (apiResponse.Success)
             {
                 currentCloudCount = apiResponse.Data.Count;
 
-                if (currentCloudCount != localCount)
+                if (currentCloudCount > localCount)
                 {
                     await service.ReplaceLineDataAsync(apiResponse.Data);
                     Console.WriteLine("> Line data replaced successfully.");
@@ -939,7 +939,7 @@ namespace WeightMaster.Core
         public async Task<bool> PostGreenLeafToExternalApiAsync(GreenLeafPostModel postModel)
         {
             var client = new CustomApiClient();
-            var url = "https://teacoopapi.codehub.lk/api/v1/greenleaf";
+            var url = "https://api.teacoop.lk/api/v1/greenleaf";
 
             var options = new JsonSerializerOptions
             {

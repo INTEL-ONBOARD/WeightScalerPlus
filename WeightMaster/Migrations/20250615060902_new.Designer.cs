@@ -12,7 +12,7 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250605083030_new")]
+    [Migration("20250615060902_new")]
     partial class @new
     {
         /// <inheritdoc />
@@ -468,15 +468,12 @@ namespace WeightMaster.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomMemberNum")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomNameWithInitials")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("CustomPreMemberNum")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasKey("Id");

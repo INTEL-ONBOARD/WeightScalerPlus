@@ -41,12 +41,21 @@ namespace WeightMaster.Services
         // Replace all members in the database
         public async Task ReplaceMembersAsync(List<Members> members)
         {
-            _context.memDbLog.RemoveRange(_context.memDbLog);
+            try
+            {
+                _context.memDbLog.RemoveRange(_context.memDbLog);
 
-            var memDbLogs = members.Select(member => MapMemberToMemDbLog(member)).ToList();
+                var memDbLogs = members.Select(member => MapMemberToMemDbLog(member)).ToList();
 
-            await _context.memDbLog.AddRangeAsync(memDbLogs);
-            await _context.SaveChangesAsync();
+                await _context.memDbLog.AddRangeAsync(memDbLogs);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("DbUpdateException: " + ex.Message);
+                if (ex.InnerException != null)
+                    System.Diagnostics.Debug.WriteLine("Inner: " + ex.InnerException.Message);
+            }
         }
 
         // Get the total count of members

@@ -15,15 +15,16 @@ namespace WeightMaster.Models
     public class Members
     {
         [JsonProperty("custom_membernum")]
-        public string CustomMemberNum { get; set; }
+        public string? CustomMemberNum { get; set; } = string.Empty;
 
         [JsonProperty("custom_premembernum")]
-        public string CustomPreMemberNum { get; set; }
+        public string? CustomPreMemberNum { get; set; } = string.Empty;
 
         [JsonProperty("custom_name_with_initials")]
-        public string CustomNameWithInitials { get; set; }
+        public string? CustomNameWithInitials { get; set; } = string.Empty;
 
         [JsonProperty("cell_number")]
-        public string CellNumber { get; set; }
+        public string? CellNumber { get; set; } = string.Empty;
     }
+
 }

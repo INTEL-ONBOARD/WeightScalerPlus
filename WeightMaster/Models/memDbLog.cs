@@ -14,11 +14,11 @@ namespace WeightMaster.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public string CustomMemberNum { get; set; } = string.Empty;
+        public string? CustomMemberNum { get; set; } = string.Empty;
 
-        public string CustomPreMemberNum { get; set; } = string.Empty;
+        public string? CustomPreMemberNum { get; set; } = string.Empty;
 
-        public string CustomNameWithInitials { get; set; } = string.Empty;
+        public string? CustomNameWithInitials { get; set; } = string.Empty;
 
         public string? CellNumber { get; set; } // Nullable
     }
