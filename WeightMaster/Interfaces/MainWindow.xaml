@@ -11,7 +11,7 @@
         Title="MainWindow" Height="1080" Width="1920"
         WindowStyle="None"
         AllowsTransparency="True"
-        Topmost="True"
+        Topmost="False"
         Background="White"
         WindowStartupLocation="CenterScreen">
 
@@ -1311,7 +1311,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
@@ -1430,7 +1430,7 @@
 
 
             <!--SettingsFrame-->
-            <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
+            <Grid x:Name="SettingsFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
 
                 <!--Left section with scroller-->
                 <Grid Background="White" Margin="0,44,1143,0" >
@@ -1575,9 +1575,18 @@
 
 
                         <!-- Sync Button -->
-                        <Button Cursor="Hand" Click="SyncButton_Click" Background="Transparent" BorderThickness="0" Margin="372,442,685,313" Style="{StaticResource HoverButton}">
+                        <TextBlock Grid.Column="0" Text="Cloud synchronize transactions" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,460,0,0" />
+                        <Button Cursor="Hand" Click="SyncButton_Click" Background="Transparent" BorderThickness="0" Margin="384,449,673,306" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
                                 <TextBlock Text="Sync" HorizontalAlignment="Center" Foreground="White"/>
+                            </Border>
+                        </Button>
+
+                        <!-- Check updates Button -->
+                        <TextBlock Grid.Column="0" Text="Check for cloud updates" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,533,0,0" />
+                        <Button Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="384,519,673,236" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
+                                <TextBlock Text="Update" HorizontalAlignment="Center" Foreground="White"/>
                             </Border>
                         </Button>
 

@@ -3679,6 +3679,149 @@ namespace WeightMaster
             }
         }
 
+        private async void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Repeat until no exception occursss
+            bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
+            bool failed = false;
+            do
+            {
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(1)..." : "Reverifying Database Status(1)...";
+                    });
+                    await _consoleHandler.VerifyUserDb(); // Uncomment when needed
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(1)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"User Database Error: {ex.Message}";
+                    });
+                }
+
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(2)..." : "Reverifying Database Status(2)...";
+                    });
+                    await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(2)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"LineMaster Database Error: {ex.Message}";
+                    });
+                }
+
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(3)...";
+                    });
+                    await _consoleHandler.verifyMemberDb(); // Uncomment when needed
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(3)";
+                        failed = false;
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Member Database Error: {ex.Message}";
+                    });
+                }
+
+                //newly added api for members
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(4)..." : "Reverifying Database Status(4)...";
+                    });
+                    await _consoleHandler.verifyMembers();  // Uncomment when needed
+                    //System.Diagnostics.Debug.WriteLine("================");
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(4)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Member(API_v2) Database Error: {ex.Message}";
+                    });
+                }
+
+                //newly added api for lines
+                try
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = (firstItr) ? "Verifying Database Status(5)..." : "Reverifying Database Status(5)...";
+                    });
+                    await _consoleHandler.VerifyLines();  // Uncomment when needed
+                    //System.Diagnostics.Debug.WriteLine("================");
+                    Dispatcher.Invoke(() =>
+                    {
+                        statusLabel.Content = "DB Verified(5)";
+                    });
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Lines(API_v2) Database Error: {ex.Message}";
+                    });
+                }
+                //VerifyLines()
+
+
+                //await _consoleHandler.verifyMembers();
+                //System.Diagnostics.Debug.WriteLine("================");
+
+                // Transaction verification is commented out, include it when needed
+                try
+                {
+                    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
+                    failed = !_isoks;
+                }
+                catch (Exception ex)
+                {
+                    Dispatcher.Invoke(() =>
+                    {
+                        failed = true;
+                        statusLabel.Content = $"Transaction Error: {ex.Message}";
+                    });
+                }
+
+            } while (failed);
+            //resetting value for next execution 
+            firstItr = true;
+
+        }
+
         //protected override void OnClosed(EventArgs e)
         //{
         //    runtimeService.OnWindowClosed(); // Clean up resources when the window is closed
