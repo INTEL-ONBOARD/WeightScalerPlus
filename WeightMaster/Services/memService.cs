@@ -104,9 +104,18 @@ namespace WeightMaster.Services
         }
         public async Task<memDbLog?> GetMemberByCustomMemberNumAsync(string customMemberNum)
         {
-            return await _context.memDbLog
+            var result = await _context.memDbLog
                 .FirstOrDefaultAsync(m => m.CustomMemberNum == customMemberNum);
+
+            if (result == null)
+            {
+                result = await _context.memDbLog
+                    .FirstOrDefaultAsync(m => m.CustomPreMemberNum == customMemberNum);
+            }
+
+            return result;
         }
+
 
     }
 }
