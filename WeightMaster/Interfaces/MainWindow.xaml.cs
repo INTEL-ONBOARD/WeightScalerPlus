@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using Newtonsoft.Json.Linq;
 using WeightMaster.Utiles;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 
 namespace WeightMaster
@@ -3819,6 +3820,14 @@ namespace WeightMaster
             } while (failed);
             //resetting value for next execution 
             firstItr = true;
+
+            ////restart the application
+            //// Get the current application's executable path
+            //string exePath = Process.GetCurrentProcess().MainModule.FileName;
+            //// Start a new instance of the application
+            //Process.Start(exePath);
+            //// Shutdown the current application
+            //Application.Current.Shutdown();
 
         }
 
