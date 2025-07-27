@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Formats.Asn1;
 
 namespace WeightMaster.Services
 {
@@ -330,6 +331,21 @@ namespace WeightMaster.Services
                 
             // Return the Id if the transaction exists; otherwise return null
             return transaction?.Id;
+        }
+
+
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName, string date)
+        {
+            return await _context.transactionData
+                .Where(t => t.linename == lineName && t.date == date && t.box_count > 0 )
+                .ToListAsync();
+        }
+
+        public async Task<List<TransactionLogBlockModel>> GetTransactionsByDateAsync(string date)
+        {
+            return await _context.transactionData
+                .Where(t => t.date == date && t.box_count > 0)
+                .ToListAsync();
         }
 
 

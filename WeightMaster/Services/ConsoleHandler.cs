@@ -189,6 +189,16 @@ namespace WeightMaster.Services
         {
             await _engine.cloudSync();
         }
+        // Document Print Methods for boxes with line name and date
+        public async Task<List<TransactionLogBlockModel>> DocumentPrintWithDateAndLinename(string lineName, string date_)
+        {
+            return await _engine.getDataForDocumentsWithDate(lineName, date_);
+        }
+        // Document Print Methods for boxes with date
+        public async Task<List<TransactionLogBlockModel>> DocumentPrintWithDate(string date_)
+        {
+            return await _engine.getDataForDocuments(date_);
+        }
 
     }
 }
