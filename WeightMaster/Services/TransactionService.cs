@@ -349,21 +349,32 @@ namespace WeightMaster.Services
             .ToListAsync();
         }
 
-        public async Task<List<TransactionLogBlockModel>> getCustomData(string lineName,string date)
+        public async Task<List<TransactionLogBlockModel>> getCustomData(string lineName, string date)
         {
-
-            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
-
             var excludedIds = await _context.RunLog
                 .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
                 .Select(r => r.Id)
                 .ToListAsync();
 
-            return await _context.transactionData
-                .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == date && t.box_count > 0 && t.bag_count == 0)
+            var results = await _context.transactionData
+                .Where(t => excludedIds.Contains(t.Id)
+                            && t.linename == lineName
+                            && t.date == date
+                            && t.box_count > 0
+                            && t.bag_count == 0)
                 .ToListAsync();
 
+            System.Diagnostics.Debug.WriteLine($"[getCustomData] Returning {results.Count} results:");
+            foreach (var item in results)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[getCustomData] ID={item.Id}, Line={item.linename}, Date={item.date}, BoxCount={item.box_count}, BagCount={item.bag_count}"
+                );
+            }
+
+            return results;
         }
+
 
     }
 }
