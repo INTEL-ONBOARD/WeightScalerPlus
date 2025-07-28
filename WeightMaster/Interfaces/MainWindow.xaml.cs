@@ -4606,7 +4606,7 @@ namespace WeightMaster
 
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
-            AddText(canvas, "0", fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, transaction.box_count.ToString(), fontSize, positions[3], y, rightAlign: true); // boxFix: Box count fix added
             AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
@@ -4701,6 +4701,7 @@ namespace WeightMaster
                 //sum up only numbers through the loop to a single row
                 foreach (var tRow in lineReportData)
                 {
+                    lineRow.box_count += ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight) / 4; //boxFix
                     lineRow.bag_count += tRow.bag_count;
                     lineRow.maximum_nomal_leaf_weight = tRow.maximum_nomal_leaf_weight;
                     lineRow.total_leaf_weight += tRow.total_leaf_weight;
