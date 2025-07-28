@@ -79,8 +79,8 @@ namespace WeightMaster.utils
         }
 
         public static List<FinalTransactionBlockModel> ToFinalTransactionBlockModel(
-            List<FinalTransactionBlockModel> lineReportData,
-            List<TransactionLogBlockModel> boxReportData)
+    List<FinalTransactionBlockModel> lineReportData,
+    List<TransactionLogBlockModel> boxReportData)
         {
             var convertedLineData = lineReportData.Select(item => new FinalTransactionBlockModel
             {
@@ -125,10 +125,8 @@ namespace WeightMaster.utils
                 phone_number = item.phone_number,
                 date = item.date,
 
-                // Bag_weight not available in boxReportData
-                bag_weight = 0,
                 bag_count = item.bag_count,
-                real_value = (float)item.real_value, // Cast double to float
+                real_value = (float)item.real_value,  // Cast double to float
                 maximum_nomal_leaf_weight = item.maximum_nomal_leaf_weight,
                 total_leaf_weight = item.total_leaf_weight,
                 actual_nomal_leaf_weight = item.actual_nomal_leaf_weight,
@@ -138,7 +136,7 @@ namespace WeightMaster.utils
                 morapuwata = item.morapuwata,
                 thambimata = item.thambimata,
                 reject = item.reject,
-
+                bag_weight = 0,  // Not available in TransactionLogBlockModel
                 final_green_leaf_count = item.final_green_leaf_count,
                 final_gold_leaf_count = item.final_gold_leaf_count,
             });

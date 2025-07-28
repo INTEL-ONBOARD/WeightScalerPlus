@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using WeightMaster.Utiles;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using WeightMaster.utils;
 
 
 namespace WeightMaster
@@ -4375,11 +4376,22 @@ namespace WeightMaster
             string lineName = lineNameCmb_admin.SelectedItem.ToString();
             try
             {
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
-                /*                foreach (var transaction in lineReportData)
-                                {
-                                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                                }*/
+                List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
+                if (!oldLineReportData.Any())
+                { MessageBox.Show("st2 list is empty"); }
+                    List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
+                if (!boxReportData.Any())
+                { MessageBox.Show("st1 box only list is empty"); }
+                List<FinalTransactionBlockModel> lineReportData =
+                    BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
+
+
+
+
+                /*foreach (var transaction in lineReportData)
+                {
+                   System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                }*/
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
@@ -4393,7 +4405,8 @@ namespace WeightMaster
                         foreach (var transaction in lineReportData)
                         {
                             //(int)Math.Floor(scalerWeight)
-                            totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight)/4; //boxFix
+                            totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //boxFix
+                            MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
                             totalWater += transaction.water;
@@ -4405,6 +4418,7 @@ namespace WeightMaster
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
+                    else { MessageBox.Show("list is empty"); }
 
                     // Pagination setup - ensure at least 1 page even for empty data
                     int pageSize = 30;

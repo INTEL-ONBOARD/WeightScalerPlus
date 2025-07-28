@@ -200,8 +200,8 @@ namespace WeightMaster.Services
             return await _engine.getDataForDocuments(date_);
         }
 
-        //Get Custom data for line-wise report
-        public async Task<List<TransactionLogBlockModel>> GetCustomData(string lineName, string date_)
+        //Station 1 box data that didn't go to staion 2: For line-wise report
+        public async Task<List<TransactionLogBlockModel>> GetBoxOnlyLineReportData(string lineName, string date_)
         {
             return await _engine.getCustomDataOut(lineName,date_);
         }
