@@ -18,6 +18,7 @@ using Newtonsoft.Json.Linq;
 using WeightMaster.Utiles;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using WeightMaster.utils;
 
 
 namespace WeightMaster
@@ -3405,7 +3406,7 @@ namespace WeightMaster
                         membernumber = currentMemberDetails_st2.barcode_details,
                         premembernumber = greenLeafPostModel_st2.premembernumber,
 
-                        bag_count = greenLeafPostModel_st2.bag_count,
+                        bag_count = greenLeafPostModel_st2.bag_count, 
                         box_count = greenLeafPostModel_st2.box_count,
 
                         real_weight = greenLeafPostModel_st2.real_weight,
@@ -3414,16 +3415,20 @@ namespace WeightMaster
                         nomal_leaf_weight = greenLeafPostModel_st2.nomal_leaf_weight,
                         gold_leaf_weight = greenLeafPostModel_st2.gold_leaf_weight,
 
-                        wathurata = finalWateredWeight,
-                        morapuwata = finalMaturedWeight,
-                        thambimata = finalSpoiledWeight,
-                        rejected = finalRejectedWeight,
+                        //wathurata = finalWateredWeight,
+                        //morapuwata = finalMaturedWeight,
+                        //thambimata = finalSpoiledWeight,
+                        //rejected = finalRejectedWeight,
+                        wathurata = greenLeafPostModel_st2.wathurata,
+                        morapuwata = greenLeafPostModel_st2.morapuwata,
+                        thambimata = greenLeafPostModel_st2.thambimata,
+                        rejected = greenLeafPostModel_st2.rejected,
 
-                        bag_weight = totalAcceptedSackWeight,
+                        bag_weight = totalAcceptedSackWeight, //when added, this should be calculated(deducted) correctly with total, normal and gold leaf weights.
                         box_weight = greenLeafPostModel_st2.box_weight,
 
-                        final_green_leaf_count = finalAvailableNormalLeafWeight,
-                        final_gold_leaf_count = finalAvailableGoldenLeafWeight,
+                        final_green_leaf_count = greenLeafPostModel_st2.final_green_leaf_count - totalAcceptedSackWeight, //a patch was applied here w/o logic
+                        final_gold_leaf_count = greenLeafPostModel_st2.final_gold_leaf_count, //a patch was applied here w/o logic
 
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail
@@ -4372,10 +4377,31 @@ namespace WeightMaster
             try
             {
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
-/*                foreach (var transaction in lineReportData)
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.DocumentPrintWithDateAndLinename(lineName, reportDate);
+                //if (lineReportData == null || boxReportData == null)
+                //{
+                //    MessageBox.Show("No data found for the selected line and date.");
+                //    return;
+                //}
+                //new line report object
+                List<FinalTransactionReportBlockModel> newLineReportData = BlockModelConverter.CombineBlockModels(lineReportData, boxReportData);
+                if (!newLineReportData.Any())
                 {
-                    System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                }*/
+                    MessageBox.Show("No items to display.", "Names with Initials");
+                }
+                else if (newLineReportData == null) {
+                    MessageBox.Show("null error.", "Names with Initials");
+                }
+                else
+                {
+                    // Extract name_with_initials from each item, handling null values
+                    var names = newLineReportData.Select(item => item.name_with_initials ?? "Unknown");
+                    // Concatenate the names with a newline separator for readability
+                    string message = string.Join("\n", names);
+                    // Display the names in a message box with a title
+                    MessageBox.Show(message, "Names with Initials");
+                }
+
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
@@ -4384,10 +4410,12 @@ namespace WeightMaster
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
                         totalReject = 0, totalBagWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
-                    if (lineReportData.Any())
+                    if (newLineReportData.Any())
                     {
-                        foreach (var transaction in lineReportData)
+                        foreach (var transaction in newLineReportData)
                         {
+                            MessageBox.Show("passed");
+                            totalBoxCount += transaction.box_count;
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
                             totalWater += transaction.water;
@@ -4399,18 +4427,19 @@ namespace WeightMaster
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
+                    else { MessageBox.Show("table is empty"); }
 
                     // Pagination setup - ensure at least 1 page even for empty data
                     int pageSize = 30;
-                    int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
+                    int totalPages = newLineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)newLineReportData.Count / pageSize);
                     FixedDocument fixedDoc = new FixedDocument();
                     fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
 
                     for (int page = 0; page < totalPages; page++)
                     {
-                        var pageData = lineReportData.Count == 0
-                            ? new List<FinalTransactionBlockModel>()  // Empty page
-                            : lineReportData
+                        var pageData = newLineReportData.Count == 0
+                            ? new List<FinalTransactionReportBlockModel>()  // Empty page
+                            : newLineReportData
                                 .Skip(page * pageSize)
                                 .Take(pageSize)
                                 .ToList();
@@ -4443,7 +4472,7 @@ namespace WeightMaster
             }
         }
 
-        private Canvas CreateLineReportPage(List<FinalTransactionBlockModel> pageData, int pageNumber,
+        private Canvas CreateLineReportPage(List<FinalTransactionReportBlockModel> pageData, int pageNumber,
             int totalPages, bool isLastPage, TotalRow totals, string lineName)
         {
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
@@ -4569,7 +4598,7 @@ namespace WeightMaster
             canvas.Children.Add(rect);
         }
 
-        private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
+        private void AddTransactionRow(Canvas canvas, FinalTransactionReportBlockModel transaction,
             double[] positions, double y, double fontSize)
         {
             // Left-aligned columns
@@ -4578,7 +4607,7 @@ namespace WeightMaster
 
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
-            AddText(canvas, "0", fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, transaction.box_count.ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
             AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
@@ -4600,7 +4629,7 @@ namespace WeightMaster
 
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
-            AddText(canvas, "0", fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, transaction.box_count.ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
             AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
@@ -4684,7 +4713,9 @@ namespace WeightMaster
             {
                 //get a single line with multiple rows
                 List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
-                
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.DocumentPrintWithDateAndLinename(lineMaster.LineName, reportDate);
+                List<FinalTransactionReportBlockModel> newLineReportData = BlockModelConverter.CombineBlockModels(lineReportData, boxReportData);
+
                 //create an obj per each line of the daily report
                 DailyReportRowBlockModel lineRow = new DailyReportRowBlockModel();
                 //assgin non-numeric vals using the first row before summing up
@@ -4693,8 +4724,9 @@ namespace WeightMaster
                 lineRow.linename = lineMaster.LineName;
                 //MessageBox.Show(lineMaster.LineName);
                 //sum up only numbers through the loop to a single row
-                foreach (var tRow in lineReportData)
+                foreach (var tRow in newLineReportData)
                 {
+                    lineRow.box_count += tRow.box_count;
                     lineRow.bag_count += tRow.bag_count;
                     lineRow.maximum_nomal_leaf_weight = tRow.maximum_nomal_leaf_weight;
                     lineRow.total_leaf_weight += tRow.total_leaf_weight;
@@ -4737,6 +4769,7 @@ namespace WeightMaster
                     {
                         foreach (var transaction in dailyReportData)
                         {
+                            totalBoxCount += transaction.box_count;
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
                             totalWater += transaction.water;

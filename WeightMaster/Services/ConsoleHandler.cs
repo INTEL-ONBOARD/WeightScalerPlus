@@ -189,7 +189,7 @@ namespace WeightMaster.Services
         {
             await _engine.cloudSync();
         }
-        // Document Print Methods for boxes with line name and date
+        // report data for boxes with line name and date from station 1 for daily report
         public async Task<List<TransactionLogBlockModel>> DocumentPrintWithDateAndLinename(string lineName, string date_)
         {
             return await _engine.getDataForDocumentsWithDate(lineName, date_);

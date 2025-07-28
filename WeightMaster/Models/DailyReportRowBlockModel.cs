@@ -12,7 +12,7 @@ namespace WeightMaster.Models
         public string? linename { get; set; }
         //public string? date { get; set; }
 
-
+        public int box_count { get; set; } = 0;
         public int bag_count { get; set; } = 0;
         public int maximum_nomal_leaf_weight { get; set; } = 0;
         public int total_leaf_weight { get; set; } = 0;
