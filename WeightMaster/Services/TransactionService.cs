@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Formats.Asn1;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WeightMaster.Services
 {
@@ -345,9 +346,24 @@ namespace WeightMaster.Services
         {
             return await _context.transactionData
                 .Where(t => t.date == date && t.box_count > 0)
-                .ToListAsync();
+            .ToListAsync();
         }
 
+        public async Task<List<TransactionLogBlockModel>> getCustomData(string lineName,string date)
+        {
+
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            return await _context.transactionData
+                .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == date && t.box_count > 0 && t.bag_count == 0)
+                .ToListAsync();
+
+        }
 
     }
 }

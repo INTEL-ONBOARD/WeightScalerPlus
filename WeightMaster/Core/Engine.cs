@@ -535,8 +535,25 @@ namespace WeightMaster.Core
         }
 
 
+        
 
+        public async Task<List<TransactionLogBlockModel>> getCustomDataOut(string lineName ,string date_)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.getCustomData(lineName,date_);
 
+                //System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} and date: {date} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                //System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName} and bardatecode {date}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
 
 
 
