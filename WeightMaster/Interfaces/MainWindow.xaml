@@ -122,8 +122,8 @@
                             <Run Text="POS" Foreground="Black" />
                             <Run Text="Plus" Foreground="#1D8348" />
                         </TextBlock>
-
-                        <TextBlock Text="Build No.1.4.0520P" Foreground="#666666" VerticalAlignment="Top" Margin="93,765,67,0" FontSize="24"/>
+                        <!--prevous: No.1.4.0520P-->
+                        <TextBlock Text="Build No.1.6.0729P" Foreground="#666666" VerticalAlignment="Top" Margin="93,765,67,0" FontSize="24"/>
                     </Grid>
 
                 </Grid>
@@ -279,7 +279,7 @@
         </Grid>
 
         <!--Station Main Frame-->
-        <Grid x:Name="StationMainFrame" Visibility="Hidden" Background="White" Margin="40,50,40,50" >
+        <Grid x:Name="StationMainFrame" Visibility="Visible" Background="White" Margin="40,50,40,50" >
             <!--Top bar-->
             <Border Background="#FBFBFB" Margin="10,8,10,836" CornerRadius="20">
                 <Grid>
@@ -1316,7 +1316,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
