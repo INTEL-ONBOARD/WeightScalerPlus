@@ -4703,7 +4703,14 @@ namespace WeightMaster
             foreach (var lineMaster in lineMasterData)
             {
                 //get a single line with multiple rows
-                List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
+                List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
+                if (!oldLineReportData.Any())
+                { MessageBox.Show("st2 list is empty"); }
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineMaster.LineName, reportDate);
+                if (!boxReportData.Any())
+                { MessageBox.Show("st1 box only list is empty"); }
+                List<FinalTransactionBlockModel> lineReportData =
+                    BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
 
                 //create an obj per each line of the daily report
                 DailyReportRowBlockModel lineRow = new DailyReportRowBlockModel();
@@ -4758,6 +4765,7 @@ namespace WeightMaster
                     {
                         foreach (var transaction in dailyReportData)
                         {
+                            totalBoxCount += transaction.box_count; // boxFix: Box count fix added
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
                             totalWater += transaction.water;
