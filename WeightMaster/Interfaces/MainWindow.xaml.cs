@@ -4936,6 +4936,9 @@ namespace WeightMaster
 
         private void triggerMechanism(object sender, TextChangedEventArgs e)
         {
+            if (weightScalerStatus_st1 == null || weightScalerValTxt_st1 == null)
+                return;
+
             if (confirmAddRowButton_st1.IsEnabled == false && weightScalerStatus_st1.Text.Equals("සමබරයි") && int.Parse(weightScalerValTxt_st1.Text) <= 0){
                 isTriggered = true;
             }
