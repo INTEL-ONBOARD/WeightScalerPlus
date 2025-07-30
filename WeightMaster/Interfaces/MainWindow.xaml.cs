@@ -4939,10 +4939,13 @@ namespace WeightMaster
             if (weightScalerStatus_st1 == null || weightScalerValTxt_st1 == null)
                 return;
 
-            if (confirmAddRowButton_st1.IsEnabled == false && weightScalerStatus_st1.Text.Equals("සමබරයි") && int.Parse(weightScalerValTxt_st1.Text) <= 0){
+            if (confirmAddRowButton_st1.IsEnabled == false && weightScalerStatus_st1.Text.Equals("සමබරයි") && float.Parse(weightScalerValTxt_st1.Text) <= 0)
+            {
                 isTriggered = true;
             }
-            if (isTriggered == true) {
+
+            if (isTriggered == true)
+            {
                 confirmAddRowButton_st1.IsEnabled = true;
             }
             else
