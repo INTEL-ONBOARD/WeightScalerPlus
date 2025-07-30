@@ -4378,10 +4378,14 @@ namespace WeightMaster
             {
                 List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
                 if (!oldLineReportData.Any())
-                { MessageBox.Show("st2 list is empty"); }
+                { 
+                    //MessageBox.Show("st2 list is empty"); 
+                }
                     List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
                 if (!boxReportData.Any())
-                { MessageBox.Show("st1 box only list is empty"); }
+                { 
+                    //MessageBox.Show("st1 box only list is empty"); 
+                }
                 List<FinalTransactionBlockModel> lineReportData =
                     BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
 
@@ -4406,7 +4410,7 @@ namespace WeightMaster
                         {
                             //(int)Math.Floor(scalerWeight)
                             totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //boxFix
-                            MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
+                            //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
                             totalWater += transaction.water;
@@ -4418,7 +4422,9 @@ namespace WeightMaster
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
-                    else { MessageBox.Show("list is empty"); }
+                    else { 
+                        //MessageBox.Show("list is empty"); 
+                    }
 
                     // Pagination setup - ensure at least 1 page even for empty data
                     int pageSize = 30;
@@ -4705,10 +4711,14 @@ namespace WeightMaster
                 //get a single line with multiple rows
                 List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
                 if (!oldLineReportData.Any())
-                { MessageBox.Show("st2 list is empty"); }
+                { 
+                    //MessageBox.Show("st2 list is empty"); 
+                }
                 List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineMaster.LineName, reportDate);
                 if (!boxReportData.Any())
-                { MessageBox.Show("st1 box only list is empty"); }
+                { 
+                    //MessageBox.Show("st1 box only list is empty"); 
+                }
                 List<FinalTransactionBlockModel> lineReportData =
                     BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
 
