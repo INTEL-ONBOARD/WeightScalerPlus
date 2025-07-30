@@ -33,6 +33,8 @@ namespace WeightMaster
         private String path;
         private ConsoleHandler _consoleHandler;
 
+        private bool isTriggered = false;
+
 
         //to store the user email(to include it to api v2 calls)
         private string userEmail = "";
@@ -1308,6 +1310,9 @@ namespace WeightMaster
                             currentStep_st1 = currentStep_st1 - 1;
                             //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
                         }*/
+
+
+            isTriggered = false;
 
             if (!weightScalerConfirmBtn_st1.IsEnabled)
             {
@@ -4927,6 +4932,20 @@ namespace WeightMaster
             return tenthsDigit > 1
                 ? integerPart + 1
                 : integerPart;
+        }
+
+        private void triggerMechanism(object sender, TextChangedEventArgs e)
+        {
+            if (confirmAddRowButton_st1.IsEnabled == false && weightScalerStatus_st1.Text.Equals("සමබරයි") && int.Parse(weightScalerValTxt_st1.Text) <= 0){
+                isTriggered = true;
+            }
+            if (isTriggered == true) {
+                confirmAddRowButton_st1.IsEnabled = true;
+            }
+            else
+            {
+                confirmAddRowButton_st1.IsEnabled = false;
+            }
         }
 
 
