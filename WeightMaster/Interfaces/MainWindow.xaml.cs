@@ -1846,7 +1846,8 @@ namespace WeightMaster
             if (!acceptedLeafWeightTxt_st1.Text.Equals("") && !normalLeafWeightTxt_st1.Text.Equals("") && ((!nSacksTxt_st1.Text.Equals("") && nBoxesTxt_st1.Text.Equals("")) || (nSacksTxt_st1.Text.Equals("") && !nBoxesTxt_st1.Text.Equals(""))))
             {
                 //these are used to both updating the db and incrementing total valles for the table
-                float.TryParse(weightScalerValTxt_st1.Text, out float weightScalerValue);
+                //float.TryParse(weightScalerValTxt_st1.Text, out float weightScalerValue);
+                float weightScalerValue = (float)scalerRoundedWeight_st1;
                 int.TryParse(acceptedLeafWeightTxt_st1.Text, out int acceptedLeafWeight);
 
                 int.TryParse(nBoxesTxt_st1.Text, out int nBoxes);
