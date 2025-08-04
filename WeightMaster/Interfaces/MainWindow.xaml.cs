@@ -33,7 +33,7 @@ namespace WeightMaster
         private String path;
         private ConsoleHandler _consoleHandler;
 
-        private bool isTriggered = false;
+        private bool scalerPassedZero = false;
 
 
         //to store the user email(to include it to api v2 calls)
@@ -1311,9 +1311,6 @@ namespace WeightMaster
                             //ShowCurrentStep(); //if this was executed, current step becomes zero hmm
                         }*/
 
-
-            isTriggered = false;
-
             if (!weightScalerConfirmBtn_st1.IsEnabled)
             {
                 //MessageBox.Show("the button is currently disabled");
@@ -1321,6 +1318,7 @@ namespace WeightMaster
                 ShowCurrentStep();
                 return;
             }
+
             //if (!double.TryParse(nSacksTxt_st1.Text, out double nSacks) || nSacks < 0)
             //    nSacks = 0;
             //if (!double.TryParse(nBoxesTxt_st1.Text, out double nBoxes) || nBoxes < 0)
@@ -1370,6 +1368,16 @@ namespace WeightMaster
                 //check that rounded weight is more than 23KG per one sack for all the num. of sacks
                 //if (floorValue > (23*nSacks)) {
                 //}
+
+                //checked in weight value textChange event
+                scalerPassedZero = false;
+                //disable the confirm button right after.(now this enables when scaler value is zero again in the weight value textChange event)
+                weightScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));  // Gray out(disabled)
+
+
+
+
                 // Update the acceptedLeafWeightTxt_st1 TextBox/TextBlock
                 acceptedLeafWeightTxt_st1.Text = floorValue.ToString();
                 scalerRoundedWeight_st1 = floorValue;
@@ -1993,10 +2001,21 @@ namespace WeightMaster
                     greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
 
                     // enable and disable confirm buttons
-                    weightScalerConfirmBtn_st1.IsEnabled = true;
                     confirmAddRowButton_st1.IsEnabled = false;
-                    weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
                     confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+
+
+                    //newly added: verify if the weight scaler value is zero or not for this existing button disability and color change
+                    if (scalerPassedZero == true)
+                    {
+                        //MessageBox.Show("Weight Scaler has passed zero before this confirm button evt: scal button enabled");
+                        weightScalerConfirmBtn_st1.IsEnabled = true;
+                        weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                    }
+                    else
+                    {
+                        //MessageBox.Show("Weight Scaler has not passed zero before this confirm button evt: scal button disabled");
+                    }
 
                     //go back to the first step(focusing the barcode)
                     currentStep_st1 = 1;
@@ -4384,12 +4403,12 @@ namespace WeightMaster
             {
                 List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, reportDate);
                 if (!oldLineReportData.Any())
-                { 
+                {
                     //MessageBox.Show("st2 list is empty"); 
                 }
-                    List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
                 if (!boxReportData.Any())
-                { 
+                {
                     //MessageBox.Show("st1 box only list is empty"); 
                 }
                 List<FinalTransactionBlockModel> lineReportData =
@@ -4428,7 +4447,8 @@ namespace WeightMaster
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
-                    else { 
+                    else
+                    {
                         //MessageBox.Show("list is empty"); 
                     }
 
@@ -4717,12 +4737,12 @@ namespace WeightMaster
                 //get a single line with multiple rows
                 List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, reportDate);
                 if (!oldLineReportData.Any())
-                { 
+                {
                     //MessageBox.Show("st2 list is empty"); 
                 }
                 List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineMaster.LineName, reportDate);
                 if (!boxReportData.Any())
-                { 
+                {
                     //MessageBox.Show("st1 box only list is empty"); 
                 }
                 List<FinalTransactionBlockModel> lineReportData =
@@ -4937,18 +4957,33 @@ namespace WeightMaster
 
         private void triggerMechanism(object sender, TextChangedEventArgs e)
         {
+            //MessageBox.Show("current step: "+currentStep_st1.ToString());
+
             if (weightScalerStatus_st1 == null || weightScalerValTxt_st1 == null)
                 return;
 
-            if (confirmAddRowButton_st1.IsEnabled == false && weightScalerStatus_st1.Text.Equals("සමබරයි") && int.Parse(weightScalerValTxt_st1.Text) <= 0){
-                isTriggered = true;
+            if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerWeight) || scalerWeight < 0)
+                scalerWeight = 0;
+
+            //if scaler button is enabled(after row confirm)
+            if (weightScalerConfirmBtn_st1.IsEnabled == false /*&& scalerWeight==scalerRoundedWeight_st1*/ /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/ && scalerWeight <= 0)
+            {
+                scalerPassedZero = true;
             }
-            if (isTriggered == true) {
-                confirmAddRowButton_st1.IsEnabled = true;
+            //if weight scaler value has passed zero, enable scaler confirm button
+            // and make sure to verify current step b/w after confirm add button click and before the scaler button click to avoid pre-rebounce
+            if (scalerPassedZero == true && currentStep_st1 == 1)
+            {
+                //MessageBox.Show("scaler passed zero and current step is 1");
+                weightScalerConfirmBtn_st1.IsEnabled = true;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
             }
+            //if weight scaler value has not passed zero yet, disable scaler confirm button
             else
             {
-                confirmAddRowButton_st1.IsEnabled = false;
+                //MessageBox.Show("scaler has not passed zero or current step is not 1");
+                weightScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));  // Gray out(disabled)
             }
         }
 
