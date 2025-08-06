@@ -4433,8 +4433,14 @@ namespace WeightMaster
                     {
                         foreach (var transaction in lineReportData)
                         {
+                            //calculate box count
+                            int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
+                            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+                            else { totalBoxCount = tempBoxWeight / 2; }
+
                             //(int)Math.Floor(scalerWeight)
-                            totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //boxFix
+                            //totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //wrong boxFix
+                            //MessageBox.Show(totalBoxCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight +"/4");
                             //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight;
@@ -4624,13 +4630,18 @@ namespace WeightMaster
         private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
             double[] positions, double y, double fontSize)
         {
+            //calculate box count 
+            int totalBoxCount = 0;
+            int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
+            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+            else { totalBoxCount = tempBoxWeight / 2; }
             // Left-aligned columns
             AddText(canvas, transaction.Id.ToString(), fontSize, positions[0], y);
             AddText(canvas, transaction.barcode_details ?? "", fontSize, positions[1], y);
 
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
-            AddText(canvas, (((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4).ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
+            AddText(canvas, totalBoxCount.ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
             AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
@@ -4758,7 +4769,14 @@ namespace WeightMaster
                 //sum up only numbers through the loop to a single row
                 foreach (var tRow in lineReportData)
                 {
-                    lineRow.box_count += ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight) / 4; //boxFix
+                    int totalBoxCount = 0;
+                    int tempBoxWeight = ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight);
+
+                    if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+                    else { totalBoxCount = tempBoxWeight / 2; }
+
+                    //lineRow.box_count += ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight) / 4; //wrong boxFix
+                    lineRow.box_count += totalBoxCount;
                     lineRow.bag_count += tRow.bag_count;
                     lineRow.maximum_nomal_leaf_weight = tRow.maximum_nomal_leaf_weight;
                     lineRow.total_leaf_weight += tRow.total_leaf_weight;
