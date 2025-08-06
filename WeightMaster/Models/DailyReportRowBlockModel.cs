@@ -23,6 +23,7 @@ namespace WeightMaster.Models
         public int thambimata { get; set; } = 0;
         public int reject { get; set; } = 0;
         public int bag_weight { get; set; } = 0;
+        public int box_weight { get; set; } = 0;
         public int final_green_leaf_count { get; set; } = 0;
         public int final_gold_leaf_count { get; set; } = 0;
         public float real_value { get; set; } = 0;

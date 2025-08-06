@@ -4427,7 +4427,7 @@ namespace WeightMaster
                     // Initialize totals to zero
                     int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
-                        totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
                     if (lineReportData.Any())
                     {
@@ -4436,19 +4436,20 @@ namespace WeightMaster
                             //calculate box count
                             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
                             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                            else { totalBoxCount = tempBoxWeight / 2; }
+                            else { totalBoxCount = tempBoxWeight / 4; }
 
                             //(int)Math.Floor(scalerWeight)
                             //totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //wrong boxFix
                             //MessageBox.Show(totalBoxCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight +"/4");
                             //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
-                            totalLeafWeight += transaction.total_leaf_weight;
+                            totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
                             totalReject += transaction.reject;
                             totalBagWeight += transaction.bag_weight;
+                            totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
                             totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
@@ -4482,7 +4483,7 @@ namespace WeightMaster
                             totals: new TotalRow(
                                 totalBagCount, totalBoxCount, totalLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
-                                totalReject, totalBagWeight, totalDalu
+                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
                             ), lineName
                         );
 
@@ -4526,9 +4527,8 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)",
-        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර" };
-            double[] headerPositions = { 50, 100, 220, 270, 330, 380, 450, 510, 590, 660, 730 };
+            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "පෙට්ටි බර", "දළු බර" };
+            double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
@@ -4559,17 +4559,18 @@ namespace WeightMaster
             // Totals and signatures (last page only)
             if (isLastPage)
             {
-                // Totals row
+                // Totals row { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
-                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 330, yPos, rightAlign: true);
-                AddText(canvas, totals.Water.ToString(), fontSize, 380, yPos, rightAlign: true);
-                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 450, yPos, rightAlign: true);
-                AddText(canvas, totals.Thambimata.ToString(), fontSize, 510, yPos, rightAlign: true);
-                AddText(canvas, totals.Reject.ToString(), fontSize, 590, yPos, rightAlign: true);
-                AddText(canvas, totals.BagWeight.ToString(), fontSize, 660, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 730, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 360, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 430, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 490, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 570, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 710, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
@@ -4630,11 +4631,11 @@ namespace WeightMaster
         private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
             double[] positions, double y, double fontSize)
         {
-            //calculate box count 
+            //calculate box weight and count 
             int totalBoxCount = 0;
             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-            else { totalBoxCount = tempBoxWeight / 2; }
+            else { totalBoxCount = tempBoxWeight / 4; }
             // Left-aligned columns
             AddText(canvas, transaction.Id.ToString(), fontSize, positions[0], y);
             AddText(canvas, transaction.barcode_details ?? "", fontSize, positions[1], y);
@@ -4642,16 +4643,17 @@ namespace WeightMaster
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
             AddText(canvas, totalBoxCount.ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
-            AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, (transaction.total_leaf_weight + tempBoxWeight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
             AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
             AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
             AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
+            AddText(canvas, tempBoxWeight.ToString(), fontSize, positions[10], y, rightAlign: true); //recently added box weight
             AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
                 transaction.morapuwata + transaction.thambimata +
                 transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[10], y, rightAlign: true);
+                fontSize, positions[11], y, rightAlign: true);
         }
 
         private void AddDailyTransactionRow(Canvas canvas, DailyReportRowBlockModel transaction,
@@ -4664,16 +4666,17 @@ namespace WeightMaster
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
             AddText(canvas, transaction.box_count.ToString(), fontSize, positions[3], y, rightAlign: true); // boxFix: Box count fix added
-            AddText(canvas, transaction.total_leaf_weight.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, (transaction.total_leaf_weight + transaction.box_weight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight   
             AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
             AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
             AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
             AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
             AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
+            AddText(canvas, transaction.box_weight.ToString(), fontSize, positions[10], y, rightAlign: true);
             AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
                 transaction.morapuwata + transaction.thambimata +
                 transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[10], y, rightAlign: true);
+                fontSize, positions[11], y, rightAlign: true);
         }
 
         private void AddSignatureLine(Canvas canvas, string label, double x, double y)
@@ -4702,10 +4705,11 @@ namespace WeightMaster
             public int Thambimata { get; }
             public int Reject { get; }
             public int BagWeight { get; }
+            public int BoxWeight { get; }
             public int Dalu { get; }
 
             public TotalRow(int bagCount, int boxCount, int leafWeight, int water,
-                           int morapuwata, int thambimata, int reject, int bagWeight, int dalu)
+                           int morapuwata, int thambimata, int reject, int bagWeight, int boxWeight, int dalu)
             {
                 BagCount = bagCount;
                 BoxCount = boxCount;
@@ -4715,6 +4719,7 @@ namespace WeightMaster
                 Thambimata = thambimata;
                 Reject = reject;
                 BagWeight = bagWeight;
+                BoxWeight = boxWeight;
                 Dalu = dalu;
             }
         }
@@ -4773,7 +4778,7 @@ namespace WeightMaster
                     int tempBoxWeight = ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight);
 
                     if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                    else { totalBoxCount = tempBoxWeight / 2; }
+                    else { totalBoxCount = tempBoxWeight / 4; }
 
                     //lineRow.box_count += ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight) / 4; //wrong boxFix
                     lineRow.box_count += totalBoxCount;
@@ -4787,6 +4792,7 @@ namespace WeightMaster
                     lineRow.thambimata += tRow.thambimata;
                     lineRow.reject += tRow.reject;
                     lineRow.bag_weight += tRow.bag_weight;
+                    lineRow.box_weight += tempBoxWeight; // Use the calculated box weight
                     lineRow.final_green_leaf_count += tRow.final_green_leaf_count;
                     lineRow.final_gold_leaf_count += tRow.final_gold_leaf_count;
                     lineRow.real_value += tRow.real_value;
@@ -4813,7 +4819,7 @@ namespace WeightMaster
                     // Initialize totals to zero
                     int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
-                        totalReject = 0, totalBagWeight = 0, totalDalu = 0;
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
                     if (dailyReportData.Any())
                     {
@@ -4821,12 +4827,13 @@ namespace WeightMaster
                         {
                             totalBoxCount += transaction.box_count; // boxFix: Box count fix added
                             totalBagCount += transaction.bag_count;
-                            totalLeafWeight += transaction.total_leaf_weight;
+                            totalLeafWeight += transaction.total_leaf_weight + transaction.box_weight;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
                             totalReject += transaction.reject;
                             totalBagWeight += transaction.bag_weight;
+                            totalBoxWeight += transaction.box_weight; // Use the box weight
                             totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
@@ -4856,7 +4863,7 @@ namespace WeightMaster
                             totals: new TotalRow(
                                 totalBagCount, totalBoxCount, totalLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
-                                totalReject, totalBagWeight, totalDalu
+                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
                             )
                         );
 
@@ -4900,9 +4907,8 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අංකය", "මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)",
-        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර" };
-            double[] headerPositions = { 50, 100, 220, 270, 330, 380, 450, 510, 590, 660, 730 };
+            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "පෙට්ටි බර", "දළු බර" };
+            double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
@@ -4932,17 +4938,18 @@ namespace WeightMaster
             // Totals and signatures (last page only)
             if (isLastPage)
             {
-                // Totals row
+                // Totals row  { 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
-                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 330, yPos, rightAlign: true);
-                AddText(canvas, totals.Water.ToString(), fontSize, 380, yPos, rightAlign: true);
-                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 450, yPos, rightAlign: true);
-                AddText(canvas, totals.Thambimata.ToString(), fontSize, 510, yPos, rightAlign: true);
-                AddText(canvas, totals.Reject.ToString(), fontSize, 590, yPos, rightAlign: true);
-                AddText(canvas, totals.BagWeight.ToString(), fontSize, 660, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 730, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 360, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 430, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 490, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 570, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 710, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
