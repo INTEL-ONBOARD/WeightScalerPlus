@@ -1264,16 +1264,16 @@ namespace WeightMaster
                 scalerWeight = 0;
 
             //if scaler button is enabled(after row confirm)
-            if (weightScalerConfirmBtn_st1.IsEnabled == false /*&& scalerWeight==scalerRoundedWeight_st1*/ /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/ && scalerWeight <= 0)
+            if (weightScalerConfirmBtn_st1.IsEnabled == false && scalerWeight <= 0/*&& scalerWeight==scalerRoundedWeight_st1*/ /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/)
             {
-                MessageBox.Show("passed zero");
+                //MessageBox.Show("passed zero");
                 scalerPassedZero = true;
             }
             //if weight scaler value has passed zero, enable scaler confirm button
             // and make sure to verify current step b/w after confirm add button click and before the scaler button click to avoid pre-rebounce
             if (scalerPassedZero == true && currentStep_st1 == 1 && weightScalerStatus_st1.Text.Equals("සමබරයි"))
             {
-                MessageBox.Show("enabled");
+                //MessageBox.Show("enabled");
                 //MessageBox.Show("scaler passed zero and current step is 1");
                 weightScalerConfirmBtn_st1.IsEnabled = true;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
@@ -1298,19 +1298,20 @@ namespace WeightMaster
             if (weightScalerConfirmBtn_st1 == null)
                 return;
 
-            //ignore processes execpt step 1 when zero passes
+            if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerVal) || scalerVal < 0)
+                scalerVal = 0;
 
             // Check if the scaler value has passed zero to make sure scaler confirm button stays disabled until it has passed zero 
             if (!scalerPassedZero /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/)
             {
-                MessageBox.Show("not passed zero: change blocked");
+                //MessageBox.Show("not passed zero: change blocked");
                 weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));
                 return;
             }
-            if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerVal) || scalerVal < 0)
-                scalerVal = 0;
-            if (scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි"))
+            //now scaler has passed zero by skipping above if statement.
+            //ignore processes except step 1 when zero passes
+            if ((scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි")) && currentStep_st1 == 1)
             {
                 weightScalerConfirmBtn_st1.IsEnabled = true;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
