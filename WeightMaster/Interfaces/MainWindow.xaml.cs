@@ -1247,26 +1247,43 @@ namespace WeightMaster
                 {
                     System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
                 }
-
-                //// Loop through each transaction and print details to the debug console
-                //for (int i = 0; i < customerTransactions_st2.Count; i++)
-                //{
-                //    var transaction = customerTransactions_st2[i];
-                //    //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                //    //System.Diagnostics.Debug.WriteLine($"barcode_details: {transaction.barcode_details}");
-                //    //System.Diagnostics.Debug.WriteLine($"name_with_initials: {transaction.name_with_initials}");
-                //    //System.Diagnostics.Debug.WriteLine($"nSacks: {transaction.bag_count}");
-                //    //System.Diagnostics.Debug.WriteLine($"remaining sacks: {null}");
-                //    //System.Diagnostics.Debug.WriteLine($"Total Leaf Weight: {transaction.real_value}");
-                //    //System.Diagnostics.Debug.WriteLine($"accepted leaf weight: {transaction.total_leaf_weight}");
-                //    //System.Diagnostics.Debug.WriteLine($"golden leaf weight: {transaction.final_gold_leaf_count}");
-                //    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                //    CustomerCompletionRowPanel.Children.Add(cctr4);
-                //}
             }
             else
             {
                 lineMasterNameLbl_st1.Text = "-";
+            }
+        }
+        private void triggerMechanism(object sender, TextChangedEventArgs e)
+        {
+            //MessageBox.Show("current step: "+currentStep_st1.ToString());
+
+            if (weightScalerStatus_st1 == null || weightScalerValTxt_st1 == null)
+                return;
+
+            if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerWeight) || scalerWeight < 0)
+                scalerWeight = 0;
+
+            //if scaler button is enabled(after row confirm)
+            if (weightScalerConfirmBtn_st1.IsEnabled == false /*&& scalerWeight==scalerRoundedWeight_st1*/ /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/ && scalerWeight <= 0)
+            {
+                MessageBox.Show("passed zero");
+                scalerPassedZero = true;
+            }
+            //if weight scaler value has passed zero, enable scaler confirm button
+            // and make sure to verify current step b/w after confirm add button click and before the scaler button click to avoid pre-rebounce
+            if (scalerPassedZero == true && currentStep_st1 == 1 && weightScalerStatus_st1.Text.Equals("සමබරයි"))
+            {
+                MessageBox.Show("enabled");
+                //MessageBox.Show("scaler passed zero and current step is 1");
+                weightScalerConfirmBtn_st1.IsEnabled = true;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
+            }
+            //if weight scaler value has not passed zero yet, disable scaler confirm button
+            else
+            {
+                //MessageBox.Show("scaler has not passed zero or current step is not 1");
+                weightScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));  // Gray out(disabled)
             }
         }
 
@@ -1280,6 +1297,17 @@ namespace WeightMaster
                 return;
             if (weightScalerConfirmBtn_st1 == null)
                 return;
+
+            //ignore processes execpt step 1 when zero passes
+
+            // Check if the scaler value has passed zero to make sure scaler confirm button stays disabled until it has passed zero 
+            if (!scalerPassedZero /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/)
+            {
+                MessageBox.Show("not passed zero: change blocked");
+                weightScalerConfirmBtn_st1.IsEnabled = false;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));
+                return;
+            }
             if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerVal) || scalerVal < 0)
                 scalerVal = 0;
             if (scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි"))
@@ -4980,37 +5008,7 @@ namespace WeightMaster
                 : integerPart;
         }
 
-        private void triggerMechanism(object sender, TextChangedEventArgs e)
-        {
-            //MessageBox.Show("current step: "+currentStep_st1.ToString());
 
-            if (weightScalerStatus_st1 == null || weightScalerValTxt_st1 == null)
-                return;
-
-            if (!double.TryParse(weightScalerValTxt_st1.Text, out double scalerWeight) || scalerWeight < 0)
-                scalerWeight = 0;
-
-            //if scaler button is enabled(after row confirm)
-            if (weightScalerConfirmBtn_st1.IsEnabled == false /*&& scalerWeight==scalerRoundedWeight_st1*/ /*&& weightScalerStatus_st1.Text.Equals("සමබරයි")*/ && scalerWeight <= 0)
-            {
-                scalerPassedZero = true;
-            }
-            //if weight scaler value has passed zero, enable scaler confirm button
-            // and make sure to verify current step b/w after confirm add button click and before the scaler button click to avoid pre-rebounce
-            if (scalerPassedZero == true && currentStep_st1 == 1)
-            {
-                //MessageBox.Show("scaler passed zero and current step is 1");
-                weightScalerConfirmBtn_st1.IsEnabled = true;
-                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
-            }
-            //if weight scaler value has not passed zero yet, disable scaler confirm button
-            else
-            {
-                //MessageBox.Show("scaler has not passed zero or current step is not 1");
-                weightScalerConfirmBtn_st1.IsEnabled = false;
-                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));  // Gray out(disabled)
-            }
-        }
 
 
         /*private void DrawDailyReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
