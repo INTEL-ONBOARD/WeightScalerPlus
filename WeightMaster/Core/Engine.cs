@@ -891,25 +891,52 @@ namespace WeightMaster.Core
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
+                //bool isAvailable = true;
+                //do
+                //{
+                //    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                //    if (isAvailable)
+                //    {
+                //        GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                //        if (model != null)
+                //        {
+                //            bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                //            if (isupdated)
+                //            {
+                //                await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
+                //            }
+                //            else
+                //            {
+                //                await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
 
-                bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                if (isAvailable)
+                //            }
+                //        }
+                //    }
+                //} while (isAvailable);
+
+
+                bool isAvailable;
+                do
                 {
-                    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                    if (model != null)
-                    {
-                        bool isupdated = await PostGreenLeafToExternalApiAsync(model);
-                        if (isupdated)
-                        {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
-                        }
-                        else
-                        {
-                            await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
+                    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                    if (!isAvailable)
+                        break; // No pending posts
 
-                        }
+                    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                    if (model == null)
+                        break; // Safety: prevents infinite loop if query fails
+
+                    bool isUpdated = await PostGreenLeafToExternalApiAsync(model);
+                    await postStatusService.UpdateStatusByPostIdAsync(model.id, isUpdated);
+
+                    if (!isUpdated)
+                    {
+                        // Optional: avoid hammering the external API on failures
+                        await Task.Delay(TimeSpan.FromSeconds(5));
                     }
-                }
+
+                } while (isAvailable);
+
 
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
                 return true;
