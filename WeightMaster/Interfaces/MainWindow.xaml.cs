@@ -789,7 +789,7 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
 
-            await _consoleHandler.cloudsync();
+            //await _consoleHandler.cloudsync();
             try
             {
                 // Update status label to indicate that fetching has started
@@ -3498,7 +3498,7 @@ namespace WeightMaster
 
 
                     await _consoleHandler.UpdateData(1, newGRPM);
-                    await _consoleHandler.cloudsync();
+                    //await _consoleHandler.cloudsync();
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
                     confirmAddRowButton_st2.IsEnabled = false;
@@ -3736,8 +3736,9 @@ namespace WeightMaster
         {
             try
             {
-                await _consoleHandler.cloudsync();
                 statusLabel.Content = "Cloud syncing...";
+                await _consoleHandler.cloudsync();
+                statusLabel.Content = "Cloud sync completed";
             }
             catch
             {
