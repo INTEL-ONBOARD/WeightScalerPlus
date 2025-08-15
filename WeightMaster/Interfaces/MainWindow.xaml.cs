@@ -1273,15 +1273,14 @@ namespace WeightMaster
             // and make sure to verify current step b/w after confirm add button click and before the scaler button click to avoid pre-rebounce
             if (scalerPassedZero == true && currentStep_st1 == 1 && weightScalerStatus_st1.Text.Equals("සමබරයි"))
             {
-                //MessageBox.Show("enabled");
-                //MessageBox.Show("scaler passed zero and current step is 1");
+                //MessageBox.Show("scaler passed zero and current step is 1: button enabled");
                 weightScalerConfirmBtn_st1.IsEnabled = true;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));  // green(enabled)
             }
             //if weight scaler value has not passed zero yet, disable scaler confirm button
             else
             {
-                //MessageBox.Show("scaler has not passed zero or current step is not 1");
+                //MessageBox.Show("scaler has not passed zero || current step is not 1 || scaler is not balanced");
                 weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FFBDA3"));  // Gray out(disabled)
             }
@@ -1311,13 +1310,15 @@ namespace WeightMaster
             }
             //now scaler has passed zero by skipping above if statement.
             //ignore processes except step 1 when zero passes
-            if ((scalerVal > 0 || weightScalerStatus_st1.Text.Equals("සමබරයි")) && currentStep_st1 == 1)
+            if ((scalerVal > 0 && weightScalerStatus_st1.Text.Equals("සමබරයි")) && currentStep_st1 == 1)
             {
+                //MessageBox.Show("passed zero: change allowed: "+ weightScalerStatus_st1.Text);
                 weightScalerConfirmBtn_st1.IsEnabled = true;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71"));
             }
             else
             {
+                //MessageBox.Show("passed zero: but scaler is not balanced");
                 weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#95D4A1"));
             }
@@ -1811,6 +1812,11 @@ namespace WeightMaster
             confirmAddRowButton_st1.IsEnabled = false;
             weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
             confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
+
+            //this was added to go back to step 1 and enable scaler confirm button because,
+            // this is the only way to get a new scaler value without confirming the transaction
+            currentStep_st1 = 1;
+
 
         }
 
