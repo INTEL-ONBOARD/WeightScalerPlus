@@ -4567,12 +4567,11 @@ namespace WeightMaster
             double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
-            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
             for (int i = 0; i < headers.Length; i++)
             {
                 bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
-                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
-                    rightAlign: isNumericColumn, brush: Brushes.White);
+                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos, rightAlign: isNumericColumn, brush: Brushes.Black);
             }
             yPos += 25;
 
@@ -4580,14 +4579,14 @@ namespace WeightMaster
             bool isAlternate = false;
             foreach (var transaction in pageData)
             {
-                if (isAlternate)
-                {
-                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
-                }
-
+                //if (isAlternate)
+                //{
+                //    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
+                //}
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
-                isAlternate = !isAlternate;
+                isAlternate = !isAlternate; // Alternate row color
             }
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 315, yPos + 120);
@@ -4596,7 +4595,7 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
                 AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
@@ -4657,7 +4656,9 @@ namespace WeightMaster
             {
                 Width = width,
                 Height = height,
-                Fill = fill
+                Fill = fill,
+                Stroke = Brushes.Black, // Sets the border color to black
+                StrokeThickness = 1     // Sets the border thickness (adjust as needed)
             };
             Canvas.SetLeft(rect, x);
             Canvas.SetTop(rect, y);
@@ -4947,12 +4948,12 @@ namespace WeightMaster
             double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
-            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
             for (int i = 0; i < headers.Length; i++)
             {
                 bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
                 AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
-                    rightAlign: isNumericColumn, brush: Brushes.White);
+                    rightAlign: isNumericColumn, brush: Brushes.Black);
             }
             yPos += 25;
 
@@ -4960,14 +4961,14 @@ namespace WeightMaster
             bool isAlternate = false;
             foreach (var transaction in pageData)
             {
-                if (isAlternate)
-                {
-                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
-                }
-
+                //if (isAlternate)
+                //{
+                //    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
+                //}
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddDailyTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
-                isAlternate = !isAlternate;
+                isAlternate = !isAlternate; // Alternate row color
             }
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 120);
@@ -4975,7 +4976,7 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row  { 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
                 AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
