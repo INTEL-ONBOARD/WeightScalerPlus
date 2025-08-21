@@ -4649,20 +4649,40 @@ namespace WeightMaster
             canvas.Children.Add(txt);
         }
 
-        private void AddRectangle(Canvas canvas, double x, double y, double width,
-            double height, Brush fill)
+        //private void AddRectangle(Canvas canvas, double x, double y, double width,
+        //    double height, Brush fill)
+        //{
+        //    var rect = new Rectangle
+        //    {
+        //        Width = width,
+        //        Height = height,
+        //        Fill = fill,
+        //        Stroke = Brushes.Black, // Sets the border color to black
+        //        StrokeThickness = 1     // Sets the border thickness (adjust as needed)
+        //    };
+        //    Canvas.SetLeft(rect, x);
+        //    Canvas.SetTop(rect, y);
+        //    canvas.Children.Add(rect);
+        //}
+        private void AddRectangle(Canvas canvas, double x, double y, double width, double height, Brush fill)
         {
             var rect = new Rectangle
             {
                 Width = width,
                 Height = height,
-                Fill = fill,
-                Stroke = Brushes.Black, // Sets the border color to black
-                StrokeThickness = 1     // Sets the border thickness (adjust as needed)
+                Fill = fill
             };
-            Canvas.SetLeft(rect, x);
-            Canvas.SetTop(rect, y);
-            canvas.Children.Add(rect);
+
+            var border = new Border
+            {
+                BorderBrush = Brushes.Black, // Black border
+                BorderThickness = new Thickness(1, 1, 1, 1), // Only bottom border (left, top, right, bottom)
+                Child = rect
+            };
+
+            Canvas.SetLeft(border, x);
+            Canvas.SetTop(border, y);
+            canvas.Children.Add(border);
         }
 
         private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
