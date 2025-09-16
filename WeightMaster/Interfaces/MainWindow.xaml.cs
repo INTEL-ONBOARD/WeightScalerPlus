@@ -14,10 +14,6 @@ using WeightMaster.Services;
 using System.Globalization;
 using System.Windows.Documents;
 using System.Windows.Shapes;
-using Newtonsoft.Json.Linq;
-using WeightMaster.Utiles;
-using System.Threading.Tasks;
-using System.Diagnostics;
 using WeightMaster.utils;
 
 
@@ -38,6 +34,7 @@ namespace WeightMaster
 
         //to store the user email(to include it to api v2 calls)
         private string userEmail = "";
+        private string loginUsername = ""; //to user globally (for admin frame currently)
 
         //for Enter and Esc navigation
         private int currentStep_st1 = 0;
@@ -49,6 +46,9 @@ namespace WeightMaster
         //public int nSacks_st1 = 0;
         //public int nBoxes_st1 = 0;
         private double singleBoxWeight = 3.5;
+
+        //settings and admin navigation logic
+        private bool isFromStation = false;
 
 
         //___________________st1 global variables____________________________________________________________________________________________|
@@ -789,7 +789,7 @@ namespace WeightMaster
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
 
-            await _consoleHandler.cloudsync();
+            //await _consoleHandler.cloudsync();
             try
             {
                 // Update status label to indicate that fetching has started
@@ -851,6 +851,7 @@ namespace WeightMaster
             {
                 statusLabel.Content = "Logging in...";
                 username = await _consoleHandler.loginUser(email, password);
+                loginUsername = username;
             }
             catch (Exception ex)
             {
@@ -1000,12 +1001,19 @@ namespace WeightMaster
 
         private void HomeButtonClick(object sender, RoutedEventArgs e)
         {
+            if (isFromStation) {
+                //MessageBox.Show("is from station");
+                AdminFrame.Visibility = Visibility.Hidden;
+            }
+            StationMainFrame.Visibility = Visibility.Visible;
             Station1Frame.Visibility = Visibility.Visible;
             SettingsFrame.Visibility = Visibility.Collapsed;
             //button visibility logic
             //Console.Beep();
             SettingsButton.Visibility = Visibility.Visible;
             HomeButton.Visibility = Visibility.Collapsed;
+
+            isFromStation = false;
 
         }
 
@@ -1913,7 +1921,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "මොරවක්කොරළේ තේ කම්හල",
+                        company = "සමූපකාර තේ කම්හල", //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = memberId_st1,
@@ -1949,7 +1957,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "3",
+                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -1993,7 +2001,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "3",
+                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -3345,7 +3353,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "මොරවක්කෝරළේ තේ කම්හල",
+                        company = "සමූපකාර තේ කම්හල",  //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         //superviosr = supervisor_st2,
@@ -3461,7 +3469,7 @@ namespace WeightMaster
                     {
                         id = 0,
                         leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                        factory = "3",
+                        factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                         transportlinename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
@@ -3498,7 +3506,7 @@ namespace WeightMaster
 
 
                     await _consoleHandler.UpdateData(1, newGRPM);
-                    await _consoleHandler.cloudsync();
+                    //await _consoleHandler.cloudsync();
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
                     confirmAddRowButton_st2.IsEnabled = false;
@@ -3690,6 +3698,26 @@ namespace WeightMaster
 
 
         //settings frame______________________________________________________________________________________________________________________________
+
+        private void ViewReports_Click(object sender, RoutedEventArgs e)
+        {
+            isFromStation = true;
+
+            //load the username as the leaf weight officer
+            weightLeafOfficerTxt_admin.Text = loginUsername;
+
+            //PageAdmin.Visibility = Visibility.Visible;
+            //LoginFrame.Visibility = Visibility.Collapsed;
+            Station2Frame.Visibility = Visibility.Collapsed;
+            Station1Frame.Visibility = Visibility.Visible;
+            //StationMainFrame.Visibility = Visibility.Collapsed;
+            SettingsFrame.Visibility = Visibility.Hidden;
+            AdminFrame.Visibility = Visibility.Visible;
+
+            TopBarStationName.Text = "ප්‍රධා න පා ලක";
+            reportDateTxt_admin.Text = reportDate;
+        }
+
         private void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
         {
             ApplicationSettingsButton.Opacity = 0.6;
@@ -3712,7 +3740,7 @@ namespace WeightMaster
 
 
 
-        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+/*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog();
             // Optionally, set filters (e.g., only text files, images, etc.)
@@ -3730,15 +3758,15 @@ namespace WeightMaster
                 runtimeService.StartTimer();
             }
 
-        }
+        }*/
 
         private async void SyncButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                await _consoleHandler.cloudsync();
                 statusLabel.Content = "Cloud syncing...";
- 
+                await _consoleHandler.cloudsync();
+                statusLabel.Content = "Cloud sync completed";
             }
             catch
             {
@@ -4544,7 +4572,8 @@ namespace WeightMaster
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
             double yPos = 50;
             Typeface typeface = new Typeface("Arial");
-            double fontSize = 10;
+            double fontSize = 13;
+            double headerFontSize = 10;
             Brush brush = Brushes.Black;
 
             // Add main headers
@@ -4563,16 +4592,15 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "පෙට්ටි බර", "දළු බර" };
-            double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
+            string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
+            double[] headerPositions = { 50, 80, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
-            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
             for (int i = 0; i < headers.Length; i++)
             {
                 bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
-                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
-                    rightAlign: isNumericColumn, brush: Brushes.White);
+                AddText(canvas, headers[i], headerFontSize, headerPositions[i], yPos, rightAlign: isNumericColumn, brush: Brushes.Black);
             }
             yPos += 25;
 
@@ -4580,14 +4608,14 @@ namespace WeightMaster
             bool isAlternate = false;
             foreach (var transaction in pageData)
             {
-                if (isAlternate)
-                {
-                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
-                }
-
+                //if (isAlternate)
+                //{
+                //    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
+                //}
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
-                isAlternate = !isAlternate;
+                isAlternate = !isAlternate; // Alternate row color
             }
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 315, yPos + 120);
@@ -4596,7 +4624,7 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
                 AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
@@ -4650,8 +4678,22 @@ namespace WeightMaster
             canvas.Children.Add(txt);
         }
 
-        private void AddRectangle(Canvas canvas, double x, double y, double width,
-            double height, Brush fill)
+        //private void AddRectangle(Canvas canvas, double x, double y, double width,
+        //    double height, Brush fill)
+        //{
+        //    var rect = new Rectangle
+        //    {
+        //        Width = width,
+        //        Height = height,
+        //        Fill = fill,
+        //        Stroke = Brushes.Black, // Sets the border color to black
+        //        StrokeThickness = 1     // Sets the border thickness (adjust as needed)
+        //    };
+        //    Canvas.SetLeft(rect, x);
+        //    Canvas.SetTop(rect, y);
+        //    canvas.Children.Add(rect);
+        //}
+        private void AddRectangle(Canvas canvas, double x, double y, double width, double height, Brush fill)
         {
             var rect = new Rectangle
             {
@@ -4659,9 +4701,17 @@ namespace WeightMaster
                 Height = height,
                 Fill = fill
             };
-            Canvas.SetLeft(rect, x);
-            Canvas.SetTop(rect, y);
-            canvas.Children.Add(rect);
+
+            var border = new Border
+            {
+                BorderBrush = Brushes.Black, // Black border
+                BorderThickness = new Thickness(1, 1, 1, 1), // Only bottom border (left, top, right, bottom)
+                Child = rect
+            };
+
+            Canvas.SetLeft(border, x);
+            Canvas.SetTop(border, y);
+            canvas.Children.Add(border);
         }
 
         private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
@@ -4924,7 +4974,8 @@ namespace WeightMaster
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
             double yPos = 50;
             Typeface typeface = new Typeface("Arial");
-            double fontSize = 10;
+            double fontSize = 13;
+            double headerFontSize = 10;
             Brush brush = Brushes.Black;
 
             // Add main headers
@@ -4943,16 +4994,16 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අංකය", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි බර", "පෙට්ටි බර", "දළු බර" };
-            double[] headerPositions = { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
+            string[] headers = { "අං.", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
+            double[] headerPositions = { 46, 70, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
-            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.Black);
+            AddRectangle(canvas, 40, yPos - 5, 816 - 80, 30, Brushes.White);
             for (int i = 0; i < headers.Length; i++)
             {
                 bool isNumericColumn = i >= 2; // Columns from index 2 are numeric
-                AddText(canvas, headers[i], fontSize, headerPositions[i], yPos,
-                    rightAlign: isNumericColumn, brush: Brushes.White);
+                AddText(canvas, headers[i], headerFontSize, headerPositions[i], yPos,
+                    rightAlign: isNumericColumn, brush: Brushes.Black);
             }
             yPos += 25;
 
@@ -4960,14 +5011,14 @@ namespace WeightMaster
             bool isAlternate = false;
             foreach (var transaction in pageData)
             {
-                if (isAlternate)
-                {
-                    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
-                }
-
+                //if (isAlternate)
+                //{
+                //    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
+                //}
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddDailyTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
                 yPos += 20;
-                isAlternate = !isAlternate;
+                isAlternate = !isAlternate; // Alternate row color
             }
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 816 - 350, yPos + 120);
@@ -4975,7 +5026,7 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row  { 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.DarkGray);
+                AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
                 AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
