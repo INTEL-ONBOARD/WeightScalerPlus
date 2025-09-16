@@ -140,11 +140,9 @@ namespace WeightMaster.Services
                 .OrderBy(ps => ps.Id)
                 .FirstOrDefaultAsync();
 
-            MessageBox.Show("PostStatus found: " + (postStatus != null ? postStatus.PostId.ToString() : "null"));
-
             if (postStatus != null)
             {
-                MessageBox.Show("Fetching GreenLeafPost for PostId: " + postStatus.PostId);
+               
                 return await _context.GreenLeafPosts
                     .FirstOrDefaultAsync(post => post.id == postStatus.PostId);
             }

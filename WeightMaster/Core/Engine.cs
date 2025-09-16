@@ -896,18 +896,15 @@ namespace WeightMaster.Core
                 do
                 {
                     isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                    MessageBox.Show("===> [checking] " + isAvailable);
                     if (isAvailable)
                     {
                         GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                        MessageBox.Show("===> [fetched] " + model?.id);
                         if (model != null)
                         {
                             bool isupdated = await PostGreenLeafToExternalApiAsync(model);
                             if (isupdated)
                             {
                                 await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
-                                MessageBox.Show("===>[done] " + model.id);
                             }
                             else
                             {
