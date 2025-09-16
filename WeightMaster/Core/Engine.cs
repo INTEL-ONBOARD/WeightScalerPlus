@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Documents;
 using WeightMaster.Config;
 using WeightMaster.Models;
@@ -891,51 +892,53 @@ namespace WeightMaster.Core
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
-                //bool isAvailable = true;
-                //do
-                //{
-                //    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                //    if (isAvailable)
-                //    {
-                //        GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                //        if (model != null)
-                //        {
-                //            bool isupdated = await PostGreenLeafToExternalApiAsync(model);
-                //            if (isupdated)
-                //            {
-                //                await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
-                //            }
-                //            else
-                //            {
-                //                await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
-
-                //            }
-                //        }
-                //    }
-                //} while (isAvailable);
-
-
-                bool isAvailable;
+                bool isAvailable = true;
                 do
                 {
                     isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                    if (!isAvailable)
-                        break; // No pending posts
-
-                    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                    if (model == null)
-                        break; // Safety: prevents infinite loop if query fails
-
-                    bool isUpdated = await PostGreenLeafToExternalApiAsync(model);
-                    await postStatusService.UpdateStatusByPostIdAsync(model.id, isUpdated);
-
-                    if (!isUpdated)
+                    MessageBox.Show("===> [checking] " + isAvailable);
+                    if (isAvailable)
                     {
-                        // Optional: avoid hammering the external API on failures
-                        await Task.Delay(TimeSpan.FromSeconds(5));
-                    }
+                        GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                        if (model != null)
+                        {
+                            bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                            if (isupdated)
+                            {
+                                await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
+                                MessageBox.Show("===>[done] " + model.id);
+                            }
+                            else
+                            {
+                                await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
 
+                            }
+                        }
+                    }
                 } while (isAvailable);
+
+
+                //bool isAvailable;
+                //do
+                //{
+                //    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
+                //    if (!isAvailable)
+                //        break; // No pending posts
+
+                //    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                //    if (model == null)
+                //        break; // Safety: prevents infinite loop if query fails
+
+                //    bool isUpdated = await PostGreenLeafToExternalApiAsync(model);
+                //    await postStatusService.UpdateStatusByPostIdAsync(model.id, isUpdated);
+
+                //    if (!isUpdated)
+                //    {
+                //        // Optional: avoid hammering the external API on failures
+                //        await Task.Delay(TimeSpan.FromSeconds(5));
+                //    }
+
+                //} while (isAvailable);
 
 
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");

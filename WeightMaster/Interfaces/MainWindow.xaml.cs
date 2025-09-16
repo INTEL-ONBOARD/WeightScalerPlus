@@ -3738,6 +3738,7 @@ namespace WeightMaster
             {
                 await _consoleHandler.cloudsync();
                 statusLabel.Content = "Cloud syncing...";
+ 
             }
             catch
             {
