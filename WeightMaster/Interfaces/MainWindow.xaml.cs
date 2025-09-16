@@ -1921,7 +1921,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "ඇලන් වැලි තේ කම්හල",
+                        company = "සමූපකාර තේ කම්හල", //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = memberId_st1,
@@ -1957,7 +1957,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "3",
+                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -2001,7 +2001,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "3",
+                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -3353,7 +3353,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "ඇලන් වැලි තේ කම්හල",
+                        company = "සමූපකාර තේ කම්හල",  //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         //superviosr = supervisor_st2,
@@ -3469,7 +3469,7 @@ namespace WeightMaster
                     {
                         id = 0,
                         leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                        factory = "3",
+                        factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                         transportlinename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,

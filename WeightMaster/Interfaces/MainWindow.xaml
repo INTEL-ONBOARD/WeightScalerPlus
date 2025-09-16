@@ -290,7 +290,8 @@
                     </Grid.ColumnDefinitions>
                     <Image Source="/Interfaces/teacoop_logo.png" Margin="9,17,418,25"/>
                     <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමා  සහිත මො  රවක්කෝ  රලේ  තේ නිපදවන්නන්ගේ  සමුපකා ර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,548,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
-                    <TextBlock x:Name="TopbarCustomerLocation" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Text="ඇලන් වැලි තේ කම්හල" Grid.ColumnSpan="2"/>
+                    <!--//සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
+                    <TextBlock x:Name="TopbarCustomerLocation" Text="සමූපකාර තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="TopBarStationName" Text="දළු කිරීම" HorizontalAlignment="Right" TextAlignment="Right" Foreground="#2F4859" FontSize="26" Margin="0,58,313,27" FontWeight="Bold" Grid.Column="1" Width="216"  />
                     <userContorls:StataionDateAndTime Grid.Column="1" Margin="565,80,313,-4"/>
                     <!--Settings button (when home button is invicible)-->
@@ -1468,7 +1469,7 @@
                     <!--horizontal line-->
                     <Border Width="2" Background="Gray" Opacity="0.3" Margin="10,10,1176,45" />
                     <!-- General settings section-->
-                    <Grid x:Name="GeneralSettingsSection" Visibility="Visible">
+                    <Grid x:Name="GeneralSettingsSection" Visibility="Hidden">
                         <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="General Settings" Width="227"/>
 
                         <!-- Sync Button -->
@@ -1520,7 +1521,7 @@
 
 
                     <!-- Application settings section-->
-                    <Grid x:Name="ApplicationSettingsSection" Visibility="Hidden">
+                    <Grid x:Name="ApplicationSettingsSection" Visibility="Visible">
                         <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="Application Settings" Width="227"/>
 
                         <!-- FIle Chooser TextBox -->
