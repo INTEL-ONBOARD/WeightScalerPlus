@@ -900,6 +900,7 @@ namespace WeightMaster.Core
                     if (isAvailable)
                     {
                         GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                        MessageBox.Show("===> [fetched] " + model?.id);
                         if (model != null)
                         {
                             bool isupdated = await PostGreenLeafToExternalApiAsync(model);
