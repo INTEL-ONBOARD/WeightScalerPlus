@@ -1006,7 +1006,7 @@ namespace WeightMaster
                 AdminFrame.Visibility = Visibility.Hidden;
             }
             StationMainFrame.Visibility = Visibility.Visible;
-            Station1Frame.Visibility = Visibility.Visible;
+            Station2Frame.Visibility = Visibility.Visible;
             SettingsFrame.Visibility = Visibility.Collapsed;
             //button visibility logic
             //Console.Beep();
@@ -4593,7 +4593,7 @@ namespace WeightMaster
 
             // Table header
             string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
-            double[] headerPositions = { 50, 80, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
+            double[] headerPositions = { 70, 80, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
@@ -4994,7 +4994,7 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අං.", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
+            string[] headers = { "අං.", "ප්‍රවා. මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
             double[] headerPositions = { 46, 70, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
