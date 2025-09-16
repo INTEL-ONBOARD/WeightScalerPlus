@@ -122,9 +122,11 @@
                             <Run Text="POS" Foreground="Black" />
                             <Run Text="Plus" Foreground="#1D8348" />
                         </TextBlock>
+                        <!--//සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
                         <!--prevous: No.1.4.0520P-->
                         <!--Previous: Build No.1.6.0729P report fix-->
-                        <TextBlock Text="Build No.1.6.0804P" Foreground="#666666" VerticalAlignment="Top" Margin="93,765,67,0" FontSize="24"/>
+                        <!--feature release outdated the 1.6.0804p: report navigation and report text layout-->
+                        <TextBlock Text="Build No.1.6.0916P" Foreground="#666666" VerticalAlignment="Top" Margin="93,765,67,0" FontSize="24"/>
                     </Grid>
 
                 </Grid>
