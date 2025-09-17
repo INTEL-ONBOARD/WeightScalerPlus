@@ -11,6 +11,33 @@ namespace WeightMaster.utils
 {
     public static class BlockModelConverter
     {
+
+
+        public static List<GreenLeafPostModel> getTransactionsByLine(List<GreenLeafPostModel> list, string lineName)
+        {
+            //filter list by lineName and return items by given lineName
+            return list;
+        }
+
+        public static List<TransactionLogBlockModel> filterTransactionDataByLine( List<TransactionLogBlockModel> list, string lineName)
+        {
+            // Defensive checks
+            if (list == null || list.Count == 0)
+                return new List<TransactionLogBlockModel>();
+
+            if (string.IsNullOrWhiteSpace(lineName))
+                return new List<TransactionLogBlockModel>(); // if you prefer to return the original list instead, change this to `return new List<TransactionLogBlockModel>(list);`
+
+            string target = lineName.Trim();
+
+            var filteredList = list
+                .Where(item => !string.IsNullOrWhiteSpace(item?.linename)
+                               && string.Equals(item.linename.Trim(), target, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return filteredList;
+        }
+
         public static List<FinalTransactionReportBlockModel> CombineBlockModels(
             List<FinalTransactionBlockModel> lineReportData,
             List<TransactionLogBlockModel> boxReportData)
