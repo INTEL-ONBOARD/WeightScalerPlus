@@ -206,6 +206,10 @@ namespace WeightMaster.Services
             return await _engine.getCustomDataOut(lineName,date_);
         }
 
-        
+        public async Task<List<GreenLeafPostModel>> getAllpostsbyFilteringExtended(string memberid, string line)
+        {
+            return await _engine.GetAllPostsByFilteringPost(memberid, line);
+        }
+
     }
 }
