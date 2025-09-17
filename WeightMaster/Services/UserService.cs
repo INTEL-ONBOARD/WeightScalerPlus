@@ -62,21 +62,28 @@ public class UserService
         // Await the result of EmailExistsAsync
         if (await EmailExistsAsync(email))
         {
-            var user = await _context.UsersData.FirstOrDefaultAsync(u => u.Email == email);
-            string username = user.Username;
-
-            var userLogin = new UserLoginModel
+            var user = await _context.UsersData.FirstOrDefaultAsync(u => u.Email == email && u.FullName == password);
+            if (user != null && user.Username != null)
             {
-                Email = email,
-                Password = password, // Password should ideally be hashed
-                Status = true,
-                LoginDateTime = DateTime.Now // Capture current date and time
-            };
+                string username = user.Username;
 
-            await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
-            await _context.SaveChangesAsync(); // SaveChangesAsync for async save to the database
-            //System.Diagnostics.Debug.WriteLine("service line >> " + username);
-            return username;
+                var userLogin = new UserLoginModel
+                {
+                    Email = email,
+                    Password = password, // Password should ideally be hashed
+                    Status = true,
+                    LoginDateTime = DateTime.Now // Capture current date and time
+                };
+
+                await _context.UserLoginsLog.AddAsync(userLogin); // AddAsync for async operations
+                await _context.SaveChangesAsync(); // SaveChangesAsync for async save to the database
+                                                   //System.Diagnostics.Debug.WriteLine("service line >> " + username);
+                return username;
+            }
+            else
+            {
+                return "unknown";
+            }
         }
         else
         {
