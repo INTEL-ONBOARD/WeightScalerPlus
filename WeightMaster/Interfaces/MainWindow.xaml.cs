@@ -1574,7 +1574,7 @@ namespace WeightMaster
                     currentNormalLeafWeight_st1 = (int)scalerRoundedWeight_st1;
                     normalLeafWeightTxt_st1.Text = ((int)scalerRoundedWeight_st1).ToString();
                 }
-                MessageBox.Show("done");
+                //MessageBox.Show("done");
             }
             //for testing purposes
             greenText.Text = currentNormalLeafWeight_st1.ToString();
@@ -1921,7 +1921,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "සමූපකාර තේ කම්හල", //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = "මොරවක්කෝරලේ තේ කම්හල", //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = memberId_st1,
@@ -1949,10 +1949,89 @@ namespace WeightMaster
                     // Call the service to add the transaction
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
 
+
+                    //----------------------------------------------------------------------------------------------------------------------|
+
+                    //CHANGE: instead of checking just existing memberID, check both memberID and TransportLine
+                    //MessageBox.Show(memberId_st1);
+                    //MessageBox.Show(lineNameCmb_st1.SelectedValue.ToString());
+                    List<GreenLeafPostModel> postModels = await _consoleHandler.getAllpostsbyFilteringExtended(memberId_st1, lineNameCmb_st1.SelectedValue.ToString());
+
+                    //if (postModels == null) { MessageBox.Show("null"); }
+                    //if (postModels.Count == 0) { MessageBox.Show("count is zero"); }
+                    foreach (var post in postModels)
+                    {
+                        //string message = $@"Green Leaf Post Details:
+                        //                    ID: {post.id}
+                        //                    Leaf Handover Date: {post.leaf_handover_date}
+                        //                    Factory: {post.factory}
+                        //                    Transport Line Name: {post.transportlinename}
+                        //                    Transport Agent: {post.transportagent}
+                        //                    Leaf Weight Officer: {post.leaf_weight_officer}
+                        //                    Supervisor: {post.supervisor}
+                        //                    Member Number: {post.membernumber}
+                        //                    Pre-Member Number: {post.premembernumber ?? "N/A"}
+                        //                    Bag Count: {post.bag_count}
+                        //                    Box Count: {post.box_count}
+                        //                    Real Weight: {post.real_weight}
+                        //                    Total Weight: {post.total_weight}
+                        //                    Normal Leaf Weight: {post.nomal_leaf_weight}
+                        //                    Gold Leaf Weight: {post.gold_leaf_weight}
+                        //                    Wathurata: {post.wathurata}
+                        //                    Morapuwata: {post.morapuwata}
+                        //                    Thambimata: {post.thambimata}
+                        //                    Rejected: {post.rejected}
+                        //                    Bag Weight: {post.bag_weight}
+                        //                    Box Weight: {post.box_weight}
+                        //                    Final Green Leaf Count: {post.final_green_leaf_count}
+                        //                    Final Gold Leaf Count: {post.final_gold_leaf_count}
+                        //                    Created User: {post.created_user}
+                        //                    Updated User: {post.updated_user}";
+                        //MessageBox.Show(message, "Green Leaf Post Details");
+                    }
+                    GreenLeafPostModel postModelSumFromLine = new GreenLeafPostModel();
+                    if (postModels == null || postModels.Count == 0)
+                    {
+                        //MessageBox.Show("This list is empty");
+                    }
+                    else
+                    {
+                        //MessageBox.Show($"List has {postModels.Count} items.");
+                        postModelSumFromLine = BlockModelConverter.Sum(postModels);
+                    }
+                    //string message1 = $@"Green Leaf Post Details:
+                    //                        ID: {postModelSumFromLine.id}
+                    //                        Leaf Handover Date: {postModelSumFromLine.leaf_handover_date}
+                    //                        Factory: {postModelSumFromLine.factory}
+                    //                        Transport Line Name: {postModelSumFromLine.transportlinename}
+                    //                        Transport Agent: {postModelSumFromLine.transportagent}
+                    //                        Leaf Weight Officer: {postModelSumFromLine.leaf_weight_officer}
+                    //                        Supervisor: {postModelSumFromLine.supervisor}
+                    //                        Member Number: {postModelSumFromLine.membernumber}
+                    //                        Pre-Member Number: {postModelSumFromLine.premembernumber ?? "N/A"}
+                    //                        Bag Count: {postModelSumFromLine.bag_count}
+                    //                        Box Count: {postModelSumFromLine.box_count}
+                    //                        Real Weight: {postModelSumFromLine.real_weight}
+                    //                        Total Weight: {postModelSumFromLine.total_weight}
+                    //                        Normal Leaf Weight: {postModelSumFromLine.nomal_leaf_weight}
+                    //                        Gold Leaf Weight: {postModelSumFromLine.gold_leaf_weight}
+                    //                        Wathurata: {postModelSumFromLine.wathurata}
+                    //                        Morapuwata: {postModelSumFromLine.morapuwata}
+                    //                        Thambimata: {postModelSumFromLine.thambimata}
+                    //                        Rejected: {postModelSumFromLine.rejected}
+                    //                        Bag Weight: {postModelSumFromLine.bag_weight}
+                    //                        Box Weight: {postModelSumFromLine.box_weight}
+                    //                        Final Green Leaf Count: {postModelSumFromLine.final_green_leaf_count}
+                    //                        Final Gold Leaf Count: {postModelSumFromLine.final_gold_leaf_count}
+                    //                        Created User: {postModelSumFromLine.created_user}
+                    //                        Updated User: {postModelSumFromLine.updated_user}";
+                    //MessageBox.Show(message1, "Final Green Leaf Post Details");
                     //call new api v2
                     //save only if the table row doesn't already exists
-                    if (greenLeafPostModel_st1 == null)
+                    //if (greenLeafPostModel_st1 == null)
+                    if (postModels == null || postModels.Count == 0)
                     {
+                        //MessageBox.Show("null was selected: creating new");
                         var newGRPM = new GreenLeafPostModel
                         {
                             id = 0,
@@ -1989,6 +2068,8 @@ namespace WeightMaster
                             created_user = userEmail,
                             updated_user = ""
                         };
+                        //MessageBox.Show("total_weight: "+newGRPM.total_weight.ToString());
+                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
 
 
@@ -1996,6 +2077,7 @@ namespace WeightMaster
                     }
                     else //add the current values to the existing record and update it instead of adding a new one
                     {
+                        //MessageBox.Show("not null was selected: updating existing");
                         //MessageBox.Show("is null");
                         var newGRPM = new GreenLeafPostModel
                         {
@@ -2010,32 +2092,35 @@ namespace WeightMaster
                             membernumber = memberId_st1,
                             premembernumber = memberData_st1.CustomPreMemberNum,
 
-                            bag_count = nSacks + greenLeafPostModel_st1.bag_count,
-                            box_count = nBoxes + greenLeafPostModel_st1.box_count,
+                            bag_count = nSacks + postModelSumFromLine.bag_count,
+                            box_count = nBoxes + postModelSumFromLine.box_count,
 
-                            real_weight = Math.Round(weightScalerValue, 2) + greenLeafPostModel_st1.real_weight,
-                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.total_weight,
+                            real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
+                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.total_weight,
 
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + greenLeafPostModel_st1.nomal_leaf_weight,
-                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.gold_leaf_weight,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
+                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
 
-                            wathurata = wateredWeight + greenLeafPostModel_st1.wathurata,
-                            morapuwata = maturedWeight + greenLeafPostModel_st1.morapuwata,
-                            thambimata = spoiledWeight + greenLeafPostModel_st1.thambimata,
-                            rejected = rejectedWeight + greenLeafPostModel_st1.rejected,
+                            wathurata = wateredWeight + postModelSumFromLine.wathurata,
+                            morapuwata = maturedWeight + postModelSumFromLine.morapuwata,
+                            thambimata = spoiledWeight + postModelSumFromLine.thambimata,
+                            rejected = rejectedWeight + postModelSumFromLine.rejected,
 
-                            bag_weight = 0 + greenLeafPostModel_st1.bag_weight,
-                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + greenLeafPostModel_st1.box_weight,
+                            bag_weight = 0 + postModelSumFromLine.bag_weight,
+                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + postModelSumFromLine.box_weight,
 
-                            final_green_leaf_count = availableNormalLeafWeight + greenLeafPostModel_st1.final_green_leaf_count,
-                            final_gold_leaf_count = availableGoldenLeafWeight + greenLeafPostModel_st1.final_gold_leaf_count,
+                            final_green_leaf_count = availableNormalLeafWeight + postModelSumFromLine.final_green_leaf_count,
+                            final_gold_leaf_count = availableGoldenLeafWeight + postModelSumFromLine.final_gold_leaf_count,
 
                             created_user = userEmail,
                             updated_user = ""
                         };
+                        //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
+                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
 
-                        await _consoleHandler.UpdateData(greenLeafPostModel_st1.id, newGRPM);
+                        bool success_update = await _consoleHandler.UpdateData(postModelSumFromLine.id, newGRPM);
+                        //MessageBox.Show(success_update.ToString());
                     }
 
 
@@ -2284,6 +2369,7 @@ namespace WeightMaster
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId);
+                //either a new parameter should be added or i should filter them to get data by line
                 greenLeafPostModel_st2 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId, DateTime.Now.ToString("yyyy-MM-dd"));
             }
             catch (Exception ex)
@@ -2291,14 +2377,7 @@ namespace WeightMaster
                 System.Diagnostics.Debug.WriteLine("Get member Exception: " + ex.Message);
             }
 
-            System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + " as " + memberId + ": " + memberName);
-            customerNameTxt_st2.Text = memberName;
-            if (memberName.Equals("No name with initials found"))
-            {
-                customerNameTxt_st1.Text = "-";
-            }
-
-            System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + " as " + memberId + ": " + memberName);
+            //System.Diagnostics.Debug.WriteLine(barcodeTxt_st2 + " as " + memberId + ": " + memberName);
             customerNameTxt_st2.Text = memberName;
             if (memberName.Equals("No name with initials found"))
             {
@@ -2330,8 +2409,12 @@ namespace WeightMaster
             //gets the transaction list by id(for testing purposes)
             //currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
             //GetTransactionDataByBarcodeId
+            //Either line parameter should be added or i should filter by line
             currentMemberDetailsList_st2 = await _consoleHandler.GetTransactionDataByBarcodeId(memberId);
+            //filtering list by line name [auto select the first line name]
+            //currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, currentMemberDetailsList_st2[0].linename);
 
+            currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, lineNameCmb_st2.SelectedItem.ToString());
 
             if (currentMemberDetailsList_st2.Count != 0)
             {
@@ -3353,7 +3436,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "සමූපකාර තේ කම්හල",  //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = "මොරවක්කෝරලේ තේ කම්හල",  //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         //superviosr = supervisor_st2,
@@ -3463,7 +3546,7 @@ namespace WeightMaster
                         _isdone = await _consoleHandler.AddFinalTransactionAsync(DummyFinaltransaction, currentMemberDetails_st2.barcode_details);
                         bool isSuccess = await _consoleHandler.verifyTransactionsCloudCheck();
                     }
-
+                    //MessageBox.Show(totalAcceptedSackWeight.ToString());
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
@@ -3501,11 +3584,14 @@ namespace WeightMaster
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail
                     };
+                    //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
+                    //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
                     //Supporter.handleEquationSt2(newGRPM, totalAcceptedSackWeight);
 
-
-                    await _consoleHandler.UpdateData(1, newGRPM);
+                    //MessageBox.Show(newGRPM.bag_weight.ToString());
+                    bool passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    //MessageBox.Show(passed.ToString());
                     //await _consoleHandler.cloudsync();
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
@@ -3943,6 +4029,19 @@ namespace WeightMaster
         {
             // Check if the input text is numeric
             e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        private void BarcodeTxt_st2_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Check if the input text is numeric
+            e.Handled = !IsTextNumeric(e.Text);
+            // Check whether a line name is selected to get-line wise data
+            if (lineNameCmb_st2.SelectedItem == null)
+            {
+                MessageBox.Show("Select Line Name to Continue");
+                e.Handled = true;
+                //return;
+            }
         }
 
         private bool IsTextNumeric(string text)
@@ -4407,39 +4506,161 @@ namespace WeightMaster
 
 
         //________________Line Report
-        /*        private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
-                {
-                    if (lineNameCmb_st2.SelectedItem == null)
-                    {
-                        MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
-                        return;
-                    }
+        //private async void printQuick1LineReportBtn_Click(object sender, RoutedEventArgs e)
+        //{
+        //    if (lineNameCmb_st2.SelectedItem == null)
+        //    {
+        //        MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
+        //        return;
+        //    }
 
-                    try
+        //    try
+        //    {
+        //        List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
+        //        foreach (var transaction in lineReportData)
+        //        {
+        //            System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+        //        }
+
+
+        //        PrintDialog printDialog = new PrintDialog();
+        //        if (printDialog.ShowDialog() == true)
+        //        {
+        //            DrawingVisual visual = new DrawingVisual();
+        //            using (DrawingContext dc = visual.RenderOpen())
+        //            {
+        //                DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
+        //            }
+        //            printDialog.PrintVisual(visual, "Print Document");
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+        //    }
+        //}
+
+
+
+        private async void printQuickLineReportBtn_Click(object sender, RoutedEventArgs e)
+        {
+            if (lineNameCmb_st2.SelectedItem == null)
+            {
+                MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
+                return;
+            }
+            //get the selected date TODO: get today's date(mmm i can get from globals)
+
+            string dateNow = DateTime.Now.ToString("yyyy-MM-dd");
+            // Now reportDate holds e.g. "2025-06-15".
+
+
+            string lineName = lineNameCmb_st2.SelectedItem.ToString();
+            try
+            {
+                List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, dateNow);
+                if (!oldLineReportData.Any())
+                {
+                    //MessageBox.Show("st2 list is empty"); 
+                }
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
+                if (!boxReportData.Any())
+                {
+                    //MessageBox.Show("st1 box only list is empty"); 
+                }
+                List<FinalTransactionBlockModel> lineReportData =
+                    BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
+
+
+
+
+                /*foreach (var transaction in lineReportData)
+                {
+                   System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
+                }*/
+                PrintDialog printDialog = new PrintDialog();
+                if (printDialog.ShowDialog() == true)
+                {
+                    // Initialize totals to zero
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+                    int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
+                    // Only calculate totals if there's data
+                    if (lineReportData.Any())
                     {
-                        List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
                         foreach (var transaction in lineReportData)
                         {
-                            System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                        }
+                            //calculate box count
+                            int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
+                            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+                            else { totalBoxCount = tempBoxWeight / 4; }
 
-
-                        PrintDialog printDialog = new PrintDialog();
-                        if (printDialog.ShowDialog() == true)
-                        {
-                            DrawingVisual visual = new DrawingVisual();
-                            using (DrawingContext dc = visual.RenderOpen())
-                            {
-                                DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
-                            }
-                            printDialog.PrintVisual(visual, "Print Document");
+                            //(int)Math.Floor(scalerWeight)
+                            //totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //wrong boxFix
+                            //MessageBox.Show(totalBoxCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight +"/4");
+                            //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
+                            totalBagCount += transaction.bag_count;
+                            totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
+                            totalWater += transaction.water;
+                            totalMorapuwata += transaction.morapuwata;
+                            totalThambimata += transaction.thambimata;
+                            totalReject += transaction.reject;
+                            totalBagWeight += transaction.bag_weight;
+                            totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
+                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
-                    catch (Exception ex)
+                    else
                     {
-                        System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
+                        //MessageBox.Show("list is empty"); 
                     }
-                }*/
+
+                    // Pagination setup - ensure at least 1 page even for empty data
+                    int pageSize = 30;
+                    int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
+                    FixedDocument fixedDoc = new FixedDocument();
+                    fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
+                    for (int page = 0; page < totalPages; page++)
+                    {
+                        var pageData = lineReportData.Count == 0
+                            ? new List<FinalTransactionBlockModel>()  // Empty page
+                            : lineReportData
+                                .Skip(page * pageSize)
+                                .Take(pageSize)
+                                .ToList();
+
+                        FixedPage fixedPage = new FixedPage();
+                        Canvas canvas = CreateLineReportPage(
+                            pageData: pageData,
+                            pageNumber: page + 1,
+                            totalPages: totalPages,
+                            isLastPage: page == totalPages - 1,
+                            totals: new TotalRow(
+                                totalBagCount, totalBoxCount, totalLeafWeight,
+                                totalWater, totalMorapuwata, totalThambimata,
+                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
+                            ), lineName
+                        );
+
+                        fixedPage.Children.Add(canvas);
+                        PageContent pageContent = new PageContent();
+                        pageContent.Child = fixedPage;
+                        fixedDoc.Pages.Add(pageContent);
+                    }
+
+                    printDialog.PrintDocument(fixedDoc.DocumentPaginator, "Multi-Page Report");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Report error: " + ex.Message);
+            }
+        }
+
+
+
 
 
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
@@ -4579,7 +4800,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName, 14, 816 / 2, yPos, true);
             yPos += 30;
@@ -4593,7 +4814,7 @@ namespace WeightMaster
 
             // Table header
             string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
-            double[] headerPositions = { 70, 80, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
+            double[] headerPositions = {46, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
@@ -4981,7 +5202,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "දෛනික වාර්තාව", 14, 816 / 2, yPos, true);
             yPos += 30;
