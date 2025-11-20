@@ -1574,7 +1574,7 @@ namespace WeightMaster
                     currentNormalLeafWeight_st1 = (int)scalerRoundedWeight_st1;
                     normalLeafWeightTxt_st1.Text = ((int)scalerRoundedWeight_st1).ToString();
                 }
-                MessageBox.Show("done");
+                //MessageBox.Show("done");
             }
             //for testing purposes
             greenText.Text = currentNormalLeafWeight_st1.ToString();
@@ -1921,7 +1921,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "සමූපකාර තේ කම්හල", //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = "මොරවක්කෝරලේ තේ කම්හල", //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = memberId_st1,
@@ -1949,25 +1949,89 @@ namespace WeightMaster
                     // Call the service to add the transaction
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
 
+
                     //----------------------------------------------------------------------------------------------------------------------|
-                    //get transaction list by member id for filtering(by line name)
-                    List<GreenLeafPostModel> postModels = new List<GreenLeafPostModel>();
+
+                    //CHANGE: instead of checking just existing memberID, check both memberID and TransportLine
+                    //MessageBox.Show(memberId_st1);
+                    //MessageBox.Show(lineNameCmb_st1.SelectedValue.ToString());
+                    List<GreenLeafPostModel> postModels = await _consoleHandler.getAllpostsbyFilteringExtended(memberId_st1, lineNameCmb_st1.SelectedValue.ToString());
+
+                    //if (postModels == null) { MessageBox.Show("null"); }
+                    //if (postModels.Count == 0) { MessageBox.Show("count is zero"); }
+                    foreach (var post in postModels)
+                    {
+                        //string message = $@"Green Leaf Post Details:
+                        //                    ID: {post.id}
+                        //                    Leaf Handover Date: {post.leaf_handover_date}
+                        //                    Factory: {post.factory}
+                        //                    Transport Line Name: {post.transportlinename}
+                        //                    Transport Agent: {post.transportagent}
+                        //                    Leaf Weight Officer: {post.leaf_weight_officer}
+                        //                    Supervisor: {post.supervisor}
+                        //                    Member Number: {post.membernumber}
+                        //                    Pre-Member Number: {post.premembernumber ?? "N/A"}
+                        //                    Bag Count: {post.bag_count}
+                        //                    Box Count: {post.box_count}
+                        //                    Real Weight: {post.real_weight}
+                        //                    Total Weight: {post.total_weight}
+                        //                    Normal Leaf Weight: {post.nomal_leaf_weight}
+                        //                    Gold Leaf Weight: {post.gold_leaf_weight}
+                        //                    Wathurata: {post.wathurata}
+                        //                    Morapuwata: {post.morapuwata}
+                        //                    Thambimata: {post.thambimata}
+                        //                    Rejected: {post.rejected}
+                        //                    Bag Weight: {post.bag_weight}
+                        //                    Box Weight: {post.box_weight}
+                        //                    Final Green Leaf Count: {post.final_green_leaf_count}
+                        //                    Final Gold Leaf Count: {post.final_gold_leaf_count}
+                        //                    Created User: {post.created_user}
+                        //                    Updated User: {post.updated_user}";
+                        //MessageBox.Show(message, "Green Leaf Post Details");
+                    }
+                    GreenLeafPostModel postModelSumFromLine = new GreenLeafPostModel();
                     if (postModels == null || postModels.Count == 0)
                     {
-                        MessageBox.Show("This list is empty");
+                        //MessageBox.Show("This list is empty");
                     }
                     else
                     {
-                        MessageBox.Show($"List has {postModels.Count} items.");
+                        //MessageBox.Show($"List has {postModels.Count} items.");
+                        postModelSumFromLine = BlockModelConverter.Sum(postModels);
                     }
-
-                    //CHANGE: instead of checking just existing memberID, check both memberID and TransportLine
-                    List<GreenLeafPostModel> postModelsByLine = BlockModelConverter.getTransactionsByLine(postModels, lineName_st1);
-
+                    //string message1 = $@"Green Leaf Post Details:
+                    //                        ID: {postModelSumFromLine.id}
+                    //                        Leaf Handover Date: {postModelSumFromLine.leaf_handover_date}
+                    //                        Factory: {postModelSumFromLine.factory}
+                    //                        Transport Line Name: {postModelSumFromLine.transportlinename}
+                    //                        Transport Agent: {postModelSumFromLine.transportagent}
+                    //                        Leaf Weight Officer: {postModelSumFromLine.leaf_weight_officer}
+                    //                        Supervisor: {postModelSumFromLine.supervisor}
+                    //                        Member Number: {postModelSumFromLine.membernumber}
+                    //                        Pre-Member Number: {postModelSumFromLine.premembernumber ?? "N/A"}
+                    //                        Bag Count: {postModelSumFromLine.bag_count}
+                    //                        Box Count: {postModelSumFromLine.box_count}
+                    //                        Real Weight: {postModelSumFromLine.real_weight}
+                    //                        Total Weight: {postModelSumFromLine.total_weight}
+                    //                        Normal Leaf Weight: {postModelSumFromLine.nomal_leaf_weight}
+                    //                        Gold Leaf Weight: {postModelSumFromLine.gold_leaf_weight}
+                    //                        Wathurata: {postModelSumFromLine.wathurata}
+                    //                        Morapuwata: {postModelSumFromLine.morapuwata}
+                    //                        Thambimata: {postModelSumFromLine.thambimata}
+                    //                        Rejected: {postModelSumFromLine.rejected}
+                    //                        Bag Weight: {postModelSumFromLine.bag_weight}
+                    //                        Box Weight: {postModelSumFromLine.box_weight}
+                    //                        Final Green Leaf Count: {postModelSumFromLine.final_green_leaf_count}
+                    //                        Final Gold Leaf Count: {postModelSumFromLine.final_gold_leaf_count}
+                    //                        Created User: {postModelSumFromLine.created_user}
+                    //                        Updated User: {postModelSumFromLine.updated_user}";
+                    //MessageBox.Show(message1, "Final Green Leaf Post Details");
                     //call new api v2
                     //save only if the table row doesn't already exists
-                    if (greenLeafPostModel_st1 == null)
+                    //if (greenLeafPostModel_st1 == null)
+                    if (postModels == null || postModels.Count == 0)
                     {
+                        //MessageBox.Show("null was selected: creating new");
                         var newGRPM = new GreenLeafPostModel
                         {
                             id = 0,
@@ -2004,6 +2068,8 @@ namespace WeightMaster
                             created_user = userEmail,
                             updated_user = ""
                         };
+                        //MessageBox.Show("total_weight: "+newGRPM.total_weight.ToString());
+                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
 
 
@@ -2011,6 +2077,7 @@ namespace WeightMaster
                     }
                     else //add the current values to the existing record and update it instead of adding a new one
                     {
+                        //MessageBox.Show("not null was selected: updating existing");
                         //MessageBox.Show("is null");
                         var newGRPM = new GreenLeafPostModel
                         {
@@ -2025,32 +2092,35 @@ namespace WeightMaster
                             membernumber = memberId_st1,
                             premembernumber = memberData_st1.CustomPreMemberNum,
 
-                            bag_count = nSacks + greenLeafPostModel_st1.bag_count,
-                            box_count = nBoxes + greenLeafPostModel_st1.box_count,
+                            bag_count = nSacks + postModelSumFromLine.bag_count,
+                            box_count = nBoxes + postModelSumFromLine.box_count,
 
-                            real_weight = Math.Round(weightScalerValue, 2) + greenLeafPostModel_st1.real_weight,
-                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.total_weight,
+                            real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
+                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.total_weight,
 
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + greenLeafPostModel_st1.nomal_leaf_weight,
-                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + greenLeafPostModel_st1.gold_leaf_weight,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
+                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
 
-                            wathurata = wateredWeight + greenLeafPostModel_st1.wathurata,
-                            morapuwata = maturedWeight + greenLeafPostModel_st1.morapuwata,
-                            thambimata = spoiledWeight + greenLeafPostModel_st1.thambimata,
-                            rejected = rejectedWeight + greenLeafPostModel_st1.rejected,
+                            wathurata = wateredWeight + postModelSumFromLine.wathurata,
+                            morapuwata = maturedWeight + postModelSumFromLine.morapuwata,
+                            thambimata = spoiledWeight + postModelSumFromLine.thambimata,
+                            rejected = rejectedWeight + postModelSumFromLine.rejected,
 
-                            bag_weight = 0 + greenLeafPostModel_st1.bag_weight,
-                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + greenLeafPostModel_st1.box_weight,
+                            bag_weight = 0 + postModelSumFromLine.bag_weight,
+                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + postModelSumFromLine.box_weight,
 
-                            final_green_leaf_count = availableNormalLeafWeight + greenLeafPostModel_st1.final_green_leaf_count,
-                            final_gold_leaf_count = availableGoldenLeafWeight + greenLeafPostModel_st1.final_gold_leaf_count,
+                            final_green_leaf_count = availableNormalLeafWeight + postModelSumFromLine.final_green_leaf_count,
+                            final_gold_leaf_count = availableGoldenLeafWeight + postModelSumFromLine.final_gold_leaf_count,
 
                             created_user = userEmail,
                             updated_user = ""
                         };
+                        //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
+                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
 
-                        await _consoleHandler.UpdateData(greenLeafPostModel_st1.id, newGRPM);
+                        bool success_update = await _consoleHandler.UpdateData(postModelSumFromLine.id, newGRPM);
+                        //MessageBox.Show(success_update.ToString());
                     }
 
 
@@ -3366,7 +3436,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "සමූපකාර තේ කම්හල",  //සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = "මොරවක්කෝරලේ තේ කම්හල",  //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         //superviosr = supervisor_st2,
@@ -3476,7 +3546,7 @@ namespace WeightMaster
                         _isdone = await _consoleHandler.AddFinalTransactionAsync(DummyFinaltransaction, currentMemberDetails_st2.barcode_details);
                         bool isSuccess = await _consoleHandler.verifyTransactionsCloudCheck();
                     }
-
+                    //MessageBox.Show(totalAcceptedSackWeight.ToString());
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
@@ -3514,11 +3584,14 @@ namespace WeightMaster
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail
                     };
+                    //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
+                    //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
 
                     //Supporter.handleEquationSt2(newGRPM, totalAcceptedSackWeight);
 
-
-                    await _consoleHandler.UpdateData(1, newGRPM);
+                    //MessageBox.Show(newGRPM.bag_weight.ToString());
+                    bool passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    //MessageBox.Show(passed.ToString());
                     //await _consoleHandler.cloudsync();
 
                     weightScalerConfirmBtn_st2.IsEnabled = true;
@@ -3800,7 +3873,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(1)..." : "Reverifying Database Status(1)...";
                     });
-                    await _consoleHandler.VerifyUserDb(); // Uncomment when needed
+                    //await _consoleHandler.VerifyUserDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(1)";
@@ -4727,7 +4800,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName, 14, 816 / 2, yPos, true);
             yPos += 30;
@@ -5129,7 +5202,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "සමූපකාර තේ කම්හල", 14, 816 / 2, yPos, true);
+            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "දෛනික වාර්තාව", 14, 816 / 2, yPos, true);
             yPos += 30;

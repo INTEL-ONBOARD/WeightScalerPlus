@@ -122,7 +122,7 @@
                             <Run Text="POS" Foreground="Black" />
                             <Run Text="Plus" Foreground="#1D8348" />
                         </TextBlock>
-                        <!--//සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
+                        <!--//මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
                         <!--prevous: No.1.4.0520P-->
                         <!--Previous: Build No.1.6.0729P report fix-->
                         <!--feature release outdated the 1.6.0804p: report navigation and report text layout-->
@@ -292,8 +292,8 @@
                     </Grid.ColumnDefinitions>
                     <Image Source="/Interfaces/teacoop_logo.png" Margin="9,17,418,25"/>
                     <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමා  සහිත මො  රවක්කෝ  රලේ  තේ නිපදවන්නන්ගේ  සමුපකා ර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,548,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
-                    <!--//සමූපකාර තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
-                    <TextBlock x:Name="TopbarCustomerLocation" Text="සමූපකාර තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
+                    <!--//මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
+                    <TextBlock x:Name="TopbarCustomerLocation" Text="මොරවක්කෝරලේ තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="TopBarStationName" Text="දළු කිරීම" HorizontalAlignment="Right" TextAlignment="Right" Foreground="#2F4859" FontSize="26" Margin="0,58,313,27" FontWeight="Bold" Grid.Column="1" Width="216"  />
                     <userContorls:StataionDateAndTime Grid.Column="1" Margin="565,80,313,-4"/>
                     <!--Settings button (when home button is invicible)-->
