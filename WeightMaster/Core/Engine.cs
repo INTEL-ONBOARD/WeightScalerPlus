@@ -20,6 +20,7 @@ namespace WeightMaster.Core
 {
     public class Engine
     {
+        //old
         public async Task dumpUserInformation()
         {
             ApiClient apiClient = new ApiClient();
@@ -54,6 +55,7 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
+        //old
         public async Task<int> getChangeCount()
         {
             ApiClient apiClient = new ApiClient();
@@ -148,7 +150,7 @@ namespace WeightMaster.Core
                 return null;
             }
         }
-
+        //old
         public async Task DumpLineMastersInformationAsync()
         {
 
@@ -184,8 +186,6 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
-
-
         internal async Task<List<LineBlockModel>> getLineMasterData()
         {
             try
@@ -202,7 +202,7 @@ namespace WeightMaster.Core
                 return new List<LineBlockModel>();
             }
         }
-
+        // old - don't use
         public async Task DumpMemberInformation()
         {
 
@@ -231,8 +231,6 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or status is not 'success'.");
             }
         }
-
-
         public async Task<String> getMemberNameById(String id)
         {
             try
@@ -245,13 +243,10 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
-                await DumpMemberInformation();
+                //await DumpMemberInformation();
                 return "Unknown";
             }
         }
-
-        
-
         public async Task<String> getMemberNumberId(String id)
         {
             try
@@ -264,11 +259,10 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
-                await DumpMemberInformation();
+                //await DumpMemberInformation();
                 return "Unknown";
             }
         }
-
         public async Task<bool> setTransaction(TransactionLogBlockModel model)
         {
             try
@@ -289,7 +283,8 @@ namespace WeightMaster.Core
                 };
                 await runService.AddRunLogAsync(RunLogs);
                 // System.Diagnostics.Debug.WriteLine(":::::" + data);
-                bool result = await UpdateGreenLeafCollectionAsync(model);
+                //bool result = await UpdateGreenLeafCollectionAsync(model);
+                bool result = true;
                 if (result)
                 {
                     return true;
@@ -310,7 +305,7 @@ namespace WeightMaster.Core
             }
         }
 
-
+        //old
         public async Task<bool> UpdateGreenLeafCollectionAsync(TransactionLogBlockModel transactionBlockModel)
         {
             ApiClient apiClient = new ApiClient();
@@ -348,7 +343,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
         public async Task<bool> verifyTransactionsCloud()
             {
             try
@@ -372,7 +366,8 @@ namespace WeightMaster.Core
                                 var transService = new TransactionService(new AppDbContext());
                                 TransactionLogBlockModel model = await transService.GetTransactionByIdAsync(que.TransactionId.Value);
 
-                                bool result = await UpdateGreenLeafCollectionAsync(model);
+                                //bool result = await UpdateGreenLeafCollectionAsync(model);
+                                bool result = true;
                                 if (result)
                                 {
                                     await runService.UpdateRunLogStatusToTrueAsync(que);
@@ -402,7 +397,8 @@ namespace WeightMaster.Core
                                 var FinalTransService = new FinalTransactionService(new AppDbContext());
                                 FinalTransactionBlockModel modelFinal = await FinalTransService.GetTransactionByIdAsync(queFinal.FinalTransactionId.Value);
 
-                                bool resultFinal = await UpdateBagWeightCollectionAsync(modelFinal);
+                                //bool resultFinal = await UpdateBagWeightCollectionAsync(modelFinal);
+                                bool resultFinal = true;
                                 if (resultFinal)
                                 {
                                     await runService.UpdateRunLogStatusToTrueAsync(queFinal);
@@ -436,9 +432,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
-
-
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string lineName)
         {
             try
@@ -494,10 +487,6 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-
-
-
-
         public async Task<List<TransactionLogBlockModel>> getDataForDocumentsWithDate(string lineName, string date_)
         {
             try
@@ -555,15 +544,6 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-
-
-
-
-
-
-
-
-
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
         {
             try
@@ -581,7 +561,6 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByBarcodeAndDateAsync(string barcodeDetails)
         {
             try
@@ -599,7 +578,6 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-
         public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode,string linename)
         {
             try
@@ -618,6 +596,7 @@ namespace WeightMaster.Core
                 ;
             }
         }
+        //old
         public async Task<bool> UpdateBagWeightCollectionAsync(FinalTransactionBlockModel finalTransactionBlockModel)
         {
             ApiClient apiClient = new ApiClient();
@@ -679,7 +658,8 @@ namespace WeightMaster.Core
                 await runService.AddRunLogAsync(runLogs);
 
                 // Call UpdateBagWeightCollectionAsync method
-                bool result = await UpdateBagWeightCollectionAsync(model);
+                //bool result = await UpdateBagWeightCollectionAsync(model);
+                bool result = true;
                 if (result)
                 {
                     return true;
@@ -753,7 +733,7 @@ namespace WeightMaster.Core
                 return new List<FinalTransactionBlockModel>();
             }
         }
-
+        //new
         public async Task getMemberData()
         {
             int currentCloudCount = 0;
@@ -784,7 +764,7 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or response indicates failure.");
             }
         }
-
+        //new
         public async Task getLineDataAsync()
         {
             int currentCloudCount = 0;
@@ -816,7 +796,6 @@ namespace WeightMaster.Core
                 Console.WriteLine("No data received or response indicates failure.");
             }
         }
-
         public async Task<GreenLeafPostModel?> getPostById(int id)
         {
             try
@@ -832,7 +811,6 @@ namespace WeightMaster.Core
                 return null;
             }
         }
-
         public async Task<bool> addPost(GreenLeafPostModel post)
         {
             try
@@ -848,7 +826,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
         public async Task<bool> updatePost(int id, GreenLeafPostModel post)
         {
             try
@@ -914,31 +891,6 @@ namespace WeightMaster.Core
                         }
                     }
                 } while (isAvailable);
-
-
-                //bool isAvailable;
-                //do
-                //{
-                //    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                //    if (!isAvailable)
-                //        break; // No pending posts
-
-                //    GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                //    if (model == null)
-                //        break; // Safety: prevents infinite loop if query fails
-
-                //    bool isUpdated = await PostGreenLeafToExternalApiAsync(model);
-                //    await postStatusService.UpdateStatusByPostIdAsync(model.id, isUpdated);
-
-                //    if (!isUpdated)
-                //    {
-                //        // Optional: avoid hammering the external API on failures
-                //        await Task.Delay(TimeSpan.FromSeconds(5));
-                //    }
-
-                //} while (isAvailable);
-
-
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
                 return true;
             }
@@ -948,8 +900,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
-
 
         public async Task<GreenLeafPostModel?> getLatestPost()
         {
@@ -998,7 +948,6 @@ namespace WeightMaster.Core
             }
         }
         
-
         public async Task<List<GreenLeafPostModel>> GetAllPostsByFilteringPost(string memberNumber, string line)
         {
             try
@@ -1015,7 +964,6 @@ namespace WeightMaster.Core
             }
         }
 
-
         public async Task<memDbLog?> GetMemberByCustomMemberNumAsync(string customMemberNum)
         {
             try
@@ -1031,7 +979,7 @@ namespace WeightMaster.Core
                 return null;
             }
         }
-
+        //new
         public async Task<bool> PostGreenLeafToExternalApiAsync(GreenLeafPostModel postModel)
         {
             var client = new CustomApiClient();
@@ -1050,7 +998,7 @@ namespace WeightMaster.Core
                 var jsonBody = JsonSerializer.Serialize(postModel, options);
                 System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
                 System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
-
+                MessageBox.Show(jsonBody);
                 // Make the API call
                 var response = await client.PostAsync<object>(url, postModel);
 
@@ -1084,10 +1032,6 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-
-
-
-
 
     }
 }

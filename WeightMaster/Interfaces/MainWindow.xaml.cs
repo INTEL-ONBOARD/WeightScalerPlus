@@ -3787,7 +3787,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(1)..." : "Reverifying Database Status(1)...";
                     });
-                    await _consoleHandler.VerifyUserDb(); // Uncomment when needed
+                    //await _consoleHandler.VerifyUserDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(1)";
@@ -3808,7 +3808,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(2)..." : "Reverifying Database Status(2)...";
                     });
-                    await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
+                    //await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -3829,7 +3829,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(3)...";
                     });
-                    await _consoleHandler.verifyMemberDb(); // Uncomment when needed
+                    //await _consoleHandler.verifyMemberDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -3852,7 +3852,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(4)..." : "Reverifying Database Status(4)...";
                     });
-                    await _consoleHandler.verifyMembers();  // Uncomment when needed
+                    //await _consoleHandler.verifyMembers();  // Uncomment when needed
                     //System.Diagnostics.Debug.WriteLine("================");
                     Dispatcher.Invoke(() =>
                     {
