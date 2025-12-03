@@ -765,7 +765,7 @@ namespace WeightMaster.Core
             }
         }
         //new
-        public async Task getLineDataAsync()
+        public async Task getLineDataAsync(int id)
         {
             int currentCloudCount = 0;
 
@@ -773,7 +773,7 @@ namespace WeightMaster.Core
             int localCount = await service.GetLineCountAsync();
 
             var apiClient = new CustomApiClient(); // Use token-aware client
-            string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster"; // Replace with actual endpoint
+            string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster/"+id; // Replace with actual endpoint
 
             LineResponse? apiResponse = await apiClient.GetAsync<LineResponse>(url);
 
