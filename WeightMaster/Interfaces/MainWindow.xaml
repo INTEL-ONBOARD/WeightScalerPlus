@@ -140,7 +140,7 @@
                 <Grid Margin="0,72,0,0">
                     <StackPanel  Margin="20,71,20,361">
                         <Image Source="/Interfaces/teacoop_logo.png" Width="110"/>
-                        <TextBlock Text="පරිශීලක නා මය" Foreground="#888888" FontSize="16" Width="315" Margin="0,80,0,5"/>
+                        <TextBlock Text="පරිශීලක නාමය" Foreground="#888888" FontSize="16" Width="315" Margin="0,80,0,5"/>
                         <TextBox x:Name="UsernameTextBox" Height="60" FontSize="20" Style="{StaticResource CustomTextBox}" Margin="0,0,0,16"/>
                         <TextBlock Text="මුරපදය" Foreground="#888888" FontSize="16" Width="316" Margin="0,0,0,5"/>
                         <Grid Margin="0,0,0,24">
@@ -260,7 +260,7 @@
                         <Border Background="#2ECC71" CornerRadius="18" Padding="10" Height="60">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Interfaces/login_button.png" Stretch="Uniform" Height="20" Width="44"/>
-                                <TextBlock Text="ගෝ  නි කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
+                                <TextBlock Text="ගෝනි කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </Button>
@@ -268,7 +268,7 @@
                         <Border Background="#2ECC71" CornerRadius="18" Padding="10" Width="331" Height="60">
                             <StackPanel Orientation="Horizontal">
                                 <Image Source="/Interfaces/login_button.png" Stretch="Uniform" Height="20" Width="99"/>
-                                <TextBlock Text="ප්‍රධා න පා ලක" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
+                                <TextBlock Text="ප්‍රධාන පාලක" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </Button>
@@ -291,9 +291,9 @@
                         <ColumnDefinition Width="183*"/>
                     </Grid.ColumnDefinitions>
                     <Image Source="/Interfaces/teacoop_logo.png" Margin="9,17,418,25"/>
-                    <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමා  සහිත මො  රවක්කෝ  රලේ  තේ නිපදවන්නන්ගේ  සමුපකා ර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,548,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
+                    <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමාසහිත මොරවක්කෝරලේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,548,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
                     <!--//මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
-                    <TextBlock x:Name="TopbarCustomerLocation" Text="මොරවක්කෝරලේ තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="TopbarCustomerLocation" Text="කෝප්කෝලා තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="TopBarStationName" Text="දළු කිරීම" HorizontalAlignment="Right" TextAlignment="Right" Foreground="#2F4859" FontSize="26" Margin="0,58,313,27" FontWeight="Bold" Grid.Column="1" Width="216"  />
                     <userContorls:StataionDateAndTime Grid.Column="1" Margin="565,80,313,-4"/>
                     <!--Settings button (when home button is invicible)-->
@@ -355,7 +355,7 @@
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,27" Grid.RowSpan="2" />
+                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධාරී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,27" Grid.RowSpan="2" />
                             <Border Grid.Row="1" CornerRadius="10" BorderThickness="2" Padding="2" Margin="0,20,0,-15">
                                 <TextBox x:Name="weightLeafOfficerTxt_st1" IsReadOnly="True" Background="#F7F7F7" BorderThickness="0" Foreground="#FF1E7CD2" FontSize="20" VerticalAlignment="Top" Height="32" Margin="0,4,0,0"/>
                             </Border>
@@ -407,7 +407,7 @@
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2"/>
+                            <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2"/>
                             <ComboBox x:Name="lineNameCmb_st1" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st1_SelectionChanged" Grid.Row="1" Margin="0,0,37,0" FontSize="20" MinHeight="50" VerticalContentAlignment="Center" MinWidth="10"  >
                                 <!--
                                 <ComboBoxItem Content="Katujurunda"/>
@@ -458,7 +458,7 @@
                                     <ColumnDefinition Width="127*"/>
                                     <ColumnDefinition Width="69*"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සා මා ජික "/><Run Text="අංකය"/></TextBlock>
+                                <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සාමාජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border Background="#F7F7F7" x:Name="barcodeTxtBorder_st1" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
                                     <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -593,7 +593,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="සා මා න්‍ය දළු බර" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-1,-20,0,10" Grid.ColumnSpan="3" />
+                                <TextBlock Grid.Row="0" Text="සාමාන්‍ය දළු බර" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-1,-20,0,10" Grid.ColumnSpan="3" />
                                 <Border Grid.Row="1" Height="86" Background="#F7F7F7" CornerRadius="10" BorderBrush="Transparent" BorderThickness="2" Padding="2" Grid.ColumnSpan="3">
                                     <TextBox x:Name="normalLeafWeightTxt_st1" IsReadOnly="True" Text="" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -616,7 +616,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock  x:Name="nSacksLbl_st1" Grid.Row="0" Text="ගෝ නි ගණන" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Width="140" Margin="0,-10,0,0" />
+                                <TextBlock  x:Name="nSacksLbl_st1" Grid.Row="0" Text="ගෝනි ගණන" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Width="140" Margin="0,-10,0,0" />
                                 <Border x:Name="borderNSacks_st1" Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox x:Name="nSacksTxt_st1" GotFocus="nSacksTxt_GotFocus_st1" PreviewTextInput="nSacksTxt_st1_PreviewTextInput" TextChanged="SackDeduction_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -653,7 +653,7 @@
                                     <RowDefinition Height="20"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
-                                <TextBlock Grid.Row="0" Text="මෝ රපුවට" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-10,0,3" />
+                                <TextBlock Grid.Row="0" Text="මෝරපුවට" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-10,0,3" />
                                 <Border Grid.Row="1" Height="96" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2">
                                     <TextBox  x:Name="maturedTxt_st1" Text="" TextChanged="WeightDeduction_st1_TextChanged"  PreviewTextInput="WeightDeduction_st1_PreviewTextInput"  Background="#F7F7F7" BorderThickness="0" Foreground="#787878" FontSize="36" Padding="8" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -718,10 +718,10 @@
                                 <ColumnDefinition Width="125" />
                             </Grid.ColumnDefinitions>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="වා ර අංකය"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝ නි ගණන(n)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝනි ගණන(n)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="2" Margin="5" HorizontalAlignment="Right" Text="පෙට්ටි ගණන(n)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="3" Margin="5" HorizontalAlignment="Right" Text="රන්දළු බර(KG)"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right" Text="සා මන්‍ය දළු බර(KG)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right" Text="සාමන්‍ය දළු බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="5" Margin="5" HorizontalAlignment="Right"  Text=" මුළු දළු බර(KG)"/>
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,65">
@@ -781,11 +781,11 @@
                                 <ColumnDefinition Width="140" />
                                 <ColumnDefinition Width="115" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="සා මා ජික අං."/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝ නි (n)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="සාමාජික අං."/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝනි (n)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="2" Margin="5" HorizontalAlignment="Right" Text="පෙට්ටි (n)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="3" Margin="5" HorizontalAlignment="Right" Text="රන්දළු බර(KG)"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right"  Text=" සා මන්‍ය දළු බර(KG)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right"  Text=" සාමන්‍ය දළු බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="5" Margin="5" HorizontalAlignment="Right" Text="මුළු දළු බර(KG)"/>
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,65">
@@ -834,7 +834,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -858,7 +858,7 @@
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-12,0,2" />
+                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධාරී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-12,0,2" />
                             <Border Grid.Row="1" CornerRadius="10" BorderThickness="2" Padding="2" Margin="0,0,0,5">
                                 <TextBox x:Name="weightLeafOfficerTxt_st2" Background="{x:Null}" BorderThickness="0" Foreground="#FF0078D7" FontSize="20" VerticalAlignment="Top" Height="23" Margin="0,4,0,0" MinHeight="50" BorderBrush="{x:Null}"/>
                             </Border>
@@ -913,7 +913,7 @@
                                 <ColumnDefinition Width="50"/>
                             </Grid.ColumnDefinitions>
                             <Grid Grid.Column="0" Height="60">
-                                <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-15,0,43"><Run Text=" සා මා ජික "/><Run Text="අංකය"/></TextBlock>
+                                <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-15,0,43"><Run Text=" සාමාජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border x:Name="barcodeTxtBorder_st2" Background="#F7F7F7" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="0,22,0,-49">
                                     <TextBox GotFocus="barcodeTxt_GotFocus_st2" x:Name="barcodeTxt_st2" PreviewTextInput="BarcodeTxt_st2_PreviewTextInput" TextChanged="barcodeTxt_st2_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
@@ -953,7 +953,7 @@
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2"/>
+                            <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2"/>
                             <ComboBox x:Name="lineNameCmb_st2" Style="{StaticResource CustomComboBoxStyle}" SelectionChanged="lineNameCmb_st2_SelectionChanged" Grid.Row="1" Margin="-9,0,0,-21" MinHeight="50" VerticalContentAlignment="Center" FontSize="20"  >
                                 <!--
                                 <ComboBoxItem Content="Alaska"/>
@@ -972,7 +972,7 @@
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන නියෝ ජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" Width="283" />
+                            <TextBlock Grid.Row="0" Text="ප්‍රවාහන නියෝජිත" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Grid.ColumnSpan="2" Width="283" />
                             <TextBlock x:Name="lineMasterNameLbl_st2" Grid.Row="1" Text="-" FontSize="24" FontWeight="Medium" Foreground="#787878" HorizontalAlignment="Left" Margin="10,0,0,-11" Width="327" Grid.ColumnSpan="2" />
                         </Grid>
                         <!--Horizontal lining upper middle-->
@@ -1222,11 +1222,11 @@
                                 <ColumnDefinition Width="135" />
                                 <ColumnDefinition Width="155" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="වා ර අංකය"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝ නි බර(KG)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="0" Margin="5" Text="වාර අංකය"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="1" Margin="5" HorizontalAlignment="Right"  Text="ගෝනි බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="2" Margin="5" HorizontalAlignment="Right" Text="මුළු දළු බර(KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="3" Margin="5" HorizontalAlignment="Right" Text="රන්දළු බර(KG)"/>
-                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right"  Text="සා මන්‍ය දළු බර(KG)"/>
+                            <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="4" Margin="5" HorizontalAlignment="Right"  Text="සාමන්‍ය දළු බර(KG)"/>
                         </Grid>
                         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,24">
                             <StackPanel x:Name="MemberTurnTablePanel_st2" Width="690" Height="169">
@@ -1251,10 +1251,10 @@
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="100" />
                             </Grid.ColumnDefinitions>
-                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="0" Margin="5,5,0,0" Text="සා මා ජික අං."/>
+                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="0" Margin="5,5,0,0" Text="සාමාජික අං."/>
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="නම"/>
-                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="2" Margin="5,5,0,0" HorizontalAlignment="Right" Text="ගෝ නි ගණන(n)"/>
-                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="3" Margin="5,5,0,0" HorizontalAlignment="Right" Text="ඉතිරි ගෝ නි(n)"/>
+                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="2" Margin="5,5,0,0" HorizontalAlignment="Right" Text="ගෝනි ගණන(n)"/>
+                            <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="3" Margin="5,5,0,0" HorizontalAlignment="Right" Text="ඉතිරි ගෝනි(n)"/>
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="4" Margin="5,5,0,0" HorizontalAlignment="Right" Text="මුළු දළු බර(KG)"/>
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="5" Margin="5,5,0,0" HorizontalAlignment="Right"  Text=" පිළිගත් දළු බර"/>
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="6" Margin="5,5,0,0" HorizontalAlignment="Right"  Text=" රන්දළු බර"/>
@@ -1320,7 +1320,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
@@ -1330,7 +1330,7 @@
                                 <RowDefinition Height="20"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධා රී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,27" Grid.RowSpan="2" />
+                            <TextBlock Grid.Row="0" Text="දළු කිරුම් නිලධාරී" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,0,0,27" Grid.RowSpan="2" />
                             <Border Grid.Row="1" CornerRadius="10" BorderThickness="2" Padding="2" Margin="0,20,0,-15">
                                 <TextBox x:Name="weightLeafOfficerTxt_admin" IsReadOnly="True" Background="#F7F7F7" BorderThickness="0" Foreground="#FF1E7CD2" FontSize="20" VerticalAlignment="Top" Height="32" Margin="0,4,0,0"/>
                             </Border>
@@ -1356,7 +1356,7 @@
                     <Grid>
 
                         <!--Daily report-->
-                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="දෛනික වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="118,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="දෛනික වාර්තාව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="118,80,0,570" FontFamily="Times New Roman" Width="489"/>
                         <TextBlock Grid.Row="0" TextAlignment="Center" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල සියලු ප්‍රවාහන මාර්ග කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="118,188,0,432" FontFamily="Times New Roman" Width="489"/>
 
                         <!--Print line report button-->
@@ -1371,7 +1371,7 @@
                         <Line X1="0" X2="0" Y1="0" Y2="400" Stroke="#F0F0F0" StrokeThickness="2" Margin="644,110,655,120" />
 
                         <!--Line report-->
-                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="ප්‍රවා හන මා ර්ග වා ර්තා ව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="724,80,0,570" FontFamily="Times New Roman" Width="489"/>
+                        <TextBlock Grid.Row="0" TextAlignment="Center" Text="ප්‍රවාහන මාර්ග වාර්තාව" FontSize="32" FontWeight="Bold" Foreground="#686868" HorizontalAlignment="Left" Margin="724,80,0,570" FontFamily="Times New Roman" Width="489"/>
                         <TextBlock Grid.Row="0" TextAlignment="Center" TextWrapping="Wrap" Text="දෙන ලද දිනයක් තුල එක ප්‍රවාහන මාර්ගයක සිදු වූ සියලු සාමාජිකයින්ගේ කිරීම් තොරතුරු මෙහෙදී ලබා ගත හැක." FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="724,181,0,426" FontFamily="Times New Roman" Width="489"/>
                         <!-- Transport Route Dropdown -->
                         <Grid Margin="798,306,132,317" >
@@ -1383,7 +1383,7 @@
                                 <RowDefinition Height="25"/>
                                 <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
-                            <TextBlock Grid.Row="0" Text="ප්‍රවා හන මා ර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2" FontFamily="Times New Roman" Grid.ColumnSpan="2"/>
+                            <TextBlock Grid.Row="0" Text="ප්‍රවාහන මාර්ගය" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="0,-7,0,2" FontFamily="Times New Roman" Grid.ColumnSpan="2"/>
                             <ComboBox x:Name="lineNameCmb_admin" Style="{StaticResource CustomComboBoxStyle}" Grid.Row="1" FontSize="20" MinHeight="50" VerticalContentAlignment="Center" MinWidth="10" Grid.ColumnSpan="2"  >
                                 <!--
                                 <ComboBoxItem Content="Katujurunda"/>
