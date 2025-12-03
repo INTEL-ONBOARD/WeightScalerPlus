@@ -33,7 +33,7 @@ public class CustomApiClient
         };
 
         var content = new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json");
-
+        
         var response = await _httpClient.PostAsync(LoginUrl, content);
         response.EnsureSuccessStatusCode();
 

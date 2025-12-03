@@ -140,9 +140,9 @@ namespace WeightMaster.Services
         {
             await _engine.getMemberData();
         }
-        public async Task VerifyLines()
+        public async Task VerifyLines(int id)
         {
-            await _engine.getLineDataAsync();
+            await _engine.getLineDataAsync(id);
         }
 
 

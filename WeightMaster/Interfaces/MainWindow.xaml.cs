@@ -3962,7 +3962,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(5)..." : "Reverifying Database Status(5)...";
                     });
-                    await _consoleHandler.VerifyLines();  // Uncomment when needed
+                    await _consoleHandler.VerifyLines(1);  // Uncomment when needed ****** pass the id here
                     //System.Diagnostics.Debug.WriteLine("================");
                     Dispatcher.Invoke(() =>
                     {
