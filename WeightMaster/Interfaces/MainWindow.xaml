@@ -293,7 +293,7 @@
                     <Image Source="/Interfaces/teacoop_logo.png" Margin="9,17,418,25"/>
                     <TextBlock x:Name="TopBarText" FontFamily="FMBasuru" Text="සීමාසහිත මොරවක්කෝරලේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය" Foreground="#2F4859" FontSize="29" Margin="134,17,548,44" FontWeight="Bold" Grid.ColumnSpan="2"  />
                     <!--//මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE-->
-                    <TextBlock x:Name="TopbarCustomerLocation" Text="කෝප්කෝලා තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
+                    <TextBlock x:Name="TopbarCustomerLocation" Text="මොරවක්කෝරලේ තේ කම්හල" FontSize="20" Margin="134,64,1138,41" FontWeight="Bold" Foreground="#2DAA44" Grid.ColumnSpan="2"/>
                     <TextBlock x:Name="TopBarStationName" Text="දළු කිරීම" HorizontalAlignment="Right" TextAlignment="Right" Foreground="#2F4859" FontSize="26" Margin="0,58,313,27" FontWeight="Bold" Grid.Column="1" Width="216"  />
                     <userContorls:StataionDateAndTime Grid.Column="1" Margin="565,80,313,-4"/>
                     <!--Settings button (when home button is invicible)-->
@@ -1320,7 +1320,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
