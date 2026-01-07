@@ -114,6 +114,12 @@ namespace WeightMaster.Services
         }
         //get data filtered based in the selected line and the barcode value
 
+        //get all the transactipn that are compelted from the station 1
+        public async Task<List<TransactionLogBlockModel>> getCompletedDataByFilter(string lineName)
+        {
+            return await _engine.GetCompletedFilteredTransactionsByLineNameAndDateAsync(lineName);
+        }
+
         public async Task<List<TransactionLogBlockModel>> getDataByFilter(string lineName, string barcodeDetails)
         {
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);

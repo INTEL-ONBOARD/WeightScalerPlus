@@ -243,7 +243,25 @@ namespace WeightMaster.Services
 
 
 
+        public async Task<List<TransactionLogBlockModel>> GetCompleteTransactionsByLineNameAndDateAsync(string lineName)
+        {
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
+            // Step 1: Get all FinalTransactionIds that are not null
+            var finalTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null)
+                .Select(r => r.FinalTransactionId.Value)
+                .ToListAsync();
+
+            // Step 2: Get all valid TransactionLogBlockModels not referenced as final transactions
+            var result = await _context.transactionData
+                .Where(t => finalTransactionIds.Contains(t.Id)
+                            && t.linename == lineName
+                            && t.date == todayDate)
+                .ToListAsync();
+
+            return result;
+        }
 
 
 

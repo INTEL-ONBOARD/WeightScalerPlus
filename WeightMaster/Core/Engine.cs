@@ -487,6 +487,24 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
+
+        public async Task<List<TransactionLogBlockModel>> GetCompletedFilteredTransactionsByLineNameAndDateAsync(string lineName)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.GetCompleteTransactionsByLineNameAndDateAsync(lineName);
+
+                System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
         public async Task<List<TransactionLogBlockModel>> getDataForDocumentsWithDate(string lineName, string date_)
         {
             try
