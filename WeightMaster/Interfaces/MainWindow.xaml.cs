@@ -15,6 +15,7 @@ using System.Globalization;
 using System.Windows.Documents;
 using System.Windows.Shapes;
 using WeightMaster.utils;
+using WeightMaster.Config;
 
 
 namespace WeightMaster
@@ -28,6 +29,7 @@ namespace WeightMaster
         private Runtime runtimeService;
         private String path;
         private ConsoleHandler _consoleHandler;
+        public AppConfig _appConfig = new AppConfig();
 
         private bool scalerPassedZero = false;
 
@@ -181,6 +183,7 @@ namespace WeightMaster
             StartupTheAppAsync();
             runtimeService.ExecuteRunExe();
 
+            TopbarCustomerLocation.Text = _appConfig.branchName;
         }
 
         //Enter & Esc navigation logic________________________________________________________________________________________
@@ -884,7 +887,6 @@ namespace WeightMaster
                         Station2Frame.Visibility = Visibility.Collapsed;
                         AdminFrame.Visibility = Visibility.Collapsed;
                         //change topbar text
-                        //TopBarText.Text = "වේදිකාව-1";
                         TopBarStationName.Text = "දළු කිරීම";
                         //for enter esc navigation
                         Station1Frame.Focus();
@@ -1261,6 +1263,7 @@ namespace WeightMaster
                 lineMasterNameLbl_st1.Text = "-";
             }
         }
+
         private void triggerMechanism(object sender, TextChangedEventArgs e)
         {
             //MessageBox.Show("current step: "+currentStep_st1.ToString());
@@ -1921,7 +1924,7 @@ namespace WeightMaster
                     {
                         linename = lineName_st1,
                         transportagent = lineMasterNameLbl_st1.Text,
-                        company = "මොරවක්කෝරලේ තේ කම්හල", //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = _appConfig.branchName, //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                         superviosr = supervisor_st1,
                         barcode_details = memberId_st1,
@@ -2036,7 +2039,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
+                            factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -2049,9 +2052,9 @@ namespace WeightMaster
                             box_count = nBoxes,
 
                             real_weight = Math.Round(weightScalerValue, 2),
-                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
-
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
+                            //total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
+                            total_weight = (int)currentAcceptedLeafWeight_st1 + (int)Math.Ceiling(nBoxes * singleBoxWeight),
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)Math.Ceiling(nBoxes * singleBoxWeight),
                             gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
 
                             wathurata = wateredWeight,
@@ -2083,7 +2086,7 @@ namespace WeightMaster
                         {
                             id = 0,
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
+                            factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
@@ -2096,9 +2099,9 @@ namespace WeightMaster
                             box_count = nBoxes + postModelSumFromLine.box_count,
 
                             real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
-                            total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.total_weight,
+                            total_weight = (int)acceptedLeafWeight + postModelSumFromLine.total_weight + (int)Math.Ceiling(nBoxes * singleBoxWeight),
 
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight + (int)Math.Ceiling(nBoxes * singleBoxWeight),
                             gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
 
                             wathurata = wateredWeight + postModelSumFromLine.wathurata,
@@ -3436,7 +3439,7 @@ namespace WeightMaster
                         Id = 0,
                         linename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
-                        company = "මොරවක්කෝරලේ තේ කම්හල",  //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                        company = _appConfig.branchName,  //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
                         //superviosr = supervisorCmb_st2.SelectedValue.ToString(),
                         //superviosr = supervisor_st2,
@@ -3552,7 +3555,7 @@ namespace WeightMaster
                     {
                         id = 0,
                         leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                        factory = "1", //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
+                        factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
                         transportlinename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
@@ -3565,6 +3568,7 @@ namespace WeightMaster
                         box_count = greenLeafPostModel_st2.box_count,
 
                         real_weight = greenLeafPostModel_st2.real_weight,
+                        //if cloud server wanted deduct bag weight as well in case, deduct from below
                         total_weight = greenLeafPostModel_st2.total_weight,
 
                         nomal_leaf_weight = greenLeafPostModel_st2.nomal_leaf_weight,
@@ -3961,7 +3965,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(5)..." : "Reverifying Database Status(5)...";
                     });
-                    await _consoleHandler.VerifyLines(1);  // Uncomment when needed ****** pass the id here
+                    await _consoleHandler.VerifyLines(Convert.ToInt32(_appConfig.branchId));  //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
                     //System.Diagnostics.Debug.WriteLine("================");
                     Dispatcher.Invoke(() =>
                     {
@@ -4583,7 +4587,7 @@ namespace WeightMaster
                 {
                     // Initialize totals to zero
                     int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
-                    int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
+                    int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, indexesTotal = 0,
                         totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
                     if (lineReportData.Any())
@@ -4609,6 +4613,14 @@ namespace WeightMaster
                             totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
                             totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            int barcode_index = 0;
+                            if (int.TryParse(transaction.barcode_details, out barcode_index))
+                            {
+                                indexesTotal += barcode_index;
+                            }
+                            else {
+                                indexesTotal += 0;
+                            }
                         }
                     }
                     else
@@ -4638,6 +4650,7 @@ namespace WeightMaster
                             totalPages: totalPages,
                             isLastPage: page == totalPages - 1,
                             totals: new TotalRow(
+                                indexesTotal,
                                 totalBagCount, totalBoxCount, totalLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
                                 totalReject, totalBagWeight, totalBoxWeight, totalDalu
@@ -4710,7 +4723,7 @@ namespace WeightMaster
                 if (printDialog.ShowDialog() == true)
                 {
                     // Initialize totals to zero
-                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, indexesTotal = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
                         totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
                     // Only calculate totals if there's data
@@ -4737,6 +4750,15 @@ namespace WeightMaster
                             totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
                             totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                                          + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            int barcode_index = 0;
+                            if (int.TryParse(transaction.barcode_details, out barcode_index))
+                            {
+                                indexesTotal += barcode_index;
+                            }
+                            else
+                            {
+                                indexesTotal += 0;
+                            }
                         }
                     }
                     else
@@ -4749,6 +4771,7 @@ namespace WeightMaster
                     int totalPages = lineReportData.Count == 0 ? 1 : (int)Math.Ceiling((double)lineReportData.Count / pageSize);
                     FixedDocument fixedDoc = new FixedDocument();
                     fixedDoc.DocumentPaginator.PageSize = new Size(printDialog.PrintableAreaWidth, printDialog.PrintableAreaHeight);
+
 
                     for (int page = 0; page < totalPages; page++)
                     {
@@ -4766,6 +4789,7 @@ namespace WeightMaster
                             totalPages: totalPages,
                             isLastPage: page == totalPages - 1,
                             totals: new TotalRow(
+                                indexesTotal,
                                 totalBagCount, totalBoxCount, totalLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
                                 totalReject, totalBagWeight, totalBoxWeight, totalDalu
@@ -4800,7 +4824,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+            AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName, 14, 816 / 2, yPos, true);
             yPos += 30;
@@ -4846,6 +4870,8 @@ namespace WeightMaster
             {
                 // Totals row { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
+                //newly added index sum to totals
+                AddText(canvas, totals.indexSum.ToString(), fontSize, 130, yPos, rightAlign: false);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
                 AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
@@ -5004,6 +5030,7 @@ namespace WeightMaster
         // Helper record for totals
         private class TotalRow
         {
+            public int indexSum { get; }
             public int BagCount { get; }
             public int BoxCount { get; }
             public int LeafWeight { get; }
@@ -5015,9 +5042,10 @@ namespace WeightMaster
             public int BoxWeight { get; }
             public int Dalu { get; }
 
-            public TotalRow(int bagCount, int boxCount, int leafWeight, int water,
+            public TotalRow(int indexSum, int bagCount, int boxCount, int leafWeight, int water,
                            int morapuwata, int thambimata, int reject, int bagWeight, int boxWeight, int dalu)
             {
+                this.indexSum = indexSum;
                 BagCount = bagCount;
                 BoxCount = boxCount;
                 LeafWeight = leafWeight;
@@ -5168,6 +5196,7 @@ namespace WeightMaster
                             totalPages: totalPages,
                             isLastPage: page == totalPages - 1,
                             totals: new TotalRow(
+                                0, //this is used in line report only
                                 totalBagCount, totalBoxCount, totalLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
                                 totalReject, totalBagWeight, totalBoxWeight, totalDalu
@@ -5202,7 +5231,7 @@ namespace WeightMaster
             // Add main headers
             AddText(canvas, "සීමාසහිත මොරවක්කොරළේ තේ නිපදවන්නන්ගේ සමුපකාර සමිතිය", 14, 816 / 2, yPos, true);
             yPos += 30;
-            AddText(canvas, "මොරවක්කෝරලේ තේ කම්හල", 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+            AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
             AddText(canvas, "දෛනික වාර්තාව", 14, 816 / 2, yPos, true);
             yPos += 30;

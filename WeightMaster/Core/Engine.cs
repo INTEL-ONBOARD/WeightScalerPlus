@@ -1019,7 +1019,7 @@ namespace WeightMaster.Core
                 var jsonBody = JsonSerializer.Serialize(postModel, options);
                 System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
                 System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
-                MessageBox.Show(jsonBody);
+                //MessageBox.Show(jsonBody);
                 // Make the API call
                 var response = await client.PostAsync<object>(url, postModel);
 

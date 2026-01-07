@@ -12,6 +12,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using WeightMaster.Config;
 
 namespace WeightMaster.Interfaces
 {
@@ -21,9 +22,15 @@ namespace WeightMaster.Interfaces
     public partial class CustomerWindow : Window
     {
         private readonly MainWindow _mainWindow; // Reference to MainWindow
+
+        //data from config.json file
+        public AppConfig _appConfig = new AppConfig();
         public CustomerWindow(MainWindow mainWindow)
         {
             InitializeComponent();
+
+            TopbarCustomerLocation.Text = _appConfig.branchName;
+
             _mainWindow = mainWindow;
             DataContext = this; // Optional: Set DataContext for binding
                                 //_mainWindow.PropertyChanged += MainWindow_PropertyChanged; // Listen for changes
