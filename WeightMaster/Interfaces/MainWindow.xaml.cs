@@ -181,6 +181,8 @@ namespace WeightMaster
             runtimeService.ExecuteRunExe();
 
             TopbarCustomerLocation.Text = _appConfig.branchName;
+
+            txtBillDate_settings.Text = reportDate;
         }
 
         //Enter & Esc navigation logic________________________________________________________________________________________
@@ -1184,6 +1186,7 @@ namespace WeightMaster
 
         private async void lineNameCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            List<TransactionLogBlockModel> roundData = null;
             //clear the linewise table before entering new data
             LineTablePanel_st1.Children.Clear();
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
@@ -1191,10 +1194,27 @@ namespace WeightMaster
             if (result != null)
             {
                 lineMasterNameLbl_st1.Text = result.LineMaster;
-
                 try
                 {
-                    var roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                    //roundData is used tot populate a table
+                    //if empty string, include full list
+                    MessageBox.Show(isthis.ToString());
+                    MessageBox.Show(isthis2.ToString());
+                    MessageBox.Show(isthis1.ToString());
+                    if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
+                    {
+                        //returns the full list
+                        roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                    }
+                    //if not empty string, filter list by barcode details string
+                    else 
+                    {
+                        roundData = null;
+                        List <TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                        roundData = tempRoundData.Where(t => t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString()).ToList();
+                    }
+
+                    //populate the data in a table
                     if (roundData.Any())
                     {
                         // to assign into total values row
@@ -1223,15 +1243,15 @@ namespace WeightMaster
                             int roundNo = currentCount;
 
                             // create row — ensure you pass strings if your constructor expects strings
-                            Station1LineTableRow lr1 = new Station1LineTableRow(
-                                roundNo.ToString(),
-                                barcodeKey,
-                                transaction.bag_count.ToString(),
-                                transaction.box_count.ToString(),
-                                transaction.total_gold_leaf_weight.ToString(),
-                                transaction.actual_nomal_leaf_weight.ToString(),
-                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
-                            );
+                                Station1LineTableRow lr1 = new Station1LineTableRow(
+                                    roundNo.ToString(),
+                                    barcodeKey,
+                                    transaction.bag_count.ToString(),
+                                    transaction.box_count.ToString(),
+                                    transaction.total_gold_leaf_weight.ToString(),
+                                    transaction.actual_nomal_leaf_weight.ToString(),
+                                    (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                                );
 
                             LineTablePanel_st1.Children.Add(lr1);
 
@@ -3871,27 +3891,45 @@ namespace WeightMaster
             ApplicationSettingsSection.Visibility = Visibility.Visible;
         }
 
-
-
-/*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+        private void SelectBillDate_settings_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            // Optionally, set filters (e.g., only text files, images, etc.)
-            openFileDialog.Filter = "Text files (.txt)|.txt|All files (.)|.";
-            // Show the dialog and check if the user selected a file
-            if (openFileDialog.ShowDialog() == true)
-            {
-                // Get the selected file path
-                string filePath = openFileDialog.FileName;
-                // Use the file path (e.g., display it in a TextBlock)
-                path = filePath;
-                FilePathTextField.Text = filePath;
-                runtimeService.SetFilePath(path); // Pass file path to the runtime service
-                runtimeService.StartFileWatcher(); // Start watching the file
-                runtimeService.StartTimer();
-            }
+            billDateCalendar.Visibility = Visibility.Visible;
+            btnSelectDate.Visibility = Visibility.Collapsed;
+        }
 
-        }*/
+        private void BillDateCalendar_settings_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (billDateCalendar.SelectedDate.HasValue)
+            {
+                txtBillDate_settings.Text = billDateCalendar.SelectedDate.Value.ToString("yyyy-MM-dd");
+
+                billDateCalendar.Visibility = Visibility.Collapsed;
+                btnSelectDate.Visibility = Visibility.Visible;
+            }
+            billDateCalendar.Visibility = Visibility.Collapsed;
+            btnSelectDate.Visibility = Visibility.Visible;
+        }
+
+
+        /*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+                {
+                    OpenFileDialog openFileDialog = new OpenFileDialog();
+                    // Optionally, set filters (e.g., only text files, images, etc.)
+                    openFileDialog.Filter = "Text files (.txt)|.txt|All files (.)|.";
+                    // Show the dialog and check if the user selected a file
+                    if (openFileDialog.ShowDialog() == true)
+                    {
+                        // Get the selected file path
+                        string filePath = openFileDialog.FileName;
+                        // Use the file path (e.g., display it in a TextBlock)
+                        path = filePath;
+                        FilePathTextField.Text = filePath;
+                        runtimeService.SetFilePath(path); // Pass file path to the runtime service
+                        runtimeService.StartFileWatcher(); // Start watching the file
+                        runtimeService.StartTimer();
+                    }
+
+                }*/
 
         private async void SyncButton_Click(object sender, RoutedEventArgs e)
         {

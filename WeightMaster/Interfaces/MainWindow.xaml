@@ -179,75 +179,6 @@
                     </StackPanel>
 
 
-                    <!--Station 1 radio button-->
-                    <!--
-                    <RadioButton x:Name="RadioBtnStation1" GroupName="LoginPathGroup"  Background="Transparent" BorderThickness="0" Margin="20,484,200,289">
-                        <RadioButton.Template>
-                            <ControlTemplate TargetType="RadioButton">
-                                <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="163" Height="60">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>
-                                        <TextBlock Text="දළු කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="False">
-                                        <Setter TargetName="Border" Property="Opacity" Value="0.7"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </RadioButton.Template>
-                    </RadioButton>
-                    -->
-                    <!--Station 2 radio button-->
-                    <!--
-                    <RadioButton x:Name="RadioBtnStation2" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="200,484,20,289">
-                        <RadioButton.Template>
-                            <ControlTemplate TargetType="RadioButton">
-                                <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="163" Height="60">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>
-                                        <TextBlock Text="ගෝනි කිරීම" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="False">
-                                        <Setter TargetName="Border" Property="Opacity" Value="0.7"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </RadioButton.Template>
-                    </RadioButton>
--->
-
-                    <!--Admin Access radio button-->
-                    <!--
-                    <RadioButton x:Name="RadioBtnAdmin" GroupName="LoginPathGroup" Background="Transparent" BorderThickness="0" Margin="20,545,20,216" >
-                        <RadioButton.Template>
-                            <ControlTemplate TargetType="RadioButton">
-                                <Border x:Name="Border" Background="#2ECC71" CornerRadius="18" Padding="10" Width="336" Height="60">
-                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                        <Ellipse Width="20" Height="20" Fill="White" Margin="0,0,10,0"/>
-                                        <TextBlock Text="ප්‍රධාන පාලක" Foreground="White" FontSize="16" FontWeight="Normal" VerticalAlignment="Center"/>
-                                    </StackPanel>
-                                </Border>
-                                <ControlTemplate.Triggers>
-                                    <Trigger Property="IsChecked" Value="False">
-                                        <Setter TargetName="Border" Property="Opacity" Value="0.7"/>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </RadioButton.Template>
-                    </RadioButton>
-                    -->
-                    <!--Login button-->
-                    <!--
-                    <Button Cursor="Hand" Background="Transparent" BorderThickness="0" Margin="20,578,20,146" Click="LoginButtonClick" >
-                        <Border Background="#2ECC71" CornerRadius="18" Padding="10" Width="336" Height="60">
-                            <Image Source="/Interfaces/login_button.png"/>
-                        </Border>
-                    </Button>
-                    -->
                     <Button x:Name="LoginStation1Button" Background="Transparent" BorderThickness="0" Margin="26,463,193,303" Click="LoginButtonClick" Style="{StaticResource HoverButton}">
                         <Border Background="#2ECC71" CornerRadius="18" Padding="10" Height="60">
                             <StackPanel Orientation="Horizontal">
@@ -1325,7 +1256,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
@@ -1444,7 +1375,7 @@
 
 
             <!--SettingsFrame-->
-            <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
+            <Grid x:Name="SettingsFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
 
                 <!--Left section with scroller-->
                 <Grid Background="White" Margin="0,44,1143,0" >
@@ -1454,7 +1385,7 @@
                                 <Grid HorizontalAlignment="Center" Background="White" Width="580" Height="100">
                                     <Image  Margin="41,34,501,28" Source="/Interfaces/station_1_image.png"/>
                                     <Image x:Name="GeneralSettingsButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png"/>
-                                    <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="General Settings"/>
+                                    <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="Transaction View"/>
                                     <Border Height="2" Background="#CACACA" Width="600" Margin="0,96,0,2"/>
                                 </Grid>
                             </Button>
@@ -1476,8 +1407,8 @@
                     <!--horizontal line-->
                     <Border Width="2" Background="Gray" Opacity="0.3" Margin="10,10,1176,45" />
                     <!-- General settings section-->
-                    <Grid x:Name="GeneralSettingsSection" Visibility="Hidden">
-                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="General Settings" Width="227"/>
+                    <Grid x:Name="GeneralSettingsSection" Visibility="Visible">
+                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="Transaction View" Width="227"/>
 
                         <!-- Sync Button -->
                         <TextBlock Grid.Column="0" Text="Generate Reports" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,124,0,0" />
@@ -1486,6 +1417,23 @@
                                 <TextBlock Text="View" HorizontalAlignment="Center" Foreground="White"/>
                             </Border>
                         </Button>
+
+                        <!-- Bill Date Label -->
+                        <TextBlock Text="Bill Date:" FontSize="16" Foreground="Black" Margin="62,183,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+
+
+                        <!-- Select Date Button -->
+                        <Button x:Name="btnSelectDate" Click="SelectBillDate_settings_Click" Background="Transparent" Margin="400,178,0,0"  BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                            <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
+                                <TextBlock Text="Select Date" Foreground="White" HorizontalAlignment="Center"/>
+                            </Border>
+                        </Button>
+                        <!-- Selected Date Text -->
+                        <TextBlock x:Name="txtBillDate_settings" Text="Select the date" FontSize="20" Foreground="#FF0078D7" Margin="523,187,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+
+
+                        <!--calender should be hidden when a date was selected and select date button should be visible  SelectedDatesChanged="ReportCalender_admin_SelectedDatesChanged"-->
+                        <Calendar Panel.ZIndex="1" x:Name="billDateCalendar" Visibility="Hidden" SelectedDatesChanged="BillDateCalendar_settings_SelectedDatesChanged" HorizontalAlignment="Left" Height="345" Margin="505,171,0,0" VerticalAlignment="Top" Width="380" Style="{DynamicResource CalendarStyle1}" CalendarButtonStyle="{DynamicResource CalendarButtonStyle1}" CalendarDayButtonStyle="{DynamicResource CalendarDayButtonStyle1}" CalendarItemStyle="{DynamicResource CalendarItemStyle1}"/>
 
                         <!-- FIle Chooser TextBox -->
                         <!--
@@ -1524,11 +1472,40 @@
                         </Grid>
                         -->
 
+                        <TextBlock Grid.Column="0" Text="මුර බිල්" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,234,0,0" />
+                        <!-- bill table -->
+                        <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="62,270,103,33">
+                            <!--Station2 Table2-->
+                            <Grid>
+                                <!-- Header Row -->
+                                <Grid Background="Transparent" Margin="10,10,0,255">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="80" />
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="240" />
+                                        <ColumnDefinition Width="240" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Center" Text="#"/>
+                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="දිනය"/>
+                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="2" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="මුර බිල් අං."/>
+                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="3" Margin="5,5,0,0" HorizontalAlignment="Center" Text="ප්‍රවාහන මාර්ගය"/>
+                                </Grid>
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,31">
+                                    <StackPanel x:Name="CustomerBillRowPanel" Width="1012">
+                                        <userContorls:CustomerBillTableRow/>
+                                        <userContorls:CustomerBillTableRow/>
+                                        <userContorls:CustomerBillTableRow/>
+                                        <userContorls:CustomerBillTableRow/>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+
                     </Grid>
 
 
                     <!-- Application settings section-->
-                    <Grid x:Name="ApplicationSettingsSection" Visibility="Visible">
+                    <Grid x:Name="ApplicationSettingsSection" Visibility="Hidden">
                         <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="Application Settings" Width="227"/>
 
                         <!-- FIle Chooser TextBox -->
