@@ -29,7 +29,7 @@ namespace WeightMaster
         private Runtime runtimeService;
         private String path;
         private ConsoleHandler _consoleHandler;
-        public AppConfig _appConfig = new AppConfig();
+        public AppConfig _appConfig;
 
         private bool scalerPassedZero = false;
 
@@ -71,16 +71,12 @@ namespace WeightMaster
         //finalized values by each round to send to db/api
         private float finalWeightScalerWeight_st1 = 0; //this goes as the accepted value to api
         private int finalAcceptedLeafWeight_st1 = 0;
-        private int finalGoldenLeafWeight_st1 = 0;
-        private int finalNormalLeafWeight_st1 = 0;
+
 
         private int finalNBoxes_st1 = 0;
         private int finalNSacks_st1 = 0;
 
-        private int finalWateredWeight_st1 = 0;
-        private int finalMaturedWeight_st1 = 0;
-        private int finalSpoiledWeight_st1 = 0;
-        private int finalRejectedWeight_st1 = 0;
+
 
         private int finalAvailableGoldenLeafWeight_st1 = 0;
         private int finalAvailableNormalLeafWeight_st1 = 0;
@@ -166,6 +162,7 @@ namespace WeightMaster
         public MainWindow()
         {
             InitializeComponent();
+            _appConfig = new AppConfig();
             //Topbar
             runtimeService = new Runtime(this, path); // Pass the labels from XAML
             //this console handler is used globally
@@ -849,11 +846,15 @@ namespace WeightMaster
 
             string email = UsernameTextBox.Text;
             string password = PasswordBoxControl.Password;
+            string passwordVis = VisiblePasswordTextBox.Text; //because visible password maintains on a different textbox
             string username = "";
             try
             {
                 statusLabel.Content = "Logging in...";
                 username = await _consoleHandler.loginUser(email, password);
+                if (username.Equals("unknown")) { //because visible password maintains on a different textbox
+                    username = await _consoleHandler.loginUser(email, passwordVis);
+                }
                 loginUsername = username;
             }
             catch (Exception ex)
@@ -1055,16 +1056,9 @@ namespace WeightMaster
             rowTotalLeafWeights_st1.Text = "";
             finalWeightScalerWeight_st1 = 0;
             finalAcceptedLeafWeight_st1 = 0;
-            finalGoldenLeafWeight_st1 = 0;
-            finalNormalLeafWeight_st1 = 0;
 
             finalNBoxes_st1 = 0;
             finalNSacks_st1 = 0;
-
-            finalWateredWeight_st1 = 0;
-            finalMaturedWeight_st1 = 0;
-            finalSpoiledWeight_st1 = 0;
-            finalRejectedWeight_st1 = 0;
 
             finalAvailableGoldenLeafWeight_st1 = 0;
             finalAvailableNormalLeafWeight_st1 = 0;
@@ -1131,8 +1125,6 @@ namespace WeightMaster
             //hmm you need either to clear all textboxes or restart the app.
             System.Diagnostics.Debug.WriteLine("system check 1");
             //runtimeService.KillRunExe();
-            //runtimeService.KillRunExe();
-            //runtimeService.KillRunExe();
             System.Diagnostics.Debug.WriteLine("system check 2");
             StartupTheAppAsync();
         }
@@ -1156,16 +1148,10 @@ namespace WeightMaster
                 {
                     customerNameTxt_st1.Text = "-";
                 }
-
                 memberData_st1 = await _consoleHandler.getMember(memberId_st1);
-                //MessageBox.Show(memberData_st1.CustomPreMemberNum);
 
                 //new api (if exists(not null), do an update after adding the new transaction at confirm button click evt)
                 greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
-                /*if (greenLeafPostModel_st1 == null)
-                {
-                    MessageBox.Show("is null");
-                }*/
             }
             catch (Exception ex)
             {
@@ -1180,16 +1166,9 @@ namespace WeightMaster
             //resetting values for the next new member
             finalWeightScalerWeight_st1 = 0;
             finalAcceptedLeafWeight_st1 = 0;
-            finalGoldenLeafWeight_st1 = 0;
-            finalNormalLeafWeight_st1 = 0;
 
             finalNBoxes_st1 = 0;
             finalNSacks_st1 = 0;
-
-            finalWateredWeight_st1 = 0;
-            finalMaturedWeight_st1 = 0;
-            finalSpoiledWeight_st1 = 0;
-            finalRejectedWeight_st1 = 0;
 
             finalAvailableGoldenLeafWeight_st1 = 0;
             finalAvailableNormalLeafWeight_st1 = 0;
@@ -1207,8 +1186,6 @@ namespace WeightMaster
         {
             //clear the linewise table before entering new data
             LineTablePanel_st1.Children.Clear();
-            //MessageBox.Show("jfsdlfksd");
-            //System.Diagnostics.Debug.WriteLine($"fjkdfldsfdskf");
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
             if (result != null)
@@ -1217,10 +1194,8 @@ namespace WeightMaster
 
                 try
                 {
-                    var data = await _consoleHandler.getDataByFilter(result.LineName.ToString());
-                    System.Diagnostics.Debug.WriteLine(result.LineName.ToString());
-                    //MessageBox.Show("here triggered");
-                    if (data.Any())
+                    var roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                    if (roundData.Any())
                     {
                         // to assign into total values row
                         int rowNBoxes = 0;
@@ -1229,19 +1204,46 @@ namespace WeightMaster
                         int rowNormalLeafWeight = 0;
                         int rowTotalLeafWeight = 0;
 
-                        //MessageBox.Show("data found");
-                        foreach (var transaction in data)
+                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
+                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                        foreach (var transaction in roundData)
                         {
-                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.barcode_details.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString());
+                            // normalize barcode key and guard against null
+                            string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+
+                            // increment occurrence count for this barcode and use it as the round number
+                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
+                            {
+                                currentCount = 0;
+                            }
+                            currentCount++;
+                            counts[barcodeKey] = currentCount;
+
+                            int roundNo = currentCount;
+
+                            // create row — ensure you pass strings if your constructor expects strings
+                            Station1LineTableRow lr1 = new Station1LineTableRow(
+                                roundNo.ToString(),
+                                barcodeKey,
+                                transaction.bag_count.ToString(),
+                                transaction.box_count.ToString(),
+                                transaction.total_gold_leaf_weight.ToString(),
+                                transaction.actual_nomal_leaf_weight.ToString(),
+                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                            );
+
                             LineTablePanel_st1.Children.Add(lr1);
-                            //System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
+
+                            // accumulate totals
                             rowNBoxes += transaction.box_count;
                             rowNSacks += transaction.bag_count;
                             rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
                             rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
                             rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
                         }
-                        //assign total column values to the total values row
+
+                        // assign total column values to the total values row
                         lineRowNBoxes_st1.Text = rowNBoxes.ToString();
                         lineRowNSacks_st1.Text = rowNSacks.ToString();
                         lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
@@ -1252,6 +1254,7 @@ namespace WeightMaster
                     {
                         System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -2181,16 +2184,9 @@ namespace WeightMaster
                     finalWeightScalerWeight_st1 += weightScalerValue;
                     finalAcceptedLeafWeight_st1 += acceptedLeafWeight;
 
-                    finalNormalLeafWeight_st1 += (int)currentNormalLeafWeight_st1;
-                    finalGoldenLeafWeight_st1 += (int)currentGoldenLeafWeight_st1;
-
                     finalNBoxes_st1 += nBoxes;
                     finalNSacks_st1 += nSacks;
 
-                    finalWateredWeight_st1 += wateredWeight;
-                    finalMaturedWeight_st1 += maturedWeight;
-                    finalSpoiledWeight_st1 += spoiledWeight;
-                    finalRejectedWeight_st1 += rejectedWeight;
 
                     finalAvailableGoldenLeafWeight_st1 += availableGoldenLeafWeight;
                     finalAvailableNormalLeafWeight_st1 += availableNormalLeafWeight;
@@ -2239,16 +2235,8 @@ namespace WeightMaster
                     finalWeightScalerWeight_st1 += weightScalerValue;
                     finalAcceptedLeafWeight_st1 += acceptedLeafWeight;
 
-                    finalNormalLeafWeight_st1 += (int)currentNormalLeafWeight_st1;
-                    finalGoldenLeafWeight_st1 += (int)currentGoldenLeafWeight_st1;
-
                     finalNBoxes_st1 += nBoxes;
                     finalNSacks_st1 += nSacks;
-
-                    finalWateredWeight_st1 += wateredWeight;
-                    finalMaturedWeight_st1 += maturedWeight;
-                    finalSpoiledWeight_st1 += spoiledWeight;
-                    finalRejectedWeight_st1 += rejectedWeight;
 
                     finalAvailableGoldenLeafWeight_st1 += availableGoldenLeafWeight;
                     finalAvailableNormalLeafWeight_st1 += availableNormalLeafWeight;
@@ -2306,10 +2294,8 @@ namespace WeightMaster
                 //updating the linewise table to show the confirmed transaction
                 try
                 {
-                    var data = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedValue.ToString());
-                    System.Diagnostics.Debug.WriteLine(lineNameCmb_st1.SelectedValue.ToString());
-                    //MessageBox.Show("here triggered");
-                    if (data.Any())
+                    var roundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedValue.ToString());
+                    if (roundData.Any())
                     {
                         // to assign into total values row
                         int rowNBoxes = 0;
@@ -2318,19 +2304,46 @@ namespace WeightMaster
                         int rowNormalLeafWeight = 0;
                         int rowTotalLeafWeight = 0;
 
-                        //MessageBox.Show("data found");
-                        foreach (var transaction in data)
+                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
+                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                        foreach (var transaction in roundData)
                         {
-                            Station1LineTableRow lr1 = new Station1LineTableRow(transaction.barcode_details.ToString(), transaction.bag_count.ToString(), transaction.box_count.ToString(), transaction.total_gold_leaf_weight.ToString(), transaction.actual_nomal_leaf_weight.ToString(), (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString());
+                            // normalize barcode key and guard against null
+                            string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+
+                            // increment occurrence count for this barcode and use it as the round number
+                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
+                            {
+                                currentCount = 0;
+                            }
+                            currentCount++;
+                            counts[barcodeKey] = currentCount;
+
+                            int roundNo = currentCount;
+
+                            // create row — ensure you pass strings if your constructor expects strings
+                            Station1LineTableRow lr1 = new Station1LineTableRow(
+                                roundNo.ToString(),
+                                barcodeKey,
+                                transaction.bag_count.ToString(),
+                                transaction.box_count.ToString(),
+                                transaction.total_gold_leaf_weight.ToString(),
+                                transaction.actual_nomal_leaf_weight.ToString(),
+                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                            );
+
                             LineTablePanel_st1.Children.Add(lr1);
-                            //System.Diagnostics.Debug.WriteLine($"Transaction: Line Name: {transaction.linename}, Date: {transaction.date}, Box Count: {transaction.barcode_details}");
+
+                            // accumulate totals
                             rowNBoxes += transaction.box_count;
                             rowNSacks += transaction.bag_count;
                             rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
                             rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
                             rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
                         }
-                        //assign total column values to the total values row
+
+                        // assign total column values to the total values row
                         lineRowNBoxes_st1.Text = rowNBoxes.ToString();
                         lineRowNSacks_st1.Text = rowNSacks.ToString();
                         lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
@@ -2341,6 +2354,7 @@ namespace WeightMaster
                     {
                         System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
                     }
+
                 }
                 catch (Exception ex)
                 {
@@ -2412,7 +2426,7 @@ namespace WeightMaster
             //gets the transaction list by id(for testing purposes)
             //currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
             //GetTransactionDataByBarcodeId
-            //Either line parameter should be added or i should filter by line
+            //Either line parameter should be added or it should filter by line
             currentMemberDetailsList_st2 = await _consoleHandler.GetTransactionDataByBarcodeId(memberId);
             //filtering list by line name [auto select the first line name]
             //currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, currentMemberDetailsList_st2[0].linename);
@@ -2636,21 +2650,26 @@ namespace WeightMaster
             try
             {
                 CustomerCompletionRowPanel.Children.Clear();
-                var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
-                if (customerTransactions_st2 != null)
+                //shows the table rows for bags waiting to be completed in stations 02
+                var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+
+                if (transactions_notCompleted_st2 != null)
                 {
-                    //MessageBox.Show("result is null"); //result returns not null hmm
-                    //for (int i = 0; i < customerTransactions_st2.Count; i++)
-                    //{
-                    //    var transaction = customerTransactions_st2[i];
-                    //        MessageBox.Show($"Barcode: {transaction.barcode_details}");
-                    //    System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                    //    CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                    //    CustomerCompletionRowPanel.Children.Add(cctr4);
-                    //}
-                    foreach (var transaction in customerTransactions_st2)
+                    foreach (var transaction in transactions_notCompleted_st2)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionRowPanel.Children.Add(cctr4);
+                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                    }
+                }
+
+                //shows the table rows for bags that have completed weighting in stations 02
+                if (transactions_completed_st2 != null)
+                {
+                    foreach (var transaction in transactions_completed_st2)
+                    {
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
                     }
@@ -2923,7 +2942,9 @@ namespace WeightMaster
         //clear button st2
         private void clearBtn_st2_Clicked(object sender, RoutedEventArgs e)
         {
-            string memberId = currentMemberDetails_st2.barcode_details;
+            if (currentMemberDetails_st2==null) { MessageBox.Show("member details is null"); }
+            if(memberHashMap_st2 == null) { MessageBox.Show("member hash map is null"); }
+            string memberId = currentMemberDetails_st2?.barcode_details;
 
             //clear any rounds if there are any
             //addedRoundList.Clear();
@@ -2949,7 +2970,13 @@ namespace WeightMaster
             //totalNSacksTxt_st2.Text = "";
 
 
-
+            // make sure we have a valid memberId and the dictionary is not null
+            if (string.IsNullOrWhiteSpace(memberId) || memberHashMap_st2 == null)
+            {
+                // nothing to load — either no member selected or hashmap missing
+                // MessageBox.Show("No member selected to load last round.");
+                return;
+            }
 
             //load the last round
             if (memberHashMap_st2.TryGetValue(memberId, out var weightRounds) && weightRounds.Count > 0)
@@ -3174,7 +3201,7 @@ namespace WeightMaster
 
                 //make this zero and also deduct the accepted weight from this
                 acceptedSackWeightTxt_st2.Text = "";
-                //totalNSacksTxt_st2.Text = "";
+                totalNSacksTxt_st2.Text = "";
 
 
                 //populate textboxes and variables for the next new round by deducting the sack weight from the both sides of the equation
@@ -3745,15 +3772,31 @@ namespace WeightMaster
                 }
                 try
                 {
-                    CustomerCompletionRowPanel.Children.Clear();
-                    var customerTransactions_st2 = await _consoleHandler.getDataByFilter(lineName);
-                    for (int i = 0; i < customerTransactions_st2.Count; i++)
+                CustomerCompletionRowPanel.Children.Clear();
+                //shows the table rows for bags waiting to be completed in stations 02
+                var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+
+                if (transactions_notCompleted_st2 != null)
+                {
+                    foreach (var transaction in transactions_notCompleted_st2)
                     {
-                        var transaction = customerTransactions_st2[i];
-                        //System.Diagnostics.Debug.WriteLine($"Transaction {i + 1}:");
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), "0", transaction.real_value.ToString(), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
+                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
                     }
+                }
+
+                //shows the table rows for bags that have completed weighting in stations 02
+                if (transactions_completed_st2 != null)
+                {
+                    foreach (var transaction in transactions_completed_st2)
+                    {
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionRowPanel.Children.Add(cctr4);
+                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                    }
+                }
                 }
                 catch (Exception ex)
                 {
@@ -4545,7 +4588,7 @@ namespace WeightMaster
         //}
 
 
-
+        //based on current date
         private async void printQuickLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
             if (lineNameCmb_st2.SelectedItem == null)
@@ -4645,6 +4688,7 @@ namespace WeightMaster
 
                         FixedPage fixedPage = new FixedPage();
                         Canvas canvas = CreateLineReportPage(
+                            basedDate: dateNow.ToString(),
                             pageData: pageData,
                             pageNumber: page + 1,
                             totalPages: totalPages,
@@ -4675,7 +4719,7 @@ namespace WeightMaster
 
 
 
-
+        //based on a given report date
         private async void printLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
 
@@ -4784,6 +4828,7 @@ namespace WeightMaster
 
                         FixedPage fixedPage = new FixedPage();
                         Canvas canvas = CreateLineReportPage(
+                            basedDate: reportDate.ToString(),
                             pageData: pageData,
                             pageNumber: page + 1,
                             totalPages: totalPages,
@@ -4811,7 +4856,7 @@ namespace WeightMaster
             }
         }
 
-        private Canvas CreateLineReportPage(List<FinalTransactionBlockModel> pageData, int pageNumber,
+        private Canvas CreateLineReportPage(string basedDate, List<FinalTransactionBlockModel> pageData, int pageNumber,
             int totalPages, bool isLastPage, TotalRow totals, string lineName)
         {
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
@@ -4826,7 +4871,7 @@ namespace WeightMaster
             yPos += 30;
             AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
-            AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName, 14, 816 / 2, yPos, true);
+            AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName + "("+basedDate+")", 14, 816 / 2, yPos, true);
             yPos += 30;
 
             // Report metadata
@@ -5191,6 +5236,7 @@ namespace WeightMaster
 
                         FixedPage fixedPage = new FixedPage();
                         Canvas canvas = CreateDailyReportPage(
+                            basedDate: reportDate.ToString(),
                             pageData: pageData,
                             pageNumber: page + 1,
                             totalPages: totalPages,
@@ -5218,7 +5264,7 @@ namespace WeightMaster
             }
         }
 
-        private Canvas CreateDailyReportPage(List<DailyReportRowBlockModel> pageData, int pageNumber,
+        private Canvas CreateDailyReportPage(string basedDate, List<DailyReportRowBlockModel> pageData, int pageNumber,
     int totalPages, bool isLastPage, TotalRow totals)
         {
             Canvas canvas = new Canvas { Width = 816, Height = 1056 }; // Standard letter size
@@ -5233,7 +5279,7 @@ namespace WeightMaster
             yPos += 30;
             AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
-            AddText(canvas, "දෛනික වාර්තාව", 14, 816 / 2, yPos, true);
+            AddText(canvas, "දෛනික වාර්තාව"+"("+basedDate+")", 14, 816 / 2, yPos, true);
             yPos += 30;
 
             // Report metadata

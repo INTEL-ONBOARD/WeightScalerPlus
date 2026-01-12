@@ -16,7 +16,8 @@ namespace WeightMaster.Config
         public AppConfig()
         {
             // Get the directory of the executing assembly
-            string exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            string exeDirectory = AppDomain.CurrentDomain.BaseDirectory;
+            //string exeDirectory = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
             // Construct the full path to config.json
             string configPath = Path.Combine(exeDirectory, "config.json");
             // Read the JSON file content

@@ -7,7 +7,7 @@ namespace WeightMaster.Interfaces.UserControls
 {
     public partial class CustomerCompletionTableRow : UserControl
     {
-        public CustomerCompletionTableRow(string memberNo, string name, string sackCount, string remainingSackCount, string totalLeafWeight, string acceptedLeafWeight, string goldLeafWeight)
+        public CustomerCompletionTableRow(string memberNo, string name, string sackCount, bool pending, string totalLeafWeight, string acceptedLeafWeight, string goldLeafWeight)
         {
             InitializeComponent();
 
@@ -15,16 +15,33 @@ namespace WeightMaster.Interfaces.UserControls
             this.memberNo.Text = memberNo;
             this.name.Text = name;
             this.sackCount.Text = sackCount;
-            this.remainingSackCount.Text = remainingSackCount;
             this.totalLeafWeight.Text = totalLeafWeight;
             this.acceptedLeafWeight.Text = acceptedLeafWeight;
             this.goldLeafWeight.Text = goldLeafWeight;
 
             // Convert sackCount & remainingSackCount to integers and update background
-            setBackgroundColor(Convert.ToInt32(sackCount), Convert.ToInt32(remainingSackCount));
+            setSackCountNotZeroBackgroundColor(pending);
         }
 
-        private void setBackgroundColor(int sackCount, int remainingSackCount)
+        private void setSackCountNotZeroBackgroundColor(bool pending)
+        {
+            BrushConverter brushConverter = new BrushConverter();
+
+            if (!pending)
+            {
+                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#FFE9E9"); // Light Red
+            }
+            else if (pending)
+            {
+                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#D8FFD3"); // Light Green
+            }
+            else
+            {
+                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#FFF5D6"); // Light Yellow
+            }
+        }
+
+        private void setRemainSacksBackgroundColor(int sackCount, int remainingSackCount)
         {
             BrushConverter brushConverter = new BrushConverter();
 

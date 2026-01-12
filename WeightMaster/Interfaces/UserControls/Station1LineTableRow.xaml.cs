@@ -20,11 +20,12 @@ namespace WeightMaster.Interfaces.UserControls
     /// </summary>
     public partial class Station1LineTableRow : UserControl
     {
-        public Station1LineTableRow(string memberNo, string sacksCount, string boxCount, string goldLeafWeight, string generalLeafWeight, string acceptedWeight)
+        public Station1LineTableRow(string roundNo, string memberNo, string sacksCount, string boxCount, string goldLeafWeight, string generalLeafWeight, string acceptedWeight)
         {
             InitializeComponent();
 
             // Assign values to the TextBoxes
+            this.roundNo.Text = roundNo;
             this.memberNo.Text = memberNo;
             this.sacksCount.Text = sacksCount;
             this.boxCount.Text = boxCount;
