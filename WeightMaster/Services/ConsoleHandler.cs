@@ -15,7 +15,7 @@ namespace WeightMaster.Services
 
         public ConsoleHandler()
         {
-            _engine = new Engine(); 
+            _engine = new Engine();
         }
 
         //public async Task GetStudentsAsync()
@@ -79,7 +79,7 @@ namespace WeightMaster.Services
 
         public async Task<bool> AddTransactionAsync(TransactionLogBlockModel newTransaction)
         {
-            return await _engine.setTransaction(newTransaction); 
+            return await _engine.setTransaction(newTransaction);
         }
         //method to check and verify the local database get synced with the cloud database
         public async Task<bool> verifyTransactionsCloudCheck()
@@ -97,14 +97,14 @@ namespace WeightMaster.Services
             return await _engine.GetFilteredTransactionsByBarcodeAndDateAsync(code);
         }
         //return a songle transaction data from the station 2 data using member code , barcode
-        public async Task<List<TransactionLogBlockModel>> GetTransactionData(string barcode,string linename) //the line name here is useless. give this ""
+        public async Task<List<TransactionLogBlockModel>> GetTransactionData(string barcode, string linename) //the line name here is useless. give this ""
         {
-            return await _engine.GetFilteredTransactionData(barcode,linename);
+            return await _engine.GetFilteredTransactionData(barcode, linename);
         }
         //add a new transaction for station 2
-        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction,string code)
+        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction, string code)
         {
-            return await _engine.SetFinalTransactionAsync(newTransaction,code);
+            return await _engine.SetFinalTransactionAsync(newTransaction, code);
         }
         //get data filtered based in the selected line
 
@@ -134,9 +134,9 @@ namespace WeightMaster.Services
         {
             return await _engine.getPrintData_2(linename);
         }
-        public async Task<List<FinalTransactionBlockModel>> print_sta2_onCustomDate(string linename,string date_)
+        public async Task<List<FinalTransactionBlockModel>> print_sta2_onCustomDate(string linename, string date_)
         {
-            return await _engine.getPrintData_2_onCustomDate(linename,date_);
+            return await _engine.getPrintData_2_onCustomDate(linename, date_);
         }
 
 
@@ -155,12 +155,12 @@ namespace WeightMaster.Services
         //station 1 use only
         public async Task SaveData(GreenLeafPostModel s)
         {
-           await _engine.addPost(s);
+            await _engine.addPost(s);
         }
         //update the SaveData savedd on st1 record by using this at st2
-        public async Task<bool> UpdateData(int id , GreenLeafPostModel s)
+        public async Task<bool> UpdateData(int id, GreenLeafPostModel s)
         {
-            return await _engine.updatePost(id ,s);
+            return await _engine.updatePost(id, s);
         }
 
 
@@ -209,7 +209,7 @@ namespace WeightMaster.Services
         //Station 1 box data that didn't go to staion 2: For line-wise report
         public async Task<List<TransactionLogBlockModel>> GetBoxOnlyLineReportData(string lineName, string date_)
         {
-            return await _engine.getCustomDataOut(lineName,date_);
+            return await _engine.getCustomDataOut(lineName, date_);
         }
 
         public async Task<List<GreenLeafPostModel>> getAllpostsbyFilteringExtended(string memberid, string line)
@@ -217,5 +217,17 @@ namespace WeightMaster.Services
             return await _engine.GetAllPostsByFilteringPost(memberid, line);
         }
 
+        //get all transport bills
+        public async Task<List<TransportBillBlockModel>> getAllTransportBills()
+        {
+            return await _engine.getAllTransportBillsAsync();
+        }
+
+        // add a transport bill
+        public async Task<bool> addTransportBill(TransportBillBlockModel newBill)
+        {
+            return await _engine.addTransportBillAsync(newBill);
+
+        }
     }
 }

@@ -1182,25 +1182,116 @@ namespace WeightMaster
             rowGreenLeafWeights_st1.Text = "0";
             rowGoldenLeafWeights_st1.Text = "0";
             rowTotalLeafWeights_st1.Text = "0"; //only sacks and boxes deducted
-        }
 
+
+
+            //to repopulate the member turn table(same as in line name dropdown)
+
+            //clear the linewise table before entering new data
+            LineTablePanel_st1.Children.Clear();
+            List<TransactionLogBlockModel> roundData = null;
+            try
+            {
+                var result = lineMasterData.FirstOrDefault(item => item.LineName == lineNameCmb_st1.SelectedItem.ToString());
+                if (result == null)
+                { return; }
+                lineMasterNameLbl_st1.Text = result.LineMaster;
+                //roundData is used tot populate a table
+                //if empty string, include full list
+                if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
+                {
+                    //returns the full list
+                    roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                }
+                //if not empty string, filter list by barcode details string
+                else
+                {
+                    roundData = null;
+                    List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                    roundData = tempRoundData.Where(t => t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString()).ToList();
+                }
+
+                //populate the data in a table
+                if (roundData.Any())
+                {
+                    // to assign into total values row
+                    int rowNBoxes = 0;
+                    int rowNSacks = 0;
+                    int rowGoldenLeafWeight = 0;
+                    int rowNormalLeafWeight = 0;
+                    int rowTotalLeafWeight = 0;
+
+                    // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
+                    var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                    foreach (var transaction in roundData)
+                    {
+                        // normalize barcode key and guard against null
+                        string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+
+                        // increment occurrence count for this barcode and use it as the round number
+                        if (!counts.TryGetValue(barcodeKey, out int currentCount))
+                        {
+                            currentCount = 0;
+                        }
+                        currentCount++;
+                        counts[barcodeKey] = currentCount;
+
+                        int roundNo = currentCount;
+
+                        // create row — ensure you pass strings if your constructor expects strings
+                        Station1LineTableRow lr1 = new Station1LineTableRow(
+                            roundNo.ToString(),
+                            barcodeKey,
+                            transaction.bag_count.ToString(),
+                            transaction.box_count.ToString(),
+                            transaction.total_gold_leaf_weight.ToString(),
+                            transaction.actual_nomal_leaf_weight.ToString(),
+                            (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                        );
+
+                        LineTablePanel_st1.Children.Add(lr1);
+
+                        // accumulate totals
+                        rowNBoxes += transaction.box_count;
+                        rowNSacks += transaction.bag_count;
+                        rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                        rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
+                        rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                    }
+
+                    // assign total column values to the total values row
+                    lineRowNBoxes_st1.Text = rowNBoxes.ToString();
+                    lineRowNSacks_st1.Text = rowNSacks.ToString();
+                    lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
+                    lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
+                    lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
+            }
+        }
         private async void lineNameCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            List<TransactionLogBlockModel> roundData = null;
             //clear the linewise table before entering new data
             LineTablePanel_st1.Children.Clear();
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
             if (result != null)
             {
+                List<TransactionLogBlockModel> roundData = null;
                 lineMasterNameLbl_st1.Text = result.LineMaster;
                 try
                 {
                     //roundData is used tot populate a table
                     //if empty string, include full list
-                    MessageBox.Show(isthis.ToString());
-                    MessageBox.Show(isthis2.ToString());
-                    MessageBox.Show(isthis1.ToString());
                     if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
                     {
                         //returns the full list

@@ -770,7 +770,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -1195,12 +1195,30 @@
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="4" Margin="5,5,0,0" HorizontalAlignment="Right"  Text=" පිළිගත් දළු බර"/>
                             <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="5" Margin="5,5,0,0" HorizontalAlignment="Right"  Text=" රන්දළු බර"/>
                         </Grid>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,31">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,71">
                             <StackPanel x:Name="CustomerCompletionRowPanel" Width="690">
 
 
                             </StackPanel>
                         </ScrollViewer>
+                        <Border Width="690" Height="50" Background="#C4C4C4" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="6" Padding="10" Margin="16,273,17,10" >
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="110" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" x:Name="lineRowBarcodeNo_st2" Text="" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNSacks_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBoxes_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNormalLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                            </Grid>
+                        </Border>
                     </Grid>
                 </Border>
 
@@ -1256,7 +1274,7 @@
             </Grid>
 
             <!--AdminFrame-->
-            <Grid x:Name="AdminFrame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="AdminFrame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,78" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
 
@@ -1375,7 +1393,7 @@
 
 
             <!--SettingsFrame-->
-            <Grid x:Name="SettingsFrame" Visibility="Visible" Background="White" Margin="10,151,10,10">
+            <Grid x:Name="SettingsFrame" Visibility="Hidden" Background="White" Margin="10,151,10,10">
 
                 <!--Left section with scroller-->
                 <Grid Background="White" Margin="0,44,1143,0" >

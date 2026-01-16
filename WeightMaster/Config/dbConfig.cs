@@ -18,6 +18,7 @@ namespace WeightMaster.Config
         public DbSet<LineBlockModel> lineDbLog { get; set; }
         public DbSet<GreenLeafPostModel> GreenLeafPosts { get; set; }
         public DbSet<PostStatusModel> PostStatus { get; set; }
+        public DbSet<TransportBillBlockModel> TransportBill { get; set; }
 
 
 

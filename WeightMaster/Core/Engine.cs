@@ -67,7 +67,7 @@ namespace WeightMaster.Core
             {
                 foreach (var user in apiResponse.Users)
                 {
-                   userCount++;
+                    userCount++;
                 }
             }
             else
@@ -78,7 +78,8 @@ namespace WeightMaster.Core
         }
         public async Task<bool> UserDbValidation()
         {
-            try {
+            try
+            {
                 await Task.Run(async () =>
                 {
                     var userService = new UserService(new AppDbContext());
@@ -96,7 +97,7 @@ namespace WeightMaster.Core
             {
                 return false;
             }
-            
+
         }
         public async Task<bool> VerifyEmailInDbAsync(string email)
         {
@@ -161,7 +162,7 @@ namespace WeightMaster.Core
             };
             string url = "http://152.42.249.231:8000/api/method/get_linemasters";
 
-            LineMasterResponse apiResponse = await apiClient.PostAsync<LineMasterResponse>(url,null , options);
+            LineMasterResponse apiResponse = await apiClient.PostAsync<LineMasterResponse>(url, null, options);
             System.Diagnostics.Debug.WriteLine("> called 1");
             //System.Diagnostics.Debug.WriteLine("> res"+ apiResponse.Status.ToString());
 
@@ -194,7 +195,7 @@ namespace WeightMaster.Core
                 var data = await lineService.GetLineDataAsync();
                 System.Diagnostics.Debug.WriteLine("Running!");
 
-                return data;  
+                return data;
             }
             catch (Exception ex)
             {
@@ -209,7 +210,7 @@ namespace WeightMaster.Core
             int currentCloudCOunt = 0;
             var service = new MemberService(new AppDbContext());
             int memberCount = await service.GetMemberCountAsync();
-            
+
             ApiClient apiClient = new ApiClient();
             var options = new JsonSerializerOptions
             {
@@ -218,11 +219,11 @@ namespace WeightMaster.Core
             string url = "http://152.42.249.231:8000/api/method/fetch_all_member_data";
 
             // Assuming memberModel is the model representing the API response for members
-            Response apiResponse = await apiClient.PostAsync<Response>(url, null,options);
+            Response apiResponse = await apiClient.PostAsync<Response>(url, null, options);
 
             if (apiResponse != null && apiResponse.Status == "success")
             {
-                currentCloudCOunt  =  apiResponse.Data.Members.Count();
+                currentCloudCOunt = apiResponse.Data.Members.Count();
                 var memberService = new MemberService(new AppDbContext());
                 if (currentCloudCOunt != memberCount) await memberService.ReplaceMembersAsync(apiResponse.Data.Members);
             }
@@ -344,7 +345,7 @@ namespace WeightMaster.Core
             }
         }
         public async Task<bool> verifyTransactionsCloud()
-            {
+        {
             try
             {
                 var runService = new RunService(new AppDbContext());
@@ -543,14 +544,14 @@ namespace WeightMaster.Core
         }
 
 
-        
 
-        public async Task<List<TransactionLogBlockModel>> getCustomDataOut(string lineName ,string date_)
+
+        public async Task<List<TransactionLogBlockModel>> getCustomDataOut(string lineName, string date_)
         {
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.getCustomData(lineName,date_);
+                var data = await transactionService.getCustomData(lineName, date_);
 
                 //System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} and date: {date} on today's date retrieved successfully!");
 
@@ -596,12 +597,12 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode,string linename)
+        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode, string linename)
         {
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionByBarcodeAndDateAsync(barcode,linename);
+                var data = await transactionService.GetTransactionByBarcodeAndDateAsync(barcode, linename);
 
                 System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
 
@@ -610,7 +611,7 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new List<TransactionLogBlockModel>(){ };
+                return new List<TransactionLogBlockModel>() { };
                 ;
             }
         }
@@ -653,7 +654,7 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model,string code)
+        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model, string code)
         {
             try
             {
@@ -734,12 +735,12 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<List<FinalTransactionBlockModel>> getPrintData_2_onCustomDate(string linename,string date_)
+        public async Task<List<FinalTransactionBlockModel>> getPrintData_2_onCustomDate(string linename, string date_)
         {
             try
             {
                 var transactionService = new FinalTransactionService(new AppDbContext());
-                var data = await transactionService.getDataForPrintOnCustomDate(linename,date_);
+                var data = await transactionService.getDataForPrintOnCustomDate(linename, date_);
 
                 //System.Diagnostics.Debug.WriteLine("===== Print data");
 
@@ -791,7 +792,7 @@ namespace WeightMaster.Core
             int localCount = await service.GetLineCountAsync();
 
             var apiClient = new CustomApiClient(); // Use token-aware client
-            string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster/"+id; // Replace with actual endpoint
+            string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster/" + id; // Replace with actual endpoint
 
             LineResponse? apiResponse = await apiClient.GetAsync<LineResponse>(url);
 
@@ -968,7 +969,7 @@ namespace WeightMaster.Core
                 return null;
             }
         }
-        
+
         public async Task<List<GreenLeafPostModel>> GetAllPostsByFilteringPost(string memberNumber, string line)
         {
             try
@@ -1053,6 +1054,58 @@ namespace WeightMaster.Core
                 return false;
             }
         }
+
+        // get all transport bills
+        public async Task<List<TransportBillBlockModel>> getAllTransportBillsAsync()
+        {
+            try
+            {
+                var transportBillService = new TransportBillService(new AppDbContext());
+                var bills = await transportBillService.GetAllTransportBillsAsync();
+                System.Diagnostics.Debug.WriteLine($"> Found {bills.Count} transport bill(s)");
+                return bills;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving transport bills: {ex.Message}");
+                return new List<TransportBillBlockModel>();
+            }
+        }
+
+        // add transport bill
+        public async Task<bool> addTransportBillAsync(TransportBillBlockModel bill)
+        {
+            try
+            {
+                var transportBillService = new TransportBillService(new AppDbContext());
+                var success = await transportBillService.SaveTransportBillAsync(bill);
+                System.Diagnostics.Debug.WriteLine("Transport bill added successfully.");
+                return success;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error adding transport bill: {ex.Message}");
+                return false;
+            }
+        }
+
+        //get transport bill by date
+        public async Task<List<TransportBillBlockModel>> getTransportBillsByDateAsync(string date)
+        {
+            try
+            {
+                var transportBillService = new TransportBillService(new AppDbContext());
+                var bills = await transportBillService.GetTransportBillsByDateAsync(date);
+                System.Diagnostics.Debug.WriteLine($"> Found {bills.Count} transport bill(s) for date: {date}");
+                return bills;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving transport bills by date: {ex.Message}");
+                return new List<TransportBillBlockModel>();
+            }
+        }
+
 
     }
 }
