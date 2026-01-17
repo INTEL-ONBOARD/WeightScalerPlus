@@ -2772,6 +2772,11 @@ namespace WeightMaster
 
         private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            string memberId_st2 = barcodeTxt_st2.Text.PadLeft(5, '0');
+
+            List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
+            List<TransactionLogBlockModel> transactions_completed_st2 = null;
+
             string searchLineName = lineNameCmb_st2.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
             if (result != null)
@@ -2793,13 +2798,43 @@ namespace WeightMaster
             {
                 lineName = "";
             }
-            //#issue No2: 
+
+            ////roundData is used tot populate a table
+            ////if empty string, include full list
+            //if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
+            //{
+            //    //returns the full list
+            //    roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+            //}
+            ////if not empty string, filter list by barcode details string
+            //else
+            //{
+            //    roundData = null;
+            //    List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+            //    roundData = tempRoundData.Where(t => t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString()).ToList();
+            //}
+
+
+
             try
             {
                 CustomerCompletionRowPanel.Children.Clear();
                 //shows the table rows for bags waiting to be completed in stations 02
-                var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
-                var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                //if empty string, include full list
+                if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
+                {
+                    transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                    transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                }
+                else
+                {
+                    //show only for the current member id/barcode
+                    List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
+                    transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+                    List<TransactionLogBlockModel> tempRoundData_completed = await _consoleHandler.getCompletedDataByFilter(lineName);
+                    transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+
+                }
 
                 if (transactions_notCompleted_st2 != null)
                 {
@@ -2829,7 +2864,6 @@ namespace WeightMaster
 
 
         }
-
         private void weightScalerStatusTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
             if (weightScalerValTxt_st2 == null)
