@@ -394,7 +394,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සාමාජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border Background="#F7F7F7" x:Name="barcodeTxtBorder_st1" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
-                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="TextBox_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="BarcodeTxt_st1_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -1215,7 +1215,7 @@
                                 <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBagsTxt_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
                                 <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeightsTxt_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
                                 <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAcceptedLeafWeightsTxt_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st2Txt" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeightsTxt_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
                             </Grid>
                         </Border>
                     </Grid>

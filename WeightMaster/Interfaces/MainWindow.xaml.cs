@@ -854,7 +854,8 @@ namespace WeightMaster
             {
                 statusLabel.Content = "Logging in...";
                 username = await _consoleHandler.loginUser(email, password);
-                if (username.Equals("unknown")) { //because visible password maintains on a different textbox
+                if (username.Equals("unknown"))
+                { //because visible password maintains on a different textbox
                     username = await _consoleHandler.loginUser(email, passwordVis);
                 }
                 loginUsername = username;
@@ -1020,7 +1021,8 @@ namespace WeightMaster
 
         private void HomeButtonClick(object sender, RoutedEventArgs e)
         {
-            if (isFromStation) {
+            if (isFromStation)
+            {
                 //MessageBox.Show("is from station");
                 AdminFrame.Visibility = Visibility.Hidden;
             }
@@ -1317,10 +1319,10 @@ namespace WeightMaster
                         roundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
                     }
                     //if not empty string, filter list by barcode details string
-                    else 
+                    else
                     {
                         roundData = null;
-                        List <TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
                         roundData = tempRoundData.Where(t => t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString()).ToList();
                     }
 
@@ -1353,15 +1355,15 @@ namespace WeightMaster
                             int roundNo = currentCount;
 
                             // create row — ensure you pass strings if your constructor expects strings
-                                Station1LineTableRow lr1 = new Station1LineTableRow(
-                                    roundNo.ToString(),
-                                    barcodeKey,
-                                    transaction.bag_count.ToString(),
-                                    transaction.box_count.ToString(),
-                                    transaction.total_gold_leaf_weight.ToString(),
-                                    transaction.actual_nomal_leaf_weight.ToString(),
-                                    (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
-                                );
+                            Station1LineTableRow lr1 = new Station1LineTableRow(
+                                roundNo.ToString(),
+                                barcodeKey,
+                                transaction.bag_count.ToString(),
+                                transaction.box_count.ToString(),
+                                transaction.total_gold_leaf_weight.ToString(),
+                                transaction.actual_nomal_leaf_weight.ToString(),
+                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                            );
 
                             LineTablePanel_st1.Children.Add(lr1);
 
@@ -2514,7 +2516,7 @@ namespace WeightMaster
 
         private async void barcodeTxt_st2_TextChanged(object sender, TextChangedEventArgs e)
         {
-            string memberId = barcodeTxt_st2.Text.PadLeft(5, '0'); ;
+            string memberId = barcodeTxt_st2.Text.PadLeft(5, '0');
 
             //clear member turn table for the next member(this is hidden currently)
             MemberTurnTablePanel_st2.Children.Clear();
@@ -2768,7 +2770,104 @@ namespace WeightMaster
                 // Clear UI or show a message
                 //MessageBox.Show($"No data found for ID: {memberId}");
             }
+
+            //to repopulate the member turn table(same as in line name dropdown)
+
+            //clear the linewise table before entering new data
+            CustomerCompletionRowPanel.Children.Clear();
+            List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
+            List<TransactionLogBlockModel> transactions_completed_st2 = null;
+            try
+            {
+                string lineName = lineNameCmb_st2.SelectedItem.ToString();
+                var result = lineMasterData.FirstOrDefault(item => item.LineName == lineName);
+                if (result == null)
+                { return; }
+                //lineMasterNameLbl_st1.Text = result.LineMaster;
+                //transactions_notCompleted_st2 and transactions_completed_st2 is used to populate a table
+                //if empty string, include full list
+                if (memberId.ToString() == "00000" || memberId.ToString() == "" || barcodeTxt_st2.ToString() == "")
+                {
+                    //returns the full list
+                    transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                    transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                }
+                //if not empty string, filter list by barcode details string
+                else
+                {
+                    transactions_notCompleted_st2 = null;
+                    transactions_completed_st2 = null;
+                    //show only for the current member id/barcode
+                    List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
+                    transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+                    List<TransactionLogBlockModel> tempRoundData_completed = await _consoleHandler.getCompletedDataByFilter(lineName);
+                    transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+
+                }
+
+                //populate the data in a table
+                if (transactions_notCompleted_st2.Any() || transactions_completed_st2.Any())
+                {
+                    // to assign into total values row
+                    int rowNSacks = 0;
+                    int rowGoldenLeafWeight = 0;
+                    int rowNormalLeafWeight = 0;
+                    int rowTotalLeafWeight = 0;
+
+                    // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
+                    var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+                    if (transactions_notCompleted_st2 != null)
+                    {
+                        foreach (var transaction in transactions_notCompleted_st2)
+                        {
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionRowPanel.Children.Add(cctr4);
+                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+
+                            // accumulate totals row values
+                            rowNSacks += transaction.bag_count;
+                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
+                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                        }
+                    }
+
+                    if (transactions_completed_st2 != null)
+                    {
+                        foreach (var transaction in transactions_completed_st2)
+                        {
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionRowPanel.Children.Add(cctr4);
+                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+                            // accumulate totals row values
+                            rowNSacks += transaction.bag_count;
+                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
+                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                        }
+                    }
+
+                    // assign total column values to the total values row
+                    lineRowNBagsTxt_st2.Text = rowNSacks.ToString();
+                    lineRowTotalLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                    lineRowAcceptedLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                    lineRowGoldLeafWeightsTxt_st2.Text = rowGoldenLeafWeight.ToString();
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                }
+
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
+            }
         }
+
 
         private async void lineNameCmb_st2_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -2828,6 +2927,8 @@ namespace WeightMaster
                 }
                 else
                 {
+                    transactions_notCompleted_st2 = null;
+                    transactions_completed_st2 = null;
                     //show only for the current member id/barcode
                     List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
                     transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
@@ -3123,8 +3224,8 @@ namespace WeightMaster
         //clear button st2
         private void clearBtn_st2_Clicked(object sender, RoutedEventArgs e)
         {
-            if (currentMemberDetails_st2==null) { MessageBox.Show("member details is null"); }
-            if(memberHashMap_st2 == null) { MessageBox.Show("member hash map is null"); }
+            if (currentMemberDetails_st2 == null) { MessageBox.Show("member details is null"); }
+            if (memberHashMap_st2 == null) { MessageBox.Show("member hash map is null"); }
             string memberId = currentMemberDetails_st2?.barcode_details;
 
             //clear any rounds if there are any
@@ -3953,31 +4054,31 @@ namespace WeightMaster
                 }
                 try
                 {
-                CustomerCompletionRowPanel.Children.Clear();
-                //shows the table rows for bags waiting to be completed in stations 02
-                var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
-                var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                    CustomerCompletionRowPanel.Children.Clear();
+                    //shows the table rows for bags waiting to be completed in stations 02
+                    var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                    var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
 
-                if (transactions_notCompleted_st2 != null)
-                {
-                    foreach (var transaction in transactions_notCompleted_st2)
+                    if (transactions_notCompleted_st2 != null)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                        CustomerCompletionRowPanel.Children.Add(cctr4);
-                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                        foreach (var transaction in transactions_notCompleted_st2)
+                        {
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionRowPanel.Children.Add(cctr4);
+                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                        }
                     }
-                }
 
-                //shows the table rows for bags that have completed weighting in stations 02
-                if (transactions_completed_st2 != null)
-                {
-                    foreach (var transaction in transactions_completed_st2)
+                    //shows the table rows for bags that have completed weighting in stations 02
+                    if (transactions_completed_st2 != null)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                        CustomerCompletionRowPanel.Children.Add(cctr4);
-                        System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                        foreach (var transaction in transactions_completed_st2)
+                        {
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionRowPanel.Children.Add(cctr4);
+                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                        }
                     }
-                }
                 }
                 catch (Exception ex)
                 {
@@ -4638,25 +4739,25 @@ namespace WeightMaster
         }
 
 
-/*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
-                {
-                    OpenFileDialog openFileDialog = new OpenFileDialog();
-                    // Optionally, set filters (e.g., only text files, images, etc.)
-                    openFileDialog.Filter = "Text files (.txt)|.txt|All files (.)|.";
-                    // Show the dialog and check if the user selected a file
-                    if (openFileDialog.ShowDialog() == true)
-                    {
-                        // Get the selected file path
-                        string filePath = openFileDialog.FileName;
-                        // Use the file path (e.g., display it in a TextBlock)
-                        path = filePath;
-                        FilePathTextField.Text = filePath;
-                        runtimeService.SetFilePath(path); // Pass file path to the runtime service
-                        runtimeService.StartFileWatcher(); // Start watching the file
-                        runtimeService.StartTimer();
-                    }
+        /*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
+                        {
+                            OpenFileDialog openFileDialog = new OpenFileDialog();
+                            // Optionally, set filters (e.g., only text files, images, etc.)
+                            openFileDialog.Filter = "Text files (.txt)|.txt|All files (.)|.";
+                            // Show the dialog and check if the user selected a file
+                            if (openFileDialog.ShowDialog() == true)
+                            {
+                                // Get the selected file path
+                                string filePath = openFileDialog.FileName;
+                                // Use the file path (e.g., display it in a TextBlock)
+                                path = filePath;
+                                FilePathTextField.Text = filePath;
+                                runtimeService.SetFilePath(path); // Pass file path to the runtime service
+                                runtimeService.StartFileWatcher(); // Start watching the file
+                                runtimeService.StartTimer();
+                            }
 
-                }*/
+                        }*/
 
         private async void SyncButton_Click(object sender, RoutedEventArgs e)
         {
@@ -4843,6 +4944,19 @@ namespace WeightMaster
             e.Handled = !IsTextNumeric(e.Text);
         }
 
+        private void BarcodeTxt_st1_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Check if the input text is numeric
+            e.Handled = !IsTextNumeric(e.Text);
+            // Check whether a line name is selected to get-line wise data
+            if (lineNameCmb_st1.SelectedItem == null)
+            {
+                MessageBox.Show("ප්‍රවාහන මාර්ගය පලමුව තෝරාගන්න");
+                e.Handled = true;
+                //return;
+            }
+        }
+
         private void BarcodeTxt_st2_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             // Check if the input text is numeric
@@ -4850,7 +4964,7 @@ namespace WeightMaster
             // Check whether a line name is selected to get-line wise data
             if (lineNameCmb_st2.SelectedItem == null)
             {
-                MessageBox.Show("Select Line Name to Continue");
+                MessageBox.Show("ප්‍රවාහන මාර්ගය පලමුව තෝරාගන්න");
                 e.Handled = true;
                 //return;
             }
@@ -5426,7 +5540,8 @@ namespace WeightMaster
                             {
                                 indexesTotal += barcode_index;
                             }
-                            else {
+                            else
+                            {
                                 indexesTotal += 0;
                             }
                         }
@@ -5636,7 +5751,7 @@ namespace WeightMaster
             yPos += 30;
             AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
-            AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName + "("+basedDate+")", 14, 816 / 2, yPos, true);
+            AddText(canvas, "ප්‍රවාහන මාර්ග වාර්තාව - " + lineName + "(" + basedDate + ")", 14, 816 / 2, yPos, true);
             yPos += 30;
 
             // Report metadata
@@ -5648,7 +5763,7 @@ namespace WeightMaster
 
             // Table header
             string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්ෂේපිත", "ගෝනි(KG)", "පෙට්ටි(KG)", "දළු(KG)" };
-            double[] headerPositions = {46, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
+            double[] headerPositions = { 46, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
@@ -6044,7 +6159,7 @@ namespace WeightMaster
             yPos += 30;
             AddText(canvas, _appConfig.branchName, 14, 816 / 2, yPos, true); //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
             yPos += 30;
-            AddText(canvas, "දෛනික වාර්තාව"+"("+basedDate+")", 14, 816 / 2, yPos, true);
+            AddText(canvas, "දෛනික වාර්තාව" + "(" + basedDate + ")", 14, 816 / 2, yPos, true);
             yPos += 30;
 
             // Report metadata
