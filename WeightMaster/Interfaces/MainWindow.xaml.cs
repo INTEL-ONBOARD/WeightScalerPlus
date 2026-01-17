@@ -4122,7 +4122,8 @@ namespace WeightMaster
             try
             {
                 var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
-                var lineNames = await finalTransactionService.GetDistinctLineNamesAsync();
+                // Use GetAllDistinctLineNamesAsync to get line names from BOTH tables
+                var lineNames = await finalTransactionService.GetAllDistinctLineNamesAsync();
 
                 LineSummaryLineFilterCmb.Items.Clear();
                 LineSummaryLineFilterCmb.Items.Add(new ComboBoxItem { Content = "All Lines", IsSelected = true });
@@ -4219,27 +4220,28 @@ namespace WeightMaster
                 Margin = new Thickness(0, 2, 0, 0)
             };
 
-            var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
+            // Column widths matching the XAML header: 80, 150, 110, 55, 55, 70, 85, 75, 95, 70
+            var grid = new Grid { Margin = new Thickness(15, 0, 15, 0) };
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(75) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(95) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
 
             var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(memberId, 0);
             grid.Children.Add(memberId);
 
-            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
+            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(name, 1);
             grid.Children.Add(name);
 
-            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
+            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(line, 2);
             grid.Children.Add(line);
 
@@ -4263,7 +4265,7 @@ namespace WeightMaster
             Grid.SetColumn(total, 7);
             grid.Children.Add(total);
 
-            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
             Grid.SetColumn(date, 8);
             grid.Children.Add(date);
 
@@ -4298,24 +4300,25 @@ namespace WeightMaster
                 List<LineSummaryModel> summaries;
 
                 // Apply filters based on line and date selection
+                // Using Combined methods to get data from BOTH FinalTransaction and Transaction tables
                 bool hasLineFilter = selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine);
                 bool hasDateFilter = !string.IsNullOrEmpty(selectedDate);
 
                 if (hasLineFilter && hasDateFilter)
                 {
-                    summaries = await finalTransactionService.GetLineSummaryByLineNameAndDateAsync(selectedLine, selectedDate);
+                    summaries = await finalTransactionService.GetCombinedLineSummaryByLineNameAndDateAsync(selectedLine, selectedDate);
                 }
                 else if (hasLineFilter)
                 {
-                    summaries = await finalTransactionService.GetLineSummaryByLineNameAsync(selectedLine);
+                    summaries = await finalTransactionService.GetCombinedLineSummaryByLineNameAsync(selectedLine);
                 }
                 else if (hasDateFilter)
                 {
-                    summaries = await finalTransactionService.GetLineSummaryByDateAsync(selectedDate);
+                    summaries = await finalTransactionService.GetCombinedLineSummaryByDateAsync(selectedDate);
                 }
                 else
                 {
-                    summaries = await finalTransactionService.GetLineSummaryAsync();
+                    summaries = await finalTransactionService.GetCombinedLineSummaryAsync();
                 }
 
                 // Clear existing rows
