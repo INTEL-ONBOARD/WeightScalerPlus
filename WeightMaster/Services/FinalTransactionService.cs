@@ -292,6 +292,158 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        // Get combined line summary (from both FinalTransaction and Transaction tables)
+        public async Task<List<LineSummaryModel>> GetCombinedLineSummaryAsync()
+        {
+            // Get transaction IDs that are already in FinalTransaction (via RunLog)
+            var completedTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null && r.TransactionId != null)
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
+            // Get data from FinalTransactionData
+            var finalData = await _context.FinaltransactionData
+                .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Get queue data from TransactionData (not already completed)
+            var queueData = await _context.transactionData
+                .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Combine and group by line name
+            var combined = finalData.Concat(queueData)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToList();
+
+            return combined;
+        }
+
+        // Get combined line summary filtered by date
+        public async Task<List<LineSummaryModel>> GetCombinedLineSummaryByDateAsync(string date)
+        {
+            // Get transaction IDs that are already in FinalTransaction (via RunLog)
+            var completedTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null && r.TransactionId != null)
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
+            // Get data from FinalTransactionData filtered by date
+            var finalData = await _context.FinaltransactionData
+                .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && t.date == date)
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Get queue data from TransactionData filtered by date (not already completed)
+            var queueData = await _context.transactionData
+                .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && t.date == date && !completedTransactionIds.Contains(t.Id))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Combine and group by line name
+            var combined = finalData.Concat(queueData)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToList();
+
+            return combined;
+        }
+
+        // Get combined line summary filtered by linename
+        public async Task<List<LineSummaryModel>> GetCombinedLineSummaryByLineNameAsync(string linename)
+        {
+            // Get transaction IDs that are already in FinalTransaction (via RunLog)
+            var completedTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null && r.TransactionId != null)
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
+            // Get data from FinalTransactionData filtered by linename
+            var finalData = await _context.FinaltransactionData
+                .Where(t => t.linename == linename && !string.IsNullOrEmpty(t.barcode_details))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Get queue data from TransactionData filtered by linename (not already completed)
+            var queueData = await _context.transactionData
+                .Where(t => t.linename == linename && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Combine and group by line name
+            var combined = finalData.Concat(queueData)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToList();
+
+            return combined;
+        }
+
+        // Get combined line summary filtered by linename and date
+        public async Task<List<LineSummaryModel>> GetCombinedLineSummaryByLineNameAndDateAsync(string linename, string date)
+        {
+            // Get transaction IDs that are already in FinalTransaction (via RunLog)
+            var completedTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null && r.TransactionId != null)
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
+            // Get data from FinalTransactionData filtered by linename and date
+            var finalData = await _context.FinaltransactionData
+                .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Get queue data from TransactionData filtered by linename and date (not already completed)
+            var queueData = await _context.transactionData
+                .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
+                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .ToListAsync();
+
+            // Combine and group by line name
+            var combined = finalData.Concat(queueData)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToList();
+
+            return combined;
+        }
+
         // Get combined transactions (Completed from FinalTransaction + Queue from Transaction)
         public async Task<List<TransactionViewModel>> GetCombinedTransactionsAsync()
         {
