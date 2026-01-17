@@ -29,11 +29,11 @@ namespace WeightMaster.Interfaces.UserControls
 
             if (!pending)
             {
-                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#FFE9E9"); // Light Red
+                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#D8FFD3"); // Light Red
             }
             else if (pending)
             {
-                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#D8FFD3"); // Light Green
+                RowBorder.Background = (Brush)brushConverter.ConvertFrom("#FFE9E9"); // Light Green
             }
             else
             {

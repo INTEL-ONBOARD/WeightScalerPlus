@@ -26,10 +26,10 @@
                         <ColumnDefinition Width="240" />
                         <ColumnDefinition Width="240" />
                     </Grid.ColumnDefinitions>
-                    <TextBox Margin="16,0,0,0" Grid.Column="0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="1" x:Name="memberNo" Foreground="#FF0078D7"/>
-                    <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="714351" x:Name="roundNo" Foreground="#FF0078D7"/>
-                    <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="2001-01-31" x:Name="sacksCount" Foreground="#FF0078D7"/>
-                    <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="මිල්ලව" x:Name="boxCount" Foreground="#FF0078D7"/>
+                    <TextBox Margin="16,0,0,0" Grid.Column="0" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="1" x:Name="no" Foreground="#FF0078D7"/>
+                    <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="714351" x:Name="billNo" Foreground="#FF0078D7"/>
+                    <!-- <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="2001-01-31" x:Name="sacksCount" Foreground="#FF0078D7"/> -->
+                    <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left" FontSize="20" Text="මිල්ලව" x:Name="lineName" Foreground="#FF0078D7"/>
                 </Grid>
             </Border>
         </Button>

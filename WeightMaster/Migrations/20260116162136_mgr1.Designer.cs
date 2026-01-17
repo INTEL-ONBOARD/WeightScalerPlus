@@ -12,8 +12,8 @@ using WeightMaster.Config;
 namespace WeightMaster.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260116115050_migbill")]
-    partial class migbill
+    [Migration("20260116162136_mgr1")]
+    partial class mgr1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

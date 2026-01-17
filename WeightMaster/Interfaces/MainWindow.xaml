@@ -770,7 +770,7 @@
             </Grid>
 
             <!--Station2Frame-->
-            <Grid x:Name="Station2Frame" Visibility="Visible" Background="White" Margin="10,150,10,10">
+            <Grid x:Name="Station2Frame" Visibility="Hidden" Background="White" Margin="10,150,10,10">
                 <Border Background="#FBFBFB" CornerRadius="20" Margin="25,35,1379,177" BorderThickness="2" BorderBrush="#ECECEC">
                     <Grid>
                         <!-- supervisor Dropdown -->
@@ -1212,11 +1212,10 @@
                                     <ColumnDefinition Width="110" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" x:Name="lineRowBarcodeNo_st2" Text="" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNSacks_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBoxes_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNormalLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBags_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAcceptedLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st2" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
                             </Grid>
                         </Border>
                     </Grid>
@@ -1390,6 +1389,8 @@
 
             </Grid>
 
+            
+            
 
 
             <!--SettingsFrame-->
@@ -1504,16 +1505,12 @@
                                         <ColumnDefinition Width="240" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="0" Margin="5,5,0,0" HorizontalAlignment="Center" Text="#"/>
-                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="දිනය"/>
-                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="2" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="මුර බිල් අං."/>
+                                    <!--<TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="2" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="දිනය"/>-->
+                                    <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="1" Margin="5,5,0,0" HorizontalAlignment="Center"  Text="මුර බිල් අං."/>
                                     <TextBlock  FontSize="10" FontWeight="SemiBold" Grid.Column="3" Margin="5,5,0,0" HorizontalAlignment="Center" Text="ප්‍රවාහන මාර්ගය"/>
                                 </Grid>
                                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,31">
                                     <StackPanel x:Name="CustomerBillRowPanel" Width="1012">
-                                        <userContorls:CustomerBillTableRow/>
-                                        <userContorls:CustomerBillTableRow/>
-                                        <userContorls:CustomerBillTableRow/>
-                                        <userContorls:CustomerBillTableRow/>
                                     </StackPanel>
                                 </ScrollViewer>
                             </Grid>

@@ -1078,6 +1078,13 @@ namespace WeightMaster.Core
             try
             {
                 var transportBillService = new TransportBillService(new AppDbContext());
+                // Check for existing bill with same BillNumber
+                bool exists = await transportBillService.TransportBillExistsAsync(bill.billNo);
+                if (exists)
+                {
+                    System.Diagnostics.Debug.WriteLine("Transport bill with this Bill Number already exists.");
+                    return true;
+                }
                 var success = await transportBillService.SaveTransportBillAsync(bill);
                 System.Diagnostics.Debug.WriteLine("Transport bill added successfully.");
                 return success;
@@ -1105,6 +1112,24 @@ namespace WeightMaster.Core
                 return new List<TransportBillBlockModel>();
             }
         }
+
+        public async Task<string?> GetTransportBillNumberByLineNameAsync(string lineName)
+        {
+            try
+            {
+                using var context = new AppDbContext();
+                var transportBillService = new TransportBillService(context);
+                var billNo = await transportBillService.GetTransportBillNoByLineNameAsync(lineName); // single string?
+                System.Diagnostics.Debug.WriteLine($"> Found {(billNo != null ? 1 : 0)} bill number(s) for line: {lineName}");
+                return billNo;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving transport bill number by line name: {ex.Message}");
+                return null;
+            }
+        }
+
 
 
     }

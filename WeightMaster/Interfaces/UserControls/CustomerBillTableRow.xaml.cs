@@ -20,9 +20,15 @@ namespace WeightMaster.Interfaces.UserControls
     /// </summary>
     public partial class CustomerBillTableRow : UserControl
     {
-        public CustomerBillTableRow()
+        public CustomerBillTableRow(string no, string billNo, string lineName)
         {
             InitializeComponent();
+
+            // Assign values to the TextBoxes
+            this.no.Text = no;
+            this.billNo.Text = billNo;
+            this.lineName.Text = lineName;
+
         }
     }
 }

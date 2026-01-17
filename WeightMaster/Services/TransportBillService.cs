@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -37,6 +38,13 @@ namespace WeightMaster.Services
             }
         }
 
+        // validate if a transport bill with the same bill number already exists
+        public async Task<bool> TransportBillExistsAsync(string billNo)
+        {
+            var exists = _context.TransportBill.Any(b => b.billNo == billNo);
+            return await Task.FromResult(exists);
+        }
+
         // delete all transport bill records from the database
         public async Task DeleteAllTransportBillsAsync()
         {
@@ -51,6 +59,18 @@ namespace WeightMaster.Services
             return await Task.FromResult(bills);
         }
 
-        
+
+        public async Task<string?> GetTransportBillNoByLineNameAsync(string lineName)
+        {
+            var billNo = await _context.TransportBill
+                .Where(b => b.lineName == lineName)
+                .OrderByDescending(b => b.Id)   // newest by highest Id
+                .Select(b => b.billNo)
+                .FirstOrDefaultAsync();
+
+            return billNo;
+        }
+
+
     }
 }

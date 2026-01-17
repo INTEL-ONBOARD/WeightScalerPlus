@@ -987,7 +987,7 @@ namespace WeightMaster
         }
 
         //topbar section
-        private void SettingsButtonClick(object sender, RoutedEventArgs e)
+        private async void SettingsButtonClick(object sender, RoutedEventArgs e)
         {
             SettingsFrame.Visibility = Visibility.Visible;
             Station1Frame.Visibility = Visibility.Collapsed;
@@ -1002,6 +1002,17 @@ namespace WeightMaster
             //Console.Beep();
             HomeButton.Visibility = Visibility.Visible;
             SettingsButton.Visibility = Visibility.Collapsed;
+
+            //load transport bills data to table
+            var bills = await _consoleHandler.getAllTransportBills();
+            //MessageBox.Show(bills.Count.ToString());
+            CustomerBillRowPanel.Children.Clear();
+            foreach (TransportBillBlockModel bill in bills)
+            {
+                int idx = bills.IndexOf(bill) + 1;
+                CustomerBillTableRow cr1 = new CustomerBillTableRow(idx.ToString(), bill.billNo, bill.lineName);
+                CustomerBillRowPanel.Children.Add(cr1);
+            }
         }
 
         private void HomeButtonClick(object sender, RoutedEventArgs e)
@@ -1284,6 +1295,11 @@ namespace WeightMaster
             LineTablePanel_st1.Children.Clear();
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
+
+            //get transport bill by line name
+            var transportBill = await _consoleHandler.getTransportBillNoByLineName(searchLineName);
+            billNoTxt_st1.Text = transportBill ?? "-";
+
             if (result != null)
             {
                 List<TransactionLogBlockModel> roundData = null;
@@ -2065,6 +2081,14 @@ namespace WeightMaster
 
                     // Call the service to add the transaction
                     _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
+
+                    TransportBillBlockModel t1 = new TransportBillBlockModel
+                    {
+                        billNo = billNoTxt_st1.Text,
+                        dateCreated = DateTime.Now.ToString("yyyy-MM-dd"),
+                        lineName = lineName_st1,
+                    };
+                    _consoleHandler.addTransportBill(t1);
 
 
                     //----------------------------------------------------------------------------------------------------------------------|
@@ -3962,7 +3986,7 @@ namespace WeightMaster
             reportDateTxt_admin.Text = reportDate;
         }
 
-        private void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
+        private async void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
         {
             ApplicationSettingsButton.Opacity = 0.6;
             GeneralSettingsButton.Opacity = 1.0;
@@ -3971,7 +3995,19 @@ namespace WeightMaster
 
             GeneralSettingsSection.Visibility = Visibility.Visible;
             ApplicationSettingsSection.Visibility = Visibility.Hidden;
+
+            //load transport bills data to table
+            var bills = await _consoleHandler.getAllTransportBills();
+            //MessageBox.Show(bills.Count.ToString());
+            CustomerBillRowPanel.Children.Clear();
+            foreach (TransportBillBlockModel bill in bills)
+            {
+                int idx = bills.IndexOf(bill) + 1;
+                CustomerBillTableRow cr1 = new CustomerBillTableRow(idx.ToString(), bill.billNo, bill.lineName);
+                CustomerBillRowPanel.Children.Add(cr1);
+            }
         }
+
         private void ApplicationSettingsButtonClick(object sender, RoutedEventArgs e)
         {
             ApplicationSettingsButton.Opacity = 1.0;
@@ -4049,7 +4085,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(1)..." : "Reverifying Database Status(1)...";
                     });
-                    //await _consoleHandler.VerifyUserDb(); // Uncomment when needed
+                    await _consoleHandler.VerifyUserDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(1)";
@@ -4070,7 +4106,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(2)..." : "Reverifying Database Status(2)...";
                     });
-                    //await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
+                    await _consoleHandler.VerifyLineMasterDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(2)";
@@ -4091,7 +4127,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(3)..." : "Reverifying Database Status(3)...";
                     });
-                    //await _consoleHandler.verifyMemberDb(); // Uncomment when needed
+                    await _consoleHandler.verifyMemberDb(); // Uncomment when needed
                     Dispatcher.Invoke(() =>
                     {
                         statusLabel.Content = "DB Verified(3)";
@@ -4114,7 +4150,7 @@ namespace WeightMaster
                     {
                         statusLabel.Content = (firstItr) ? "Verifying Database Status(4)..." : "Reverifying Database Status(4)...";
                     });
-                    //await _consoleHandler.verifyMembers();  // Uncomment when needed
+                    await _consoleHandler.verifyMembers();  // Uncomment when needed
                     //System.Diagnostics.Debug.WriteLine("================");
                     Dispatcher.Invoke(() =>
                     {

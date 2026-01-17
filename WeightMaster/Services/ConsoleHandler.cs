@@ -229,5 +229,11 @@ namespace WeightMaster.Services
             return await _engine.addTransportBillAsync(newBill);
 
         }
+
+        // get transport bill by line name
+        public async Task<string?> getTransportBillNoByLineName(string lineName)
+        {
+            return await _engine.GetTransportBillNumberByLineNameAsync(lineName);
+        }
     }
 }
