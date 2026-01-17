@@ -4347,6 +4347,91 @@ namespace WeightMaster
             return border;
         }
 
+        // Auto-search when line filter changes in Transaction View
+        private void TransactionLineFilterCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TransactionViewSection.Visibility == Visibility.Visible)
+            {
+                TransactionSearchButton_Click(sender, new RoutedEventArgs());
+            }
+        }
+
+        // Debounce timer for text input
+        private DispatcherTimer? _transactionSearchTimer;
+
+        // Auto-search when member ID text changes (with debounce)
+        private void TransactionMemberIdFilterTxt_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            // Cancel previous timer if exists
+            _transactionSearchTimer?.Stop();
+
+            // Create new timer with 500ms delay
+            _transactionSearchTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(500)
+            };
+            _transactionSearchTimer.Tick += (s, args) =>
+            {
+                _transactionSearchTimer.Stop();
+                if (TransactionViewSection.Visibility == Visibility.Visible)
+                {
+                    TransactionSearchButton_Click(sender, new RoutedEventArgs());
+                }
+            };
+            _transactionSearchTimer.Start();
+        }
+
+        // Clear button for Transaction View
+        private void TransactionClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset filters
+            if (TransactionLineFilterCmb.Items.Count > 0)
+            {
+                TransactionLineFilterCmb.SelectedIndex = 0;
+            }
+            TransactionMemberIdFilterTxt.Text = "";
+
+            // Clear table
+            TransactionTablePanel.Children.Clear();
+
+            // Reset summary
+            TransactionTotalCount.Text = "Total: 0";
+            TransactionTotalBags.Text = "0";
+            TransactionTotalGold.Text = "0";
+            TransactionTotalNormal.Text = "0";
+            TransactionTotalWeight.Text = "0";
+        }
+
+        // Auto-search when line filter changes in Line Summary
+        private void LineSummaryLineFilterCmb_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LineSummarySection.Visibility == Visibility.Visible)
+            {
+                LineSummarySearchButton_Click(sender, new RoutedEventArgs());
+            }
+        }
+
+        // Clear button for Line Summary
+        private void LineSummaryClearButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset filter
+            if (LineSummaryLineFilterCmb.Items.Count > 0)
+            {
+                LineSummaryLineFilterCmb.SelectedIndex = 0;
+            }
+
+            // Clear table
+            LineSummaryTablePanel.Children.Clear();
+
+            // Reset summary
+            LineSummaryTotalLines.Text = "Total Lines: 0";
+            LineSummaryTotalMembers.Text = "0";
+            LineSummaryTotalBags.Text = "0";
+            LineSummaryTotalGold.Text = "0";
+            LineSummaryTotalNormal.Text = "0";
+            LineSummaryTotalWeight.Text = "0";
+        }
+
 
         private void SelectBillDate_settings_Click(object sender, RoutedEventArgs e)
         {
