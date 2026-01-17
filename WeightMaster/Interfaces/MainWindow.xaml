@@ -1415,6 +1415,24 @@
                                 </Grid>
                             </Button>
 
+                            <Button x:Name="TransactionViewButton" Style="{StaticResource NoFocusButtonStyle}" Cursor="Hand" Width="580" Height="100" Background="White" BorderThickness="0" Click="TransactionViewButtonClick">
+                                <Grid HorizontalAlignment="Center" Background="White" Width="580" Height="100">
+                                    <Image  Margin="41,34,501,28" Source="/Interfaces/station_1_image.png"/>
+                                    <Image x:Name="TransactionViewButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png" Visibility="Hidden"/>
+                                    <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="Transaction View"/>
+                                    <Border Height="2" Background="#CACACA" Width="600" Margin="0,96,0,2"/>
+                                </Grid>
+                            </Button>
+
+                            <Button x:Name="LineSummaryButton" Style="{StaticResource NoFocusButtonStyle}" Cursor="Hand" Width="580" Height="100" Background="White" BorderThickness="0" Click="LineSummaryButtonClick">
+                                <Grid HorizontalAlignment="Center" Background="White" Width="580" Height="100">
+                                    <Image  Margin="41,34,501,28" Source="/Interfaces/station_1_image.png"/>
+                                    <Image x:Name="LineSummaryButtonRightArrow" Width="30" Margin="534,36,16,30" Source="/Interfaces/arrow_right.png" Visibility="Hidden"/>
+                                    <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="108,34,0,28" FontWeight="Medium" Text="Line Summary"/>
+                                    <Border Height="2" Background="#CACACA" Width="600" Margin="0,96,0,2"/>
+                                </Grid>
+                            </Button>
+
                         </StackPanel>
                     </ScrollViewer>
                 </Grid>
@@ -1608,6 +1626,175 @@
                         </Button>
 
 
+                    </Grid>
+
+                    <!-- Transaction View Section -->
+                    <Grid x:Name="TransactionViewSection" Visibility="Hidden">
+                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,0" FontWeight="Medium" Text="Transaction View" VerticalAlignment="Top"/>
+
+                        <!-- Filters -->
+                        <Grid Margin="36,80,36,0" Height="60" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Line Name Filter -->
+                            <Grid Grid.Column="0">
+                                <TextBlock Text="Line Name" FontSize="14" Foreground="Black" VerticalAlignment="Top"/>
+                                <ComboBox x:Name="TransactionLineFilterCmb" Style="{StaticResource CustomComboBoxStyle}" Margin="0,22,0,0" FontSize="14" Height="35" VerticalContentAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Member ID Filter -->
+                            <Grid Grid.Column="2">
+                                <TextBlock Text="Member ID" FontSize="14" Foreground="Black" VerticalAlignment="Top"/>
+                                <Border Background="#F7F7F7" CornerRadius="8" BorderBrush="#C4C4C4" BorderThickness="1" Margin="0,22,0,0" Height="35">
+                                    <TextBox x:Name="TransactionMemberIdFilterTxt" Background="Transparent" BorderThickness="0" Foreground="Black" FontSize="14" Padding="8,6" VerticalAlignment="Center"/>
+                                </Border>
+                            </Grid>
+
+                            <!-- Search Button -->
+                            <Button Grid.Column="4" Cursor="Hand" Click="TransactionSearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="8" Padding="15,8">
+                                    <TextBlock Text="Search" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
+                                </Border>
+                            </Button>
+                        </Grid>
+
+                        <!-- Table Container -->
+                        <Border BorderThickness="1" BorderBrush="#E0E0E0" CornerRadius="10" Margin="36,160,36,60" Background="#FAFAFA">
+                            <Grid>
+                                <!-- Table Header -->
+                                <Border Background="#E8E8E8" CornerRadius="10,10,0,0" Height="45" VerticalAlignment="Top">
+                                    <Grid Margin="10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Member ID" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="Name" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="Line" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="Bags" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="4" Text="Gold (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="5" Text="Normal (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="6" Text="Total (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="7" Text="Date" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Table Body -->
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,45,0,50">
+                                    <StackPanel x:Name="TransactionTablePanel"/>
+                                </ScrollViewer>
+
+                                <!-- Summary Row -->
+                                <Border Background="#D0D0D0" CornerRadius="0,0,10,10" Height="50" VerticalAlignment="Bottom">
+                                    <Grid Margin="10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="80"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" x:Name="TransactionTotalCount" Text="Total: 0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="#333"/>
+                                        <TextBlock Grid.Column="3" x:Name="TransactionTotalBags" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="4" x:Name="TransactionTotalGold" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="5" x:Name="TransactionTotalNormal" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="6" x:Name="TransactionTotalWeight" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </Grid>
+
+                    <!-- Line Summary Section -->
+                    <Grid x:Name="LineSummarySection" Visibility="Hidden">
+                        <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,0" FontWeight="Medium" Text="Line Summary" VerticalAlignment="Top"/>
+
+                        <!-- Filters -->
+                        <Grid Margin="36,80,36,0" Height="60" VerticalAlignment="Top">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="250"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <!-- Line Name Filter -->
+                            <Grid Grid.Column="0">
+                                <TextBlock Text="Line Name" FontSize="14" Foreground="Black" VerticalAlignment="Top"/>
+                                <ComboBox x:Name="LineSummaryLineFilterCmb" Style="{StaticResource CustomComboBoxStyle}" Margin="0,22,0,0" FontSize="14" Height="35" VerticalContentAlignment="Center"/>
+                            </Grid>
+
+                            <!-- Search Button -->
+                            <Button Grid.Column="2" Cursor="Hand" Click="LineSummarySearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                                <Border Background="#2ECC71" CornerRadius="8" Padding="15,8">
+                                    <TextBlock Text="Search" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
+                                </Border>
+                            </Button>
+                        </Grid>
+
+                        <!-- Table Container -->
+                        <Border BorderThickness="1" BorderBrush="#E0E0E0" CornerRadius="10" Margin="36,160,36,60" Background="#FAFAFA">
+                            <Grid>
+                                <!-- Table Header -->
+                                <Border Background="#E8E8E8" CornerRadius="10,10,0,0" Height="45" VerticalAlignment="Top">
+                                    <Grid Margin="10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="Line Name" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="Members" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="2" Text="Total Bags" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="3" Text="Gold Leaf (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="4" Text="Normal Leaf (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                        <TextBlock Grid.Column="5" Text="Total Weight (KG)" FontSize="12" FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Right"/>
+                                    </Grid>
+                                </Border>
+
+                                <!-- Table Body -->
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,45,0,50">
+                                    <StackPanel x:Name="LineSummaryTablePanel"/>
+                                </ScrollViewer>
+
+                                <!-- Summary Row -->
+                                <Border Background="#D0D0D0" CornerRadius="0,0,10,10" Height="50" VerticalAlignment="Bottom">
+                                    <Grid Margin="10,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="200"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="120"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="150"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" x:Name="LineSummaryTotalLines" Text="Total Lines: 0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" Foreground="#333"/>
+                                        <TextBlock Grid.Column="1" x:Name="LineSummaryTotalMembers" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="2" x:Name="LineSummaryTotalBags" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="3" x:Name="LineSummaryTotalGold" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="4" x:Name="LineSummaryTotalNormal" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                        <TextBlock Grid.Column="5" x:Name="LineSummaryTotalWeight" Text="0" FontSize="14" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Border>
                     </Grid>
 
                 </Grid>

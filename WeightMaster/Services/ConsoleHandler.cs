@@ -235,5 +235,11 @@ namespace WeightMaster.Services
         {
             return await _engine.GetTransportBillNumberByLineNameAsync(lineName);
         }
+
+        // Get DbContext for Transaction View and Line Summary features
+        public Config.AppDbContext GetDbContext()
+        {
+            return new Config.AppDbContext();
+        }
     }
 }
