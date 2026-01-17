@@ -4211,6 +4211,7 @@ namespace WeightMaster
 
                 // Calculate totals
                 int totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalWater = 0, totalMora = 0, totalThambi = 0, totalReject = 0;
 
                 // Populate table
                 foreach (var transaction in transactions)
@@ -4223,6 +4224,10 @@ namespace WeightMaster
                     totalGold += transaction.GoldLeafWeight;
                     totalNormal += transaction.NormalLeafWeight;
                     totalWeight += transaction.TotalWeight;
+                    totalWater += transaction.Water;
+                    totalMora += transaction.Morapuwata;
+                    totalThambi += transaction.Thambimata;
+                    totalReject += transaction.Reject;
                 }
 
                 // Update summary
@@ -4232,6 +4237,10 @@ namespace WeightMaster
                 TransactionTotalGold.Text = totalGold.ToString();
                 TransactionTotalNormal.Text = totalNormal.ToString();
                 TransactionTotalWeight.Text = totalWeight.ToString();
+                TransactionTotalWater.Text = totalWater.ToString();
+                TransactionTotalMora.Text = totalMora.ToString();
+                TransactionTotalThambi.Text = totalThambi.ToString();
+                TransactionTotalReject.Text = totalReject.ToString();
             }
             catch (Exception ex)
             {
@@ -4254,53 +4263,73 @@ namespace WeightMaster
                 Margin = new Thickness(0, 2, 0, 0)
             };
 
-            // Column widths matching the XAML header: 80, 150, 110, 55, 55, 70, 85, 75, 95, 70
+            // Column widths matching the XAML header: 75, 130, 90, 50, 50, 60, 65, 60, 55, 55, 60, 55, 85, 75
             var grid = new Grid { Margin = new Thickness(15, 0, 15, 0) };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(110) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(75) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(75) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(95) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
 
-            var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
+            var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(memberId, 0);
             grid.Children.Add(memberId);
 
-            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(name, 1);
             grid.Children.Add(name);
 
-            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(line, 2);
             grid.Children.Add(line);
 
-            var boxes = new TextBlock { Text = transaction.BoxCount.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var boxes = new TextBlock { Text = transaction.BoxCount.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(boxes, 3);
             grid.Children.Add(boxes);
 
-            var bags = new TextBlock { Text = transaction.BagCount.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var bags = new TextBlock { Text = transaction.BagCount.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(bags, 4);
             grid.Children.Add(bags);
 
-            var gold = new TextBlock { Text = transaction.GoldLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var gold = new TextBlock { Text = transaction.GoldLeafWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(gold, 5);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = transaction.NormalLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var normal = new TextBlock { Text = transaction.NormalLeafWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 6);
             grid.Children.Add(normal);
 
-            var total = new TextBlock { Text = transaction.TotalWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var total = new TextBlock { Text = transaction.TotalWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(total, 7);
             grid.Children.Add(total);
 
-            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
-            Grid.SetColumn(date, 8);
+            var water = new TextBlock { Text = transaction.Water.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(water, 8);
+            grid.Children.Add(water);
+
+            var mora = new TextBlock { Text = transaction.Morapuwata.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(mora, 9);
+            grid.Children.Add(mora);
+
+            var thambi = new TextBlock { Text = transaction.Thambimata.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(thambi, 10);
+            grid.Children.Add(thambi);
+
+            var reject = new TextBlock { Text = transaction.Reject.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(reject, 11);
+            grid.Children.Add(reject);
+
+            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+            Grid.SetColumn(date, 12);
             grid.Children.Add(date);
 
             // Status tag with color coding
@@ -4313,9 +4342,9 @@ namespace WeightMaster
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            var status = new TextBlock { Text = transaction.Status, FontSize = 10, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
+            var status = new TextBlock { Text = transaction.Status, FontSize = 9, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
             statusBorder.Child = status;
-            Grid.SetColumn(statusBorder, 9);
+            Grid.SetColumn(statusBorder, 13);
             grid.Children.Add(statusBorder);
 
             border.Child = grid;
@@ -4359,7 +4388,8 @@ namespace WeightMaster
                 LineSummaryTablePanel.Children.Clear();
 
                 // Calculate totals
-                int totalMembers = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalMembers = 0, totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalWater = 0, totalMora = 0, totalThambi = 0, totalReject = 0;
 
                 // Populate table
                 foreach (var summary in summaries)
@@ -4368,19 +4398,29 @@ namespace WeightMaster
                     LineSummaryTablePanel.Children.Add(row);
 
                     totalMembers += summary.TotalMembers;
+                    totalBoxes += summary.TotalBoxes;
                     totalBags += summary.TotalBags;
                     totalGold += summary.TotalGoldLeafWeight;
                     totalNormal += summary.TotalNormalLeafWeight;
                     totalWeight += summary.TotalWeight;
+                    totalWater += summary.TotalWater;
+                    totalMora += summary.TotalMorapuwata;
+                    totalThambi += summary.TotalThambimata;
+                    totalReject += summary.TotalReject;
                 }
 
                 // Update summary
                 LineSummaryTotalLines.Text = $"Total Lines: {summaries.Count}";
                 LineSummaryTotalMembers.Text = totalMembers.ToString();
+                LineSummaryTotalBoxes.Text = totalBoxes.ToString();
                 LineSummaryTotalBags.Text = totalBags.ToString();
                 LineSummaryTotalGold.Text = totalGold.ToString();
                 LineSummaryTotalNormal.Text = totalNormal.ToString();
                 LineSummaryTotalWeight.Text = totalWeight.ToString();
+                LineSummaryTotalWater.Text = totalWater.ToString();
+                LineSummaryTotalMora.Text = totalMora.ToString();
+                LineSummaryTotalThambi.Text = totalThambi.ToString();
+                LineSummaryTotalReject.Text = totalReject.ToString();
             }
             catch (Exception ex)
             {
@@ -4400,37 +4440,63 @@ namespace WeightMaster
                 Margin = new Thickness(0, 2, 0, 0)
             };
 
+            // Column widths matching XAML: 140, 80, 70, 70, 90, 100, 100, 70, 70, 80, 70
             var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(200) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(140) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
 
-            var lineName = new TextBlock { Text = summary.LineName ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var lineName = new TextBlock { Text = summary.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(lineName, 0);
             grid.Children.Add(lineName);
 
-            var members = new TextBlock { Text = summary.TotalMembers.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var members = new TextBlock { Text = summary.TotalMembers.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(members, 1);
             grid.Children.Add(members);
 
-            var bags = new TextBlock { Text = summary.TotalBags.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(bags, 2);
+            var boxes = new TextBlock { Text = summary.TotalBoxes.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(boxes, 2);
+            grid.Children.Add(boxes);
+
+            var bags = new TextBlock { Text = summary.TotalBags.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 3);
             grid.Children.Add(bags);
 
-            var gold = new TextBlock { Text = summary.TotalGoldLeafWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(gold, 3);
+            var gold = new TextBlock { Text = summary.TotalGoldLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 4);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = summary.TotalNormalLeafWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(normal, 4);
+            var normal = new TextBlock { Text = summary.TotalNormalLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 5);
             grid.Children.Add(normal);
 
-            var total = new TextBlock { Text = summary.TotalWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(total, 5);
+            var total = new TextBlock { Text = summary.TotalWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 6);
             grid.Children.Add(total);
+
+            var water = new TextBlock { Text = summary.TotalWater.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(water, 7);
+            grid.Children.Add(water);
+
+            var mora = new TextBlock { Text = summary.TotalMorapuwata.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(mora, 8);
+            grid.Children.Add(mora);
+
+            var thambi = new TextBlock { Text = summary.TotalThambimata.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(thambi, 9);
+            grid.Children.Add(thambi);
+
+            var reject = new TextBlock { Text = summary.TotalReject.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(reject, 10);
+            grid.Children.Add(reject);
 
             border.Child = grid;
             return border;
@@ -4491,6 +4557,10 @@ namespace WeightMaster
             TransactionTotalGold.Text = "0";
             TransactionTotalNormal.Text = "0";
             TransactionTotalWeight.Text = "0";
+            TransactionTotalWater.Text = "0";
+            TransactionTotalMora.Text = "0";
+            TransactionTotalThambi.Text = "0";
+            TransactionTotalReject.Text = "0";
         }
 
         // Auto-search when date changes in Transaction View
@@ -4527,10 +4597,15 @@ namespace WeightMaster
             // Reset summary
             LineSummaryTotalLines.Text = "Total Lines: 0";
             LineSummaryTotalMembers.Text = "0";
+            LineSummaryTotalBoxes.Text = "0";
             LineSummaryTotalBags.Text = "0";
             LineSummaryTotalGold.Text = "0";
             LineSummaryTotalNormal.Text = "0";
             LineSummaryTotalWeight.Text = "0";
+            LineSummaryTotalWater.Text = "0";
+            LineSummaryTotalMora.Text = "0";
+            LineSummaryTotalThambi.Text = "0";
+            LineSummaryTotalReject.Text = "0";
         }
 
         // Auto-search when date changes in Line Summary

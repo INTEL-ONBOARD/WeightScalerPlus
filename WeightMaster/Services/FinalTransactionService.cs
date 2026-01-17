@@ -301,16 +301,16 @@ namespace WeightMaster.Services
                 .Select(r => r.TransactionId)
                 .ToListAsync();
 
-            // Get data from FinalTransactionData
+            // Get data from FinalTransactionData (no box_count in this table)
             var finalData = await _context.FinaltransactionData
                 .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, box_count = 0, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Get queue data from TransactionData (not already completed)
             var queueData = await _context.transactionData
                 .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, t.box_count, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Combine and group by line name
@@ -320,10 +320,15 @@ namespace WeightMaster.Services
                 {
                     LineName = g.Key!,
                     TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBoxes = g.Sum(t => t.box_count),
                     TotalBags = g.Sum(t => t.bag_count),
                     TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
                     TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
-                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                    TotalWeight = g.Sum(t => t.total_leaf_weight),
+                    TotalWater = g.Sum(t => t.water),
+                    TotalMorapuwata = g.Sum(t => t.morapuwata),
+                    TotalThambimata = g.Sum(t => t.thambimata),
+                    TotalReject = g.Sum(t => t.reject)
                 })
                 .ToList();
 
@@ -339,16 +344,16 @@ namespace WeightMaster.Services
                 .Select(r => r.TransactionId)
                 .ToListAsync();
 
-            // Get data from FinalTransactionData filtered by date
+            // Get data from FinalTransactionData filtered by date (no box_count in this table)
             var finalData = await _context.FinaltransactionData
                 .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && t.date == date)
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, box_count = 0, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Get queue data from TransactionData filtered by date (not already completed)
             var queueData = await _context.transactionData
                 .Where(t => t.linename != null && !string.IsNullOrEmpty(t.barcode_details) && t.date == date && !completedTransactionIds.Contains(t.Id))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, t.box_count, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Combine and group by line name
@@ -358,10 +363,15 @@ namespace WeightMaster.Services
                 {
                     LineName = g.Key!,
                     TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBoxes = g.Sum(t => t.box_count),
                     TotalBags = g.Sum(t => t.bag_count),
                     TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
                     TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
-                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                    TotalWeight = g.Sum(t => t.total_leaf_weight),
+                    TotalWater = g.Sum(t => t.water),
+                    TotalMorapuwata = g.Sum(t => t.morapuwata),
+                    TotalThambimata = g.Sum(t => t.thambimata),
+                    TotalReject = g.Sum(t => t.reject)
                 })
                 .ToList();
 
@@ -377,16 +387,16 @@ namespace WeightMaster.Services
                 .Select(r => r.TransactionId)
                 .ToListAsync();
 
-            // Get data from FinalTransactionData filtered by linename
+            // Get data from FinalTransactionData filtered by linename (no box_count in this table)
             var finalData = await _context.FinaltransactionData
                 .Where(t => t.linename == linename && !string.IsNullOrEmpty(t.barcode_details))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, box_count = 0, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Get queue data from TransactionData filtered by linename (not already completed)
             var queueData = await _context.transactionData
                 .Where(t => t.linename == linename && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, t.box_count, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Combine and group by line name
@@ -396,10 +406,15 @@ namespace WeightMaster.Services
                 {
                     LineName = g.Key!,
                     TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBoxes = g.Sum(t => t.box_count),
                     TotalBags = g.Sum(t => t.bag_count),
                     TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
                     TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
-                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                    TotalWeight = g.Sum(t => t.total_leaf_weight),
+                    TotalWater = g.Sum(t => t.water),
+                    TotalMorapuwata = g.Sum(t => t.morapuwata),
+                    TotalThambimata = g.Sum(t => t.thambimata),
+                    TotalReject = g.Sum(t => t.reject)
                 })
                 .ToList();
 
@@ -415,16 +430,16 @@ namespace WeightMaster.Services
                 .Select(r => r.TransactionId)
                 .ToListAsync();
 
-            // Get data from FinalTransactionData filtered by linename and date
+            // Get data from FinalTransactionData filtered by linename and date (no box_count in this table)
             var finalData = await _context.FinaltransactionData
                 .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, box_count = 0, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Get queue data from TransactionData filtered by linename and date (not already completed)
             var queueData = await _context.transactionData
                 .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
-                .Select(t => new { t.linename, t.barcode_details, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight })
+                .Select(t => new { t.linename, t.barcode_details, t.box_count, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 
             // Combine and group by line name
@@ -434,10 +449,15 @@ namespace WeightMaster.Services
                 {
                     LineName = g.Key!,
                     TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBoxes = g.Sum(t => t.box_count),
                     TotalBags = g.Sum(t => t.bag_count),
                     TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
                     TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
-                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                    TotalWeight = g.Sum(t => t.total_leaf_weight),
+                    TotalWater = g.Sum(t => t.water),
+                    TotalMorapuwata = g.Sum(t => t.morapuwata),
+                    TotalThambimata = g.Sum(t => t.thambimata),
+                    TotalReject = g.Sum(t => t.reject)
                 })
                 .ToList();
 
@@ -463,6 +483,10 @@ namespace WeightMaster.Services
                     GoldLeafWeight = t.total_gold_leaf_weight,
                     NormalLeafWeight = t.actual_nomal_leaf_weight,
                     TotalWeight = t.total_leaf_weight,
+                    Water = t.water,
+                    Morapuwata = t.morapuwata,
+                    Thambimata = t.thambimata,
+                    Reject = t.reject,
                     Date = t.date,
                     Status = "Completed"
                 })
@@ -489,6 +513,10 @@ namespace WeightMaster.Services
                     GoldLeafWeight = t.total_gold_leaf_weight,
                     NormalLeafWeight = t.actual_nomal_leaf_weight,
                     TotalWeight = t.total_leaf_weight,
+                    Water = t.water,
+                    Morapuwata = t.morapuwata,
+                    Thambimata = t.thambimata,
+                    Reject = t.reject,
                     Date = t.date,
                     Status = "Queue"
                 })
@@ -544,10 +572,15 @@ namespace WeightMaster.Services
     {
         public string LineName { get; set; } = string.Empty;
         public int TotalMembers { get; set; }
+        public int TotalBoxes { get; set; }
         public int TotalBags { get; set; }
         public int TotalGoldLeafWeight { get; set; }
         public int TotalNormalLeafWeight { get; set; }
         public int TotalWeight { get; set; }
+        public int TotalWater { get; set; }
+        public int TotalMorapuwata { get; set; }
+        public int TotalThambimata { get; set; }
+        public int TotalReject { get; set; }
     }
 
     // Unified view model for Transaction View (combines FinalTransaction and Transaction)
@@ -562,6 +595,10 @@ namespace WeightMaster.Services
         public int GoldLeafWeight { get; set; }
         public int NormalLeafWeight { get; set; }
         public int TotalWeight { get; set; }
+        public int Water { get; set; }
+        public int Morapuwata { get; set; }
+        public int Thambimata { get; set; }
+        public int Reject { get; set; }
         public string? Date { get; set; }
         public string Status { get; set; } = "Queue"; // "Completed" or "Queue"
     }
