@@ -217,5 +217,11 @@ namespace WeightMaster.Services
             return await _engine.GetAllPostsByFilteringPost(memberid, line);
         }
 
+        // Get DbContext for Transaction View and Line Summary features
+        public Config.AppDbContext GetDbContext()
+        {
+            return new Config.AppDbContext();
+        }
+
     }
 }

@@ -180,5 +180,92 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        // Get all transactions
+        public async Task<List<FinalTransactionBlockModel>> GetAllTransactionsAsync()
+        {
+            return await _context.FinaltransactionData.ToListAsync();
+        }
+
+        // Get transactions filtered by linename
+        public async Task<List<FinalTransactionBlockModel>> GetTransactionsByLineNameAsync(string linename)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename == linename)
+                .ToListAsync();
+        }
+
+        // Get transactions filtered by barcode_details (member_id)
+        public async Task<List<FinalTransactionBlockModel>> GetTransactionsByMemberIdAsync(string memberId)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.barcode_details == memberId)
+                .ToListAsync();
+        }
+
+        // Get transactions filtered by both linename and barcode_details
+        public async Task<List<FinalTransactionBlockModel>> GetTransactionsByLineAndMemberAsync(string linename, string memberId)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename == linename && t.barcode_details == memberId)
+                .ToListAsync();
+        }
+
+        // Get distinct line names for dropdown
+        public async Task<List<string>> GetDistinctLineNamesAsync()
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename != null)
+                .Select(t => t.linename!)
+                .Distinct()
+                .ToListAsync();
+        }
+
+        // Get line summary (aggregated data by line)
+        public async Task<List<LineSummaryModel>> GetLineSummaryAsync()
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename != null)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToListAsync();
+        }
+
+        // Get line summary filtered by linename
+        public async Task<List<LineSummaryModel>> GetLineSummaryByLineNameAsync(string linename)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename == linename)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToListAsync();
+        }
+
+    }
+
+    // Model for line summary
+    public class LineSummaryModel
+    {
+        public string LineName { get; set; } = string.Empty;
+        public int TotalMembers { get; set; }
+        public int TotalBags { get; set; }
+        public int TotalGoldLeafWeight { get; set; }
+        public int TotalNormalLeafWeight { get; set; }
+        public int TotalWeight { get; set; }
     }
 }

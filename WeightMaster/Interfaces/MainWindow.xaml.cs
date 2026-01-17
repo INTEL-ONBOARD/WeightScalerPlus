@@ -3810,13 +3810,20 @@ namespace WeightMaster
 
         private void GeneralSettingsButtonClick(object sender, RoutedEventArgs e)
         {
-            ApplicationSettingsButton.Opacity = 0.6;
             GeneralSettingsButton.Opacity = 1.0;
-            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            ApplicationSettingsButton.Opacity = 0.6;
+            TransactionViewButton.Opacity = 0.6;
+            LineSummaryButton.Opacity = 0.6;
+
             GeneralSettingsButtonRightArrow.Visibility = Visibility.Visible;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            TransactionViewButtonRightArrow.Visibility = Visibility.Hidden;
+            LineSummaryButtonRightArrow.Visibility = Visibility.Hidden;
 
             GeneralSettingsSection.Visibility = Visibility.Visible;
             ApplicationSettingsSection.Visibility = Visibility.Hidden;
+            TransactionViewSection.Visibility = Visibility.Hidden;
+            LineSummarySection.Visibility = Visibility.Hidden;
         }
         private void ApplicationSettingsButtonClick(object sender, RoutedEventArgs e)
         {
@@ -3826,8 +3833,320 @@ namespace WeightMaster
             GeneralSettingsButtonRightArrow.Visibility = Visibility.Hidden;
             GeneralSettingsSection.Visibility = Visibility.Hidden;
             ApplicationSettingsSection.Visibility = Visibility.Visible;
+            TransactionViewSection.Visibility = Visibility.Hidden;
+            LineSummarySection.Visibility = Visibility.Hidden;
+            TransactionViewButton.Opacity = 0.6;
+            LineSummaryButton.Opacity = 0.6;
+            TransactionViewButtonRightArrow.Visibility = Visibility.Hidden;
+            LineSummaryButtonRightArrow.Visibility = Visibility.Hidden;
         }
 
+        private async void TransactionViewButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Update button states
+            GeneralSettingsButton.Opacity = 0.6;
+            ApplicationSettingsButton.Opacity = 0.6;
+            TransactionViewButton.Opacity = 1.0;
+            LineSummaryButton.Opacity = 0.6;
+
+            GeneralSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            TransactionViewButtonRightArrow.Visibility = Visibility.Visible;
+            LineSummaryButtonRightArrow.Visibility = Visibility.Hidden;
+
+            // Show/hide sections
+            GeneralSettingsSection.Visibility = Visibility.Hidden;
+            ApplicationSettingsSection.Visibility = Visibility.Hidden;
+            TransactionViewSection.Visibility = Visibility.Visible;
+            LineSummarySection.Visibility = Visibility.Hidden;
+
+            // Load line names into filter dropdown
+            await LoadTransactionLineFilter();
+        }
+
+        private async void LineSummaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            // Update button states
+            GeneralSettingsButton.Opacity = 0.6;
+            ApplicationSettingsButton.Opacity = 0.6;
+            TransactionViewButton.Opacity = 0.6;
+            LineSummaryButton.Opacity = 1.0;
+
+            GeneralSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
+            TransactionViewButtonRightArrow.Visibility = Visibility.Hidden;
+            LineSummaryButtonRightArrow.Visibility = Visibility.Visible;
+
+            // Show/hide sections
+            GeneralSettingsSection.Visibility = Visibility.Hidden;
+            ApplicationSettingsSection.Visibility = Visibility.Hidden;
+            TransactionViewSection.Visibility = Visibility.Hidden;
+            LineSummarySection.Visibility = Visibility.Visible;
+
+            // Load line names into filter dropdown
+            await LoadLineSummaryLineFilter();
+        }
+
+        private async Task LoadTransactionLineFilter()
+        {
+            try
+            {
+                var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
+                var lineNames = await finalTransactionService.GetDistinctLineNamesAsync();
+
+                TransactionLineFilterCmb.Items.Clear();
+                TransactionLineFilterCmb.Items.Add(new ComboBoxItem { Content = "All Lines", IsSelected = true });
+
+                foreach (var lineName in lineNames)
+                {
+                    TransactionLineFilterCmb.Items.Add(new ComboBoxItem { Content = lineName });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading line filter: {ex.Message}");
+            }
+        }
+
+        private async Task LoadLineSummaryLineFilter()
+        {
+            try
+            {
+                var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
+                var lineNames = await finalTransactionService.GetDistinctLineNamesAsync();
+
+                LineSummaryLineFilterCmb.Items.Clear();
+                LineSummaryLineFilterCmb.Items.Add(new ComboBoxItem { Content = "All Lines", IsSelected = true });
+
+                foreach (var lineName in lineNames)
+                {
+                    LineSummaryLineFilterCmb.Items.Add(new ComboBoxItem { Content = lineName });
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading line filter: {ex.Message}");
+            }
+        }
+
+        private async void TransactionSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
+
+                var selectedLine = (TransactionLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var memberId = TransactionMemberIdFilterTxt.Text?.Trim();
+
+                List<FinalTransactionBlockModel> transactions;
+
+                // Apply filters
+                if (!string.IsNullOrEmpty(memberId) && selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                {
+                    transactions = await finalTransactionService.GetTransactionsByLineAndMemberAsync(selectedLine, memberId);
+                }
+                else if (!string.IsNullOrEmpty(memberId))
+                {
+                    transactions = await finalTransactionService.GetTransactionsByMemberIdAsync(memberId);
+                }
+                else if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                {
+                    transactions = await finalTransactionService.GetTransactionsByLineNameAsync(selectedLine);
+                }
+                else
+                {
+                    transactions = await finalTransactionService.GetAllTransactionsAsync();
+                }
+
+                // Clear existing rows
+                TransactionTablePanel.Children.Clear();
+
+                // Calculate totals
+                int totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+
+                // Populate table
+                foreach (var transaction in transactions)
+                {
+                    var row = CreateTransactionRow(transaction);
+                    TransactionTablePanel.Children.Add(row);
+
+                    totalBags += transaction.bag_count;
+                    totalGold += transaction.total_gold_leaf_weight;
+                    totalNormal += transaction.actual_nomal_leaf_weight;
+                    totalWeight += transaction.total_leaf_weight;
+                }
+
+                // Update summary
+                TransactionTotalCount.Text = $"Total: {transactions.Count}";
+                TransactionTotalBags.Text = totalBags.ToString();
+                TransactionTotalGold.Text = totalGold.ToString();
+                TransactionTotalNormal.Text = totalNormal.ToString();
+                TransactionTotalWeight.Text = totalWeight.ToString();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error searching transactions: {ex.Message}");
+                MessageBox.Show($"Error loading transactions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private Border CreateTransactionRow(FinalTransactionBlockModel transaction)
+        {
+            var border = new Border
+            {
+                Height = 40,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5")),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                BorderThickness = new Thickness(0, 0, 0, 1),
+                Margin = new Thickness(0, 2, 0, 0)
+            };
+
+            var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+
+            var memberId = new TextBlock { Text = transaction.barcode_details ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(memberId, 0);
+            grid.Children.Add(memberId);
+
+            var name = new TextBlock { Text = transaction.name_with_initials ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(name, 1);
+            grid.Children.Add(name);
+
+            var line = new TextBlock { Text = transaction.linename ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(line, 2);
+            grid.Children.Add(line);
+
+            var bags = new TextBlock { Text = transaction.bag_count.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 3);
+            grid.Children.Add(bags);
+
+            var gold = new TextBlock { Text = transaction.total_gold_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 4);
+            grid.Children.Add(gold);
+
+            var normal = new TextBlock { Text = transaction.actual_nomal_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 5);
+            grid.Children.Add(normal);
+
+            var total = new TextBlock { Text = transaction.total_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 6);
+            grid.Children.Add(total);
+
+            var date = new TextBlock { Text = transaction.date ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(date, 7);
+            grid.Children.Add(date);
+
+            border.Child = grid;
+            return border;
+        }
+
+        private async void LineSummarySearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
+
+                var selectedLine = (LineSummaryLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
+
+                List<LineSummaryModel> summaries;
+
+                // Apply filters
+                if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                {
+                    summaries = await finalTransactionService.GetLineSummaryByLineNameAsync(selectedLine);
+                }
+                else
+                {
+                    summaries = await finalTransactionService.GetLineSummaryAsync();
+                }
+
+                // Clear existing rows
+                LineSummaryTablePanel.Children.Clear();
+
+                // Calculate totals
+                int totalMembers = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+
+                // Populate table
+                foreach (var summary in summaries)
+                {
+                    var row = CreateLineSummaryRow(summary);
+                    LineSummaryTablePanel.Children.Add(row);
+
+                    totalMembers += summary.TotalMembers;
+                    totalBags += summary.TotalBags;
+                    totalGold += summary.TotalGoldLeafWeight;
+                    totalNormal += summary.TotalNormalLeafWeight;
+                    totalWeight += summary.TotalWeight;
+                }
+
+                // Update summary
+                LineSummaryTotalLines.Text = $"Total Lines: {summaries.Count}";
+                LineSummaryTotalMembers.Text = totalMembers.ToString();
+                LineSummaryTotalBags.Text = totalBags.ToString();
+                LineSummaryTotalGold.Text = totalGold.ToString();
+                LineSummaryTotalNormal.Text = totalNormal.ToString();
+                LineSummaryTotalWeight.Text = totalWeight.ToString();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error searching line summary: {ex.Message}");
+                MessageBox.Show($"Error loading line summary: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private Border CreateLineSummaryRow(LineSummaryModel summary)
+        {
+            var border = new Border
+            {
+                Height = 40,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5")),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                BorderThickness = new Thickness(0, 0, 0, 1),
+                Margin = new Thickness(0, 2, 0, 0)
+            };
+
+            var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(200) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+
+            var lineName = new TextBlock { Text = summary.LineName ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(lineName, 0);
+            grid.Children.Add(lineName);
+
+            var members = new TextBlock { Text = summary.TotalMembers.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(members, 1);
+            grid.Children.Add(members);
+
+            var bags = new TextBlock { Text = summary.TotalBags.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 2);
+            grid.Children.Add(bags);
+
+            var gold = new TextBlock { Text = summary.TotalGoldLeafWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 3);
+            grid.Children.Add(gold);
+
+            var normal = new TextBlock { Text = summary.TotalNormalLeafWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 4);
+            grid.Children.Add(normal);
+
+            var total = new TextBlock { Text = summary.TotalWeight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 5);
+            grid.Children.Add(total);
+
+            border.Child = grid;
+            return border;
+        }
 
 
 /*        private void OpenFileButton_Click(object sender, RoutedEventArgs e)
