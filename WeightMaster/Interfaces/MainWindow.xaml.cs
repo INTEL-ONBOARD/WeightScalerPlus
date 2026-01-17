@@ -4094,7 +4094,8 @@ namespace WeightMaster
             try
             {
                 var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
-                var lineNames = await finalTransactionService.GetDistinctLineNamesAsync();
+                // Get line names from both FinalTransaction and Transaction tables
+                var lineNames = await finalTransactionService.GetAllDistinctLineNamesAsync();
 
                 TransactionLineFilterCmb.Items.Clear();
                 TransactionLineFilterCmb.Items.Add(new ComboBoxItem { Content = "All Lines", IsSelected = true });
@@ -4140,31 +4141,31 @@ namespace WeightMaster
                 var selectedLine = (TransactionLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
                 var memberId = TransactionMemberIdFilterTxt.Text?.Trim();
 
-                List<FinalTransactionBlockModel> transactions;
+                List<TransactionViewModel> transactions;
 
-                // Apply filters
+                // Apply filters using combined data (FinalTransaction + Transaction)
                 if (!string.IsNullOrEmpty(memberId) && selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
                 {
-                    transactions = await finalTransactionService.GetTransactionsByLineAndMemberAsync(selectedLine, memberId);
+                    transactions = await finalTransactionService.GetCombinedTransactionsByLineAndMemberAsync(selectedLine, memberId);
                 }
                 else if (!string.IsNullOrEmpty(memberId))
                 {
-                    transactions = await finalTransactionService.GetTransactionsByMemberIdAsync(memberId);
+                    transactions = await finalTransactionService.GetCombinedTransactionsByMemberIdAsync(memberId);
                 }
                 else if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
                 {
-                    transactions = await finalTransactionService.GetTransactionsByLineNameAsync(selectedLine);
+                    transactions = await finalTransactionService.GetCombinedTransactionsByLineNameAsync(selectedLine);
                 }
                 else
                 {
-                    transactions = await finalTransactionService.GetAllTransactionsAsync();
+                    transactions = await finalTransactionService.GetCombinedTransactionsAsync();
                 }
 
                 // Clear existing rows
                 TransactionTablePanel.Children.Clear();
 
                 // Calculate totals
-                int totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
 
                 // Populate table
                 foreach (var transaction in transactions)
@@ -4172,14 +4173,16 @@ namespace WeightMaster
                     var row = CreateTransactionRow(transaction);
                     TransactionTablePanel.Children.Add(row);
 
-                    totalBags += transaction.bag_count;
-                    totalGold += transaction.total_gold_leaf_weight;
-                    totalNormal += transaction.actual_nomal_leaf_weight;
-                    totalWeight += transaction.total_leaf_weight;
+                    totalBoxes += transaction.BoxCount;
+                    totalBags += transaction.BagCount;
+                    totalGold += transaction.GoldLeafWeight;
+                    totalNormal += transaction.NormalLeafWeight;
+                    totalWeight += transaction.TotalWeight;
                 }
 
                 // Update summary
                 TransactionTotalCount.Text = $"Total: {transactions.Count}";
+                TransactionTotalBoxes.Text = totalBoxes.ToString();
                 TransactionTotalBags.Text = totalBags.ToString();
                 TransactionTotalGold.Text = totalGold.ToString();
                 TransactionTotalNormal.Text = totalNormal.ToString();
@@ -4192,58 +4195,82 @@ namespace WeightMaster
             }
         }
 
-        private Border CreateTransactionRow(FinalTransactionBlockModel transaction)
+        private Border CreateTransactionRow(TransactionViewModel transaction)
         {
+            // Set background color based on status
+            var bgColor = transaction.Status == "Completed" ? "#E8F5E9" : "#FFF3E0"; // Green-ish for completed, orange-ish for queue
+
             var border = new Border
             {
                 Height = 40,
-                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5")),
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(bgColor)),
                 BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0")),
                 BorderThickness = new Thickness(0, 0, 0, 1),
                 Margin = new Thickness(0, 2, 0, 0)
             };
 
             var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(120) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
 
-            var memberId = new TextBlock { Text = transaction.barcode_details ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(memberId, 0);
             grid.Children.Add(memberId);
 
-            var name = new TextBlock { Text = transaction.name_with_initials ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(name, 1);
             grid.Children.Add(name);
 
-            var line = new TextBlock { Text = transaction.linename ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center };
+            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(line, 2);
             grid.Children.Add(line);
 
-            var bags = new TextBlock { Text = transaction.bag_count.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(bags, 3);
+            var boxes = new TextBlock { Text = transaction.BoxCount.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(boxes, 3);
+            grid.Children.Add(boxes);
+
+            var bags = new TextBlock { Text = transaction.BagCount.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 4);
             grid.Children.Add(bags);
 
-            var gold = new TextBlock { Text = transaction.total_gold_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(gold, 4);
+            var gold = new TextBlock { Text = transaction.GoldLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 5);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = transaction.actual_nomal_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(normal, 5);
+            var normal = new TextBlock { Text = transaction.NormalLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 6);
             grid.Children.Add(normal);
 
-            var total = new TextBlock { Text = transaction.total_leaf_weight.ToString(), FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(total, 6);
+            var total = new TextBlock { Text = transaction.TotalWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 7);
             grid.Children.Add(total);
 
-            var date = new TextBlock { Text = transaction.date ?? "", FontSize = 12, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
-            Grid.SetColumn(date, 7);
+            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(date, 8);
             grid.Children.Add(date);
+
+            // Status tag with color coding
+            var statusColor = transaction.Status == "Completed" ? "#2ECC71" : "#F39C12"; // Green for completed, Orange for queue
+            var statusBorder = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(statusColor)),
+                CornerRadius = new CornerRadius(4),
+                Padding = new Thickness(6, 2, 6, 2),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var status = new TextBlock { Text = transaction.Status, FontSize = 10, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
+            statusBorder.Child = status;
+            Grid.SetColumn(statusBorder, 9);
+            grid.Children.Add(statusBorder);
 
             border.Child = grid;
             return border;
@@ -4399,6 +4426,7 @@ namespace WeightMaster
 
             // Reset summary
             TransactionTotalCount.Text = "Total: 0";
+            TransactionTotalBoxes.Text = "0";
             TransactionTotalBags.Text = "0";
             TransactionTotalGold.Text = "0";
             TransactionTotalNormal.Text = "0";

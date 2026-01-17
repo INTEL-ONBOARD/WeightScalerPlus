@@ -256,6 +256,99 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        // Get combined transactions (Completed from FinalTransaction + Queue from Transaction)
+        public async Task<List<TransactionViewModel>> GetCombinedTransactionsAsync()
+        {
+            var result = new List<TransactionViewModel>();
+
+            // Get all completed transactions from FinalTransactionData (with member_id)
+            var completedTransactions = await _context.FinaltransactionData
+                .Where(t => !string.IsNullOrEmpty(t.barcode_details))
+                .Select(t => new TransactionViewModel
+                {
+                    Id = t.Id,
+                    MemberId = t.barcode_details,
+                    Name = t.name_with_initials,
+                    LineName = t.linename,
+                    BoxCount = 0, // FinalTransaction doesn't have box_count
+                    BagCount = t.bag_count,
+                    GoldLeafWeight = t.total_gold_leaf_weight,
+                    NormalLeafWeight = t.actual_nomal_leaf_weight,
+                    TotalWeight = t.total_leaf_weight,
+                    Date = t.date,
+                    Status = "Completed"
+                })
+                .ToListAsync();
+            result.AddRange(completedTransactions);
+
+            // Get transaction IDs that are already in FinalTransaction (via RunLog)
+            var completedTransactionIds = await _context.RunLog
+                .Where(r => r.FinalTransactionId != null && r.TransactionId != null)
+                .Select(r => r.TransactionId)
+                .ToListAsync();
+
+            // Get queue transactions from TransactionData (not in FinalTransaction, with member_id)
+            var queueTransactions = await _context.transactionData
+                .Where(t => !string.IsNullOrEmpty(t.barcode_details) && !completedTransactionIds.Contains(t.Id))
+                .Select(t => new TransactionViewModel
+                {
+                    Id = t.Id,
+                    MemberId = t.barcode_details,
+                    Name = t.name_with_initials,
+                    LineName = t.linename,
+                    BoxCount = t.box_count,
+                    BagCount = t.bag_count,
+                    GoldLeafWeight = t.total_gold_leaf_weight,
+                    NormalLeafWeight = t.actual_nomal_leaf_weight,
+                    TotalWeight = t.total_leaf_weight,
+                    Date = t.date,
+                    Status = "Queue"
+                })
+                .ToListAsync();
+            result.AddRange(queueTransactions);
+
+            return result;
+        }
+
+        // Get combined transactions filtered by linename
+        public async Task<List<TransactionViewModel>> GetCombinedTransactionsByLineNameAsync(string linename)
+        {
+            var all = await GetCombinedTransactionsAsync();
+            return all.Where(t => t.LineName == linename).ToList();
+        }
+
+        // Get combined transactions filtered by member_id
+        public async Task<List<TransactionViewModel>> GetCombinedTransactionsByMemberIdAsync(string memberId)
+        {
+            var all = await GetCombinedTransactionsAsync();
+            return all.Where(t => t.MemberId == memberId).ToList();
+        }
+
+        // Get combined transactions filtered by both linename and member_id
+        public async Task<List<TransactionViewModel>> GetCombinedTransactionsByLineAndMemberAsync(string linename, string memberId)
+        {
+            var all = await GetCombinedTransactionsAsync();
+            return all.Where(t => t.LineName == linename && t.MemberId == memberId).ToList();
+        }
+
+        // Get distinct line names from both tables for dropdown
+        public async Task<List<string>> GetAllDistinctLineNamesAsync()
+        {
+            var finalLines = await _context.FinaltransactionData
+                .Where(t => t.linename != null)
+                .Select(t => t.linename!)
+                .Distinct()
+                .ToListAsync();
+
+            var transactionLines = await _context.transactionData
+                .Where(t => t.linename != null)
+                .Select(t => t.linename!)
+                .Distinct()
+                .ToListAsync();
+
+            return finalLines.Union(transactionLines).Distinct().ToList();
+        }
+
     }
 
     // Model for line summary
@@ -267,5 +360,21 @@ namespace WeightMaster.Services
         public int TotalGoldLeafWeight { get; set; }
         public int TotalNormalLeafWeight { get; set; }
         public int TotalWeight { get; set; }
+    }
+
+    // Unified view model for Transaction View (combines FinalTransaction and Transaction)
+    public class TransactionViewModel
+    {
+        public int Id { get; set; }
+        public string? MemberId { get; set; }
+        public string? Name { get; set; }
+        public string? LineName { get; set; }
+        public int BoxCount { get; set; }
+        public int BagCount { get; set; }
+        public int GoldLeafWeight { get; set; }
+        public int NormalLeafWeight { get; set; }
+        public int TotalWeight { get; set; }
+        public string? Date { get; set; }
+        public string Status { get; set; } = "Queue"; // "Completed" or "Queue"
     }
 }
