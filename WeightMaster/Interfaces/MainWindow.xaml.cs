@@ -2517,6 +2517,15 @@ namespace WeightMaster
             MemberTurnTablePanel_st2.Children.Clear();
             //clear all weight deduction rounds for the next id
             addedRoundList.Clear();
+
+            ////clear member wise table data and clear it's total row
+            //MemberTurnTablePanel_st1.Children.Clear();
+            //rowNBoxes_st1.Text = "0";
+            //rowNSacks_st1.Text = "0";
+            //rowGreenLeafWeights_st1.Text = "0";
+            //rowGoldenLeafWeights_st1.Text = "0";
+            //rowTotalLeafWeights_st1.Text = "0"; //only sacks and boxes deducted
+
             string memberName = "";
             try
             {
