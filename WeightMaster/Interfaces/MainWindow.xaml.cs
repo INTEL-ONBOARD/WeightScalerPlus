@@ -994,9 +994,12 @@ namespace WeightMaster
             ApplicationSettingsButtonRightArrow.Visibility = Visibility.Hidden;
             GeneralSettingsButtonRightArrow.Visibility = Visibility.Visible;
 
-            GeneralSettingsSection.Visibility = Visibility.Visible;
+            // Show/hide sections
+            GeneralSettingsSection.Visibility = Visibility.Hidden;
             ApplicationSettingsSection.Visibility = Visibility.Hidden;
-            //Console.Beep();
+            TransactionViewSection.Visibility = Visibility.Hidden;
+            LineSummarySection.Visibility = Visibility.Hidden;
+
             HomeButton.Visibility = Visibility.Visible;
             SettingsButton.Visibility = Visibility.Collapsed;
         }
