@@ -256,6 +256,42 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        // Get line summary filtered by date
+        public async Task<List<LineSummaryModel>> GetLineSummaryByDateAsync(string date)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename != null && t.date == date)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToListAsync();
+        }
+
+        // Get line summary filtered by linename and date
+        public async Task<List<LineSummaryModel>> GetLineSummaryByLineNameAndDateAsync(string linename, string date)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.linename == linename && t.date == date)
+                .GroupBy(t => t.linename)
+                .Select(g => new LineSummaryModel
+                {
+                    LineName = g.Key!,
+                    TotalMembers = g.Select(t => t.barcode_details).Distinct().Count(),
+                    TotalBags = g.Sum(t => t.bag_count),
+                    TotalGoldLeafWeight = g.Sum(t => t.total_gold_leaf_weight),
+                    TotalNormalLeafWeight = g.Sum(t => t.actual_nomal_leaf_weight),
+                    TotalWeight = g.Sum(t => t.total_leaf_weight)
+                })
+                .ToListAsync();
+        }
+
         // Get combined transactions (Completed from FinalTransaction + Queue from Transaction)
         public async Task<List<TransactionViewModel>> GetCombinedTransactionsAsync()
         {

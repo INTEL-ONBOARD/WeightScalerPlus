@@ -1635,10 +1635,12 @@
                         <!-- Filters -->
                         <Grid Margin="36,80,36,0" Height="60" VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="250"/>
-                                <ColumnDefinition Width="20"/>
-                                <ColumnDefinition Width="250"/>
-                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="15"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1658,15 +1660,21 @@
                                 </Border>
                             </Grid>
 
+                            <!-- Date Filter -->
+                            <Grid Grid.Column="4">
+                                <TextBlock Text="Date" FontSize="14" Foreground="Black" VerticalAlignment="Top"/>
+                                <DatePicker x:Name="TransactionDatePicker" Margin="0,22,0,0" Height="35" FontSize="14" SelectedDateChanged="TransactionDatePicker_SelectedDateChanged"/>
+                            </Grid>
+
                             <!-- Search Button -->
-                            <Button Grid.Column="4" Cursor="Hand" Click="TransactionSearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                            <Button Grid.Column="6" Cursor="Hand" Click="TransactionSearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
                                 <Border Background="#2ECC71" CornerRadius="8" Padding="15,8">
                                     <TextBlock Text="Search" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
                                 </Border>
                             </Button>
 
                             <!-- Clear Button -->
-                            <Button Grid.Column="6" Cursor="Hand" Click="TransactionClearButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                            <Button Grid.Column="8" Cursor="Hand" Click="TransactionClearButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
                                 <Border Background="#E74C3C" CornerRadius="8" Padding="15,8">
                                     <TextBlock Text="Clear" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
                                 </Border>
@@ -1743,8 +1751,10 @@
                         <!-- Filters -->
                         <Grid Margin="36,80,36,0" Height="60" VerticalAlignment="Top">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="250"/>
-                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="200"/>
+                                <ColumnDefinition Width="15"/>
+                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="15"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="10"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -1756,15 +1766,21 @@
                                 <ComboBox x:Name="LineSummaryLineFilterCmb" Style="{StaticResource CustomComboBoxStyle}" Margin="0,22,0,0" FontSize="14" Height="35" VerticalContentAlignment="Center" SelectionChanged="LineSummaryLineFilterCmb_SelectionChanged"/>
                             </Grid>
 
+                            <!-- Date Filter -->
+                            <Grid Grid.Column="2">
+                                <TextBlock Text="Date" FontSize="14" Foreground="Black" VerticalAlignment="Top"/>
+                                <DatePicker x:Name="LineSummaryDatePicker" Margin="0,22,0,0" Height="35" FontSize="14" SelectedDateChanged="LineSummaryDatePicker_SelectedDateChanged"/>
+                            </Grid>
+
                             <!-- Search Button -->
-                            <Button Grid.Column="2" Cursor="Hand" Click="LineSummarySearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                            <Button Grid.Column="4" Cursor="Hand" Click="LineSummarySearchButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
                                 <Border Background="#2ECC71" CornerRadius="8" Padding="15,8">
                                     <TextBlock Text="Search" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
                                 </Border>
                             </Button>
 
                             <!-- Clear Button -->
-                            <Button Grid.Column="4" Cursor="Hand" Click="LineSummaryClearButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
+                            <Button Grid.Column="6" Cursor="Hand" Click="LineSummaryClearButton_Click" Background="Transparent" BorderThickness="0" Margin="0,22,0,0" Style="{StaticResource HoverButton}">
                                 <Border Background="#E74C3C" CornerRadius="8" Padding="15,8">
                                     <TextBlock Text="Clear" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
                                 </Border>

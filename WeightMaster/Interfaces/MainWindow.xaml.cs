@@ -4062,6 +4062,9 @@ namespace WeightMaster
             TransactionViewSection.Visibility = Visibility.Visible;
             LineSummarySection.Visibility = Visibility.Hidden;
 
+            // Set default date to today
+            TransactionDatePicker.SelectedDate = DateTime.Today;
+
             // Load line names into filter dropdown
             await LoadTransactionLineFilter();
         }
@@ -4084,6 +4087,9 @@ namespace WeightMaster
             ApplicationSettingsSection.Visibility = Visibility.Hidden;
             TransactionViewSection.Visibility = Visibility.Hidden;
             LineSummarySection.Visibility = Visibility.Visible;
+
+            // Set default date to today
+            LineSummaryDatePicker.SelectedDate = DateTime.Today;
 
             // Load line names into filter dropdown
             await LoadLineSummaryLineFilter();
@@ -4140,25 +4146,29 @@ namespace WeightMaster
 
                 var selectedLine = (TransactionLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
                 var memberId = TransactionMemberIdFilterTxt.Text?.Trim();
+                var selectedDate = TransactionDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
 
                 List<TransactionViewModel> transactions;
 
-                // Apply filters using combined data (FinalTransaction + Transaction)
-                if (!string.IsNullOrEmpty(memberId) && selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                // Get all combined transactions first
+                transactions = await finalTransactionService.GetCombinedTransactionsAsync();
+
+                // Apply line filter
+                if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
                 {
-                    transactions = await finalTransactionService.GetCombinedTransactionsByLineAndMemberAsync(selectedLine, memberId);
+                    transactions = transactions.Where(t => t.LineName == selectedLine).ToList();
                 }
-                else if (!string.IsNullOrEmpty(memberId))
+
+                // Apply member ID filter
+                if (!string.IsNullOrEmpty(memberId))
                 {
-                    transactions = await finalTransactionService.GetCombinedTransactionsByMemberIdAsync(memberId);
+                    transactions = transactions.Where(t => t.MemberId != null && t.MemberId.Contains(memberId, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
-                else if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+
+                // Apply date filter
+                if (!string.IsNullOrEmpty(selectedDate))
                 {
-                    transactions = await finalTransactionService.GetCombinedTransactionsByLineNameAsync(selectedLine);
-                }
-                else
-                {
-                    transactions = await finalTransactionService.GetCombinedTransactionsAsync();
+                    transactions = transactions.Where(t => t.Date == selectedDate).ToList();
                 }
 
                 // Clear existing rows
@@ -4283,13 +4293,25 @@ namespace WeightMaster
                 var finalTransactionService = new FinalTransactionService(_consoleHandler.GetDbContext());
 
                 var selectedLine = (LineSummaryLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var selectedDate = LineSummaryDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
 
                 List<LineSummaryModel> summaries;
 
-                // Apply filters
-                if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                // Apply filters based on line and date selection
+                bool hasLineFilter = selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine);
+                bool hasDateFilter = !string.IsNullOrEmpty(selectedDate);
+
+                if (hasLineFilter && hasDateFilter)
+                {
+                    summaries = await finalTransactionService.GetLineSummaryByLineNameAndDateAsync(selectedLine, selectedDate);
+                }
+                else if (hasLineFilter)
                 {
                     summaries = await finalTransactionService.GetLineSummaryByLineNameAsync(selectedLine);
+                }
+                else if (hasDateFilter)
+                {
+                    summaries = await finalTransactionService.GetLineSummaryByDateAsync(selectedDate);
                 }
                 else
                 {
@@ -4420,6 +4442,7 @@ namespace WeightMaster
                 TransactionLineFilterCmb.SelectedIndex = 0;
             }
             TransactionMemberIdFilterTxt.Text = "";
+            TransactionDatePicker.SelectedDate = DateTime.Today;
 
             // Clear table
             TransactionTablePanel.Children.Clear();
@@ -4431,6 +4454,15 @@ namespace WeightMaster
             TransactionTotalGold.Text = "0";
             TransactionTotalNormal.Text = "0";
             TransactionTotalWeight.Text = "0";
+        }
+
+        // Auto-search when date changes in Transaction View
+        private void TransactionDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (TransactionViewSection.Visibility == Visibility.Visible)
+            {
+                TransactionSearchButton_Click(sender, new RoutedEventArgs());
+            }
         }
 
         // Auto-search when line filter changes in Line Summary
@@ -4450,6 +4482,7 @@ namespace WeightMaster
             {
                 LineSummaryLineFilterCmb.SelectedIndex = 0;
             }
+            LineSummaryDatePicker.SelectedDate = DateTime.Today;
 
             // Clear table
             LineSummaryTablePanel.Children.Clear();
@@ -4461,6 +4494,15 @@ namespace WeightMaster
             LineSummaryTotalGold.Text = "0";
             LineSummaryTotalNormal.Text = "0";
             LineSummaryTotalWeight.Text = "0";
+        }
+
+        // Auto-search when date changes in Line Summary
+        private void LineSummaryDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (LineSummarySection.Visibility == Visibility.Visible)
+            {
+                LineSummarySearchButton_Click(sender, new RoutedEventArgs());
+            }
         }
 
 
