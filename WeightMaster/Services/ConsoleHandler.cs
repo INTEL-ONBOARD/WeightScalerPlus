@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WeightMaster.Core;
 using WeightMaster.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WeightMaster.Services
 {
@@ -28,14 +29,14 @@ namespace WeightMaster.Services
             return await _engine.UserDbValidation();
         }
 
-        public async Task<bool> ValidateEmail(String email)
+        public async Task<bool> ValidateEmail(string email)
         {
             return await _engine.VerifyEmailInDbAsync(email);
         }
 
 
         //return username or "unknown" : use this for user login 
-        public async Task<string> loginUser(String email, string password)
+        public async Task<string> loginUser(string email, string password)
         {
             return await _engine.LoginUser(email, password);
         }
@@ -66,12 +67,12 @@ namespace WeightMaster.Services
             await _engine.DumpMemberInformation();
         }
         //get member name by id - v2
-        public async Task<string> GetMemberName(String id)
+        public async Task<string> GetMemberName(string id)
         {
             return await _engine.getMemberNameById(id);
         }
         //get member nuber by id
-        public async Task<string> GetMemberNumber(String id)
+        public async Task<string> GetMemberNumber(string id)
         {
             return await _engine.getMemberNumberId(id);
         }
@@ -218,9 +219,16 @@ namespace WeightMaster.Services
         }
 
         //get all transport bills
-        public async Task<List<TransportBillBlockModel>> getAllTransportBills()
+        //public async Task<List<TransportBillBlockModel>> getAllTransportBills()
+        //{
+        //    return await _engine.getAllTransportBillsAsync();
+        //}
+
+        // get transport bills by date
+        public async Task<List<TransportBillBlockModel>> getAllTransportBills(string? date = null)   // ← note the ? for default date parameter
         {
-            return await _engine.getAllTransportBillsAsync();
+            date ??= DateTime.Today.ToString("yyyy-MM-dd");
+            return await _engine.getTransportBillsByDateAsync(date);
         }
 
         // add a transport bill
@@ -231,15 +239,28 @@ namespace WeightMaster.Services
         }
 
         // get transport bill by line name
-        public async Task<string?> getTransportBillNoByLineName(string lineName)
+        public async Task<string?> getTransportBillNoByLineName(string lineName, string date = null)
         {
-            return await _engine.GetTransportBillNumberByLineNameAsync(lineName);
+            date ??= DateTime.Today.ToString("yyyy-MM-dd");
+            return await _engine.GetTransportBillNumberByLineNameAsync(lineName, date);
         }
 
         // Get DbContext for Transaction View and Line Summary features
         public Config.AppDbContext GetDbContext()
         {
             return new Config.AppDbContext();
+        }
+
+
+        // transaction view data
+        public async Task<List<FinalTransactionBlockModel>> printTransactionByDate_trans(string date_)
+        {
+            return await _engine.getTransDataByDate(date_);
+        }
+        // transaction view data
+        public async Task<List<TransactionLogBlockModel>> printTransactionsBoxAndPendingBagsByDate_trans( string date_)
+        {
+            return await _engine.getBoxOnlyTransactions(date_);
         }
     }
 }

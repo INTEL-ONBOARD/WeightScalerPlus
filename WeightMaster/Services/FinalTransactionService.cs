@@ -180,6 +180,13 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
+        public async Task<List<FinalTransactionBlockModel>> getTransDataByDate(string date_)
+        {
+            return await _context.FinaltransactionData
+                .Where(t => t.bag_count > 0 && t.date == date_ && t.linename != "-")
+                .ToListAsync();
+        }
+
         // Get all transactions
         public async Task<List<FinalTransactionBlockModel>> GetAllTransactionsAsync()
         {
@@ -432,7 +439,7 @@ namespace WeightMaster.Services
 
             // Get data from FinalTransactionData filtered by linename and date (no box_count in this table)
             var finalData = await _context.FinaltransactionData
-                .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details))
+                .Where(t => t.linename == linename && t.date == date && !string.IsNullOrEmpty(t.barcode_details) && t.linename != "-")
                 .Select(t => new { t.linename, t.barcode_details, box_count = 0, t.bag_count, t.total_gold_leaf_weight, t.actual_nomal_leaf_weight, t.total_leaf_weight, t.water, t.morapuwata, t.thambimata, t.reject })
                 .ToListAsync();
 

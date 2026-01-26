@@ -52,18 +52,18 @@ namespace WeightMaster.Services
             await _context.SaveChangesAsync();
         }
 
-        // get transport bill by date
+        // get transport bills by date
         public async Task<List<Models.TransportBillBlockModel>> GetTransportBillsByDateAsync(string date)
         {
             var bills = _context.TransportBill.Where(b => b.dateCreated == date).ToList();
             return await Task.FromResult(bills);
         }
 
-
-        public async Task<string?> GetTransportBillNoByLineNameAsync(string lineName)
+        // get the latest transport bill number by line name and date
+        public async Task<string?> GetTransportBillNoByLineNameAsync(string lineName, string date)
         {
             var billNo = await _context.TransportBill
-                .Where(b => b.lineName == lineName)
+                .Where(b => b.lineName == lineName && b.dateCreated == date)
                 .OrderByDescending(b => b.Id)   // newest by highest Id
                 .Select(b => b.billNo)
                 .FirstOrDefaultAsync();

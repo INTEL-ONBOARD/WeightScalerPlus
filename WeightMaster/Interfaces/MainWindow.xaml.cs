@@ -16,6 +16,7 @@ using System.Windows.Documents;
 using System.Windows.Shapes;
 using WeightMaster.utils;
 using WeightMaster.Config;
+using System.Data;
 
 
 namespace WeightMaster
@@ -2431,10 +2432,23 @@ namespace WeightMaster
 
                 // clear the linewise table to repopulate
                 LineTablePanel_st1.Children.Clear();
-                //updating the linewise table to show the confirmed transaction
+                //updating the linewise table to show the confirmed transaction by member id
                 try
                 {
-                    var roundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedValue.ToString());
+                    List<TransactionLogBlockModel> roundData = null;
+                    //if empty string, include full list
+                    if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
+                    {
+                        //returns the full list
+                        roundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedItem.ToString());
+                    }
+                    //if not empty string, filter list by barcode details string
+                    else
+                    {
+                        roundData = null;
+                        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedItem.ToString());
+                        roundData = tempRoundData.Where(t => t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString()).ToList();
+                    }
                     if (roundData.Any())
                     {
                         // to assign into total values row
@@ -2447,6 +2461,7 @@ namespace WeightMaster
                         // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
                         var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
 
+                        //populate lines by barcode
                         foreach (var transaction in roundData)
                         {
                             // normalize barcode key and guard against null
@@ -2462,7 +2477,7 @@ namespace WeightMaster
 
                             int roundNo = currentCount;
 
-                            // create row — ensure you pass strings if your constructor expects strings
+                            // create row
                             Station1LineTableRow lr1 = new Station1LineTableRow(
                                 roundNo.ToString(),
                                 barcodeKey,
@@ -4054,10 +4069,30 @@ namespace WeightMaster
                 }
                 try
                 {
+                    List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
+                    List<TransactionLogBlockModel> transactions_completed_st2 = null;
+                    string memberId_st2 = barcodeTxt_st2.Text.PadLeft(5, '0');
                     CustomerCompletionRowPanel.Children.Clear();
+                    //MessageBox.Show("cleared all records");
                     //shows the table rows for bags waiting to be completed in stations 02
-                    var transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
-                    var transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                    if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
+                    {
+                        //MessageBox.Show("getting all records");
+                        transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                        transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                    }
+                    else
+                    {
+                        //MessageBox.Show("getting filtered records");
+                        transactions_notCompleted_st2 = null;
+                        transactions_completed_st2 = null;
+                        //show only for the current member id/barcode
+                        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
+                        transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+                        List<TransactionLogBlockModel> tempRoundData_completed = await _consoleHandler.getCompletedDataByFilter(lineName);
+                        transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+
+                    }
 
                     if (transactions_notCompleted_st2 != null)
                     {
@@ -4274,7 +4309,7 @@ namespace WeightMaster
             }
         }
 
-        private async void TransactionSearchButton_Click(object sender, RoutedEventArgs e)
+        private async void TransactionSearchButton_Click2(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -4350,6 +4385,114 @@ namespace WeightMaster
             }
         }
 
+        private async void TransactionSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            //filtering parameters for table data
+            var selectedLine = (TransactionLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
+            var memberId = TransactionMemberIdFilterTxt.Text?.Trim();
+            var selectedDate = TransactionDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+
+            try
+            {
+                //fetch data from both tables
+                List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.printTransactionByDate_trans(selectedDate);
+                //MessageBox.Show("number of rows found in "+oldLineReportData.Count());
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.printTransactionsBoxAndPendingBagsByDate_trans(selectedDate);
+                //MessageBox.Show("number of rows found in " + boxReportData.Count());
+                //merge data and finalize object list to populate the table
+                List<FinalTransactionBlockModel> transactions = BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
+
+                // Apply line filter
+                if (selectedLine != "All Lines" && !string.IsNullOrEmpty(selectedLine))
+                {
+                    transactions = transactions.Where(t => t.linename == selectedLine).ToList();
+                }
+
+                // Apply member ID filter
+                if (!string.IsNullOrEmpty(memberId))
+                {
+                    transactions = transactions.Where(t => t.barcode_details != null && t.barcode_details.Contains(memberId, StringComparison.OrdinalIgnoreCase)).ToList();
+                }
+
+                // Apply date filter
+                if (!string.IsNullOrEmpty(selectedDate))
+                {
+                    transactions = transactions.Where(t => t.date == selectedDate).ToList();
+                }
+
+                // Clear existing rows
+                TransactionTablePanel.Children.Clear();
+
+                // Initialize totals to zero
+                int indexesTotal = 0, totalBagCount = 0, totalBoxCount = 0,
+                    totalLeafWeight = 0, totalDalu = 0,
+                    totalGoldLeafWeight = 0, totalGreenLeafWeight = 0,
+                    totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0,
+                    totalBagWeight = 0, totalBoxWeight = 0;
+
+                // Populate table
+
+                if (transactions.Any())
+                {
+                    foreach (var transaction in transactions)
+                    {
+                        // create and add row
+                        var row = CreateCustomTransactionRow(transaction);
+                        TransactionTablePanel.Children.Add(row);
+
+                        //helper method to calculate box count
+                        int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
+                        if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+                        else { totalBoxCount = tempBoxWeight / 4; }
+
+                        //calculate total row values
+                        totalBagCount += transaction.bag_count;
+                        totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
+                        totalGreenLeafWeight += transaction.actual_nomal_leaf_weight;
+                        totalGoldLeafWeight += transaction.total_gold_leaf_weight;
+                        totalWater += transaction.water;
+                        totalMorapuwata += transaction.morapuwata;
+                        totalThambimata += transaction.thambimata;
+                        totalReject += transaction.reject;
+                        totalBagWeight += transaction.bag_weight;
+                        totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
+                        //used as a temp variable for now
+                        totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                                     + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                        int barcode_index = 0;
+                        if (int.TryParse(transaction.barcode_details, out barcode_index))
+                        {
+                            indexesTotal += barcode_index;
+                        }
+                        else
+                        {
+                            indexesTotal += 0;
+                        }
+                    }
+
+                    // assign total row values
+                    TransactionTotalCount.Text = $"Total: {transactions.Count}";
+                    TransactionTotalBoxes.Text = totalBoxCount.ToString();
+                    TransactionTotalBags.Text = totalBagCount.ToString();
+                    TransactionTotalNormal.Text = totalGreenLeafWeight.ToString();
+                    TransactionTotalGold.Text = totalGoldLeafWeight.ToString();
+                    TransactionTotalWeight.Text = totalLeafWeight.ToString();
+                    TransactionTotalWater.Text = totalWater.ToString();
+                    TransactionTotalMora.Text = totalMorapuwata.ToString();
+                    TransactionTotalThambi.Text = totalThambimata.ToString();
+                    TransactionTotalReject.Text = totalReject.ToString();
+                }
+                else
+                {
+                    //MessageBox.Show("list is empty to populate table");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Report error: " + ex.Message);
+            }
+        }
+
         private Border CreateTransactionRow(TransactionViewModel transaction)
         {
             // Set background color based on status
@@ -4366,72 +4509,72 @@ namespace WeightMaster
 
             // Column widths matching the XAML header: 75, 130, 90, 50, 50, 60, 65, 60, 55, 55, 60, 55, 85, 75
             var grid = new Grid { Margin = new Thickness(15, 0, 15, 0) };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(75) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(130) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(50) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(65) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(60) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(55) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(95) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(73) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            //grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(75) });
 
-            var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center };
+            var memberId = new TextBlock { Text = transaction.MemberId ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center };
             Grid.SetColumn(memberId, 0);
             grid.Children.Add(memberId);
 
-            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var name = new TextBlock { Text = transaction.Name ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(name, 1);
             grid.Children.Add(name);
 
-            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var line = new TextBlock { Text = transaction.LineName ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(line, 2);
             grid.Children.Add(line);
 
-            var boxes = new TextBlock { Text = transaction.BoxCount.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var boxes = new TextBlock { Text = transaction.BoxCount.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(boxes, 3);
             grid.Children.Add(boxes);
 
-            var bags = new TextBlock { Text = transaction.BagCount.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var bags = new TextBlock { Text = transaction.BagCount.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(bags, 4);
             grid.Children.Add(bags);
 
-            var gold = new TextBlock { Text = transaction.GoldLeafWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var gold = new TextBlock { Text = transaction.GoldLeafWeight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(gold, 5);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = transaction.NormalLeafWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var normal = new TextBlock { Text = transaction.NormalLeafWeight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 6);
             grid.Children.Add(normal);
 
-            var total = new TextBlock { Text = transaction.TotalWeight.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var total = new TextBlock { Text = transaction.TotalWeight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(total, 7);
             grid.Children.Add(total);
 
-            var water = new TextBlock { Text = transaction.Water.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var water = new TextBlock { Text = transaction.Water.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(water, 8);
             grid.Children.Add(water);
 
-            var mora = new TextBlock { Text = transaction.Morapuwata.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var mora = new TextBlock { Text = transaction.Morapuwata.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(mora, 9);
             grid.Children.Add(mora);
 
-            var thambi = new TextBlock { Text = transaction.Thambimata.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var thambi = new TextBlock { Text = transaction.Thambimata.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(thambi, 10);
             grid.Children.Add(thambi);
 
-            var reject = new TextBlock { Text = transaction.Reject.ToString(), FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var reject = new TextBlock { Text = transaction.Reject.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(reject, 11);
             grid.Children.Add(reject);
 
-            var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 10, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
-            Grid.SetColumn(date, 12);
-            grid.Children.Add(date);
+            //var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+            //Grid.SetColumn(date, 12);
+            //grid.Children.Add(date);
 
             // Status tag with color coding
             var statusColor = transaction.Status == "Completed" ? "#2ECC71" : "#F39C12"; // Green for completed, Orange for queue
@@ -4443,7 +4586,116 @@ namespace WeightMaster
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            var status = new TextBlock { Text = transaction.Status, FontSize = 9, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
+            var status = new TextBlock { Text = transaction.Status, FontSize = 17, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
+            statusBorder.Child = status;
+            Grid.SetColumn(statusBorder, 13);
+            grid.Children.Add(statusBorder);
+
+            border.Child = grid;
+            return border;
+        }
+
+        private Border CreateCustomTransactionRow(FinalTransactionBlockModel transaction)
+        {
+            //helper method to calculate box count
+            int totalBoxCount = 0;
+            int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
+            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+            else { totalBoxCount = tempBoxWeight / 4; }
+
+            // Set background color based on status
+            // completed: bag count is not zero
+            var bgColor = (transaction.bag_weight > 0) ? "#E8F5E9" : "#FFF3E0"; // Green-ish for completed, orange-ish for queue
+
+            var border = new Border
+            {
+                Height = 40,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(bgColor)),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                BorderThickness = new Thickness(0, 0, 0, 1),
+                Margin = new Thickness(0, 2, 0, 0)
+            };
+
+            // Column widths matching the XAML header: 75, 130, 90, 50, 50, 60, 65, 60, 55, 55, 60, 55, 85, 75
+            var grid = new Grid { Margin = new Thickness(15, 0, 15, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(150) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(95) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(73) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            //grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(85) });
+
+            var memberId = new TextBlock { Text = transaction.barcode_details ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center };
+            Grid.SetColumn(memberId, 0);
+            grid.Children.Add(memberId);
+
+            var name = new TextBlock { Text = transaction.name_with_initials ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            Grid.SetColumn(name, 1);
+            grid.Children.Add(name);
+
+            var line = new TextBlock { Text = transaction.linename ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            Grid.SetColumn(line, 2);
+            grid.Children.Add(line);
+
+            var boxes = new TextBlock { Text = totalBoxCount.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(boxes, 3);
+            grid.Children.Add(boxes);
+
+            var bags = new TextBlock { Text = transaction.bag_count.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 4);
+            grid.Children.Add(bags);
+
+            var gold = new TextBlock { Text = transaction.total_gold_leaf_weight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 5);
+            grid.Children.Add(gold);
+
+            var normal = new TextBlock { Text = transaction.actual_nomal_leaf_weight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 6);
+            grid.Children.Add(normal);
+
+            var total = new TextBlock { Text = transaction.total_leaf_weight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 7);
+            grid.Children.Add(total);
+
+            var water = new TextBlock { Text = transaction.water.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(water, 8);
+            grid.Children.Add(water);
+
+            var mora = new TextBlock { Text = transaction.morapuwata.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(mora, 9);
+            grid.Children.Add(mora);
+
+            var thambi = new TextBlock { Text = transaction.thambimata.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(thambi, 10);
+            grid.Children.Add(thambi);
+
+            var reject = new TextBlock { Text = transaction.reject.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(reject, 11);
+            grid.Children.Add(reject);
+
+            //var date = new TextBlock { Text = transaction.Date ?? "", FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center };
+            //Grid.SetColumn(date, 12);
+            //grid.Children.Add(date);
+
+            // Status tag with color coding
+            var statusColor = (transaction.bag_weight > 0) ? "#2ECC71" : "#F39C12"; // Green for completed, Orange for queue
+            var statusBorder = new Border
+            {
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(statusColor)),
+                CornerRadius = new CornerRadius(4),
+                Padding = new Thickness(6, 2, 6, 2),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            var status = new TextBlock { Text = (transaction.bag_weight > 0) ? "Done" : "Pending", FontSize = 17, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
             statusBorder.Child = status;
             Grid.SetColumn(statusBorder, 13);
             grid.Children.Add(statusBorder);
@@ -4543,59 +4795,59 @@ namespace WeightMaster
 
             // Column widths matching XAML: 140, 80, 70, 70, 90, 100, 100, 70, 70, 80, 70
             var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(140) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(160) });
             grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(100) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(80) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(70) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
 
-            var lineName = new TextBlock { Text = summary.LineName ?? "", FontSize = 11, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            var lineName = new TextBlock { Text = summary.LineName ?? "", FontSize = 18, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
             Grid.SetColumn(lineName, 0);
             grid.Children.Add(lineName);
 
-            var members = new TextBlock { Text = summary.TotalMembers.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var members = new TextBlock { Text = summary.TotalMembers.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(members, 1);
             grid.Children.Add(members);
 
-            var boxes = new TextBlock { Text = summary.TotalBoxes.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var boxes = new TextBlock { Text = summary.TotalBoxes.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(boxes, 2);
             grid.Children.Add(boxes);
 
-            var bags = new TextBlock { Text = summary.TotalBags.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var bags = new TextBlock { Text = summary.TotalBags.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(bags, 3);
             grid.Children.Add(bags);
 
-            var gold = new TextBlock { Text = summary.TotalGoldLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var gold = new TextBlock { Text = summary.TotalGoldLeafWeight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(gold, 4);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = summary.TotalNormalLeafWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var normal = new TextBlock { Text = summary.TotalNormalLeafWeight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 5);
             grid.Children.Add(normal);
 
-            var total = new TextBlock { Text = summary.TotalWeight.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var total = new TextBlock { Text = summary.TotalWeight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(total, 6);
             grid.Children.Add(total);
 
-            var water = new TextBlock { Text = summary.TotalWater.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var water = new TextBlock { Text = summary.TotalWater.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(water, 7);
             grid.Children.Add(water);
 
-            var mora = new TextBlock { Text = summary.TotalMorapuwata.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var mora = new TextBlock { Text = summary.TotalMorapuwata.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(mora, 8);
             grid.Children.Add(mora);
 
-            var thambi = new TextBlock { Text = summary.TotalThambimata.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var thambi = new TextBlock { Text = summary.TotalThambimata.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(thambi, 9);
             grid.Children.Add(thambi);
 
-            var reject = new TextBlock { Text = summary.TotalReject.ToString(), FontSize = 11, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            var reject = new TextBlock { Text = summary.TotalReject.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
             Grid.SetColumn(reject, 10);
             grid.Children.Add(reject);
 
@@ -4725,11 +4977,24 @@ namespace WeightMaster
             btnSelectDate.Visibility = Visibility.Collapsed;
         }
 
-        private void BillDateCalendar_settings_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
+        private async void BillDateCalendar_settings_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
             if (billDateCalendar.SelectedDate.HasValue)
             {
-                txtBillDate_settings.Text = billDateCalendar.SelectedDate.Value.ToString("yyyy-MM-dd");
+                string date = billDateCalendar.SelectedDate.Value.ToString("yyyy-MM-dd");
+                txtBillDate_settings.Text = date;
+
+                //load transport bills data to table
+                var bills = await _consoleHandler.getAllTransportBills(date);
+                
+                
+                CustomerBillRowPanel.Children.Clear();
+                foreach (TransportBillBlockModel bill in bills)
+                {
+                    int idx = bills.IndexOf(bill) + 1;
+                    CustomerBillTableRow cr1 = new CustomerBillTableRow(idx.ToString(), bill.billNo, bill.lineName);
+                    CustomerBillRowPanel.Children.Add(cr1);
+                }
 
                 billDateCalendar.Visibility = Visibility.Collapsed;
                 btnSelectDate.Visibility = Visibility.Visible;

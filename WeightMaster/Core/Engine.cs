@@ -752,6 +752,43 @@ namespace WeightMaster.Core
                 return new List<FinalTransactionBlockModel>();
             }
         }
+
+        public async Task<List<FinalTransactionBlockModel>> getTransDataByDate(string date_)
+        {
+            try
+            {
+                var transactionService = new FinalTransactionService(new AppDbContext());
+                var data = await transactionService.getTransDataByDate(date_);
+
+                //System.Diagnostics.Debug.WriteLine("===== Print data");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
+                return new List<FinalTransactionBlockModel>();
+            }
+        }
+
+        public async Task<List<TransactionLogBlockModel>> getBoxOnlyTransactions(string date_)
+        {
+            try
+            {
+                var transactionService = new TransactionService(new AppDbContext());
+                var data = await transactionService.getBoxesAndPendingBagsOnly(date_);
+
+                //System.Diagnostics.Debug.WriteLine($"Filtered transactions for lineName: {lineName} and date: {date} on today's date retrieved successfully!");
+
+                return data;
+            }
+            catch (Exception ex)
+            {
+                //System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName} and bardatecode {date}: {ex.Message}");
+                return new List<TransactionLogBlockModel>();
+            }
+        }
+
         //new
         public async Task getMemberData()
         {
@@ -1113,13 +1150,14 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<string?> GetTransportBillNumberByLineNameAsync(string lineName)
+        public async Task<string?> GetTransportBillNumberByLineNameAsync(string lineName, string date = null)
         {
+            date ??= DateTime.Today.ToString("yyyy-MM-dd");
             try
             {
                 using var context = new AppDbContext();
                 var transportBillService = new TransportBillService(context);
-                var billNo = await transportBillService.GetTransportBillNoByLineNameAsync(lineName); // single string?
+                var billNo = await transportBillService.GetTransportBillNoByLineNameAsync(lineName, date); // single string?
                 System.Diagnostics.Debug.WriteLine($"> Found {(billNo != null ? 1 : 0)} bill number(s) for line: {lineName}");
                 return billNo;
             }

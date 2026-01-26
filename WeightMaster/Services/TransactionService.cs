@@ -393,6 +393,30 @@ namespace WeightMaster.Services
             return results;
         }
 
+        public async Task<List<TransactionLogBlockModel>> getBoxesAndPendingBagsOnly(string date)
+        {
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            var results = await _context.transactionData
+                .Where(t => excludedIds.Contains(t.Id)
+                            && t.date == date
+)
+                .ToListAsync();
+
+            System.Diagnostics.Debug.WriteLine($"[getCustomData] Returning {results.Count} results:");
+            foreach (var item in results)
+            {
+                System.Diagnostics.Debug.WriteLine(
+                    $"[getCustomData] ID={item.Id}, Line={item.linename}, Date={item.date}, BoxCount={item.box_count}, BagCount={item.bag_count}"
+                );
+            }
+
+            return results;
+        }
+
 
     }
 }
