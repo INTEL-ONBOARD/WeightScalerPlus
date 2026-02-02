@@ -10,7 +10,8 @@ namespace WeightMaster.Models
     {
         public int Id { get; set; }
         public string? linename { get; set; }
-        //public string? date { get; set; }
+        
+        public string? date { get; set; }
 
         public int box_count { get; set; } = 0;
         public int bag_count { get; set; } = 0;

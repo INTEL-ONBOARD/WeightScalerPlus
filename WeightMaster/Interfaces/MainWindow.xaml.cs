@@ -2836,7 +2836,7 @@ namespace WeightMaster
                     {
                         foreach (var transaction in transactions_notCompleted_st2)
                         {
-                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                             CustomerCompletionRowPanel.Children.Add(cctr4);
                             System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
 
@@ -4072,7 +4072,7 @@ namespace WeightMaster
                     List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
                     List<TransactionLogBlockModel> transactions_completed_st2 = null;
                     string memberId_st2 = barcodeTxt_st2.Text.PadLeft(5, '0');
-                    CustomerCompletionRowPanel.Children.Clear();
+                    //MessageBox.Show("member id: "+memberId_st2);
                     //MessageBox.Show("cleared all records");
                     //shows the table rows for bags waiting to be completed in stations 02
                     if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
@@ -4093,7 +4093,9 @@ namespace WeightMaster
                         transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
 
                     }
-
+                    //clear existing rows for repopulation
+                    CustomerCompletionRowPanel.Children.Clear();
+                    //MessageBox.Show("table records cleared");
                     if (transactions_notCompleted_st2 != null)
                     {
                         foreach (var transaction in transactions_notCompleted_st2)
@@ -4101,6 +4103,7 @@ namespace WeightMaster
                             CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                             CustomerCompletionRowPanel.Children.Add(cctr4);
                             System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                            //MessageBox.Show("pending row added");
                         }
                     }
 
@@ -4112,6 +4115,7 @@ namespace WeightMaster
                             CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                             CustomerCompletionRowPanel.Children.Add(cctr4);
                             System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                            //MessageBox.Show("completed row added");
                         }
                     }
                 }
@@ -4704,7 +4708,192 @@ namespace WeightMaster
             return border;
         }
 
+
+        // fix this api call
+
         private async void LineSummarySearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var selectedLine = (LineSummaryLineFilterCmb.SelectedItem as ComboBoxItem)?.Content?.ToString();
+                var selectedDate = LineSummaryDatePicker.SelectedDate?.ToString("yyyy-MM-dd");
+
+                List<DailyReportRowBlockModel> dailyReportData = new List<DailyReportRowBlockModel>();
+
+                //get all lines to fetch data seperately
+                List<LineBlockModel> lines = null;
+                lines = await _consoleHandler.getLineMasterData();
+                int dailyId = 1;
+                foreach (var lineMaster in lineMasterData)
+                {
+                    //get a single line with multiple rows
+                    List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineMaster.LineName, selectedDate);
+                    List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineMaster.LineName, selectedDate);
+                    List<FinalTransactionBlockModel> lineReportData =
+                        BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
+
+
+                    //create an obj per each line of the daily report
+                    DailyReportRowBlockModel lineRow = new DailyReportRowBlockModel();
+                    //assgin non-numeric vals using the first row before summing up
+                    //currentMemberDetailsList_st2[0].linename;
+                    lineRow.Id = dailyId;
+                    lineRow.linename = lineMaster.LineName;
+                    //MessageBox.Show(lineMaster.LineName);
+                    //sum up only numbers through the loop to a single row
+                    foreach (var tRow in lineReportData)
+                    {
+                        int totalBoxCount = 0;
+                        int tempBoxWeight = ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight);
+
+                        if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
+                        else { totalBoxCount = tempBoxWeight / 4; }
+
+                        lineRow.box_count += totalBoxCount;
+                        lineRow.bag_count += tRow.bag_count;
+                        lineRow.maximum_nomal_leaf_weight += tRow.maximum_nomal_leaf_weight;
+                        lineRow.total_leaf_weight += tRow.total_leaf_weight;
+                        lineRow.actual_nomal_leaf_weight += tRow.actual_nomal_leaf_weight;
+                        lineRow.total_gold_leaf_weight += tRow.total_gold_leaf_weight;
+                        lineRow.water += tRow.water;
+                        lineRow.morapuwata += tRow.morapuwata;
+                        lineRow.thambimata += tRow.thambimata;
+                        lineRow.reject += tRow.reject;
+                        lineRow.bag_weight += tRow.bag_weight;
+                        lineRow.box_weight += tempBoxWeight; // Use the calculated box weight
+                        lineRow.final_green_leaf_count += tRow.final_green_leaf_count;
+                        lineRow.final_gold_leaf_count += tRow.final_gold_leaf_count;
+                        lineRow.real_value += tRow.real_value;
+                    }
+                    //add that row to the daily report row list
+                    dailyReportData.Add(lineRow);
+
+                    dailyId++;
+                }
+                dailyId = 1;
+
+                // Clear existing rows
+                LineSummaryTablePanel.Children.Clear();
+
+                // Calculate totals
+                int totalMembers = 0, totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalWater = 0, totalMora = 0, totalThambi = 0, totalReject = 0;
+
+                // Populate table
+                foreach (var summary in dailyReportData)
+                {
+                    var row = CreateLineSummaryRow(summary);
+                    LineSummaryTablePanel.Children.Add(row);
+
+                    //totalMembers += summary.TotalMembers;
+                    totalBoxes += summary.box_count;
+                    totalBags += summary.bag_count;
+                    totalGold += summary.total_gold_leaf_weight;
+                    totalNormal += summary.total_leaf_weight;
+                    totalWeight += summary.total_leaf_weight;
+                    totalWater += summary.water;
+                    totalMora += summary.morapuwata;
+                    totalThambi += summary.thambimata;
+                    totalReject += summary.reject;
+                }
+
+                // Update summary
+                //LineSummaryTotalLines.Text = $"Total Lines: {summaries.Count}";
+                LineSummaryTotalMembers.Text = totalMembers.ToString();
+                LineSummaryTotalBoxes.Text = totalBoxes.ToString();
+                LineSummaryTotalBags.Text = totalBags.ToString();
+                LineSummaryTotalGold.Text = totalGold.ToString();
+                LineSummaryTotalNormal.Text = totalNormal.ToString();
+                LineSummaryTotalWeight.Text = totalWeight.ToString();
+                LineSummaryTotalWater.Text = totalWater.ToString();
+                LineSummaryTotalMora.Text = totalMora.ToString();
+                LineSummaryTotalThambi.Text = totalThambi.ToString();
+                LineSummaryTotalReject.Text = totalReject.ToString();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error searching line summary: {ex.Message}");
+                MessageBox.Show($"Error loading line summary: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+
+        private Border CreateLineSummaryRow(DailyReportRowBlockModel summary)
+        {
+            var border = new Border
+            {
+                Height = 40,
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F5F5F5")),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E0E0E0")),
+                BorderThickness = new Thickness(0, 0, 0, 1),
+                Margin = new Thickness(0, 2, 0, 0)
+            };
+
+            // Column widths matching XAML: 140, 80, 70, 70, 90, 100, 100, 70, 70, 80, 70
+            var grid = new Grid { Margin = new Thickness(10, 0, 10, 0) };
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(160) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(90) });
+
+            var lineName = new TextBlock { Text = summary.linename ?? "", FontSize = 18, VerticalAlignment = VerticalAlignment.Center, TextTrimming = TextTrimming.CharacterEllipsis };
+            Grid.SetColumn(lineName, 0);
+            grid.Children.Add(lineName);
+
+            var members = new TextBlock { Text = (summary.total_leaf_weight + summary.box_weight).ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(members, 1);
+            grid.Children.Add(members);
+
+            var boxes = new TextBlock { Text = summary.box_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(boxes, 2);
+            grid.Children.Add(boxes);
+
+            var bags = new TextBlock { Text = summary.bag_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(bags, 3);
+            grid.Children.Add(bags);
+
+            var gold = new TextBlock { Text = summary.total_gold_leaf_weight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(gold, 4);
+            grid.Children.Add(gold);
+
+            var normal = new TextBlock { Text = summary.final_green_leaf_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(normal, 5);
+            grid.Children.Add(normal);
+
+            var total = new TextBlock { Text = (summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight)).ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            Grid.SetColumn(total, 6);
+            grid.Children.Add(total);
+
+            var water = new TextBlock { Text = summary.water.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(water, 7);
+            grid.Children.Add(water);
+
+            var mora = new TextBlock { Text = summary.morapuwata.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(mora, 8);
+            grid.Children.Add(mora);
+
+            var thambi = new TextBlock { Text = summary.thambimata.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(thambi, 9);
+            grid.Children.Add(thambi);
+
+            var reject = new TextBlock { Text = summary.reject.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right, Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#E74C3C")) };
+            Grid.SetColumn(reject, 10);
+            grid.Children.Add(reject);
+
+            border.Child = grid;
+            return border;
+        }
+
+
+        private async void LineSummarySearchButton_Click1(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -4747,7 +4936,7 @@ namespace WeightMaster
                 // Populate table
                 foreach (var summary in summaries)
                 {
-                    var row = CreateLineSummaryRow(summary);
+                    var row = CreateLineSummaryRow1(summary);
                     LineSummaryTablePanel.Children.Add(row);
 
                     totalMembers += summary.TotalMembers;
@@ -4782,7 +4971,7 @@ namespace WeightMaster
             }
         }
 
-        private Border CreateLineSummaryRow(LineSummaryModel summary)
+        private Border CreateLineSummaryRow1(LineSummaryModel summary)
         {
             var border = new Border
             {
@@ -5678,6 +5867,7 @@ namespace WeightMaster
         }
 
         //__________adminFrame-----------------------------------------------------------------
+        //______Report Frame____________________________________________________________________
         private void ReportCalender_admin_SelectedDatesChanged(object sender, SelectionChangedEventArgs e)
         {
             if (ReportCalender_admin.SelectedDate.HasValue)
@@ -5690,6 +5880,7 @@ namespace WeightMaster
                 reportDateTxt_admin.Text = reportDate;
             }
         }
+
 
 
         //_______Reports_______________________________________________________________________
