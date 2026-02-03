@@ -4776,7 +4776,7 @@ namespace WeightMaster
                 LineSummaryTablePanel.Children.Clear();
 
                 // Calculate totals
-                int totalMembers = 0, totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalWeight = 0;
+                int totalWeight = 0, totalBoxes = 0, totalBags = 0, totalGold = 0, totalNormal = 0, totalNet = 0;
                 int totalWater = 0, totalMora = 0, totalThambi = 0, totalReject = 0;
 
                 // Populate table
@@ -4785,12 +4785,12 @@ namespace WeightMaster
                     var row = CreateLineSummaryRow(summary);
                     LineSummaryTablePanel.Children.Add(row);
 
-                    //totalMembers += summary.TotalMembers;
+                    totalWeight += summary.total_leaf_weight + summary.box_weight;
                     totalBoxes += summary.box_count;
                     totalBags += summary.bag_count;
                     totalGold += summary.total_gold_leaf_weight;
-                    totalNormal += summary.total_leaf_weight;
-                    totalWeight += summary.total_leaf_weight;
+                    totalNormal += summary.actual_nomal_leaf_weight;
+                    totalNet += summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight);
                     totalWater += summary.water;
                     totalMora += summary.morapuwata;
                     totalThambi += summary.thambimata;
@@ -4799,12 +4799,12 @@ namespace WeightMaster
 
                 // Update summary
                 //LineSummaryTotalLines.Text = $"Total Lines: {summaries.Count}";
-                LineSummaryTotalMembers.Text = totalMembers.ToString();
+                LineSummaryTotalMembers.Text = totalWeight.ToString();
                 LineSummaryTotalBoxes.Text = totalBoxes.ToString();
                 LineSummaryTotalBags.Text = totalBags.ToString();
                 LineSummaryTotalGold.Text = totalGold.ToString();
                 LineSummaryTotalNormal.Text = totalNormal.ToString();
-                LineSummaryTotalWeight.Text = totalWeight.ToString();
+                LineSummaryTotalWeight.Text = totalNet.ToString();
                 LineSummaryTotalWater.Text = totalWater.ToString();
                 LineSummaryTotalMora.Text = totalMora.ToString();
                 LineSummaryTotalThambi.Text = totalThambi.ToString();
@@ -4864,7 +4864,7 @@ namespace WeightMaster
             Grid.SetColumn(gold, 4);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = summary.final_green_leaf_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            var normal = new TextBlock { Text = summary.actual_nomal_leaf_weight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 5);
             grid.Children.Add(normal);
 

@@ -1860,7 +1860,7 @@
                                                 <ColumnDefinition Width="90"/>
                                                 <ColumnDefinition Width="90"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0" x:Name="LineSummaryTotalLines" Text="Total Lines: 0" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" Foreground="#333"/>
+                                            <TextBlock Grid.Column="0" x:Name="LineSummaryTotalLines" Text="Total Lines: 0" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" Foreground="#333" Visibility="Hidden"/>
                                             <TextBlock Grid.Column="1" x:Name="LineSummaryTotalMembers" Text="0" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
                                             <TextBlock Grid.Column="2" x:Name="LineSummaryTotalBoxes" Text="0" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
                                             <TextBlock Grid.Column="3" x:Name="LineSummaryTotalBags" Text="0" FontSize="17" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#0078D7"/>
