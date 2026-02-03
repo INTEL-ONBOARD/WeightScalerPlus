@@ -944,11 +944,14 @@ namespace WeightMaster.Core
                             }
                             else
                             {
-                                await postStatusService.UpdateStatusByPostIdAsync(model.id, false);
-
+                                // If sync fails, stop the loop to prevent infinite retries of the same record
+                                // The record remains Status=false and will be retried next time cloudSync is called
+                                System.Diagnostics.Debug.WriteLine($"======> Sync failed for Post ID: {model.id}. Stopping sync batch.");
+                                return false; 
                             }
                         }
                     }
+                    // Loop will continue only if there are more items AND the last one was successful
                 } while (isAvailable);
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
                 return true;
@@ -1067,6 +1070,13 @@ namespace WeightMaster.Core
             }
             catch (HttpRequestException ex)
             {
+                 // Check for 409 Conflict (Duplicate) - Treat as Success
+                if (ex.StatusCode == System.Net.HttpStatusCode.Conflict)
+                {
+                    System.Diagnostics.Debug.WriteLine("> Duplicate record found (409). Treating as success.");
+                    return true;
+                }
+
                 System.Diagnostics.Debug.WriteLine($"> HTTP Error: {ex.Message}");
 
                 if (ex.Data != null)
