@@ -1304,7 +1304,7 @@ namespace WeightMaster
 
             //get transport bill by line name
             var transportBill = await _consoleHandler.getTransportBillNoByLineName(searchLineName);
-            billNoTxt_st1.Text = transportBill ?? "-";
+            billNoTxt_st1.Text = transportBill ?? "";
 
             if (result != null)
             {
@@ -4058,71 +4058,74 @@ namespace WeightMaster
                 //acceptedSackWeightTxt_st2.Text = "";
 
                 //update the customer completion table after an update based on Line Name
-                string lineName = "";
-                if (lineNameCmb_st2.SelectedValue != null)
-                {
-                    lineName = lineNameCmb_st2.SelectedValue.ToString();
-                }
-                else
-                {
-                    lineName = "";
-                }
-                try
-                {
-                    List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
-                    List<TransactionLogBlockModel> transactions_completed_st2 = null;
-                    string memberId_st2 = barcodeTxt_st2.Text.PadLeft(5, '0');
-                    //MessageBox.Show("member id: "+memberId_st2);
-                    //MessageBox.Show("cleared all records");
-                    //shows the table rows for bags waiting to be completed in stations 02
-                    if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
-                    {
-                        //MessageBox.Show("getting all records");
-                        transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
-                        transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
-                    }
-                    else
-                    {
-                        //MessageBox.Show("getting filtered records");
-                        transactions_notCompleted_st2 = null;
-                        transactions_completed_st2 = null;
-                        //show only for the current member id/barcode
-                        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
-                        transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
-                        List<TransactionLogBlockModel> tempRoundData_completed = await _consoleHandler.getCompletedDataByFilter(lineName);
-                        transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+                //string lineName = "";
+                //if (lineNameCmb_st2.SelectedValue != null)
+                //{
+                //    lineName = lineNameCmb_st2.SelectedValue.ToString();
+                //}
+                //else
+                //{
+                //    lineName = "";
+                //}
+                //try
+                //{
+                //    List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
+                //    List<TransactionLogBlockModel> transactions_completed_st2 = null;
+                //    string memberId_st2 = barcodeTxt_st2.Text.PadLeft(5, '0');
+                //    //MessageBox.Show("member id: "+memberId_st2);
+                //    //MessageBox.Show("cleared all records");
+                //    //shows the table rows for bags waiting to be completed in stations 02
+                //    if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
+                //    {
+                //        //MessageBox.Show("getting all records");
+                //        transactions_notCompleted_st2 = await _consoleHandler.getDataByFilter(lineName);
+                //        transactions_completed_st2 = await _consoleHandler.getCompletedDataByFilter(lineName);
+                //    }
+                //    else
+                //    {
+                //        //MessageBox.Show("getting filtered records");
+                //        transactions_notCompleted_st2 = null;
+                //        transactions_completed_st2 = null;
+                //        //show only for the current member id/barcode
+                //        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineName);
+                //        transactions_notCompleted_st2 = tempRoundData.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
+                //        List<TransactionLogBlockModel> tempRoundData_completed = await _consoleHandler.getCompletedDataByFilter(lineName);
+                //        transactions_completed_st2 = tempRoundData_completed.Where(t => t.barcode_details == memberId_st2 || t.barcode_details == barcodeTxt_st2.ToString()).ToList();
 
-                    }
-                    //clear existing rows for repopulation
-                    CustomerCompletionRowPanel.Children.Clear();
-                    //MessageBox.Show("table records cleared");
-                    if (transactions_notCompleted_st2 != null)
-                    {
-                        foreach (var transaction in transactions_notCompleted_st2)
-                        {
-                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                            CustomerCompletionRowPanel.Children.Add(cctr4);
-                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
-                            //MessageBox.Show("pending row added");
-                        }
-                    }
+                //    }
+                //    //clear existing rows for repopulation
+                //    CustomerCompletionRowPanel.Children.Clear();
+                //    //MessageBox.Show("table records cleared");
+                //    if (transactions_notCompleted_st2 != null)
+                //    {
+                //        foreach (var transaction in transactions_notCompleted_st2)
+                //        {
+                //            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                //            CustomerCompletionRowPanel.Children.Add(cctr4);
+                //            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                //            //MessageBox.Show("pending row added");
+                //        }
+                //    }
 
-                    //shows the table rows for bags that have completed weighting in stations 02
-                    if (transactions_completed_st2 != null)
-                    {
-                        foreach (var transaction in transactions_completed_st2)
-                        {
-                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
-                            CustomerCompletionRowPanel.Children.Add(cctr4);
-                            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
-                            //MessageBox.Show("completed row added");
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine("customer completion tbl population: " + ex.Message);
-                }
+                //    //shows the table rows for bags that have completed weighting in stations 02
+                //    if (transactions_completed_st2 != null)
+                //    {
+                //        foreach (var transaction in transactions_completed_st2)
+                //        {
+                //            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                //            CustomerCompletionRowPanel.Children.Add(cctr4);
+                //            System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+                //            //MessageBox.Show("completed row added");
+                //        }
+                //    }
+                //}
+                //catch (Exception ex)
+                //{
+                //    System.Diagnostics.Debug.WriteLine("customer completion tbl population: " + ex.Message);
+                //}
+
+                // to trigger table repopulation through barcode text change
+                barcodeTxt_st2.Text = "";
             }
             else
             {

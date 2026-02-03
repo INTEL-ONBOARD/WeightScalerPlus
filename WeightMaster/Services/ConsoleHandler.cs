@@ -234,6 +234,10 @@ namespace WeightMaster.Services
         // add a transport bill
         public async Task<bool> addTransportBill(TransportBillBlockModel newBill)
         {
+            if(newBill == null || newBill.billNo == null || newBill.billNo == "" || newBill.billNo == "-") 
+            {
+                return true;
+            }
             return await _engine.addTransportBillAsync(newBill);
 
         }
