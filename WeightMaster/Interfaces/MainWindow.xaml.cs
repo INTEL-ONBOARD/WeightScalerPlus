@@ -3239,8 +3239,8 @@ namespace WeightMaster
         //clear button st2
         private void clearBtn_st2_Clicked(object sender, RoutedEventArgs e)
         {
-            if (currentMemberDetails_st2 == null) { MessageBox.Show("member details is null"); }
-            if (memberHashMap_st2 == null) { MessageBox.Show("member hash map is null"); }
+            //if (currentMemberDetails_st2 == null) { MessageBox.Show("member details is null"); }
+            //if (memberHashMap_st2 == null) { MessageBox.Show("member hash map is null"); }
             string memberId = currentMemberDetails_st2?.barcode_details;
 
             //clear any rounds if there are any
