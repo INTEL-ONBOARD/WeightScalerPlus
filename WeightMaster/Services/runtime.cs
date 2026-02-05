@@ -16,6 +16,8 @@ namespace WeightMaster.Services
         private MainWindow window;
         private bool soundTrigger = false;
         private bool soundTriggerMax = false;
+        private DateTime lastDataReceived = DateTime.MinValue;
+        private bool isScaleConnected = false;
         public Runtime(MainWindow win, string file)
         {
             this.window = win;
@@ -105,6 +107,7 @@ namespace WeightMaster.Services
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             {
                 System.Diagnostics.Debug.WriteLine($"Error: File not found at {filePath}");
+                UpdateScaleConnectionStatus(false);
                 return;  // Exit if the file doesn't exist
             }
 
@@ -144,7 +147,11 @@ namespace WeightMaster.Services
                 {
                     Interval = TimeSpan.FromMilliseconds(500)
                 };
-                readTimer.Tick += (s, e) => ReadFile();
+                readTimer.Tick += (s, e) =>
+                {
+                    ReadFile();
+                    CheckConnectionTimeout();
+                };
             }
             readTimer.Start();
         }
@@ -179,6 +186,10 @@ namespace WeightMaster.Services
                             // System.Diagnostics.Debug.WriteLine($"> Value: {data.Value}, Stable: {data.Stable}");
                             window.weightScalerValTxt_st1.Text = data.Value.ToUpper().Replace("KG", "").Trim();
                              window.weightScalerValTxt_st2.Text = data.Value.ToUpper().Replace("KG", "").Trim();
+
+                            // Update scale connection status
+                            lastDataReceived = DateTime.Now;
+                            UpdateScaleConnectionStatus(true);
 
                             if (data.Stable.Equals("true"))
                             {
@@ -262,6 +273,58 @@ namespace WeightMaster.Services
         {
             fileWatcher?.Dispose();
             readTimer?.Stop();
+        }
+
+        /// <summary>
+        /// Updates the scale connection status indicator on both stations.
+        /// </summary>
+        private void UpdateScaleConnectionStatus(bool connected)
+        {
+            if (isScaleConnected == connected) return; // No change
+            isScaleConnected = connected;
+
+            try
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    var color = connected
+                        ? new SolidColorBrush(Color.FromRgb(46, 204, 113))  // Green
+                        : new SolidColorBrush(Color.FromRgb(231, 76, 60)); // Red
+
+                    var textColor = connected
+                        ? new SolidColorBrush(Color.FromRgb(46, 204, 113))
+                        : new SolidColorBrush(Color.FromRgb(153, 153, 153));
+
+                    var statusText = connected ? "Connected" : "Disconnected";
+
+                    // Update Station 1 indicator
+                    window.ScaleStatusIndicator_st1.Fill = color;
+                    window.ScaleStatusText_st1.Text = statusText;
+                    window.ScaleStatusText_st1.Foreground = textColor;
+
+                    // Update Station 2 indicator
+                    window.ScaleStatusIndicator_st2.Fill = color;
+                    window.ScaleStatusText_st2.Text = statusText;
+                    window.ScaleStatusText_st2.Foreground = textColor;
+                });
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating scale status: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Checks if the scale connection has timed out (no data for 5 seconds).
+        /// Call this periodically to detect disconnection.
+        /// </summary>
+        public void CheckConnectionTimeout()
+        {
+            if (lastDataReceived != DateTime.MinValue &&
+                (DateTime.Now - lastDataReceived).TotalSeconds > 5)
+            {
+                UpdateScaleConnectionStatus(false);
+            }
         }
     }
 }

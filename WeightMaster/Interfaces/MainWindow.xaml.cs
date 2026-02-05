@@ -31,6 +31,7 @@ namespace WeightMaster
         private String path;
         private ConsoleHandler _consoleHandler;
         public AppConfig _appConfig;
+        private ComPortService? _comPortService;
 
         private bool scalerPassedZero = false;
 
@@ -4218,6 +4219,9 @@ namespace WeightMaster
             LineSummaryButton.Opacity = 0.6;
             TransactionViewButtonRightArrow.Visibility = Visibility.Hidden;
             LineSummaryButtonRightArrow.Visibility = Visibility.Hidden;
+
+            // Load available COM ports
+            LoadAvailableComPorts();
         }
 
         private async void TransactionViewButtonClick(object sender, RoutedEventArgs e)
@@ -6870,6 +6874,208 @@ namespace WeightMaster
                 new Point(50, signY + 5)); // Adjusted to the same x-coordinate
 
         }*/
+
+        #region COM Port Settings Methods
+
+        /// <summary>
+        /// Loads available COM ports into the dropdown.
+        /// </summary>
+        private void LoadAvailableComPorts()
+        {
+            try
+            {
+                var ports = ComPortService.GetAvailablePorts();
+                ComPortComboBox.Items.Clear();
+
+                if (ports.Length == 0)
+                {
+                    ComPortComboBox.Items.Add(new ComboBoxItem { Content = "No COM ports found", IsEnabled = false });
+                    UpdateComPortStatus(false, "No COM ports available");
+                }
+                else
+                {
+                    foreach (var port in ports)
+                    {
+                        ComPortComboBox.Items.Add(new ComboBoxItem { Content = port });
+                    }
+                    UpdateComPortStatus(false, $"Found {ports.Length} port(s) - Select a port to test");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading COM ports: {ex.Message}");
+                UpdateComPortStatus(false, $"Error: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// Handles COM port selection change.
+        /// </summary>
+        private void ComPortComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (ComPortComboBox.SelectedItem is ComboBoxItem selectedItem && selectedItem.IsEnabled)
+            {
+                string portName = selectedItem.Content?.ToString() ?? "";
+                if (!string.IsNullOrEmpty(portName) && portName.StartsWith("COM"))
+                {
+                    UpdateComPortStatus(false, $"Port {portName} selected - Click 'Test Port' to verify");
+                }
+            }
+        }
+
+        /// <summary>
+        /// Refreshes the list of available COM ports.
+        /// </summary>
+        private void RefreshPortsButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAvailableComPorts();
+            ComPortDataPreview.Text = "Port list refreshed";
+        }
+
+        /// <summary>
+        /// Tests the selected COM port for connectivity and data.
+        /// </summary>
+        private async void TestPortButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (ComPortComboBox.SelectedItem is not ComboBoxItem selectedItem || !selectedItem.IsEnabled)
+            {
+                MessageBox.Show("Please select a COM port first.", "No Port Selected", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            string portName = selectedItem.Content?.ToString() ?? "";
+            if (string.IsNullOrEmpty(portName) || !portName.StartsWith("COM"))
+            {
+                return;
+            }
+
+            UpdateComPortStatus(false, $"Testing {portName}...");
+            ComPortDataPreview.Text = "Testing port, please wait...";
+
+            try
+            {
+                _comPortService ??= new ComPortService();
+                var result = await _comPortService.TestPortAsync(portName, 9600, 3000);
+
+                if (result.IsSuccess)
+                {
+                    if (result.HasData)
+                    {
+                        UpdateComPortStatus(true, $"{portName}: Connected - Receiving data");
+                        ComPortDataPreview.Text = $"Data received:\n{TruncateText(result.ReceivedData, 200)}";
+                    }
+                    else
+                    {
+                        UpdateComPortStatus(false, $"{portName}: Port opened but no data received");
+                        ComPortDataPreview.Text = "Port is accessible but no data was received within 3 seconds.\nMake sure the weight scale is connected and sending data.";
+                    }
+                }
+                else
+                {
+                    UpdateComPortStatus(false, $"{portName}: {result.Error}");
+                    ComPortDataPreview.Text = $"Error: {result.Error}";
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateComPortStatus(false, $"Test failed: {ex.Message}");
+                ComPortDataPreview.Text = $"Error: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Auto-detects which COM port has active data flowing.
+        /// </summary>
+        private async void AutoDetectPortButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateComPortStatus(false, "Auto-detecting active port...");
+            ComPortDataPreview.Text = "Scanning all ports for data, please wait...";
+
+            try
+            {
+                _comPortService ??= new ComPortService();
+
+                var ports = ComPortService.GetAvailablePorts();
+                if (ports.Length == 0)
+                {
+                    UpdateComPortStatus(false, "No COM ports found");
+                    ComPortDataPreview.Text = "No COM ports available to scan.";
+                    return;
+                }
+
+                ComPortTestResult? activePort = null;
+
+                foreach (var port in ports)
+                {
+                    ComPortDataPreview.Text = $"Testing {port}...";
+                    var result = await _comPortService.TestPortAsync(port, 9600, 2000);
+
+                    if (result.HasData)
+                    {
+                        activePort = result;
+                        break;
+                    }
+                }
+
+                if (activePort != null)
+                {
+                    // Select the active port in the dropdown
+                    for (int i = 0; i < ComPortComboBox.Items.Count; i++)
+                    {
+                        if (ComPortComboBox.Items[i] is ComboBoxItem item &&
+                            item.Content?.ToString() == activePort.PortName)
+                        {
+                            ComPortComboBox.SelectedIndex = i;
+                            break;
+                        }
+                    }
+
+                    UpdateComPortStatus(true, $"{activePort.PortName}: Active - Receiving data");
+                    ComPortDataPreview.Text = $"Found active port: {activePort.PortName}\nData received:\n{TruncateText(activePort.ReceivedData, 150)}";
+                }
+                else
+                {
+                    UpdateComPortStatus(false, "No active port found");
+                    ComPortDataPreview.Text = "Scanned all ports but none are receiving data.\nMake sure the weight scale is:\n- Connected via USB/Serial\n- Powered on\n- Sending data";
+                }
+            }
+            catch (Exception ex)
+            {
+                UpdateComPortStatus(false, $"Auto-detect failed: {ex.Message}");
+                ComPortDataPreview.Text = $"Error during auto-detection: {ex.Message}";
+            }
+        }
+
+        /// <summary>
+        /// Updates the COM port status indicator.
+        /// </summary>
+        private void UpdateComPortStatus(bool isConnected, string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ComPortStatusIndicator.Fill = isConnected
+                    ? new SolidColorBrush(Color.FromRgb(46, 204, 113))  // Green
+                    : new SolidColorBrush(Color.FromRgb(231, 76, 60)); // Red
+                ComPortStatusText.Text = message;
+                ComPortStatusText.Foreground = isConnected
+                    ? new SolidColorBrush(Color.FromRgb(46, 204, 113))
+                    : new SolidColorBrush(Color.FromRgb(102, 102, 102));
+            });
+        }
+
+        /// <summary>
+        /// Truncates text to a maximum length with ellipsis.
+        /// </summary>
+        private static string TruncateText(string text, int maxLength)
+        {
+            if (string.IsNullOrEmpty(text)) return text;
+            // Clean up the text - remove excessive whitespace and control characters
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"[\x00-\x1F]+", " ");
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"\s+", " ").Trim();
+            return text.Length <= maxLength ? text : text.Substring(0, maxLength) + "...";
+        }
+
+        #endregion
     }
 }
 
