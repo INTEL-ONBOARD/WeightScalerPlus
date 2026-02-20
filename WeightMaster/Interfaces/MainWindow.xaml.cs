@@ -1416,6 +1416,14 @@ namespace WeightMaster
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                        
+                        lineRowNBoxes_st1.Text = "0";
+                        lineRowNSacks_st1.Text = "0";
+                        lineRowGoldLeafWeights_st1.Text = "0";
+                        lineRowNormalLeafWeights_st1.Text = "0";
+                        lineRowTotalLeafWeights_st1.Text = "0";
+                        
+                        UpdateAllLinesTotalRow_st1();
                     }
 
                 }
