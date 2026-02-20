@@ -710,7 +710,7 @@
                     <!--Station1 line-wise Table-->
                     <Grid>
                         <!--Line-wise Header Row -->
-                        <Grid Background="Transparent" Margin="24,10,0,342">
+                        <Grid Background="Transparent" Margin="24,10,0,10">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="100" />
                                 <ColumnDefinition Width="70" />
@@ -728,27 +728,52 @@
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="5" Margin="5" HorizontalAlignment="Right"  Text=" සාමන්‍ය දළු (KG)"/>
                             <TextBlock  FontSize="12" FontWeight="Bold" Grid.Column="6" Margin="5" HorizontalAlignment="Right" Text="මුළු දළු (KG)"/>
                         </Grid>
-                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,65">
+
+                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Margin="0,56,0,135">
                             <StackPanel x:Name="LineTablePanel_st1" Width="690">
 
                             </StackPanel>
                         </ScrollViewer>
-                        <Border Width="690" Height="50" Background="#C4C4C4" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="6" Padding="10" Margin="16,319,17,10" >
+
+                        <Border Width="690" Height="50" Background="#C4C4C4" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="6" Padding="10" Margin="16,0,17,75" VerticalAlignment="Bottom">
                             <Grid>
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
                                     <ColumnDefinition Width="110" />
-                                    <ColumnDefinition Width="110" />
-                                    <ColumnDefinition Width="120" />
-                                    <ColumnDefinition Width="120" />
-                                    <ColumnDefinition Width="110" />
-                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="115" />
+                                    <ColumnDefinition Width="100" />
                                 </Grid.ColumnDefinitions>
-                                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="15" x:Name="lineRowBarcodeNo_st1" Text="" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNSacks_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBoxes_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNormalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
-                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Text="මාර්ග තොරතුරු" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Text="" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNSacks_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNBoxes_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowGoldLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowNormalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="6" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowTotalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                            </Grid>
+                        </Border>
+
+                        <Border Width="690" Height="50" Background="#FFD700" BorderBrush="#CACACA" BorderThickness="0,0,0,2" CornerRadius="6" Padding="10" Margin="16,0,17,10" VerticalAlignment="Bottom">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="150" />
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="90" />
+                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="115" />
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox Margin="0,0,15,0" Grid.Column="0" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="11" Text="සම්පූර්ණ තොරතුරු" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="1" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="15" Text="" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="2" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAllNSacks_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="3" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAllNBoxes_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="4" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAllGoldLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="5" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAllNormalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
+                                <TextBox Margin="0,0,15,0" Grid.Column="6" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="20" x:Name="lineRowAllTotalLeafWeights_st1" Text="0" FontWeight="Bold" Foreground="#FF0078D7" />
                             </Grid>
                         </Border>
                     </Grid>
