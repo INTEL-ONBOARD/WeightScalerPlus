@@ -1202,6 +1202,72 @@ namespace WeightMaster
             rowGoldenLeafWeights_st1.Text = "0";
             rowTotalLeafWeights_st1.Text = "0"; //only sacks and boxes deducted
 
+            //populate member turn table with historical data from database
+            try
+            {
+                string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+                var result = lineMasterData.FirstOrDefault(item => item.LineName == lineNameCmb_st1.SelectedItem?.ToString());
+                
+                if (result != null && !string.IsNullOrWhiteSpace(memberId_st1) && memberId_st1 != "00000")
+                {
+                    List<TransactionLogBlockModel> memberRoundData = await _consoleHandler.getDataByFilter(result.LineName.ToString());
+                    memberRoundData = memberRoundData.Where(t => t.date == todayDate && t.barcode_details == memberId_st1).ToList();
+
+                    if (memberRoundData.Any())
+                    {
+                        int roundCounter = 1;
+                        int memberRowNBoxes = 0;
+                        int memberRowNSacks = 0;
+                        int memberRowGoldenLeafWeight = 0;
+                        int memberRowNormalLeafWeight = 0;
+                        int memberRowTotalLeafWeight = 0;
+
+                        foreach (var transaction in memberRoundData)
+                        {
+                            Station1TableRow sr1 = new Station1TableRow(
+                                roundCounter.ToString(),
+                                transaction.bag_count.ToString(),
+                                transaction.box_count.ToString(),
+                                transaction.final_gold_leaf_count.ToString(),
+                                transaction.final_green_leaf_count.ToString(),
+                                (transaction.final_gold_leaf_count + transaction.final_green_leaf_count).ToString()
+                            );
+
+                            MemberTurnTablePanel_st1.Children.Add(sr1);
+
+                            // accumulate totals for member
+                            memberRowNBoxes += transaction.box_count;
+                            memberRowNSacks += transaction.bag_count;
+                            memberRowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                            memberRowNormalLeafWeight += transaction.final_green_leaf_count;
+                            memberRowTotalLeafWeight += (transaction.final_gold_leaf_count + transaction.final_green_leaf_count);
+
+                            roundCounter++;
+                        }
+
+                        // Update member turn table totals
+                        rowNBoxes_st1.Text = memberRowNBoxes.ToString();
+                        rowNSacks_st1.Text = memberRowNSacks.ToString();
+                        rowGreenLeafWeights_st1.Text = memberRowNormalLeafWeight.ToString();
+                        rowGoldenLeafWeights_st1.Text = memberRowGoldenLeafWeight.ToString();
+                        rowTotalLeafWeights_st1.Text = memberRowTotalLeafWeight.ToString();
+
+                        // Update global totals to match database values
+                        finalWeightScalerWeight_st1 = 0; // Will be recalculated when adding new rows
+                        finalAcceptedLeafWeight_st1 = memberRowTotalLeafWeight;
+                        finalNBoxes_st1 = memberRowNBoxes;
+                        finalNSacks_st1 = memberRowNSacks;
+                        finalAvailableGoldenLeafWeight_st1 = memberRowGoldenLeafWeight;
+                        finalAvailableNormalLeafWeight_st1 = memberRowNormalLeafWeight;
+                        _currentTurn_st1 = roundCounter; // Set next round number
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error populating member turn table from database: {ex.Message}");
+            }
+
 
 
             //to repopulate the member turn table(same as in line name dropdown)
@@ -1246,51 +1312,43 @@ namespace WeightMaster
                     int rowNormalLeafWeight = 0;
                     int rowTotalLeafWeight = 0;
 
-                    // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                    var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                    // Group by member (barcode_details) to show one row per member with aggregated totals
+                    var memberGroups = roundData.GroupBy(t => t.barcode_details?.ToString() ?? string.Empty).ToList();
 
-                    foreach (var transaction in roundData)
+                    foreach (var memberGroup in memberGroups)
                     {
-                        // normalize barcode key and guard against null
-                        string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+                        string memberBarcode = memberGroup.Key;
+                        
+                        // Calculate totals and max round number for this member
+                        int memberMaxRound = memberGroup.Count(); // Number of transactions for this member
+                        int memberSacks = memberGroup.Sum(t => t.bag_count);
+                        int memberBoxes = memberGroup.Sum(t => t.box_count);
+                        int memberGoldenLeaf = memberGroup.Sum(t => t.final_gold_leaf_count);
+                        int memberNormalLeaf = memberGroup.Sum(t => t.final_green_leaf_count);
+                        int memberTotalLeaf = memberGoldenLeaf + memberNormalLeaf;
 
-                        // increment occurrence count for this barcode and use it as the round number
-                        if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                        {
-                            currentCount = 0;
-                        }
-                        currentCount++;
-                        counts[barcodeKey] = currentCount;
-
-                        int roundNo = currentCount;
-
-                        // create row — ensure you pass strings if your constructor expects strings
+                        // Create ONE row per member with their aggregated totals
                         Station1LineTableRow lr1 = new Station1LineTableRow(
-                            roundNo.ToString(),
-                            barcodeKey,
-                            transaction.bag_count.ToString(),
-                            transaction.box_count.ToString(),
-                            transaction.total_gold_leaf_weight.ToString(),
-                            transaction.actual_nomal_leaf_weight.ToString(),
-                            (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                            memberMaxRound.ToString(),
+                            memberBarcode,
+                            memberSacks.ToString(),
+                            memberBoxes.ToString(),
+                            memberGoldenLeaf.ToString(),
+                            memberNormalLeaf.ToString(),
+                            memberTotalLeaf.ToString()
                         );
 
                         LineTablePanel_st1.Children.Add(lr1);
 
-                        // accumulate totals
-                        rowNBoxes += transaction.box_count;
-                        rowNSacks += transaction.bag_count;
-                        rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                        rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                        rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                        // accumulate line totals
+                        rowNBoxes += memberBoxes;
+                        rowNSacks += memberSacks;
+                        rowGoldenLeafWeight += memberGoldenLeaf;
+                        rowNormalLeafWeight += memberNormalLeaf;
+                        rowTotalLeafWeight += memberTotalLeaf;
                     }
 
-                    // assign total column values to the total values row
-                    lineRowNBoxes_st1.Text = rowNBoxes.ToString();
-                    lineRowNSacks_st1.Text = rowNSacks.ToString();
-                    lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
-                    lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
-                    lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                    await UpdateSelectedLineTotalRow_st1(result.LineName.ToString());
 
                     // update all-lines total row
                     UpdateAllLinesTotalRow_st1();
@@ -1298,6 +1356,8 @@ namespace WeightMaster
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                    await UpdateSelectedLineTotalRow_st1(result.LineName.ToString());
+                    UpdateAllLinesTotalRow_st1();
                 }
 
             }
@@ -1364,51 +1424,43 @@ namespace WeightMaster
                         int rowNormalLeafWeight = 0;
                         int rowTotalLeafWeight = 0;
 
-                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                        // Group by member (barcode_details) to show one row per member with aggregated totals
+                        var memberGroups = roundData.GroupBy(t => t.barcode_details?.ToString() ?? string.Empty).ToList();
 
-                        foreach (var transaction in roundData)
+                        foreach (var memberGroup in memberGroups)
                         {
-                            // normalize barcode key and guard against null
-                            string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+                            string memberBarcode = memberGroup.Key;
+                            
+                            // Calculate totals and max round number for this member
+                            int memberMaxRound = memberGroup.Count(); // Number of transactions for this member
+                            int memberSacks = memberGroup.Sum(t => t.bag_count);
+                            int memberBoxes = memberGroup.Sum(t => t.box_count);
+                            int memberGoldenLeaf = memberGroup.Sum(t => t.final_gold_leaf_count);
+                            int memberNormalLeaf = memberGroup.Sum(t => t.final_green_leaf_count);
+                            int memberTotalLeaf = memberGoldenLeaf + memberNormalLeaf;
 
-                            // increment occurrence count for this barcode and use it as the round number
-                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                            {
-                                currentCount = 0;
-                            }
-                            currentCount++;
-                            counts[barcodeKey] = currentCount;
-
-                            int roundNo = currentCount;
-
-                            // create row — ensure you pass strings if your constructor expects strings
+                            // Create ONE row per member with their aggregated totals
                             Station1LineTableRow lr1 = new Station1LineTableRow(
-                                roundNo.ToString(),
-                                barcodeKey,
-                                transaction.bag_count.ToString(),
-                                transaction.box_count.ToString(),
-                                transaction.total_gold_leaf_weight.ToString(),
-                                transaction.actual_nomal_leaf_weight.ToString(),
-                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                                memberMaxRound.ToString(),
+                                memberBarcode,
+                                memberSacks.ToString(),
+                                memberBoxes.ToString(),
+                                memberGoldenLeaf.ToString(),
+                                memberNormalLeaf.ToString(),
+                                memberTotalLeaf.ToString()
                             );
 
                             LineTablePanel_st1.Children.Add(lr1);
 
-                            // accumulate totals
-                            rowNBoxes += transaction.box_count;
-                            rowNSacks += transaction.bag_count;
-                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                            // accumulate line totals
+                            rowNBoxes += memberBoxes;
+                            rowNSacks += memberSacks;
+                            rowGoldenLeafWeight += memberGoldenLeaf;
+                            rowNormalLeafWeight += memberNormalLeaf;
+                            rowTotalLeafWeight += memberTotalLeaf;
                         }
 
-                        // assign total column values to the total values row
-                        lineRowNBoxes_st1.Text = rowNBoxes.ToString();
-                        lineRowNSacks_st1.Text = rowNSacks.ToString();
-                        lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
-                        lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
-                        lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                        await UpdateSelectedLineTotalRow_st1(result.LineName.ToString());
 
                         // update all-lines total row
                         UpdateAllLinesTotalRow_st1();
@@ -1416,13 +1468,7 @@ namespace WeightMaster
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
-                        
-                        lineRowNBoxes_st1.Text = "0";
-                        lineRowNSacks_st1.Text = "0";
-                        lineRowGoldLeafWeights_st1.Text = "0";
-                        lineRowNormalLeafWeights_st1.Text = "0";
-                        lineRowTotalLeafWeights_st1.Text = "0";
-                        
+                        await UpdateSelectedLineTotalRow_st1(result.LineName.ToString());
                         UpdateAllLinesTotalRow_st1();
                     }
 
@@ -1435,6 +1481,38 @@ namespace WeightMaster
             else
             {
                 lineMasterNameLbl_st1.Text = "-";
+            }
+        }
+
+
+        private async Task UpdateSelectedLineTotalRow_st1(string lineName)
+        {
+            try
+            {
+                string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+                var lineDayTransactions = await _consoleHandler.getDataByFilter(lineName);
+                var filtered = lineDayTransactions.Where(t => t.date == todayDate).ToList();
+
+                int rowNBoxes = filtered.Sum(t => t.box_count);
+                int rowNSacks = filtered.Sum(t => t.bag_count);
+                int rowGoldenLeafWeight = filtered.Sum(t => t.final_gold_leaf_count);
+                int rowNormalLeafWeight = filtered.Sum(t => t.final_green_leaf_count);
+                int rowTotalLeafWeight = rowGoldenLeafWeight + rowNormalLeafWeight;
+
+                lineRowNBoxes_st1.Text = rowNBoxes.ToString();
+                lineRowNSacks_st1.Text = rowNSacks.ToString();
+                lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
+                lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
+                lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error updating selected line total row: {ex.Message}");
+                lineRowNBoxes_st1.Text = "0";
+                lineRowNSacks_st1.Text = "0";
+                lineRowGoldLeafWeights_st1.Text = "0";
+                lineRowNormalLeafWeights_st1.Text = "0";
+                lineRowTotalLeafWeights_st1.Text = "0";
             }
         }
 
@@ -1465,9 +1543,9 @@ namespace WeightMaster
                             {
                                 allRowNBoxes += transaction.box_count;
                                 allRowNSacks += transaction.bag_count;
-                                allRowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                                allRowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                                allRowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                                allRowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                                allRowNormalLeafWeight += transaction.final_green_leaf_count;
+                                allRowTotalLeafWeight += (transaction.final_gold_leaf_count + transaction.final_green_leaf_count);
                             }
                         }
                         catch (Exception ex)
@@ -2554,52 +2632,43 @@ namespace WeightMaster
                         int rowNormalLeafWeight = 0;
                         int rowTotalLeafWeight = 0;
 
-                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                        //populate lines by member - group by barcode_details to show one row per member with aggregated totals
+                        var memberGroups = roundData.GroupBy(t => t.barcode_details?.ToString() ?? string.Empty).ToList();
 
-                        //populate lines by barcode
-                        foreach (var transaction in roundData)
+                        foreach (var memberGroup in memberGroups)
                         {
-                            // normalize barcode key and guard against null
-                            string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
+                            string memberBarcode = memberGroup.Key;
+                            
+                            // Calculate totals and max round number for this member
+                            int memberMaxRound = memberGroup.Count(); // Number of transactions for this member
+                            int memberSacks = memberGroup.Sum(t => t.bag_count);
+                            int memberBoxes = memberGroup.Sum(t => t.box_count);
+                            int memberGoldenLeaf = memberGroup.Sum(t => t.final_gold_leaf_count);
+                            int memberNormalLeaf = memberGroup.Sum(t => t.final_green_leaf_count);
+                            int memberTotalLeaf = memberGoldenLeaf + memberNormalLeaf;
 
-                            // increment occurrence count for this barcode and use it as the round number
-                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                            {
-                                currentCount = 0;
-                            }
-                            currentCount++;
-                            counts[barcodeKey] = currentCount;
-
-                            int roundNo = currentCount;
-
-                            // create row
+                            // Create ONE row per member with their aggregated totals
                             Station1LineTableRow lr1 = new Station1LineTableRow(
-                                roundNo.ToString(),
-                                barcodeKey,
-                                transaction.bag_count.ToString(),
-                                transaction.box_count.ToString(),
-                                transaction.total_gold_leaf_weight.ToString(),
-                                transaction.actual_nomal_leaf_weight.ToString(),
-                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
+                                memberMaxRound.ToString(),
+                                memberBarcode,
+                                memberSacks.ToString(),
+                                memberBoxes.ToString(),
+                                memberGoldenLeaf.ToString(),
+                                memberNormalLeaf.ToString(),
+                                memberTotalLeaf.ToString()
                             );
 
                             LineTablePanel_st1.Children.Add(lr1);
 
-                            // accumulate totals
-                            rowNBoxes += transaction.box_count;
-                            rowNSacks += transaction.bag_count;
-                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                            // accumulate line totals
+                            rowNBoxes += memberBoxes;
+                            rowNSacks += memberSacks;
+                            rowGoldenLeafWeight += memberGoldenLeaf;
+                            rowNormalLeafWeight += memberNormalLeaf;
+                            rowTotalLeafWeight += memberTotalLeaf;
                         }
 
-                        // assign total column values to the total values row
-                        lineRowNBoxes_st1.Text = rowNBoxes.ToString();
-                        lineRowNSacks_st1.Text = rowNSacks.ToString();
-                        lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
-                        lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
-                        lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
+                        await UpdateSelectedLineTotalRow_st1(lineNameCmb_st1.SelectedItem.ToString());
 
                         // update all-lines total row
                         UpdateAllLinesTotalRow_st1();
@@ -2607,6 +2676,8 @@ namespace WeightMaster
                     else
                     {
                         System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                        await UpdateSelectedLineTotalRow_st1(lineNameCmb_st1.SelectedItem.ToString());
+                        UpdateAllLinesTotalRow_st1();
                     }
 
                 }
@@ -2889,6 +2960,10 @@ namespace WeightMaster
 
             //clear the linewise table before entering new data
             CustomerCompletionRowPanel.Children.Clear();
+            
+            // Set descriptive label for total row
+            lineRowBarcodeNoTxt_st2.Text = "මාර්ග තොරතුරු";
+            
             List<TransactionLogBlockModel> transactions_notCompleted_st2 = null;
             List<TransactionLogBlockModel> transactions_completed_st2 = null;
             try
@@ -2935,16 +3010,16 @@ namespace WeightMaster
                     {
                         foreach (var transaction in transactions_notCompleted_st2)
                         {
-                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.total_leaf_weight.ToString(), transaction.final_green_leaf_count.ToString(), transaction.final_gold_leaf_count.ToString());
                             CustomerCompletionRowPanel.Children.Add(cctr4);
                             System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
 
 
-                            // accumulate totals row values
+                            // accumulate totals row values (use final counts consistently)
                             rowNSacks += transaction.bag_count;
-                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                            rowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                            rowNormalLeafWeight += transaction.final_green_leaf_count;
+                            rowTotalLeafWeight += (int)transaction.total_leaf_weight;
                         }
                     }
 
@@ -2952,26 +3027,31 @@ namespace WeightMaster
                     {
                         foreach (var transaction in transactions_completed_st2)
                         {
-                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                            CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.total_leaf_weight.ToString(), transaction.final_green_leaf_count.ToString(), transaction.final_gold_leaf_count.ToString());
                             CustomerCompletionRowPanel.Children.Add(cctr4);
                             System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
 
-                            // accumulate totals row values
+                            // accumulate totals row values (use final counts consistently)
                             rowNSacks += transaction.bag_count;
-                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
+                            rowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                            rowNormalLeafWeight += transaction.final_green_leaf_count;
+                            rowTotalLeafWeight += (int)transaction.total_leaf_weight;
                         }
                     }
 
                     // assign total column values to the total values row
                     lineRowNBagsTxt_st2.Text = rowNSacks.ToString();
                     lineRowTotalLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
-                    lineRowAcceptedLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                    lineRowAcceptedLeafWeightsTxt_st2.Text = rowNormalLeafWeight.ToString();
                     lineRowGoldLeafWeightsTxt_st2.Text = rowGoldenLeafWeight.ToString();
                 }
                 else
                 {
+                    // Reset totals to 0 when no data
+                    lineRowNBagsTxt_st2.Text = "0";
+                    lineRowTotalLeafWeightsTxt_st2.Text = "0";
+                    lineRowAcceptedLeafWeightsTxt_st2.Text = "0";
+                    lineRowGoldLeafWeightsTxt_st2.Text = "0";
                     System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
                 }
 
@@ -3036,6 +3116,10 @@ namespace WeightMaster
             try
             {
                 CustomerCompletionRowPanel.Children.Clear();
+                
+                // Set descriptive label for total row
+                lineRowBarcodeNoTxt_st2.Text = "මාර්ග තොරතුරු";
+                
                 //shows the table rows for bags waiting to be completed in stations 02
                 //if empty string, include full list
                 if (memberId_st2.ToString() == "00000" || memberId_st2.ToString() == "" || barcodeTxt_st2.ToString() == "")
@@ -3055,13 +3139,25 @@ namespace WeightMaster
 
                 }
 
+                // to assign into total values row
+                int rowNSacks = 0;
+                int rowGoldenLeafWeight = 0;
+                int rowNormalLeafWeight = 0;
+                int rowTotalLeafWeight = 0;
+
                 if (transactions_notCompleted_st2 != null)
                 {
                     foreach (var transaction in transactions_notCompleted_st2)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.total_leaf_weight.ToString(), transaction.final_green_leaf_count.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+                        // accumulate totals row values (use final counts consistently)
+                        rowNSacks += transaction.bag_count;
+                        rowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                        rowNormalLeafWeight += transaction.final_green_leaf_count;
+                        rowTotalLeafWeight += (int)transaction.total_leaf_weight;
                     }
                 }
 
@@ -3070,11 +3166,23 @@ namespace WeightMaster
                 {
                     foreach (var transaction in transactions_completed_st2)
                     {
-                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
+                        CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.total_leaf_weight.ToString(), transaction.final_green_leaf_count.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+                        // accumulate totals row values (use final counts consistently)
+                        rowNSacks += transaction.bag_count;
+                        rowGoldenLeafWeight += transaction.final_gold_leaf_count;
+                        rowNormalLeafWeight += transaction.final_green_leaf_count;
+                        rowTotalLeafWeight += (int)transaction.total_leaf_weight;
                     }
                 }
+
+                // assign total column values to the total values row
+                lineRowNBagsTxt_st2.Text = rowNSacks.ToString();
+                lineRowTotalLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                lineRowAcceptedLeafWeightsTxt_st2.Text = rowNormalLeafWeight.ToString();
+                lineRowGoldLeafWeightsTxt_st2.Text = rowGoldenLeafWeight.ToString();
             }
             catch (Exception ex)
             {
@@ -6231,8 +6339,8 @@ namespace WeightMaster
                             //MessageBox.Show(totalBoxCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight +"/4");
                             //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
-                            totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
-                            totalGoldLeafWeight += transaction.total_gold_leaf_weight;
+                            totalLeafWeight += transaction.final_green_leaf_count + tempBoxWeight; //total weigt was fixed to include bag weight
+                            totalGoldLeafWeight += transaction.final_gold_leaf_count;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
@@ -6329,8 +6437,8 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්.", "ගෝනි(KG)", "පෙට්ටි(KG)", "සා.දළු(KG)", "රන් දළු(KG)" };
-            double[] headerPositions = { 46, 80, 200, 245, 285, 330, 400, 470, 510, 580, 640, 700, 760 };
+            string[] headers = { "අං", "සාමාජික අං", "ගෝනි(n)", "පෙට්ටි(n)", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්.", "ගෝනි(KG)", "පෙට්ටි(KG)", "සා.දළු(KG)", "රන් දළු(KG)", "මුළු බර" };
+            double[] headerPositions = { 46, 80, 200, 245, 285, 340, 400, 440, 510, 580, 640, 700, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 25, Brushes.White);
@@ -6361,21 +6469,22 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row { 50, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                //headerPositions = { 46, 80, 200, 245, 285, 330, 400, 470, 510, 580, 640, 700, 760 };
+                //headerPositions = { 46, 80, 200, 245, 285, 340, 400, 440, 510, 580, 640, 700, 760 };
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 //newly added index sum to totals
                 AddText(canvas, totals.indexSum.ToString(), fontSize, 80, yPos, rightAlign: false);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 200, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 245, yPos, rightAlign: true);
-                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 285, yPos, rightAlign: true);
-                AddText(canvas, totals.Water.ToString(), fontSize, 330, yPos, rightAlign: true);
-                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 400, yPos, rightAlign: true);
-                AddText(canvas, totals.Thambimata.ToString(), fontSize, 470, yPos, rightAlign: true);
-                AddText(canvas, totals.Reject.ToString(), fontSize, 510, yPos, rightAlign: true);
-                AddText(canvas, totals.BagWeight.ToString(), fontSize, 580, yPos, rightAlign: true);
-                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 640, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 700, yPos, rightAlign: true);
-                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 760, yPos, rightAlign: true);
+                //AddText(canvas, totals.LeafWeight.ToString(), fontSize, 285, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 285, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 340, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 400, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 440, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 510, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 580, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 640, yPos, rightAlign: true);
+                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 700, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
@@ -6470,18 +6579,20 @@ namespace WeightMaster
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
             AddText(canvas, totalBoxCount.ToString(), fontSize, positions[3], y, rightAlign: true); // Box count
-            AddText(canvas, (transaction.total_leaf_weight + tempBoxWeight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight
-            AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
-            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
-            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
-            AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
-            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
-            AddText(canvas, tempBoxWeight.ToString(), fontSize, positions[10], y, rightAlign: true); //recently added box weight
+            //AddText(canvas, (transaction.total_leaf_weight + tempBoxWeight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight
+            AddText(canvas, transaction.water.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[5], y, rightAlign: true);
+            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[6], y, rightAlign: true);
+            AddText(canvas, transaction.reject.ToString(), fontSize, positions[7], y, rightAlign: true);
+            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[8], y, rightAlign: true);
+            AddText(canvas, tempBoxWeight.ToString(), fontSize, positions[9], y, rightAlign: true); //recently added box weight
+            AddText(canvas, (transaction.final_green_leaf_count + tempBoxWeight).ToString(), fontSize, positions[10], y, rightAlign: true);
+            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[11], y, rightAlign: true);
             AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
                 transaction.morapuwata + transaction.thambimata +
                 transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[11], y, rightAlign: true);
-            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
+                fontSize, positions[12], y, rightAlign: true);
+
         }
 
         private void AddDailyTransactionRow(Canvas canvas, DailyReportRowBlockModel transaction,
@@ -6494,18 +6605,19 @@ namespace WeightMaster
             // Right-aligned numeric columns
             AddText(canvas, transaction.bag_count.ToString(), fontSize, positions[2], y, rightAlign: true);
             AddText(canvas, transaction.box_count.ToString(), fontSize, positions[3], y, rightAlign: true); // boxFix: Box count fix added
-            AddText(canvas, (transaction.total_leaf_weight + transaction.box_weight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight   
-            AddText(canvas, transaction.water.ToString(), fontSize, positions[5], y, rightAlign: true);
-            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[6], y, rightAlign: true);
-            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[7], y, rightAlign: true);
-            AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
-            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
-            AddText(canvas, transaction.box_weight.ToString(), fontSize, positions[10], y, rightAlign: true);
+            //AddText(canvas, (transaction.total_leaf_weight + transaction.box_weight).ToString(), fontSize, positions[4], y, rightAlign: true); //total weigt was fixed to include bag weight   
+            AddText(canvas, transaction.water.ToString(), fontSize, positions[4], y, rightAlign: true);
+            AddText(canvas, transaction.morapuwata.ToString(), fontSize, positions[5], y, rightAlign: true);
+            AddText(canvas, transaction.thambimata.ToString(), fontSize, positions[6], y, rightAlign: true);
+            AddText(canvas, transaction.reject.ToString(), fontSize, positions[7], y, rightAlign: true);
+            AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[8], y, rightAlign: true);
+            AddText(canvas, transaction.box_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
+            AddText(canvas, (transaction.final_green_leaf_count + transaction.box_weight).ToString(), fontSize, positions[10], y, rightAlign: true);
+            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[11], y, rightAlign: true);
             AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
                 transaction.morapuwata + transaction.thambimata +
                 transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[11], y, rightAlign: true);
-            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
+                fontSize, positions[12], y, rightAlign: true);
         }
 
         private void AddSignatureLine(Canvas canvas, string label, double x, double y)
@@ -6660,7 +6772,7 @@ namespace WeightMaster
                         {
                             totalBoxCount += transaction.box_count; // boxFix: Box count fix added
                             totalBagCount += transaction.bag_count;
-                            totalLeafWeight += transaction.total_leaf_weight + transaction.box_weight;
+                            totalLeafWeight += transaction.final_green_leaf_count + transaction.box_weight;
                             totalGoldLeafWeight += transaction.total_gold_leaf_weight;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
@@ -6744,9 +6856,9 @@ namespace WeightMaster
             yPos += 40;
 
             // Table header
-            string[] headers = { "අං.", "ප්‍රවා. මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්.", "ගෝනි(KG)", "පෙට්ටි(KG)", "සා.දළු(KG)", "රන් දළු" };
+            string[] headers = { "අං.", "ප්‍රවා. මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්.", "ගෝනි(KG)", "පෙට්ටි(KG)", "සා.දළු(KG)", "රන් දළු", "මුළු බර"};
             //double[] headerPositions = { 46, 70, 220, 270, 315, 350, 390, 460, 520, 590, 650, 710, 760 };
-            double[] headerPositions = { 46, 70, 220, 270, 315, 370, 430, 490, 530, 590, 650, 710, 760 };
+            double[] headerPositions = { 46, 70, 220, 270, 315, 370, 430, 470, 530, 590, 650, 710, 760 };
             //double[] headerPositions = { 46, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
@@ -6778,19 +6890,20 @@ namespace WeightMaster
             if (isLastPage)
             {
                 // Totals row  { 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
-                //headerPositions = { 46, 70, 220, 270, 315, 370, 430, 490, 530, 590, 650, 710, 760 };
+                //headerPositions = { 46, 70, 220, 270, 315, 370, 430, 470, 530, 590, 650, 710, 760 };
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
                 AddText(canvas, totals.BagCount.ToString(), fontSize, 220, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxCount.ToString(), fontSize, 270, yPos, rightAlign: true);
-                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
-                AddText(canvas, totals.Water.ToString(), fontSize, 370, yPos, rightAlign: true);
-                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 430, yPos, rightAlign: true);
-                AddText(canvas, totals.Thambimata.ToString(), fontSize, 490, yPos, rightAlign: true);
-                AddText(canvas, totals.Reject.ToString(), fontSize, 530, yPos, rightAlign: true);
-                AddText(canvas, totals.BagWeight.ToString(), fontSize, 590, yPos, rightAlign: true);
-                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 710, yPos, rightAlign: true);
-                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 760, yPos, rightAlign: true);
+                //AddText(canvas, totals.LeafWeight.ToString(), fontSize, 315, yPos, rightAlign: true);
+                AddText(canvas, totals.Water.ToString(), fontSize, 315, yPos, rightAlign: true);
+                AddText(canvas, totals.Morapuwata.ToString(), fontSize, 370, yPos, rightAlign: true);
+                AddText(canvas, totals.Thambimata.ToString(), fontSize, 430, yPos, rightAlign: true);
+                AddText(canvas, totals.Reject.ToString(), fontSize, 470, yPos, rightAlign: true);
+                AddText(canvas, totals.BagWeight.ToString(), fontSize, 530, yPos, rightAlign: true);
+                AddText(canvas, totals.BoxWeight.ToString(), fontSize, 590, yPos, rightAlign: true);
+                AddText(canvas, totals.LeafWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
+                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 710, yPos, rightAlign: true);
+                AddText(canvas, totals.Dalu.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
