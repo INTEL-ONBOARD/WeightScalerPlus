@@ -32,9 +32,9 @@
                 <TextBox Margin="0,0,15,0" Grid.Column="1" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="12" Text="Mr. Kulathunga" x:Name="name"/>
                 <TextBox Margin="0,0,15,0" Grid.Column="2" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="6" x:Name="sackCount"/>
                 <!--<TextBox Margin="0,0,15,0" Grid.Column="3" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="0" x:Name="remainingSackCount"/>-->
-                <TextBox Margin="0,0,15,0" Grid.Column="4" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="320kg" x:Name="totalLeafWeight"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="5" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="320kg" x:Name="acceptedLeafWeight"/>
-                <TextBox Margin="0,0,15,0" Grid.Column="6" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="200kg" x:Name="goldLeafWeight"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="3" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="320kg" x:Name="totalLeafWeight"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="4" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="320kg" x:Name="acceptedLeafWeight"/>
+                <TextBox Margin="0,0,15,0" Grid.Column="5" IsReadOnly="True"  IsEnabled="False" Background="Transparent" BorderThickness="0" Foreground="#8E8E8E" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12" Text="200kg" x:Name="goldLeafWeight"/>
             </Grid>
         </Border>
     </Button>
