@@ -6065,9 +6065,9 @@ namespace WeightMaster
                 if (printDialog.ShowDialog() == true)
                 {
                     // Initialize totals to zero
-                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, totalGoldLeafWeight = 0;
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, totalGoldLeafWeight = 0, totalNormalLeafWeight = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, indexesTotal = 0,
-                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0; //totalDalu = 0;
                     // Only calculate totals if there's data
                     if (lineReportData.Any())
                     {
@@ -6084,15 +6084,16 @@ namespace WeightMaster
                             //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
-                            totalGoldLeafWeight += transaction.total_gold_leaf_weight;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
                             totalReject += transaction.reject;
                             totalBagWeight += transaction.bag_weight;
                             totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
-                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                            //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            totalGoldLeafWeight += transaction.final_gold_leaf_count;
+                            totalNormalLeafWeight += transaction.final_green_leaf_count;
                             int barcode_index = 0;
                             if (int.TryParse(transaction.barcode_details, out barcode_index))
                             {
@@ -6135,7 +6136,7 @@ namespace WeightMaster
                                 indexesTotal,
                                 totalBagCount, totalBoxCount, totalLeafWeight, totalGoldLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
-                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
+                                totalReject, totalBagWeight, totalBoxWeight, totalNormalLeafWeight
                             ), lineName
                         );
 
@@ -6205,9 +6206,9 @@ namespace WeightMaster
                 if (printDialog.ShowDialog() == true)
                 {
                     // Initialize totals to zero
-                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, totalGoldLeafWeight = 0, indexesTotal = 0;
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, indexesTotal = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
-                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalGoldLeafWeight = 0, totalNormalLeafWeight = 0; //totalDalu = 0;
                     // Only calculate totals if there's data
                     if (lineReportData.Any())
                     {
@@ -6224,15 +6225,16 @@ namespace WeightMaster
                             //MessageBox.Show(totalBagCount + "=" + (int)Math.Floor(transaction.real_value) + "-" + transaction.maximum_nomal_leaf_weight);
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
-                            totalGoldLeafWeight += transaction.total_gold_leaf_weight;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
                             totalReject += transaction.reject;
                             totalBagWeight += transaction.bag_weight;
                             totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
-                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            totalGoldLeafWeight += transaction.final_gold_leaf_count;
+                            totalNormalLeafWeight += transaction.final_green_leaf_count;
+                            //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                            //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             int barcode_index = 0;
                             if (int.TryParse(transaction.barcode_details, out barcode_index))
                             {
@@ -6276,7 +6278,7 @@ namespace WeightMaster
                                 indexesTotal,
                                 totalBagCount, totalBoxCount, totalLeafWeight, totalGoldLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
-                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
+                                totalReject, totalBagWeight, totalBoxWeight, totalNormalLeafWeight
                             ), lineName
                         );
 
@@ -6366,8 +6368,8 @@ namespace WeightMaster
                 AddText(canvas, totals.Reject.ToString(), fontSize, 510, yPos, rightAlign: true);
                 AddText(canvas, totals.BagWeight.ToString(), fontSize, 580, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxWeight.ToString(), fontSize, 640, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 700, yPos, rightAlign: true);
-                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 760, yPos, rightAlign: true);
+                AddText(canvas, totals.totalNormalLeafWeights.ToString(), fontSize, 700, yPos, rightAlign: true);
+                AddText(canvas, totals.totalGoldLeafWeights.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
@@ -6469,11 +6471,13 @@ namespace WeightMaster
             AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
             AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
             AddText(canvas, tempBoxWeight.ToString(), fontSize, positions[10], y, rightAlign: true); //recently added box weight
-            AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
-                transaction.morapuwata + transaction.thambimata +
-                transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[11], y, rightAlign: true);
-            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
+            //old row used to show total weight after substracting deductions and bag weights.
+            //AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
+            //    transaction.morapuwata + transaction.thambimata +
+            //    transaction.reject + transaction.bag_weight)).ToString(),
+            //    fontSize, positions[11], y, rightAlign: true);
+            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
+            AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
         }
 
         private void AddDailyTransactionRow(Canvas canvas, DailyReportRowBlockModel transaction,
@@ -6493,11 +6497,13 @@ namespace WeightMaster
             AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
             AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
             AddText(canvas, transaction.box_weight.ToString(), fontSize, positions[10], y, rightAlign: true);
-            AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
-                transaction.morapuwata + transaction.thambimata +
-                transaction.reject + transaction.bag_weight)).ToString(),
-                fontSize, positions[11], y, rightAlign: true);
-            AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
+            //AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
+            //    transaction.morapuwata + transaction.thambimata +
+            //    transaction.reject + transaction.bag_weight)).ToString(),
+            //    fontSize, positions[11], y, rightAlign: true);
+            //AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
+            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
+            AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
         }
 
         private void AddSignatureLine(Canvas canvas, string label, double x, double y)
@@ -6522,30 +6528,30 @@ namespace WeightMaster
             public int BagCount { get; }
             public int BoxCount { get; }
             public int LeafWeight { get; }
-            public int GoldLeafWeight { get; }
+            public int totalGoldLeafWeights { get; }
             public int Water { get; }
             public int Morapuwata { get; }
             public int Thambimata { get; }
             public int Reject { get; }
             public int BagWeight { get; }
             public int BoxWeight { get; }
-            public int Dalu { get; }
+            public int totalNormalLeafWeights { get; }
 
-            public TotalRow(int indexSum, int bagCount, int boxCount, int leafWeight, int goldLeafWeight, int water,
-                           int morapuwata, int thambimata, int reject, int bagWeight, int boxWeight, int dalu)
+            public TotalRow(int indexSum, int bagCount, int boxCount, int leafWeight, int totGoldLeafWeight, int water,
+                           int morapuwata, int thambimata, int reject, int bagWeight, int boxWeight, int totNormLeafWeight)
             {
                 this.indexSum = indexSum;
                 BagCount = bagCount;
                 BoxCount = boxCount;
                 LeafWeight = leafWeight;
-                GoldLeafWeight = goldLeafWeight;
                 Water = water;
                 Morapuwata = morapuwata;
                 Thambimata = thambimata;
                 Reject = reject;
                 BagWeight = bagWeight;
                 BoxWeight = boxWeight;
-                Dalu = dalu;
+                totalGoldLeafWeights = totGoldLeafWeight;
+                totalNormalLeafWeights = totNormLeafWeight;
             }
         }
 
@@ -6642,9 +6648,9 @@ namespace WeightMaster
                 if (printDialog.ShowDialog() == true)
                 {
                     // Initialize totals to zero
-                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, totalGoldLeafWeight = 0;
+                    int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0, finalGoldLeafWeight = 0, finalNormalLeafWeight = 0;
                     int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0,
-                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0, totalDalu = 0;
+                        totalReject = 0, totalBagWeight = 0, totalBoxWeight = 0; //totalDalu = 0;
                     // Only calculate totals if there's data
                     if (dailyReportData.Any())
                     {
@@ -6653,15 +6659,16 @@ namespace WeightMaster
                             totalBoxCount += transaction.box_count; // boxFix: Box count fix added
                             totalBagCount += transaction.bag_count;
                             totalLeafWeight += transaction.total_leaf_weight + transaction.box_weight;
-                            totalGoldLeafWeight += transaction.total_gold_leaf_weight;
                             totalWater += transaction.water;
                             totalMorapuwata += transaction.morapuwata;
                             totalThambimata += transaction.thambimata;
                             totalReject += transaction.reject;
                             totalBagWeight += transaction.bag_weight;
                             totalBoxWeight += transaction.box_weight; // Use the box weight
-                            totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                                         + transaction.thambimata + transaction.reject + transaction.bag_weight);
+                            finalGoldLeafWeight += transaction.final_gold_leaf_count;
+                            finalNormalLeafWeight += transaction.final_green_leaf_count;
+                            //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
+                            //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
                     }
 
@@ -6689,9 +6696,9 @@ namespace WeightMaster
                             isLastPage: page == totalPages - 1,
                             totals: new TotalRow(
                                 0, //this is used in line report only
-                                totalBagCount, totalBoxCount, totalLeafWeight, totalGoldLeafWeight,
+                                totalBagCount, totalBoxCount, totalLeafWeight, finalGoldLeafWeight,
                                 totalWater, totalMorapuwata, totalThambimata,
-                                totalReject, totalBagWeight, totalBoxWeight, totalDalu
+                                totalReject, totalBagWeight, totalBoxWeight, finalNormalLeafWeight //totalDalu
                             )
                         );
 
@@ -6737,9 +6744,7 @@ namespace WeightMaster
 
             // Table header
             string[] headers = { "අං.", "ප්‍රවා. මාර්ගය", "ගෝනි(n)", "පෙට්ටි(n)", "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට", "ප්‍රතික්.", "ගෝනි(KG)", "පෙට්ටි(KG)", "සා.දළු(KG)", "රන් දළු" };
-            //double[] headerPositions = { 46, 70, 220, 270, 315, 350, 390, 460, 520, 590, 650, 710, 760 };
             double[] headerPositions = { 46, 70, 220, 270, 315, 370, 430, 490, 530, 590, 650, 710, 760 };
-            //double[] headerPositions = { 46, 100, 220, 270, 315, 360, 430, 490, 570, 650, 710, 760 };
 
             // Draw header background
             AddRectangle(canvas, 40, yPos - 5, 816 - 80, 30, Brushes.White);
@@ -6781,8 +6786,8 @@ namespace WeightMaster
                 AddText(canvas, totals.Reject.ToString(), fontSize, 530, yPos, rightAlign: true);
                 AddText(canvas, totals.BagWeight.ToString(), fontSize, 590, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
-                AddText(canvas, totals.Dalu.ToString(), fontSize, 710, yPos, rightAlign: true);
-                AddText(canvas, totals.GoldLeafWeight.ToString(), fontSize, 760, yPos, rightAlign: true);
+                AddText(canvas, totals.totalGoldLeafWeights.ToString(), fontSize, 710, yPos, rightAlign: true);  //fix to normal
+                AddText(canvas, totals.totalNormalLeafWeights.ToString(), fontSize, 760, yPos, rightAlign: true);  //fix to gold
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);
@@ -6813,174 +6818,6 @@ namespace WeightMaster
                 : integerPart;
         }
 
-
-
-
-        /*private void DrawDailyReportPage(DrawingContext dc, List<FinalTransactionBlockModel> lineReportData)
-        {
-            foreach (var transaction in lineReportData)
-            {
-                System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-            }
-
-            Typeface typeface = new Typeface("Arial");
-            double fontSize = 10;
-            Brush brush = Brushes.Black;
-            double pixelsPerDip = VisualTreeHelper.GetDpi(this).PixelsPerDip;
-            double yPos = 50;
-            double pageWidth = 816;
-
-            // Headers
-            string[] mainHeaders = {
-        "සීමාසහිත මොරවක්කොරළේ තේ නිපදවනන්ගේ සමුපකාර සමිතිය",
-        "සමූපකාර තේ කම්හල",
-    };
-            double[] headerSizes = { 14, 14 };
-
-            for (int i = 0; i < mainHeaders.Length; i++)
-            {
-                FormattedText headerText = new FormattedText(
-                    mainHeaders[i],
-                    CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight,
-                    typeface,
-                    headerSizes[i],
-                    brush,
-                    pixelsPerDip
-                );
-
-                double centerX = (pageWidth - headerText.WidthIncludingTrailingWhitespace) / 2;
-                dc.DrawText(headerText, new Point(centerX, yPos));
-                yPos += headerText.Height + 8;
-            }
-
-            yPos += 30;
-
-            // Report Issue Index
-            string issueIndex = "IDX-" + Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
-            dc.DrawText(
-                new FormattedText("Report Issue Index: " + issueIndex, CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                    typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, yPos));
-            yPos += 20;
-
-            // Date Issued
-            dc.DrawText(
-                new FormattedText("Date Issued: " + DateTime.Now.ToString("yyyy.MM.dd"), CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, yPos));
-            yPos += 40;
-
-            // Table headers
-            string[] headers = {
-        "අංකය", "සාමාජික අංකය", "ගෝනි(n)", "පෙට්ටි(n)",
-        "මුළු බර", "වතුරට", "මෝරපුවට", "තැමිණීමට",
-        "ප්‍රතික්ෂේපිත", "ගෝනි බර", "දළු බර"
-    };
-            double[] headerPositions = { 50, 110, 200, 260, 320, 380, 450, 510, 570, 640, 710 };
-
-            // Draw black background for header
-            dc.DrawRectangle(Brushes.Black, null, new Rect(40, yPos - 5, pageWidth - 80, 25));
-
-            for (int i = 0; i < headers.Length; i++)
-            {
-                dc.DrawText(
-                    new FormattedText(headers[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                        typeface, fontSize, Brushes.White, pixelsPerDip),
-                    new Point(headerPositions[i], yPos));
-            }
-
-            yPos += 25;
-
-            // Totals
-            int totalBagCount = 0, totalBoxCount = 0, totalLeafWeight = 0;
-            int totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0, totalBagWeight = 0, totalDalu = 0;
-
-            List<string[]> data = new List<string[]>();
-            foreach (var transaction in lineReportData)
-            {
-                int boxCount = transaction.bag_count > 0 ? 0 : 0;
-                int dalu = transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
-                             + transaction.thambimata + transaction.reject + transaction.bag_weight);
-
-                data.Add(new string[]
-                {
-                transaction.Id.ToString(),
-                transaction.barcode_details ?? "",
-                transaction.bag_count.ToString(),
-                boxCount.ToString(),
-                transaction.total_leaf_weight.ToString(),
-                transaction.water.ToString(),
-                transaction.morapuwata.ToString(),
-                transaction.thambimata.ToString(),
-                transaction.reject.ToString(),
-                transaction.bag_weight.ToString(),
-                dalu.ToString()
-                });
-
-                totalBagCount += transaction.bag_count;
-                totalBoxCount += boxCount;
-                totalLeafWeight += transaction.total_leaf_weight;
-                totalWater += transaction.water;
-                totalMorapuwata += transaction.morapuwata;
-                totalThambimata += transaction.thambimata;
-                totalReject += transaction.reject;
-                totalBagWeight += transaction.bag_weight;
-                totalDalu += dalu;
-            }
-
-            // Draw rows
-            bool isAlternate = false;
-            foreach (string[] row in data)
-            {
-                if (isAlternate)
-                {
-                    dc.DrawRectangle(Brushes.LightGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
-                }
-                for (int i = 0; i < row.Length; i++)
-                {
-                    dc.DrawText(
-                        new FormattedText(row[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                            typeface, fontSize, brush, pixelsPerDip),
-                        new Point(headerPositions[i], yPos));
-                }
-                yPos += 20;
-                isAlternate = !isAlternate;
-            }
-                //test
-            // Totals row background
-            dc.DrawRectangle(Brushes.DarkGray, null, new Rect(40, yPos - 2, pageWidth - 80, 20));
-
-            string[] totalsRow = {
-        "Total", "", totalBagCount.ToString(), totalBoxCount.ToString(), totalLeafWeight.ToString(),
-        totalWater.ToString(), totalMorapuwata.ToString(), totalThambimata.ToString(), totalReject.ToString(),
-        totalBagWeight.ToString(), totalDalu.ToString()
-    };
-
-            for (int i = 0; i < totalsRow.Length; i++)
-            {
-                dc.DrawText(
-                    new FormattedText(totalsRow[i], CultureInfo.CurrentCulture, FlowDirection.LeftToRight,
-                        typeface, fontSize, brush, pixelsPerDip),
-                    new Point(headerPositions[i], yPos));
-            }
-
-            yPos += 40;
-
-            // Signature area
-            // Signature area
-            double signY = yPos + 60;
-
-            // Align the signature line to the left (starting at position 50)
-            dc.DrawLine(new Pen(brush, 1), new Point(50, signY), new Point(350, signY)); // Signature line
-
-            // Align the "Authorised by" text to the left (starting at position 50)
-            dc.DrawText(
-                new FormattedText("Authorised by", CultureInfo.CurrentCulture,
-                    FlowDirection.LeftToRight, typeface, fontSize, brush, pixelsPerDip),
-                new Point(50, signY + 5)); // Adjusted to the same x-coordinate
-
-        }*/
 
         #region COM Port Settings Methods
 
