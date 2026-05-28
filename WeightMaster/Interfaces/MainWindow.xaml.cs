@@ -52,7 +52,7 @@ namespace WeightMaster
         private double singleBoxWeight = 3.5;
 
         //settings and admin navigation logic
-        private bool isFromStation = false;
+        private string previousFrame = "station1";
 
 
         //___________________st1 global variables____________________________________________________________________________________________|
@@ -208,6 +208,26 @@ namespace WeightMaster
 
             if (Station1Frame.IsVisible)
             {
+
+                //special case for station 1: if bill number textbox focused at the time, jump to the selected step
+                if (billNoTxt_st1.IsFocused)
+                {
+                    // 2. Clear keyboard focus
+                    var focusScope = FocusManager.GetFocusScope(billNoTxt_st1);
+                    if (focusScope != null)
+                    {
+                        FocusManager.SetFocusedElement(focusScope, null);
+                    }
+                    // Keyboard.ClearFocus();
+
+                    //reset the step
+                    currentStep_st1 = 1;
+                    ShowCurrentStep();
+
+                    return;
+                }
+
+
                 //allow only textbox increments within goToNextStep method
                 if (currentStep_st1 == maxStep_st1 /*|| currentStep_st1 == 1*/)
                 {
@@ -790,6 +810,17 @@ namespace WeightMaster
         List<LineBlockModel> lineMasterData = null;
         List<String> supervisorData = null;
 
+        private string GetLineIdByLineName(string? lineName)
+        {
+            if (string.IsNullOrWhiteSpace(lineName) || lineMasterData == null)
+            {
+                return string.Empty;
+            }
+
+            var selectedLine = lineMasterData.FirstOrDefault(item => item.LineName == lineName);
+            return selectedLine?.LineId > 0 ? selectedLine.LineId.ToString() : string.Empty;
+        }
+
         private async void LoginButtonClick(object sender, RoutedEventArgs e)
         {
 
@@ -886,6 +917,7 @@ namespace WeightMaster
                 {
                     if (clickedButton.Name == "LoginStation1Button")
                     {
+                        previousFrame = "station1";
                         //load the username as the leaf weight officer
                         weightLeafOfficerTxt_st1.Text = username;
 
@@ -904,6 +936,7 @@ namespace WeightMaster
                     }
                     else if (clickedButton.Name == "LoginStation2Button")
                     {
+                        previousFrame = "station2";
                         //load the username as the leaf weight officer
                         weightLeafOfficerTxt_st2.Text = username;
 
@@ -1025,20 +1058,27 @@ namespace WeightMaster
 
         private void HomeButtonClick(object sender, RoutedEventArgs e)
         {
-            if (isFromStation)
+            //user come to station 1 or station 2.
+            if (previousFrame=="station1" || previousFrame=="station2")
             {
                 //MessageBox.Show("is from station");
                 AdminFrame.Visibility = Visibility.Hidden;
+                SettingsFrame.Visibility = Visibility.Collapsed;
+                StationMainFrame.Visibility = Visibility.Visible;
             }
-            StationMainFrame.Visibility = Visibility.Visible;
-            Station2Frame.Visibility = Visibility.Visible;
-            SettingsFrame.Visibility = Visibility.Collapsed;
+            if (previousFrame=="station1")
+            {
+                Station1Frame.Visibility = Visibility.Visible;
+            }
+            if (previousFrame == "station2")
+            {
+                Station2Frame.Visibility = Visibility.Visible;
+            }
+
             //button visibility logic
             //Console.Beep();
             SettingsButton.Visibility = Visibility.Visible;
             HomeButton.Visibility = Visibility.Collapsed;
-
-            isFromStation = false;
 
         }
 
@@ -2267,6 +2307,7 @@ namespace WeightMaster
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
                             factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
+                            line_id = GetLineIdByLineName(lineName_st1),
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
                             leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
@@ -2314,6 +2355,7 @@ namespace WeightMaster
                             leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
                             factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
+                            line_id = GetLineIdByLineName(lineName_st1),
                             transportlinename = lineName_st1,
                             transportagent = lineMasterNameLbl_st1.Text,
                             leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
@@ -2682,11 +2724,11 @@ namespace WeightMaster
             //currentMemberDetailsList_st2 = await _consoleHandler.getDataByFilter("ඉළුකපිටිය");
             //GetTransactionDataByBarcodeId
             //Either line parameter should be added or it should filter by line
-            currentMemberDetailsList_st2 = await _consoleHandler.GetTransactionDataByBarcodeId(memberId);
+            currentMemberDetailsList_st2 = await _consoleHandler.getPendingTransactionBagData(lineNameCmb_st2.SelectedItem.ToString(), memberId);
             //filtering list by line name [auto select the first line name]
             //currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, currentMemberDetailsList_st2[0].linename);
 
-            currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, lineNameCmb_st2.SelectedItem.ToString());
+            //currentMemberDetailsList_st2 = BlockModelConverter.filterTransactionDataByLine(currentMemberDetailsList_st2, lineNameCmb_st2.SelectedItem.ToString());
 
             if (currentMemberDetailsList_st2.Count != 0)
             {
@@ -3452,6 +3494,12 @@ namespace WeightMaster
                 Console.WriteLine($"No entries found for key: {memberId}");
             }
 
+            //hotfix: clear bag count if previous round doesn't exist
+            if (acceptedLeafWeightTxt_st2.Text=="")
+            {
+                totalNSacksTxt_st2.Text = "";
+            }
+
             //disable the upload button and enable the weightScaler button to get a new input for the next user
             confirmAddRowButton_st2.IsEnabled = false;
             weightScalerConfirmBtn_st2.IsEnabled = true;
@@ -3593,29 +3641,26 @@ namespace WeightMaster
 
                 //make this zero and also deduct the accepted weight from this
                 acceptedSackWeightTxt_st2.Text = "";
-                totalNSacksTxt_st2.Text = "";
+                //totalNSacksTxt_st2.Text = "";
 
 
                 //populate textboxes and variables for the next new round by deducting the sack weight from the both sides of the equation
                 //totalNSacksTxt_st2.Text = currentMemberDetails_st2.bag_count.ToString();
 
                 //update the current values(please do the appropiate deductions before population)
-                //MessageBox.Show("before: " + normalLeafWeightTxt_st2.Text);
                 maturedTxt_st2.Text = maturedWeight.ToString();
                 wateredTxt_st2.Text = wateredWeight.ToString();
                 spoiledTxt_st2.Text = spoiledWeight.ToString();
                 rejectedTxt_st2.Text = rejectedWeight.ToString();
 
-                //deducted value for the next sack deduction
+                //deducted values for the next sack deduction
                 acceptedLeafWeightTxt_st2.Text = (acceptedLeafWeight - acceptedSackWeight).ToString();
-                //MessageBox.Show("mid: "+normalLeafWeightTxt_st2.Text);
                 normalLeafWeightTxt_st2.Text = availableNormalLeafWeight.ToString();
-                //MessageBox.Show("after: " + normalLeafWeightTxt_st2.Text);
                 goldenLeafWeightTxt_st2.Text = availableGoldenLeafWeight.ToString();
 
                 //deducted value for the next sack deduction
                 currentAcceptedLeafWeight_st2 = currAcceptedLeafWeight - acceptedSackWeight;
-                //FIX THISSSSSSSS: Yesss donee
+
                 if (acceptedSackWeight <= currNormalLeafWeight)
                 {
                     currentNormalLeafWeight_st2 = currNormalLeafWeight - acceptedSackWeight;
@@ -3626,30 +3671,12 @@ namespace WeightMaster
                     currentNormalLeafWeight_st2 = 0;
                     currentGoldenLeafWeight_st2 = currGoldenLeafWeight - (acceptedSackWeight - currNormalLeafWeight);
                 }
-                //if normal weight doesn't exceeds total deduction(no need to update golden leaf weights)
-                /*                if (totalDeductions <= currentNormalLeafWeight_st2)
-                                {
-                                    normalLeafWeightTxt_st2.Text = (currentNormalLeafWeight_st2 - totalDeductions).ToString();
-                                    goldenLeafWeightTxt_st2.Text = currentGoldenLeafWeight_st2.ToString();
-                                    //update helper value
-                                    currentTotalDeduction_st2 = totalDeductions;
-                                    blueText2.Text = currentTotalDeduction_st2.ToString();
-                                }
-                                //if normal weight doesn't exceeds total deduction(now you need to update both golden leaf weights & normal leaf weights)
-                                else if (totalDeductions > currentNormalLeafWeight_st2)
-                                {
-                                    normalLeafWeightTxt_st2.Text = "0";
-                                    goldenLeafWeightTxt_st2.Text = (currentGoldenLeafWeight_st2 - (totalDeductions - currentNormalLeafWeight_st2)).ToString();
-                                    //update helper value
-                                    currentTotalDeduction_st2 = totalDeductions;
-                                    blueText2.Text = currentTotalDeduction_st2.ToString();
-                                }*/
+
 
 
                 //re-enable weight scaler button and disable confirm button
                 currentTotalDeduction_st2 = maturedWeight + wateredWeight + spoiledWeight + rejectedWeight;
-                //MessageBox.Show("final: " + normalLeafWeightTxt_st2.Text);
-                //MessageBox.Show("final: " + normalLeafWeightTxt_st2.Text);
+
 
                 //enable the upload button and weightScaler button to get either edit the current sack weight or confirm existing rounds
                 confirmAddRowButton_st2.IsEnabled = true;
@@ -3766,8 +3793,8 @@ namespace WeightMaster
                 //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
 
                 //decrement the remaining sacks
-                if (!int.TryParse(totalNSacksTxt_st2.Text, out int totalNSacks) || totalNSacks < 0)
-                    totalNSacks = 0;
+                //if (!int.TryParse(totalNSacksTxt_st2.Text, out int totalNSacks) || totalNSacks < 0)
+                //    totalNSacks = 0;
 
                 //re-feed the updated values and helper variables to the same textboxes if there are sacks remaining
 
@@ -3976,6 +4003,7 @@ namespace WeightMaster
                         leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
                         factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
+                        line_id = !string.IsNullOrWhiteSpace(greenLeafPostModel_st2.line_id) ? greenLeafPostModel_st2.line_id : GetLineIdByLineName(lineName_st2),
                         transportlinename = lineName_st2,
                         transportagent = lineMasterNameLbl_st2.Text,
                         leaf_weight_officer = weightLeafOfficerTxt_st2.Text,
@@ -4253,16 +4281,9 @@ namespace WeightMaster
 
         private void ViewReports_Click(object sender, RoutedEventArgs e)
         {
-            isFromStation = true;
-
             //load the username as the leaf weight officer
             weightLeafOfficerTxt_admin.Text = loginUsername;
 
-            //PageAdmin.Visibility = Visibility.Visible;
-            //LoginFrame.Visibility = Visibility.Collapsed;
-            Station2Frame.Visibility = Visibility.Collapsed;
-            Station1Frame.Visibility = Visibility.Visible;
-            //StationMainFrame.Visibility = Visibility.Collapsed;
             SettingsFrame.Visibility = Visibility.Hidden;
             AdminFrame.Visibility = Visibility.Visible;
 
@@ -5318,6 +5339,7 @@ namespace WeightMaster
         {
             try
             {
+                SyncButton_settings.IsEnabled = false;
                 statusLabel.Content = "Cloud syncing...";
                 await _consoleHandler.cloudsync();
                 statusLabel.Content = "Cloud sync completed";
@@ -5326,6 +5348,10 @@ namespace WeightMaster
             {
                 statusLabel.Content = "Cloud syncing failed...";
             }
+            finally
+            {
+                SyncButton_settings.IsEnabled = true;
+            }
         }
 
         private async void CheckUpdatesButton_Click(object sender, RoutedEventArgs e)
@@ -5333,6 +5359,8 @@ namespace WeightMaster
             // Repeat until no exception occursss
             bool firstItr = true; //to check the first iteration has passed(to show different status label content after first iteration)
             bool failed = false;
+            CheckUpdatesButton_settings.IsEnabled = false;
+            CheckUpdatesButton_login.IsEnabled = false;
             do
             {
                 try
@@ -5468,7 +5496,8 @@ namespace WeightMaster
             } while (failed);
             //resetting value for next execution 
             firstItr = true;
-
+            CheckUpdatesButton_settings.IsEnabled = true;
+            CheckUpdatesButton_login.IsEnabled = true;
             ////restart the application
             //// Get the current application's executable path
             //string exePath = Process.GetCurrentProcess().MainModule.FileName;
@@ -5987,43 +6016,6 @@ namespace WeightMaster
         //_______Reports_______________________________________________________________________
 
 
-
-        //________________Line Report
-        //private async void printQuick1LineReportBtn_Click(object sender, RoutedEventArgs e)
-        //{
-        //    if (lineNameCmb_st2.SelectedItem == null)
-        //    {
-        //        MessageBox.Show("ප්‍රවා හන මා ර්ගය ඇතුලත් කරන්න");
-        //        return;
-        //    }
-
-        //    try
-        //    {
-        //        List<FinalTransactionBlockModel> lineReportData = await _consoleHandler.print_sta2(lineNameCmb_st2.SelectedItem.ToString());
-        //        foreach (var transaction in lineReportData)
-        //        {
-        //            System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-        //        }
-
-
-        //        PrintDialog printDialog = new PrintDialog();
-        //        if (printDialog.ShowDialog() == true)
-        //        {
-        //            DrawingVisual visual = new DrawingVisual();
-        //            using (DrawingContext dc = visual.RenderOpen())
-        //            {
-        //                DrawLineReportPage(dc, lineReportData, lineNameCmb_st2.SelectedItem.ToString());
-        //            }
-        //            printDialog.PrintVisual(visual, "Print Document");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        System.Diagnostics.Debug.WriteLine("Report data fetching error: " + ex.Message);
-        //    }
-        //}
-
-
         //based on current date
         private async void printQuickLineReportBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -6055,12 +6047,6 @@ namespace WeightMaster
                     BlockModelConverter.ToFinalTransactionBlockModel(oldLineReportData, boxReportData);
 
 
-
-
-                /*foreach (var transaction in lineReportData)
-                {
-                   System.Diagnostics.Debug.WriteLine($"ID: {transaction.Id}, Line Name: {transaction.linename}, Transport Agent: {transaction.transportagent}, Company: {transaction.company}");
-                }*/
                 PrintDialog printDialog = new PrintDialog();
                 if (printDialog.ShowDialog() == true)
                 {
@@ -6097,7 +6083,7 @@ namespace WeightMaster
                             int barcode_index = 0;
                             if (int.TryParse(transaction.barcode_details, out barcode_index))
                             {
-                                indexesTotal += barcode_index;
+                                indexesTotal ++;
                             }
                             else
                             {
@@ -6337,17 +6323,20 @@ namespace WeightMaster
 
             // Data rows
             bool isAlternate = false;
+            int columnNo = 1;
             foreach (var transaction in pageData)
             {
-                //if (isAlternate)
+                //if (isAlternate) //commented due to dot matrix printing
                 //{
                 //    AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.LightGray);
                 //}
                 AddRectangle(canvas, 40, yPos - 2, 816 - 80, 20, Brushes.White);
-                AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize);
+                AddTransactionRow(canvas, transaction, headerPositions, yPos, fontSize, (columnNo++).ToString());
                 yPos += 20;
                 isAlternate = !isAlternate; // Alternate row color
             }
+            columnNo = 1;
+
             AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Leaf Weighting Officer)", 315, yPos + 120);
             AddSignatureLine(canvas, "Authorised by (Bag Weighting Officer)", 570, yPos + 120);
@@ -6450,7 +6439,7 @@ namespace WeightMaster
         }
 
         private void AddTransactionRow(Canvas canvas, FinalTransactionBlockModel transaction,
-            double[] positions, double y, double fontSize)
+            double[] positions, double y, double fontSize, string columnNo)
         {
             //calculate box weight and count 
             int totalBoxCount = 0;
@@ -6458,7 +6447,7 @@ namespace WeightMaster
             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
             else { totalBoxCount = tempBoxWeight / 4; }
             // Left-aligned columns
-            AddText(canvas, transaction.Id.ToString(), fontSize, positions[0], y);
+            AddText(canvas, columnNo, fontSize, positions[0], y);
             AddText(canvas, transaction.barcode_details ?? "", fontSize, positions[1], y);
 
             // Right-aligned numeric columns
@@ -6502,8 +6491,8 @@ namespace WeightMaster
             //    transaction.reject + transaction.bag_weight)).ToString(),
             //    fontSize, positions[11], y, rightAlign: true);
             //AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
-            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
-            AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
+            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
+            AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
         }
 
         private void AddSignatureLine(Canvas canvas, string label, double x, double y)
@@ -6786,8 +6775,8 @@ namespace WeightMaster
                 AddText(canvas, totals.Reject.ToString(), fontSize, 530, yPos, rightAlign: true);
                 AddText(canvas, totals.BagWeight.ToString(), fontSize, 590, yPos, rightAlign: true);
                 AddText(canvas, totals.BoxWeight.ToString(), fontSize, 650, yPos, rightAlign: true);
-                AddText(canvas, totals.totalGoldLeafWeights.ToString(), fontSize, 710, yPos, rightAlign: true);  //fix to normal
-                AddText(canvas, totals.totalNormalLeafWeights.ToString(), fontSize, 760, yPos, rightAlign: true);  //fix to gold
+                AddText(canvas, totals.totalNormalLeafWeights.ToString(), fontSize, 710, yPos, rightAlign: true);
+                AddText(canvas, totals.totalGoldLeafWeights.ToString(), fontSize, 760, yPos, rightAlign: true);
 
                 // Signatures
                 //AddSignatureLine(canvas, "Authorised by (Supervisor)", 50, yPos + 60);

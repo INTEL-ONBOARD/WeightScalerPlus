@@ -94,14 +94,7 @@ namespace WeightMaster.Services
             return member?.CustomNameWithInitials ?? "No initials found";
         }
 
-        // Get the cell number for a given custom member number
-        public async Task<string> GetCellNumberByCustomMemberNumAsync(string customMemberNum)
-        {
-            var member = await _context.memDbLog
-                .FirstOrDefaultAsync(m => m.CustomMemberNum == customMemberNum);
 
-            return member?.CellNumber ?? "";
-        }
         public async Task<memDbLog?> GetMemberByCustomMemberNumAsync(string customMemberNum)
         {
             var result = await _context.memDbLog

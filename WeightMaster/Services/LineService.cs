@@ -22,6 +22,7 @@ namespace WeightMaster.Services
         {
             return new LineBlockModel
             {
+                LineId = line.LineId,
                 LineName = line.LineName,
                 LineMaster = line.LineMaster
             };
@@ -53,6 +54,20 @@ namespace WeightMaster.Services
             return await _context.lineDbLog.CountAsync();
         }
 
+        public async Task<bool> HasMissingLineIdsAsync()
+        {
+            return await _context.lineDbLog.AnyAsync(line => line.LineId <= 0);
+        }
+
+        public async Task<string> GetLineIdByLineNameAsync(string lineName)
+        {
+            var matchingLine = await _context.lineDbLog
+                .AsNoTracking()
+                .FirstOrDefaultAsync(candidate => candidate.LineName == lineName);
+
+            return matchingLine?.LineId > 0 ? matchingLine.LineId.ToString() : string.Empty;
+        }
+
         // Retrieve line data from the database
         public async Task<List<LineBlockModel>> GetLineDataAsync()
         {
@@ -60,6 +75,7 @@ namespace WeightMaster.Services
                 .Select(line => new LineBlockModel
                 {
                     Id = line.Id,
+                    LineId = line.LineId,
                     LineName = line.LineName,
                     LineMaster = line.LineMaster
                 })

@@ -142,6 +142,11 @@ namespace WeightMaster.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("line_id")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varchar(32)");
+
                     b.Property<string>("leaf_weight_officer")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -202,6 +207,10 @@ namespace WeightMaster.Migrations
                         .HasColumnType("int");
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("LineId")
+                        .HasColumnType("int")
+                        .HasColumnName("lineid");
 
                     b.Property<string>("LineMaster")
                         .IsRequired()

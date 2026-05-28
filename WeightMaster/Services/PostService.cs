@@ -24,6 +24,7 @@ namespace WeightMaster.Services
                 id = post.id,
                 leaf_handover_date = post.leaf_handover_date,
                 factory = post.factory,
+                line_id = post.line_id,
                 transportlinename = post.transportlinename,
                 transportagent = post.transportagent,
                 leaf_weight_officer = post.leaf_weight_officer,
@@ -139,6 +140,7 @@ namespace WeightMaster.Services
             {
                 existingPost.leaf_handover_date = updatedPost.leaf_handover_date;
                 existingPost.factory = updatedPost.factory;
+                existingPost.line_id = updatedPost.line_id;
                 existingPost.transportlinename = updatedPost.transportlinename;
                 existingPost.transportagent = updatedPost.transportagent;
                 existingPost.leaf_weight_officer = updatedPost.leaf_weight_officer;
@@ -161,6 +163,20 @@ namespace WeightMaster.Services
                 existingPost.final_gold_leaf_count = updatedPost.final_gold_leaf_count;
                 existingPost.created_user = updatedPost.created_user;
                 existingPost.updated_user = updatedPost.updated_user;
+
+                var existingStatus = await _context.PostStatus.FirstOrDefaultAsync(status => status.PostId == existingPost.id);
+                if (existingStatus != null)
+                {
+                    existingStatus.Status = false;
+                }
+                else
+                {
+                    await _context.PostStatus.AddAsync(new PostStatusModel
+                    {
+                        PostId = existingPost.id,
+                        Status = false
+                    });
+                }
 
                 await _context.SaveChangesAsync();
             }

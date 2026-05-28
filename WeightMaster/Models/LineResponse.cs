@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using System.Text.Json.Serialization;
 
 namespace WeightMaster.Models
@@ -15,6 +16,10 @@ namespace WeightMaster.Models
 
     public class LineData
     {
+        [JsonProperty("lineid")]
+        [JsonPropertyName("lineid")]
+        public int LineId { get; set; }
+
         [JsonPropertyName("linename")]
         public string LineName { get; set; }
 

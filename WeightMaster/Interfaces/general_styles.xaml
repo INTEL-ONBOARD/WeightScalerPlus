@@ -16,7 +16,6 @@
         </Setter>
     </Style>
 
-    <!--Hover effect-->
     <Style x:Key="HoverButton" TargetType="Button">
         <Setter Property="Background" Value="#F9F9F9"/>
         <Setter Property="Foreground" Value="White"/>
@@ -25,7 +24,6 @@
                 <ControlTemplate TargetType="Button">
                     <Border RenderTransformOrigin="0.5,0.5" x:Name="ButtonBorder" Background="{TemplateBinding Background}" CornerRadius="12">
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        <!-- Apply the ScaleTransform -->
                         <Border.RenderTransform>
                             <ScaleTransform ScaleX="1" ScaleY="1"/>
                         </Border.RenderTransform>
@@ -36,32 +34,24 @@
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation
-                                    Storyboard.TargetName="ButtonBorder"
-                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
-                                    To="0.95" Duration="0:0:0.2"/>
-                                        <DoubleAnimation
-                                    Storyboard.TargetName="ButtonBorder"
-                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
-                                    To="0.95" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="0.95" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="0.95" Duration="0:0:0.2"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.EnterActions>
-
                             <Trigger.ExitActions>
                                 <BeginStoryboard>
                                     <Storyboard>
-                                        <DoubleAnimation
-                                    Storyboard.TargetName="ButtonBorder"
-                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)"
-                                    To="1" Duration="0:0:0.2"/>
-                                        <DoubleAnimation
-                                    Storyboard.TargetName="ButtonBorder"
-                                    Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)"
-                                    To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleX)" To="1" Duration="0:0:0.2"/>
+                                        <DoubleAnimation Storyboard.TargetName="ButtonBorder" Storyboard.TargetProperty="(RenderTransform).(ScaleTransform.ScaleY)" To="1" Duration="0:0:0.2"/>
                                     </Storyboard>
                                 </BeginStoryboard>
                             </Trigger.ExitActions>
+                        </Trigger>
+
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="ButtonBorder" Property="Opacity" Value="0.5"/>
+                            <Setter Property="Cursor" Value="Arrow"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
 
@@ -70,7 +60,7 @@
         </Setter>
     </Style>
 
-    
+
     <!--textbox focus and isError border-->
     <Style x:Key="StyledTextBoxBorder" TargetType="Border">
         <!-- Default Properties -->

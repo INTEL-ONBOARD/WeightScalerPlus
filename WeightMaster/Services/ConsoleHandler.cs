@@ -29,12 +29,6 @@ namespace WeightMaster.Services
             return await _engine.UserDbValidation();
         }
 
-        public async Task<bool> ValidateEmail(string email)
-        {
-            return await _engine.VerifyEmailInDbAsync(email);
-        }
-
-
         //return username or "unknown" : use this for user login 
         public async Task<string> loginUser(string email, string password)
         {
@@ -71,11 +65,6 @@ namespace WeightMaster.Services
         {
             return await _engine.getMemberNameById(id);
         }
-        //get member nuber by id
-        public async Task<string> GetMemberNumber(string id)
-        {
-            return await _engine.getMemberNumberId(id);
-        }
         //set and update the local and cloud database with the finish button process
 
         public async Task<bool> AddTransactionAsync(TransactionLogBlockModel newTransaction)
@@ -86,21 +75,6 @@ namespace WeightMaster.Services
         public async Task<bool> verifyTransactionsCloudCheck()
         {
             return await _engine.verifyTransactionsCloud();
-        }
-        //return the transaction data from the station 2 data record section, this func return the records of the dataa that has weight value over 0
-        //public async Task<List<TransactionLogBlockModel>> GetTransactionData(string linenames)
-        //{
-        //    return await _engine.GetFilteredTransactionData(linenames);
-        //}
-        //return the transaction data for station-1 based on barcode 
-        public async Task<List<TransactionLogBlockModel>> GetTransactionDataByBarcodeId(string code)
-        {
-            return await _engine.GetFilteredTransactionsByBarcodeAndDateAsync(code);
-        }
-        //return a songle transaction data from the station 2 data using member code , barcode
-        public async Task<List<TransactionLogBlockModel>> GetTransactionData(string barcode, string linename) //the line name here is useless. give this ""
-        {
-            return await _engine.GetFilteredTransactionData(barcode, linename);
         }
         //add a new transaction for station 2
         public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction, string code)
@@ -125,16 +99,14 @@ namespace WeightMaster.Services
         {
             return await _engine.GetFilteredTransactionsByLineNameBarcodeAndDateAsync(lineName, barcodeDetails);
         }
-        ////return data for the report from thhe station-1
-        //public async Task<List<FinalTransactionBlockModel>> print_sta1()
-        //{
-        //    return await _engine.getPrintData_1();
-        //}
-        //return data for the report from thhe station-2
-        public async Task<List<FinalTransactionBlockModel>> print_sta2(string linename)
+
+
+        public async Task<List<TransactionLogBlockModel>> getPendingTransactionBagData(string lineName, string barcodeDetails)
         {
-            return await _engine.getPrintData_2(linename);
+            return await _engine.GetPendingTransactionsByLineBarcodeDateAsync(lineName, barcodeDetails);
         }
+
+
         public async Task<List<FinalTransactionBlockModel>> print_sta2_onCustomDate(string linename, string date_)
         {
             return await _engine.getPrintData_2_onCustomDate(linename, date_);
@@ -164,25 +136,6 @@ namespace WeightMaster.Services
             return await _engine.updatePost(id, s);
         }
 
-
-        //get id and blueprint in st2 useless for now
-        //public async Task<GreenLeafPostModel?> GetData(int id)
-        //{
-        //    return await _engine.getPostById(id);
-        //}
-        ////useless for now
-        //public async Task<GreenLeafPostModel?> GetRecent()
-        //{
-        //    return await _engine.getLatestPost();
-        //}
-
-
-        ////get id and blueprint in st2 with DATE! with a list(not using this)
-        //public async Task<List<GreenLeafPostModel>> getDatabyMemberiDandDate(string memberid,string date_)
-        //{
-        //    return await _engine.getPostsByMemberAndDate(memberid,date_);
-        //}
-        //get id and blueprint in st2 with DATE! with a single record
         public async Task<GreenLeafPostModel> getDatabyMemberiDandDateSingle(string memberid, string date_)
         {
             return await _engine.getPostByMemberAndDate(memberid, date_);

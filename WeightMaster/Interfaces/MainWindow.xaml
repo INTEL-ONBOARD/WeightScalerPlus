@@ -203,7 +203,7 @@
                             </StackPanel>
                         </Border>
                     </Button>
-                    <Button Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="1018,854,-745,-56" Style="{StaticResource HoverButton}">
+                    <Button x:Name="CheckUpdatesButton_login" Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="1018,854,-745,-56" Style="{StaticResource HoverButton}">
                         <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
                             <TextBlock Text="Update" HorizontalAlignment="Center" Foreground="White"/>
                         </Border>
@@ -1569,7 +1569,7 @@
 
 
                     <!-- Application settings section-->
-                    <Grid x:Name="ApplicationSettingsSection" Visibility="Hidden">
+                    <Grid x:Name="ApplicationSettingsSection" Visibility="Visible">
                         <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,714" FontWeight="Medium" Text="Application Settings" Width="227"/>
 
                         <!-- FIle Chooser TextBox -->
@@ -1644,7 +1644,7 @@
 
                         <!-- Sync Button -->
                         <TextBlock Grid.Column="0" Text="Cloud synchronize transactions" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,460,0,0" />
-                        <Button Cursor="Hand" Click="SyncButton_Click" Background="Transparent" BorderThickness="0" Margin="384,449,673,306" Style="{StaticResource HoverButton}">
+                        <Button x:Name="SyncButton_settings" Cursor="Hand" Click="SyncButton_Click" Background="Transparent" BorderThickness="0" Margin="384,449,673,306" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
                                 <TextBlock Text="Sync" HorizontalAlignment="Center" Foreground="White"/>
                             </Border>
@@ -1652,7 +1652,7 @@
 
                         <!-- Check updates Button -->
                         <TextBlock Grid.Column="0" Text="Check for cloud updates" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,533,0,0" />
-                        <Button Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="384,519,673,236" Style="{StaticResource HoverButton}">
+                        <Button x:Name="CheckUpdatesButton_settings" Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="384,519,673,236" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
                                 <TextBlock Text="Update" HorizontalAlignment="Center" Foreground="White"/>
                             </Border>
@@ -1873,7 +1873,7 @@
                     </Grid>
 
                     <!-- Line Summary Section -->
-                    <Grid x:Name="LineSummarySection" Visibility="Visible">
+                    <Grid x:Name="LineSummarySection" Visibility="Hidden">
                         <TextBlock HorizontalAlignment="Left" FontSize="24" Margin="36,34,0,0" FontWeight="Medium" Text="Line Summary" VerticalAlignment="Top"/>
 
                         <!-- Filters -->

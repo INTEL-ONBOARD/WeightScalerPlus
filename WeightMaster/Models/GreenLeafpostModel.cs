@@ -14,6 +14,9 @@ namespace WeightMaster.Models
 
         public string factory { get; set; } = string.Empty;
 
+        [MaxLength(32)]
+        public string line_id { get; set; } = string.Empty;
+
         public string transportlinename { get; set; } = string.Empty;
 
         public string transportagent { get; set; } = string.Empty;

@@ -9,6 +9,9 @@ namespace WeightMaster.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
+        [Column("lineid")]
+        public int LineId { get; set; }
+
         [Required]
         public string LineName { get; set; } = string.Empty;
 

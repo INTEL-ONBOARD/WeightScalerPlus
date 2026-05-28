@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Formats.Asn1;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Windows;
 
 namespace WeightMaster.Services
 {
@@ -167,6 +168,8 @@ namespace WeightMaster.Services
                 .Where(t => t.bag_count > 0 && t.date == todayDate && t.linename == lineName)
                 .ToListAsync();
         }
+
+        // i can certainly use this.
         public async Task<List<TransactionLogBlockModel>> GetTransactionByBarcodeAndDateAsync(string barcodeDetails,string lineName)
         {
 
@@ -207,19 +210,7 @@ namespace WeightMaster.Services
 
 
 
-        //public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
-        //{
-        //    string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-        //    var excludedIds = await _context.RunLog
-        //        .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
-        //        .Select(r => r.TransactionId)
-        //        .ToListAsync();
-
-        //    return await _context.transactionData
-        //        .Where(t => excludedIds.Contains(t.Id) && t.linename == lineName && t.date == todayDate)
-        //        .ToListAsync();
-        //}
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -266,6 +257,7 @@ namespace WeightMaster.Services
 
 
 
+
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameBarcodeAndDateAsync(string lineName, string barcodeDetails)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
@@ -275,23 +267,33 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
-        public async Task<List<TransactionLogBlockModel>> GetTransactionsByBarcodeAndDateAsync(string barcodeDetails)
+
+
+
+
+        // GetPendingTransactionsByLineBarcodeDateAsync
+        public async Task<List<TransactionLogBlockModel>> GetPendingTransactionsByLineBarcodeDateAsync(string lineName, string barcodeDetails)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-            return await _context.transactionData
-                .Where(t => t.barcode_details == barcodeDetails && t.date == todayDate)
+            // Get IDs where Id is NOT in FinalTransactionId
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
                 .ToListAsync();
+
+            return await _context.transactionData
+                .Where(t => t.linename == lineName
+                            && t.barcode_details == barcodeDetails
+                            && t.date == todayDate
+                            && t.box_count == 0
+                            && excludedIds.Contains(t.Id) // Ensures only transactions with mismatched IDs are fetched
+                ).ToListAsync();
+
         }
 
-        //public async Task<List<TransactionLogBlockModel>> getDataForPrint()
-        //{
-        //    string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-        //    return await _context.transactionData
-        //        .Where(t => t.bag_count == 0 && t.date == todayDate)
-        //        .ToListAsync();
-        //}
+
 
 
         public async Task<List<FinalTransactionBlockModel>> getDataForPrint()
@@ -321,7 +323,7 @@ namespace WeightMaster.Services
                 .ToListAsync();
         }
 
-
+        // this is the one i need i guess.
         public async Task<List<TransactionLogBlockModel>> GetTransactionsNotInRunLogAsync(string lineName)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");

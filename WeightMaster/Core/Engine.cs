@@ -99,24 +99,6 @@ namespace WeightMaster.Core
             }
 
         }
-        public async Task<bool> VerifyEmailInDbAsync(string email)
-        {
-            try
-            {
-                return await Task.Run(async () =>
-                {
-                    var userService = new UserService(new AppDbContext());
-
-                    bool emailExists = await userService.EmailExistsAsync(email);
-
-                    return emailExists;
-                });
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
-        }
         public async Task<String> LoginUser(string username, string password)
         {
             try
@@ -248,22 +230,7 @@ namespace WeightMaster.Core
                 return "Unknown";
             }
         }
-        public async Task<String> getMemberNumberId(String id)
-        {
-            try
-            {
-                var memService = new MemService(new AppDbContext());
-                String data = await memService.GetCellNumberByCustomMemberNumAsync(id);
-                System.Diagnostics.Debug.WriteLine(">>>>!" + data);
-                return data;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error retrieving line master data: {ex.Message}");
-                //await DumpMemberInformation();
-                return "Unknown";
-            }
-        }
+
         public async Task<bool> setTransaction(TransactionLogBlockModel model)
         {
             try
@@ -433,23 +400,7 @@ namespace WeightMaster.Core
                 return false;
             }
         }
-        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string lineName)
-        {
-            try
-            {
-                var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionsNotInRunLogAsync(lineName);
 
-                System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new List<TransactionLogBlockModel>();
-            }
-        }
 
 
 
@@ -580,41 +531,25 @@ namespace WeightMaster.Core
                 return new List<TransactionLogBlockModel>();
             }
         }
-        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionsByBarcodeAndDateAsync(string barcodeDetails)
+
+        public async Task<List<TransactionLogBlockModel>> GetPendingTransactionsByLineBarcodeDateAsync(string lineName, string barcodeDetails)
         {
             try
             {
                 var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionsByBarcodeAndDateAsync(barcodeDetails);
+                var data = await transactionService.GetPendingTransactionsByLineBarcodeDateAsync(lineName, barcodeDetails);
 
-                System.Diagnostics.Debug.WriteLine($"Filtered transactions forbarcode: {barcodeDetails} on today's date retrieved successfully!");
+                System.Diagnostics.Debug.WriteLine($"Pending transactions for lineName: {lineName} and barcode: {barcodeDetails} on today's date retrieved successfully!");
 
                 return data;
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for barcode {barcodeDetails}: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data for lineName {lineName} and barcode {barcodeDetails}: {ex.Message}");
                 return new List<TransactionLogBlockModel>();
             }
         }
-        public async Task<List<TransactionLogBlockModel>> GetFilteredTransactionData(string barcode, string linename)
-        {
-            try
-            {
-                var transactionService = new TransactionService(new AppDbContext());
-                var data = await transactionService.GetTransactionByBarcodeAndDateAsync(barcode, linename);
 
-                System.Diagnostics.Debug.WriteLine("Filtered transactions with bag_count > 0 retrieved successfully!");
-
-                return data;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error retrieving filtered transaction data: {ex.Message}");
-                return new List<TransactionLogBlockModel>() { };
-                ;
-            }
-        }
         //old
         public async Task<bool> UpdateBagWeightCollectionAsync(FinalTransactionBlockModel finalTransactionBlockModel)
         {
@@ -827,6 +762,7 @@ namespace WeightMaster.Core
 
             var service = new LineService(new AppDbContext());
             int localCount = await service.GetLineCountAsync();
+            bool hasMissingLineIds = await service.HasMissingLineIdsAsync();
 
             var apiClient = new CustomApiClient(); // Use token-aware client
             string url = "https://api.teacoop.lk/api/v1/linemaster/thirdparty-linemaster/" + id; // Replace with actual endpoint
@@ -837,7 +773,7 @@ namespace WeightMaster.Core
             {
                 currentCloudCount = apiResponse.Data.Count;
 
-                if (currentCloudCount > localCount)
+                if (currentCloudCount != localCount || hasMissingLineIds)
                 {
                     await service.ReplaceLineDataAsync(apiResponse.Data);
                     Console.WriteLine("> Line data replaced successfully.");
@@ -1046,6 +982,7 @@ namespace WeightMaster.Core
         {
             var client = new CustomApiClient();
             var url = "https://api.teacoop.lk/api/v1/greenleaf";
+            await PopulateLineIdIfMissingAsync(postModel);
 
             var options = new JsonSerializerOptions
             {
@@ -1099,6 +1036,24 @@ namespace WeightMaster.Core
                 }
 
                 return false;
+            }
+        }
+
+        private async Task PopulateLineIdIfMissingAsync(GreenLeafPostModel postModel)
+        {
+            if (!string.IsNullOrWhiteSpace(postModel.line_id) || string.IsNullOrWhiteSpace(postModel.transportlinename))
+            {
+                return;
+            }
+
+            try
+            {
+                var lineService = new LineService(new AppDbContext());
+                postModel.line_id = await lineService.GetLineIdByLineNameAsync(postModel.transportlinename);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"> Unable to resolve line_id for greenleaf post {postModel.id}: {ex.Message}");
             }
         }
 
