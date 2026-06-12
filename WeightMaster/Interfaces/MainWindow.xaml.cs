@@ -4584,7 +4584,8 @@ namespace WeightMaster
                         //calculate total row values
                         totalBagCount += transaction.bag_count;
                         totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
-                        totalGreenLeafWeight += transaction.actual_nomal_leaf_weight;
+                        // Sum the after-deductions value so the Normal totals row matches the per-row column.
+                        totalGreenLeafWeight += transaction.final_green_leaf_count;
                         totalGoldLeafWeight += transaction.total_gold_leaf_weight;
                         totalWater += transaction.water;
                         totalMorapuwata += transaction.morapuwata;
@@ -4793,7 +4794,9 @@ namespace WeightMaster
             Grid.SetColumn(gold, 5);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = transaction.actual_nomal_leaf_weight.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            // Show the after-deductions value so the Normal column reflects bag weight + other deductions,
+            // matching the printed Transport Route Report (which uses final_green_leaf_count).
+            var normal = new TextBlock { Text = transaction.final_green_leaf_count.ToString(), FontSize = 17, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 6);
             grid.Children.Add(normal);
 
@@ -4921,7 +4924,8 @@ namespace WeightMaster
                     totalBoxes += summary.box_count;
                     totalBags += summary.bag_count;
                     totalGold += summary.total_gold_leaf_weight;
-                    totalNormal += summary.actual_nomal_leaf_weight;
+                    // Sum the after-deductions value so the Normal totals row matches the per-row column.
+                    totalNormal += summary.final_green_leaf_count;
                     totalNet += summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight);
                     totalWater += summary.water;
                     totalMora += summary.morapuwata;
@@ -4996,7 +5000,9 @@ namespace WeightMaster
             Grid.SetColumn(gold, 4);
             grid.Children.Add(gold);
 
-            var normal = new TextBlock { Text = summary.actual_nomal_leaf_weight.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            // Show the after-deductions value so the Normal column reflects bag weight + other deductions,
+            // matching the printed Daily Report (which uses final_green_leaf_count).
+            var normal = new TextBlock { Text = summary.final_green_leaf_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 5);
             grid.Children.Add(normal);
 
@@ -6046,9 +6052,12 @@ namespace WeightMaster
                 List<FinalTransactionBlockModel> oldLineReportData = await _consoleHandler.print_sta2_onCustomDate(lineName, dateNow);
                 if (!oldLineReportData.Any())
                 {
-                    //MessageBox.Show("st2 list is empty"); 
+                    //MessageBox.Show("st2 list is empty");
                 }
-                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, reportDate);
+                // Use today's date for the box-only Station-1 fetch as well, so this report is
+                // a self-contained "today" snapshot. (Previously this used the global `reportDate`,
+                // which could be left stale by a prior visit to the Admin reports screen.)
+                List<TransactionLogBlockModel> boxReportData = await _consoleHandler.GetBoxOnlyLineReportData(lineName, dateNow);
                 if (!boxReportData.Any())
                 {
                     //MessageBox.Show("st1 box only list is empty"); 
@@ -6069,10 +6078,12 @@ namespace WeightMaster
                     {
                         foreach (var transaction in lineReportData)
                         {
-                            //calculate box count
+                            //calculate box count (accumulate per row, not overwrite)
                             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
-                            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                            else { totalBoxCount = tempBoxWeight / 4; }
+                            int rowBoxCount = (tempBoxWeight % 7 == 0)
+                                ? (int)(tempBoxWeight / 3.5)
+                                : tempBoxWeight / 4;
+                            totalBoxCount += rowBoxCount;
 
                             //(int)Math.Floor(scalerWeight)
                             //totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //wrong boxFix
@@ -6093,7 +6104,9 @@ namespace WeightMaster
                             int barcode_index = 0;
                             if (int.TryParse(transaction.barcode_details, out barcode_index))
                             {
-                                indexesTotal ++;
+                                // Sum the numeric member numbers, matching the Admin handler so the
+                                // totals row's leftmost cell is consistent across both report buttons.
+                                indexesTotal += barcode_index;
                             }
                             else
                             {
@@ -6103,7 +6116,7 @@ namespace WeightMaster
                     }
                     else
                     {
-                        //MessageBox.Show("list is empty"); 
+                        //MessageBox.Show("list is empty");
                     }
 
                     // Pagination setup - ensure at least 1 page even for empty data
@@ -6210,10 +6223,12 @@ namespace WeightMaster
                     {
                         foreach (var transaction in lineReportData)
                         {
-                            //calculate box count
+                            //calculate box count (accumulate per row, not overwrite)
                             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
-                            if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                            else { totalBoxCount = tempBoxWeight / 4; }
+                            int rowBoxCount = (tempBoxWeight % 7 == 0)
+                                ? (int)(tempBoxWeight / 3.5)
+                                : tempBoxWeight / 4;
+                            totalBoxCount += rowBoxCount;
 
                             //(int)Math.Floor(scalerWeight)
                             //totalBoxCount += ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight) / 4; //wrong boxFix
