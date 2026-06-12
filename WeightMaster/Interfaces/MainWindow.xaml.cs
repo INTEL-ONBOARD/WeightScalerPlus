@@ -3013,6 +3013,11 @@ namespace WeightMaster
                 else
                 {
                     System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
+                    // Explicitly reset the totals row so stale values from a previous line don't carry over.
+                    lineRowNBagsTxt_st2.Text = "0";
+                    lineRowTotalLeafWeightsTxt_st2.Text = "0";
+                    lineRowAcceptedLeafWeightsTxt_st2.Text = "0";
+                    lineRowGoldLeafWeightsTxt_st2.Text = "0";
                 }
 
             }
@@ -3095,6 +3100,14 @@ namespace WeightMaster
 
                 }
 
+                // Totals-row accumulators — keep this handler in sync with the other one that
+                // populates the same CustomerCompletionRowPanel (the line-totals table). Without
+                // these, switching the line dropdown filled the rows but left the totals row at
+                // its "0 0 0 0" XAML default.
+                int rowNSacks = 0;
+                int rowGoldenLeafWeight = 0;
+                int rowTotalLeafWeight = 0;
+
                 if (transactions_notCompleted_st2 != null)
                 {
                     foreach (var transaction in transactions_notCompleted_st2)
@@ -3102,6 +3115,10 @@ namespace WeightMaster
                         CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), true, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+                        rowNSacks += transaction.bag_count;
+                        rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                        rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
                     }
                 }
 
@@ -3113,8 +3130,19 @@ namespace WeightMaster
                         CustomerCompletionTableRow cctr4 = new CustomerCompletionTableRow(transaction.barcode_details, transaction.name_with_initials, transaction.bag_count.ToString(), false, transaction.real_value.ToString("F2", CultureInfo.CurrentCulture), transaction.total_leaf_weight.ToString(), transaction.final_gold_leaf_count.ToString());
                         CustomerCompletionRowPanel.Children.Add(cctr4);
                         System.Diagnostics.Debug.WriteLine(transaction.barcode_details + " - " + transaction.linename);
+
+                        rowNSacks += transaction.bag_count;
+                        rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
+                        rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
                     }
                 }
+
+                // Write totals (always — includes the empty case so stale values from a previous
+                // line don't carry over). If both lists were empty, all three accumulators are 0.
+                lineRowNBagsTxt_st2.Text = rowNSacks.ToString();
+                lineRowTotalLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                lineRowAcceptedLeafWeightsTxt_st2.Text = rowTotalLeafWeight.ToString();
+                lineRowGoldLeafWeightsTxt_st2.Text = rowGoldenLeafWeight.ToString();
             }
             catch (Exception ex)
             {
