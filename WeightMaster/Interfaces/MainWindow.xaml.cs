@@ -2714,6 +2714,12 @@ namespace WeightMaster
             normalLeafWeightTxt_st2.Text = "";
             goldenLeafWeightTxt_st2.Text = "";
 
+            // Clear leftover sack-weight from prior member. Without this, an identical rounded
+            // sack weight on the next member would not re-fire WeightDeduction_st2_TextChanged
+            // (WPF skips TextChanged when Text is assigned the same value), leaving the
+            // normal-leaf column un-deducted at confirm time.
+            acceptedSackWeightTxt_st2.Text = "";
+
             currentAcceptedLeafWeight_st2 = 0;
             currentNormalLeafWeight_st2 = 0;
             currentGoldenLeafWeight_st2 = 0;
@@ -4056,6 +4062,10 @@ namespace WeightMaster
                     loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
                     currentStep_st2 = currentStep_st2 - 1;
                     ShowCurrentStep();
+
+                    // Clear sack weight on save-failure so a retry on the next member
+                    // doesn't inherit this member's stale sack-weight value.
+                    acceptedSackWeightTxt_st2.Text = "";
                 }
 
                 currentStep_st2 = 1;
