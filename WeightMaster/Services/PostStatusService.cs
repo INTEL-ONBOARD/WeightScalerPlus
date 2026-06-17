@@ -135,16 +135,26 @@ namespace WeightMaster.Services
 
         public async Task<GreenLeafPostModel?> GetFirstGreenLeafPostWithStatusFalseAsync()
         {
-            var postStatus = await _context.PostStatus
+            // Returns the oldest unsynced record that is SAFE to send to the cloud. A record only becomes
+            // sync-eligible once Station 2 has finalised it (updated_user is written there) or it has no
+            // bags to weigh (bag_count == 0). This stops a record being pushed while still at its
+            // Station-1 bag_weight = 0 state, which is what put zero bag weights on the Tea Coop cloud.
+            var pendingPostIds = await _context.PostStatus
                 .Where(ps => ps.Status == false)
                 .OrderBy(ps => ps.Id)
-                .FirstOrDefaultAsync();
+                .Select(ps => ps.PostId)
+                .ToListAsync();
 
-            if (postStatus != null)
+            foreach (var postId in pendingPostIds)
             {
-               
-                return await _context.GreenLeafPosts
-                    .FirstOrDefaultAsync(post => post.id == postStatus.PostId);
+                var post = await _context.GreenLeafPosts
+                    .FirstOrDefaultAsync(p => p.id == postId);
+                if (post == null) continue;
+
+                if (!string.IsNullOrWhiteSpace(post.updated_user) || post.bag_count == 0)
+                {
+                    return post;
+                }
             }
 
             return null;

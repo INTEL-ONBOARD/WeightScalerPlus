@@ -828,6 +828,11 @@ namespace WeightMaster.Core
                 await postService.UpdatePostAsync(id, post);
                 System.Diagnostics.Debug.WriteLine($"Post with ID {id} updated successfully.");
 
+                // Re-queue the record for cloud sync. Station 2 writes the real bag weight here; if the
+                // record was already synced (e.g. earlier at its Station-1 bag_weight = 0 state) this
+                // marks it dirty again so the corrected values are re-sent on the next cloudSync.
+                await postStatusService.UpdateStatusByPostIdAsync(id, false);
+
                 //bool isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
                 //if (isAvailable)
                 //{
@@ -861,34 +866,33 @@ namespace WeightMaster.Core
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
-                bool isAvailable = true;
+                // Drive the loop off GetFirstGreenLeafPostWithStatusFalseAsync (which now only returns
+                // FINALISED records) rather than AnyPostStatusIsFalseAsync. Otherwise un-finalised
+                // Station-1 records (still Status=false) would keep "any" true while "getFirst" returns
+                // null, spinning forever. A null result means nothing is left to sync.
+                GreenLeafPostModel? model;
                 do
                 {
-                    isAvailable = await postStatusService.AnyPostStatusIsFalseAsync();
-                    //MessageBox.Show("===> [checking] " + isAvailable);
-                    if (isAvailable)
+                    model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
+                    //MessageBox.Show("===> [fetched] " + model?.id);
+                    if (model != null)
                     {
-                        GreenLeafPostModel? model = await postStatusService.GetFirstGreenLeafPostWithStatusFalseAsync();
-                        //MessageBox.Show("===> [fetched] " + model?.id);
-                        if (model != null)
+                        bool isupdated = await PostGreenLeafToExternalApiAsync(model);
+                        if (isupdated)
                         {
-                            bool isupdated = await PostGreenLeafToExternalApiAsync(model);
-                            if (isupdated)
-                            {
-                                await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
-                                //MessageBox.Show("===>[done] " + model.id);
-                            }
-                            else
-                            {
-                                // If sync fails, stop the loop to prevent infinite retries of the same record
-                                // The record remains Status=false and will be retried next time cloudSync is called
-                                System.Diagnostics.Debug.WriteLine($"======> Sync failed for Post ID: {model.id}. Stopping sync batch.");
-                                return false; 
-                            }
+                            await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
+                            //MessageBox.Show("===>[done] " + model.id);
+                        }
+                        else
+                        {
+                            // If sync fails, stop the loop to prevent infinite retries of the same record
+                            // The record remains Status=false and will be retried next time cloudSync is called
+                            System.Diagnostics.Debug.WriteLine($"======> Sync failed for Post ID: {model.id}. Stopping sync batch.");
+                            return false;
                         }
                     }
-                    // Loop will continue only if there are more items AND the last one was successful
-                } while (isAvailable);
+                    // Loop continues only while finalised, unsynced records remain
+                } while (model != null);
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
                 return true;
             }
@@ -942,6 +946,24 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error retrieving post by member and date: {ex.Message}");
+                return null;
+            }
+        }
+
+        // Line-aware variant: returns the record for the specific line the member is being weighed on,
+        // so Station 2 updates the right GreenLeafPost instead of always hitting the first one.
+        public async Task<GreenLeafPostModel?> getPostByMemberDateLine(string memberNumber, string date, string lineId, string lineName)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var post = await postService.GetPostByMemberDateLineAsyncSingle(memberNumber, date, lineId, lineName);
+                System.Diagnostics.Debug.WriteLine($"> Found post (line-aware): {post?.id}");
+                return post;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving post by member, date and line: {ex.Message}");
                 return null;
             }
         }
