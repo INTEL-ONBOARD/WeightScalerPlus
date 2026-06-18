@@ -4031,6 +4031,19 @@ namespace WeightMaster
                     }
                     //MessageBox.Show(totalAcceptedSackWeight.ToString());
                     //call new api v2 (st2)
+
+                    // RACE FIX (separate-PC, shared DB): greenLeafPostModel_st2 was looked up at
+                    // barcode-scan time, which can run BEFORE Station 1 (a different PC) commits the
+                    // greenleafpost row, leaving its id = 0. Re-resolve it now, at confirm time (the row
+                    // exists by now), so newGRPM carries the real Station-1 data and the bag weight is
+                    // written to the actual row instead of being dropped by UpdatePostAsync(id = 0).
+                    var freshPost_st2 = await _consoleHandler.getDatabyMemberiDandDateSingle(
+                        currentMemberDetails_st2.barcode_details, DateTime.Now.ToString("yyyy-MM-dd"));
+                    if (freshPost_st2 != null)
+                    {
+                        greenLeafPostModel_st2 = freshPost_st2;
+                    }
+
                     var newGRPM = new GreenLeafPostModel
                     {
                         id = 0,
@@ -4075,7 +4088,25 @@ namespace WeightMaster
                     //Supporter.handleEquationSt2(newGRPM, totalAcceptedSackWeight);
 
                     //MessageBox.Show(newGRPM.bag_weight.ToString());
-                    bool passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    // Upsert: if the row exists, update it with the bag weight; if Station 1 never created
+                    // it, create it here (filling the Station-1 leaf fields from the member's transaction
+                    // totals) so the bag weight is always recorded in greenleafposts and the record syncs.
+                    bool passed;
+                    if (greenLeafPostModel_st2.id > 0)
+                    {
+                        passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    }
+                    else
+                    {
+                        newGRPM.bag_count = currentMemberDetails_st2.bag_count;
+                        newGRPM.box_count = currentMemberDetails_st2.box_count;
+                        newGRPM.real_weight = currentMemberDetails_st2.real_value;
+                        newGRPM.total_weight = currentMemberDetails_st2.total_leaf_weight;
+                        newGRPM.nomal_leaf_weight = currentMemberDetails_st2.actual_nomal_leaf_weight;
+                        newGRPM.gold_leaf_weight = currentMemberDetails_st2.total_gold_leaf_weight;
+                        await _consoleHandler.SaveData(newGRPM);
+                        passed = true;
+                    }
                     //MessageBox.Show(passed.ToString());
                     //await _consoleHandler.cloudsync();
 
