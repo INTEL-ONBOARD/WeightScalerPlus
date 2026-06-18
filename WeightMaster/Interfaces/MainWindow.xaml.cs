@@ -2683,17 +2683,8 @@ namespace WeightMaster
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId);
-                // Resolve the record for the LINE currently selected at Station 2, not just member + date.
-                // A member can hand over on multiple lines in a day; keying on the line (via line_id, with
-                // the line name as fallback) makes Station 2 update the correct record and stops it
-                // renaming an earlier line / leaving another line's record at bag_weight = 0.
-                string selectedLine_st2 = lineNameCmb_st2.SelectedItem?.ToString() ?? "";
-                string selectedLineId_st2 = GetLineIdByLineName(selectedLine_st2);
-                greenLeafPostModel_st2 = await _consoleHandler.getDatabyMemberIdDateAndLineSingle(
-                    memberId, DateTime.Now.ToString("yyyy-MM-dd"), selectedLineId_st2, selectedLine_st2);
-                // Guard: no record yet for this member on this line. Keep a non-null model so the rest of
-                // the Station 2 flow (which reads greenLeafPostModel_st2.*) does not NullReference.
-                greenLeafPostModel_st2 ??= new GreenLeafPostModel();
+                //either a new parameter should be added or i should filter them to get data by line
+                greenLeafPostModel_st2 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId, DateTime.Now.ToString("yyyy-MM-dd"));
             }
             catch (Exception ex)
             {

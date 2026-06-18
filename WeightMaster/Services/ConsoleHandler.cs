@@ -140,12 +140,6 @@ namespace WeightMaster.Services
         {
             return await _engine.getPostByMemberAndDate(memberid, date_);
         }
-        // Line-aware lookup for Station 2: resolves the record for the member on the specific line
-        // being weighed, so multi-line members no longer collapse onto the first line's record.
-        public async Task<GreenLeafPostModel> getDatabyMemberIdDateAndLineSingle(string memberid, string date_, string lineId, string lineName)
-        {
-            return await _engine.getPostByMemberDateLine(memberid, date_, lineId, lineName);
-        }
         //to get the pre-member number //also replacable with getMemberDetails
         public async Task<memDbLog> getMember(string customMemberNum)
         {
