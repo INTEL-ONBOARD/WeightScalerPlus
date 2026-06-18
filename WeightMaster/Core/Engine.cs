@@ -866,6 +866,14 @@ namespace WeightMaster.Core
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
+
+                // Before uploading, reconcile any pending records that never got their bag weight written
+                // back at Station 2: copy the correct bag_weight + deductions from FinaltransactionData
+                // (the source of truth) onto the GreenLeafPost. This guarantees the cloud receives the
+                // correct bag weight even when the live Station-2 finalisation missed the record.
+                int reconciled = await postStatusService.ReconcilePendingBagWeightsAsync();
+                System.Diagnostics.Debug.WriteLine($"======> Reconciled {reconciled} pending record(s) from FinaltransactionData before sync.");
+
                 // Drive the loop off GetFirstGreenLeafPostWithStatusFalseAsync (which now only returns
                 // FINALISED records) rather than AnyPostStatusIsFalseAsync. Otherwise un-finalised
                 // Station-1 records (still Status=false) would keep "any" true while "getFirst" returns

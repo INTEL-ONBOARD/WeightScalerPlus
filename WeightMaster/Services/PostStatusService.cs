@@ -160,5 +160,51 @@ namespace WeightMaster.Services
             return null;
         }
 
+        // Reconcile pending (Status=false) records from the Station-2 source of truth before they sync.
+        // The correct bag weight is always captured in FinaltransactionData; the in-app finalisation that
+        // copies it onto the GreenLeafPost can miss. This pulls bag_weight (and the Station-2 deductions)
+        // from FinaltransactionData (matched on member + date + line) so the cloud always receives the
+        // correct value, regardless of whether the live finalisation worked. Returns how many it fixed.
+        public async Task<int> ReconcilePendingBagWeightsAsync()
+        {
+            int fixedCount = 0;
+
+            var pendingIds = await _context.PostStatus
+                .Where(ps => ps.Status == false)
+                .Select(ps => ps.PostId)
+                .ToListAsync();
+
+            foreach (var postId in pendingIds)
+            {
+                var post = await _context.GreenLeafPosts.FirstOrDefaultAsync(p => p.id == postId);
+                if (post == null) continue;
+                if (post.bag_count <= 0) continue;                                   // no bags -> nothing to reconcile
+                if (!string.IsNullOrWhiteSpace(post.updated_user) && post.bag_weight > 0) continue; // already correct
+
+                var finals = await _context.FinaltransactionData
+                    .Where(f => f.barcode_details == post.membernumber
+                             && f.date == post.leaf_handover_date
+                             && f.linename == post.transportlinename)
+                    .ToListAsync();
+                if (finals.Count == 0) continue;                                     // no source of truth yet -> leave it held
+
+                // Sum across rounds (a member can have multiple Station-2 rows for the same line/day).
+                post.bag_weight = finals.Sum(f => f.bag_weight);
+                post.wathurata = finals.Sum(f => f.water);
+                post.morapuwata = finals.Sum(f => f.morapuwata);
+                post.thambimata = finals.Sum(f => f.thambimata);
+                post.rejected = finals.Sum(f => f.reject);
+                post.final_green_leaf_count = finals.Sum(f => f.final_green_leaf_count);
+                post.final_gold_leaf_count = finals.Sum(f => f.final_gold_leaf_count);
+                if (string.IsNullOrWhiteSpace(post.updated_user))
+                    post.updated_user = "reconciled";
+
+                await _context.SaveChangesAsync();
+                fixedCount++;
+            }
+
+            return fixedCount;
+        }
+
     }
 }
