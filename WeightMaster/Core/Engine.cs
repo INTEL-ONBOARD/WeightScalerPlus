@@ -946,6 +946,24 @@ namespace WeightMaster.Core
             }
         }
 
+        // Line-aware variant: returns the row for the specific line being weighed, so Station 2 updates
+        // the right greenleafpost instead of always hitting the first one (which renamed lines / left 0s).
+        public async Task<GreenLeafPostModel?> getPostByMemberDateAndLine(string memberNumber, string date, string line)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var post = await postService.GetPostByMemberDateAndLineAsyncSingle(memberNumber, date, line);
+                System.Diagnostics.Debug.WriteLine($"> Found post (line-aware): {post?.id}");
+                return post;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving post by member/date/line: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<List<GreenLeafPostModel>> GetAllPostsByFilteringPost(string memberNumber, string line)
         {
             try

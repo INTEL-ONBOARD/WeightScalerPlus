@@ -2683,8 +2683,13 @@ namespace WeightMaster
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId);
-                //either a new parameter should be added or i should filter them to get data by line
-                greenLeafPostModel_st2 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId, DateTime.Now.ToString("yyyy-MM-dd"));
+                // Resolve the row for the LINE being weighed (not just member + date), so a member with
+                // rows on two lines updates the correct one and no line gets renamed. ?? new
+                // GreenLeafPostModel() keeps id = 0 when no row matches, so the id > 0 guard at confirm
+                // turns a missing row into a clean no-op (no wrong-row overwrite, no NullReference).
+                string scanLine_st2 = lineNameCmb_st2.SelectedItem?.ToString() ?? "";
+                greenLeafPostModel_st2 = (await _consoleHandler.getDatabyMemberDateAndLineSingle(
+                    memberId, DateTime.Now.ToString("yyyy-MM-dd"), scanLine_st2)) ?? new GreenLeafPostModel();
             }
             catch (Exception ex)
             {
@@ -4075,7 +4080,17 @@ namespace WeightMaster
                     //Supporter.handleEquationSt2(newGRPM, totalAcceptedSackWeight);
 
                     //MessageBox.Show(newGRPM.bag_weight.ToString());
-                    bool passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    // Only update when we resolved the correct row for this line (id > 0). If no row
+                    // matched member + date + line, skip — never fall back to overwriting another line's row.
+                    bool passed = false;
+                    if (greenLeafPostModel_st2.id > 0)
+                    {
+                        passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    }
+                    else
+                    {
+                        System.Diagnostics.Debug.WriteLine($"No Station-1 row for member {memberId} on line {lineName_st2}; skipping Station-2 update to avoid a wrong-row overwrite.");
+                    }
                     //MessageBox.Show(passed.ToString());
                     //await _consoleHandler.cloudsync();
 
