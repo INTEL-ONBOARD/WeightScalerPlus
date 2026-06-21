@@ -1,5 +1,0 @@
-{
-  "branch_id":   "{{BRANCH_ID}}",
-  "branch_name": "{{BRANCH_NAME}}",
-  "build_no":    "{{BUILD_NO}}"
-}

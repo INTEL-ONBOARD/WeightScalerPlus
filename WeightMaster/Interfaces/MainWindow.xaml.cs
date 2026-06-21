@@ -187,7 +187,9 @@ namespace WeightMaster
 
             txtBillDate_settings.Text = reportDate;
 
-            // Auto-update: show current version, restore the toggle state, and check on startup if enabled.
+            // Auto-update: clean up any exe left behind by a previous self-update, show the current
+            // version, restore the toggle state, and check on startup if enabled.
+            _updateService.CleanupOldVersion();
             AppVersionText.Text = $"App version: v{_updateService.GetCurrentVersion().ToString(3)}";
             AutoUpdateToggle.IsChecked = _updateService.GetAutoUpdateEnabled();
             if (AutoUpdateToggle.IsChecked == true)
@@ -5422,7 +5424,7 @@ namespace WeightMaster
                 }
 
                 var choice = MessageBox.Show(
-                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and install now?",
+                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and update now? The app will restart.",
                     "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (choice != MessageBoxResult.Yes)
                 {
@@ -5433,10 +5435,7 @@ namespace WeightMaster
                 var progress = new Progress<double>(p =>
                     Dispatcher.Invoke(() => statusLabel.Content = $"Downloading update... {p:0}%"));
                 statusLabel.Content = "Downloading update...";
-                var installerPath = await _updateService.DownloadInstallerAsync(info, progress);
-
-                statusLabel.Content = "Launching installer...";
-                _updateService.LaunchInstallerAndExit(installerPath); // app shuts down here
+                await _updateService.DownloadAndApplyUpdateAsync(info, progress); // app restarts & exits here
             }
             catch (Exception ex)
             {
@@ -5471,15 +5470,14 @@ namespace WeightMaster
                 }
 
                 var choice = MessageBox.Show(
-                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and install now?",
+                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and update now? The app will restart.",
                     "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (choice != MessageBoxResult.Yes)
                 {
                     return;
                 }
 
-                var installerPath = await _updateService.DownloadInstallerAsync(info);
-                _updateService.LaunchInstallerAndExit(installerPath);
+                await _updateService.DownloadAndApplyUpdateAsync(info);
             }
             catch
             {

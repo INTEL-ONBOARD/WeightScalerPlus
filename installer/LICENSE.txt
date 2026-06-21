@@ -1,4 +1,0 @@
-Copyright (c) Tea Coop. Internal use only.
-
-This software is licensed for internal use by Tea Coop and its affiliated
-weighing stations. Redistribution is not permitted without written consent.

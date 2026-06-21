@@ -1,0 +1,73 @@
+name: Build WeightMaster EXE
+
+on:
+  workflow_dispatch:
+  push:
+    tags: [ 'v*' ]
+
+permissions:
+  contents: write          # used by the release job to attach the exes
+
+jobs:
+  build:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        rid: [ win-x64, win-x86 ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - run: dotnet restore WeightMaster.sln -r ${{ matrix.rid }}
+
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $v = $env:GITHUB_REF -replace '^refs/tags/v',''
+          } else {
+            $v = '0.0.0-dev'
+          }
+          $fileVer = ($v -split '-')[0]
+          "fileVersion=$fileVer" | Out-File -Append $env:GITHUB_OUTPUT
+
+      - name: Publish (self-contained single-file)
+        run: >
+          dotnet publish WeightMaster/WeightMaster.csproj
+          -c Release -r ${{ matrix.rid }} --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:EnableCompressionInSingleFile=true
+          -p:Version=${{ steps.ver.outputs.fileVersion }}
+          -p:FileVersion=${{ steps.ver.outputs.fileVersion }}
+          -p:AssemblyVersion=${{ steps.ver.outputs.fileVersion }}
+          -o publish
+
+      - name: Name the exe per architecture
+        shell: pwsh
+        run: Rename-Item publish/WeightMaster.exe WeightMaster-${{ matrix.rid }}.exe
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WeightMaster-${{ matrix.rid }}
+          path: publish/WeightMaster-${{ matrix.rid }}.exe
+          retention-days: 30
+
+  release:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*.exe
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
