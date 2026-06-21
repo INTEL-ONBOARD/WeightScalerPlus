@@ -1637,7 +1637,7 @@
                             <!-- Title -->
                             <TextBlock Grid.Column="0" Text="Automatic Updates" FontSize="16" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,10,0" />
                             <!-- Toggle Button for Slide Switch -->
-                            <ToggleButton Grid.Column="1"  HorizontalAlignment="Right" VerticalAlignment="Center" Width="50" Height="26"/>
+                            <ToggleButton x:Name="AutoUpdateToggle" Click="AutoUpdateToggle_Click" Grid.Column="1"  HorizontalAlignment="Right" VerticalAlignment="Center" Width="50" Height="26"/>
                         </Grid>
 
 
@@ -1650,11 +1650,19 @@
                             </Border>
                         </Button>
 
-                        <!-- Check updates Button -->
-                        <TextBlock Grid.Column="0" Text="Check for cloud updates" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,533,0,0" />
+                        <!-- Verify databases Button -->
+                        <TextBlock Grid.Column="0" Text="Verify databases" FontSize="16" Foreground="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="62,533,0,0" />
                         <Button x:Name="CheckUpdatesButton_settings" Cursor="Hand" Click="CheckUpdatesButton_Click" Background="Transparent" BorderThickness="0" Margin="384,519,673,236" Style="{StaticResource HoverButton}">
                             <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="108">
-                                <TextBlock Text="Update" HorizontalAlignment="Center" Foreground="White"/>
+                                <TextBlock Text="Verify DB" HorizontalAlignment="Center" Foreground="White"/>
+                            </Border>
+                        </Button>
+
+                        <!-- App update: current version + check button -->
+                        <TextBlock x:Name="AppVersionText" Text="App version: -" FontSize="14" Foreground="#666" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="540,455,0,0" />
+                        <Button x:Name="AppUpdateButton_settings" Cursor="Hand" Click="AppUpdateButton_Click" Background="Transparent" BorderThickness="0" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="540,495,0,0" Style="{StaticResource HoverButton}">
+                            <Border Background="#2ECC71" CornerRadius="10" Padding="12" Width="170">
+                                <TextBlock Text="Check for App Update" HorizontalAlignment="Center" Foreground="White"/>
                             </Border>
                         </Button>
 

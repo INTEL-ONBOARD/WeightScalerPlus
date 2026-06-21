@@ -1,0 +1,1 @@
+Server={{HOST}};Port={{PORT}};Database={{DB}};Uid={{USER}};Pwd={{PASS}};

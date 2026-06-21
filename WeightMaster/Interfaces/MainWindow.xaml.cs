@@ -32,6 +32,7 @@ namespace WeightMaster
         private ConsoleHandler _consoleHandler;
         public AppConfig _appConfig;
         private ComPortService? _comPortService;
+        private readonly UpdateService _updateService = new UpdateService();
 
         private bool scalerPassedZero = false;
 
@@ -185,6 +186,14 @@ namespace WeightMaster
             TopbarCustomerLocation.Text = _appConfig.branchName;
 
             txtBillDate_settings.Text = reportDate;
+
+            // Auto-update: show current version, restore the toggle state, and check on startup if enabled.
+            AppVersionText.Text = $"App version: v{_updateService.GetCurrentVersion().ToString(3)}";
+            AutoUpdateToggle.IsChecked = _updateService.GetAutoUpdateEnabled();
+            if (AutoUpdateToggle.IsChecked == true)
+            {
+                _ = RunSilentUpdateCheckAsync();
+            }
         }
 
         //Enter & Esc navigation logic________________________________________________________________________________________
@@ -5395,6 +5404,86 @@ namespace WeightMaster
             finally
             {
                 SyncButton_settings.IsEnabled = true;
+            }
+        }
+
+        // Manual "Check for App Update": queries GitHub Releases, then downloads + launches the installer.
+        private async void AppUpdateButton_Click(object sender, RoutedEventArgs e)
+        {
+            AppUpdateButton_settings.IsEnabled = false;
+            try
+            {
+                statusLabel.Content = "Checking for updates...";
+                var info = await _updateService.CheckForUpdateAsync();
+                if (info == null)
+                {
+                    statusLabel.Content = $"You're on the latest version (v{_updateService.GetCurrentVersion().ToString(3)}).";
+                    return;
+                }
+
+                var choice = MessageBox.Show(
+                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and install now?",
+                    "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (choice != MessageBoxResult.Yes)
+                {
+                    statusLabel.Content = "Update postponed.";
+                    return;
+                }
+
+                var progress = new Progress<double>(p =>
+                    Dispatcher.Invoke(() => statusLabel.Content = $"Downloading update... {p:0}%"));
+                statusLabel.Content = "Downloading update...";
+                var installerPath = await _updateService.DownloadInstallerAsync(info, progress);
+
+                statusLabel.Content = "Launching installer...";
+                _updateService.LaunchInstallerAndExit(installerPath); // app shuts down here
+            }
+            catch (Exception ex)
+            {
+                statusLabel.Content = $"Update check failed: {ex.Message}";
+            }
+            finally
+            {
+                AppUpdateButton_settings.IsEnabled = true;
+            }
+        }
+
+        // Persists the "Automatic Updates" preference and, when turned on, checks immediately.
+        private async void AutoUpdateToggle_Click(object sender, RoutedEventArgs e)
+        {
+            bool enabled = AutoUpdateToggle.IsChecked == true;
+            _updateService.SetAutoUpdateEnabled(enabled);
+            if (enabled)
+            {
+                await RunSilentUpdateCheckAsync();
+            }
+        }
+
+        // Background update check (startup / toggle-on): prompts only if a newer release exists; never throws.
+        private async Task RunSilentUpdateCheckAsync()
+        {
+            try
+            {
+                var info = await _updateService.CheckForUpdateAsync();
+                if (info == null)
+                {
+                    return;
+                }
+
+                var choice = MessageBox.Show(
+                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and install now?",
+                    "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                if (choice != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+
+                var installerPath = await _updateService.DownloadInstallerAsync(info);
+                _updateService.LaunchInstallerAndExit(installerPath);
+            }
+            catch
+            {
+                // Silent: a failed background check must not interrupt normal use.
             }
         }
 

@@ -1,0 +1,85 @@
+name: Build Windows Installer
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version (e.g. 26.2.0). Defaults to 0.0.0-dev.'
+        required: false
+        default: '0.0.0-dev'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Resolve version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $v = $env:GITHUB_REF -replace '^refs/tags/v',''
+          } else {
+            $v = '${{ github.event.inputs.version }}'
+            if (-not $v) { $v = '0.0.0-dev' }
+          }
+          $fileVer = ($v -split '-')[0]
+          "version=$v"           | Out-File -Append $env:GITHUB_OUTPUT
+          "fileVersion=$fileVer" | Out-File -Append $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore WeightMaster.sln
+
+      - name: Publish (self-contained, single-file, win-x64)
+        run: >
+          dotnet publish WeightMaster/WeightMaster.csproj
+          -c Release
+          -r win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:IncludeNativeLibrariesForSelfExtract=true
+          -p:Version=${{ steps.ver.outputs.fileVersion }}
+          -p:FileVersion=${{ steps.ver.outputs.fileVersion }}
+          -p:AssemblyVersion=${{ steps.ver.outputs.fileVersion }}
+          -o publish
+
+      - name: Build installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $iscc = "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe"
+          if (-not (Test-Path $iscc)) {
+            choco install innosetup -y --no-progress
+          }
+          & $iscc `
+            /DAppVersion=${{ steps.ver.outputs.version }} `
+            /DPublishDir=$PWD\publish `
+            /DOutputDir=$PWD\dist `
+            installer\setup.iss
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WeightMaster-Setup-${{ steps.ver.outputs.version }}
+          path: dist/*.exe
+          if-no-files-found: error
+
+      - name: Publish GitHub Release (tag push only)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe
+          generate_release_notes: true
+          # Tags with a suffix (e.g. v26.4.0-rc.1) are pre-releases; clean vX.Y.Z tags are full
+          # releases so they surface via the GitHub "latest" endpoint the in-app updater queries.
+          prerelease: ${{ contains(github.ref_name, '-') }}
