@@ -2694,8 +2694,13 @@ namespace WeightMaster
             try
             {
                 memberName = await _consoleHandler.GetMemberName(memberId);
-                //either a new parameter should be added or i should filter them to get data by line
-                greenLeafPostModel_st2 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId, DateTime.Now.ToString("yyyy-MM-dd"));
+                //Load the post for this member ON THE CURRENTLY-SELECTED LINE (mirrors station 1).
+                //A member can deliver leaf on more than one line the same day, so station 1 creates
+                //one post per (member, line). The previous member+date-only lookup always returned the
+                //first line's post, so the other line's post was never updated and shipped to the cloud
+                //un-deducted (bag_weight stayed 0). Filtering by the selected line fixes that.
+                string selectedLineName_st2 = lineNameCmb_st2.SelectedItem?.ToString() ?? "";
+                greenLeafPostModel_st2 = await _consoleHandler.getDataByMemberLineAndDateSingle(memberId, selectedLineName_st2, DateTime.Now.ToString("yyyy-MM-dd"));
             }
             catch (Exception ex)
             {

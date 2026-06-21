@@ -195,6 +195,16 @@ namespace WeightMaster.Services
                 .FirstOrDefaultAsync(p => p.membernumber == memberNumber && p.leaf_handover_date == handoverDate);
         }
 
+        // Line-aware single-post lookup. A member can deliver leaf on more than one line on the
+        // same day, producing one post per (member, line). Station 2 must load the post for the
+        // CURRENTLY-SELECTED line; filtering only by member+date returns the first line's post and
+        // leaves the other line's post un-deducted (bag_weight stays 0). Mirrors GetAllPostsByFiltering.
+        public async Task<GreenLeafPostModel?> GetPostByMemberLineAndDateAsyncSingle(string memberNumber, string line, string handoverDate)
+        {
+            return await _context.GreenLeafPosts
+                .FirstOrDefaultAsync(p => p.membernumber == memberNumber && p.transportlinename == line && p.leaf_handover_date == handoverDate);
+        }
+
         public async Task<List<GreenLeafPostModel>> GetAllPostsByFiltering(string memberNumber, string line)
         {
             string todayDate = DateTime.Now.ToString("yyyy-MM-dd");

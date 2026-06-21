@@ -140,6 +140,13 @@ namespace WeightMaster.Services
         {
             return await _engine.getPostByMemberAndDate(memberid, date_);
         }
+
+        //line-aware single post lookup (member + line + date) used by station 2 so the correct
+        //line's post is loaded/updated when a member delivered on more than one line per day.
+        public async Task<GreenLeafPostModel> getDataByMemberLineAndDateSingle(string memberid, string line, string date_)
+        {
+            return await _engine.getPostByMemberLineAndDate(memberid, line, date_);
+        }
         //to get the pre-member number //also replacable with getMemberDetails
         public async Task<memDbLog> getMember(string customMemberNum)
         {

@@ -946,6 +946,24 @@ namespace WeightMaster.Core
             }
         }
 
+        // Line-aware variant of getPostByMemberAndDate: loads the post for a specific (member, line, date)
+        // so station 2 updates the correct line's post when a member delivered on more than one line/day.
+        public async Task<GreenLeafPostModel?> getPostByMemberLineAndDate(string memberNumber, string line, string date)
+        {
+            try
+            {
+                var postService = new PostService(new AppDbContext());
+                var post = await postService.GetPostByMemberLineAndDateAsyncSingle(memberNumber, line, date);
+                System.Diagnostics.Debug.WriteLine($"> Found post (line-aware): {post?.id}");
+                return post;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error retrieving post by member, line and date: {ex.Message}");
+                return null;
+            }
+        }
+
         public async Task<List<GreenLeafPostModel>> GetAllPostsByFilteringPost(string memberNumber, string line)
         {
             try
