@@ -1873,8 +1873,18 @@ namespace WeightMaster
             //}
             //else
             {
-                acceptedLeafWeightTxt_st1.Text = (scalerRoundedWeight_st1 - boxWeights).ToString();
-                currentAcceptedLeafWeight_st1 = (int)(scalerRoundedWeight_st1 - boxWeights);
+                // Net leaf for the box round = scale reading minus the box tare (3.5 KG/box).
+                double netBoxLeaf = scalerRoundedWeight_st1 - boxWeights;
+
+                // A single box can hold at most 23 KG of leaf, so cap the net leaf at 23 x nBoxes
+                // (mirrors the sack cap in SackDeduction_st1_TextChanged). Without this, a box round
+                // reading over the limit (e.g. 30 -> 26 net for 1 box) was saved un-capped.
+                double boxLeafLimit = nBoxes * 23;
+                if (nBoxes != 0 && netBoxLeaf > boxLeafLimit)
+                    netBoxLeaf = boxLeafLimit;
+
+                acceptedLeafWeightTxt_st1.Text = netBoxLeaf.ToString();
+                currentAcceptedLeafWeight_st1 = (int)netBoxLeaf;
                 //MessageBox.Show("nboxes exceeds rounded weights");
             }
             //updating normal and golden leaf weights
