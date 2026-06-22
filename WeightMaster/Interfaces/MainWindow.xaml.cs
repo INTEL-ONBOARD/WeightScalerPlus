@@ -4620,7 +4620,7 @@ namespace WeightMaster
 
                 // Initialize totals to zero
                 int indexesTotal = 0, totalBagCount = 0, totalBoxCount = 0,
-                    totalLeafWeight = 0, totalDalu = 0,
+                    totalLeafWeight = 0, totalLeafNet = 0, totalDalu = 0,
                     totalGoldLeafWeight = 0, totalGreenLeafWeight = 0,
                     totalWater = 0, totalMorapuwata = 0, totalThambimata = 0, totalReject = 0,
                     totalBagWeight = 0, totalBoxWeight = 0;
@@ -4637,12 +4637,15 @@ namespace WeightMaster
 
                         //helper method to calculate box count
                         int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
-                        if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                        else { totalBoxCount = tempBoxWeight / 4; }
+                        int rowBoxCount;
+                        if (tempBoxWeight % 7 == 0) { rowBoxCount = (int)(tempBoxWeight / 3.5); }
+                        else { rowBoxCount = tempBoxWeight / 4; }
+                        totalBoxCount += rowBoxCount; //fix: accumulate box count across rows (was overwriting with the last row only)
 
                         //calculate total row values
                         totalBagCount += transaction.bag_count;
-                        totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //total weigt was fixed to include bag weight
+                        totalLeafNet += transaction.total_leaf_weight;                    //net leaf — matches the per-row Total column
+                        totalLeafWeight += transaction.total_leaf_weight + tempBoxWeight; //gross = net + box tare — shown in the badge
                         // Sum the after-deductions value so the Normal totals row matches the per-row column.
                         totalGreenLeafWeight += transaction.final_green_leaf_count;
                         totalGoldLeafWeight += transaction.total_gold_leaf_weight;
@@ -4672,7 +4675,11 @@ namespace WeightMaster
                     TransactionTotalBags.Text = totalBagCount.ToString();
                     TransactionTotalNormal.Text = totalGreenLeafWeight.ToString();
                     TransactionTotalGold.Text = totalGoldLeafWeight.ToString();
-                    TransactionTotalWeight.Text = totalLeafWeight.ToString();
+                    // Total column shows net leaf (e.g. 87); box-inclusive gross (e.g. 95) goes in the small
+                    // green badge, shown only when they differ (i.e. the selection contains box weight).
+                    TransactionTotalWeight.Text = totalLeafNet.ToString();
+                    TransactionTotalWeightGross.Text = totalLeafWeight.ToString();
+                    TransactionTotalWeightGrossBadge.Visibility = (totalLeafWeight > totalLeafNet) ? Visibility.Visible : Visibility.Collapsed;
                     TransactionTotalWater.Text = totalWater.ToString();
                     TransactionTotalMora.Text = totalMorapuwata.ToString();
                     TransactionTotalThambi.Text = totalThambimata.ToString();
@@ -5296,6 +5303,8 @@ namespace WeightMaster
             TransactionTotalGold.Text = "0";
             TransactionTotalNormal.Text = "0";
             TransactionTotalWeight.Text = "0";
+            TransactionTotalWeightGross.Text = "0";
+            TransactionTotalWeightGrossBadge.Visibility = Visibility.Collapsed;
             TransactionTotalWater.Text = "0";
             TransactionTotalMora.Text = "0";
             TransactionTotalThambi.Text = "0";
