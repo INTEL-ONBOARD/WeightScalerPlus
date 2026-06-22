@@ -2341,8 +2341,11 @@ namespace WeightMaster
 
                             real_weight = Math.Round(weightScalerValue, 2),
                             //total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
-                            total_weight = (int)currentAcceptedLeafWeight_st1 + (int)Math.Ceiling(nBoxes * singleBoxWeight),
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)Math.Ceiling(nBoxes * singleBoxWeight),
+                            // Box tare (3.5 KG/box) is already removed by BoxDeduction_st1_TextChanged and is
+                            // tracked separately in box_weight below; do NOT add it back into the leaf columns,
+                            // otherwise the leaf weight is inflated by the crate weight (e.g. 90 net -> 98).
+                            total_weight = (int)currentAcceptedLeafWeight_st1,
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
                             gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
 
                             wathurata = wateredWeight,
@@ -2388,9 +2391,11 @@ namespace WeightMaster
                             box_count = nBoxes + postModelSumFromLine.box_count,
 
                             real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
-                            total_weight = (int)acceptedLeafWeight + postModelSumFromLine.total_weight + (int)Math.Ceiling(nBoxes * singleBoxWeight),
+                            // Box tare already removed by BoxDeduction_st1_TextChanged and kept in box_weight;
+                            // don't re-add it here, otherwise the leaf columns are inflated by the crate weight.
+                            total_weight = (int)acceptedLeafWeight + postModelSumFromLine.total_weight,
 
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight + (int)Math.Ceiling(nBoxes * singleBoxWeight),
+                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
                             gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
 
                             wathurata = wateredWeight + postModelSumFromLine.wathurata,
