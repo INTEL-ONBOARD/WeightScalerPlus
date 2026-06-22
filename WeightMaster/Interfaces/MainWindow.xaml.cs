@@ -4806,9 +4806,13 @@ namespace WeightMaster
             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
             else { totalBoxCount = tempBoxWeight / 4; }
 
+            // A round is "Done" if a sack weight was deducted at station 2 (bag_weight > 0),
+            // OR if it is a box-only round (boxes, no bags) — those have no station-2 sack step,
+            // so they are complete once weighed at station 1. Mark them Done, not Pending.
+            bool isDone = (transaction.bag_weight > 0) || (totalBoxCount > 0 && transaction.bag_count == 0);
+
             // Set background color based on status
-            // completed: bag count is not zero
-            var bgColor = (transaction.bag_weight > 0) ? "#E8F5E9" : "#FFF3E0"; // Green-ish for completed, orange-ish for queue
+            var bgColor = isDone ? "#E8F5E9" : "#FFF3E0"; // Green-ish for completed, orange-ish for queue
 
             var border = new Border
             {
@@ -4891,7 +4895,7 @@ namespace WeightMaster
             //grid.Children.Add(date);
 
             // Status tag with color coding
-            var statusColor = (transaction.bag_weight > 0) ? "#2ECC71" : "#F39C12"; // Green for completed, Orange for queue
+            var statusColor = isDone ? "#2ECC71" : "#F39C12"; // Green for completed, Orange for queue
             var statusBorder = new Border
             {
                 Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(statusColor)),
@@ -4900,7 +4904,7 @@ namespace WeightMaster
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
-            var status = new TextBlock { Text = (transaction.bag_weight > 0) ? "Done" : "Pending", FontSize = 17, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
+            var status = new TextBlock { Text = isDone ? "Done" : "Pending", FontSize = 17, Foreground = Brushes.White, FontWeight = FontWeights.SemiBold };
             statusBorder.Child = status;
             Grid.SetColumn(statusBorder, 13);
             grid.Children.Add(statusBorder);
