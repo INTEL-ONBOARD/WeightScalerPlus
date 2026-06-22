@@ -4061,6 +4061,26 @@ namespace WeightMaster
                         bool isSuccess = await _consoleHandler.verifyTransactionsCloudCheck();
                     }
                     //MessageBox.Show(totalAcceptedSackWeight.ToString());
+
+                    // BOXFIX: boxes never reach Station 2 (getPendingTransactionBagData filters box_count == 0),
+                    // so the box rounds' green AND gold leaf are dropped when this post is overwritten below. Box
+                    // rounds are already net of box tare + per-box cap at Station 1, so read this member's box rounds
+                    // for the SAME line + today from the transaction table and sum their final_green/gold_leaf_count.
+                    // Mirrors the way the line/daily reports already merge box data from transactionData.
+                    int boxGreenLeaf_st2 = 0;
+                    int boxGoldLeaf_st2 = 0;
+                    try
+                    {
+                        var memberRounds_st2 = await _consoleHandler.getDataByFilter(currentMemberDetails_st2.linename, currentMemberDetails_st2.barcode_details);
+                        var boxRounds_st2 = memberRounds_st2.Where(r => r.box_count > 0).ToList();
+                        boxGreenLeaf_st2 = boxRounds_st2.Sum(r => r.final_green_leaf_count);
+                        boxGoldLeaf_st2 = boxRounds_st2.Sum(r => r.final_gold_leaf_count);
+                    }
+                    catch (Exception exBox)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Station 2 box leaf lookup failed: " + exBox.Message);
+                    }
+
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
@@ -4094,8 +4114,11 @@ namespace WeightMaster
                         bag_weight = totalAcceptedSackWeight,
                         box_weight = greenLeafPostModel_st2.box_weight,
 
-                        final_green_leaf_count = finalAvailableNormalLeafWeight,
-                        final_gold_leaf_count = finalAvailableGoldenLeafWeight,
+                        // BOXFIX: bag-net (Station 2) + box green leaf read from transactionData above,
+                        // so the post matches the printed reports/receipts (e.g. bag net 33 + box 44 = 77),
+                        // instead of the bag-only value that dropped the box leaf (was 33).
+                        final_green_leaf_count = finalAvailableNormalLeafWeight + boxGreenLeaf_st2,
+                        final_gold_leaf_count = finalAvailableGoldenLeafWeight + boxGoldLeaf_st2,
 
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail
