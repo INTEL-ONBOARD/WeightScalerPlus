@@ -3944,6 +3944,32 @@ namespace WeightMaster
 
                 try
                 {
+                    // Resolve the Station-1 green-leaf post FRESH at confirm time using the line we're
+                    // about to write the transaction under — NOT the scan-time greenLeafPostModel_st2,
+                    // which can be null/stale because the line-aware lookup at scan runs before the
+                    // line dropdown settles. Done BEFORE writing the final transaction so the record
+                    // can never go half-saved (transaction written but post left un-deducted at bag_weight=0).
+                    greenLeafPostModel_st2 = await _consoleHandler.getDataByMemberLineAndDateSingle(
+                        currentMemberDetails_st2.barcode_details,
+                        lineName_st2,
+                        DateTime.Now.ToString("yyyy-MM-dd"));
+
+                    if (greenLeafPostModel_st2 == null || greenLeafPostModel_st2.id <= 0)
+                    {
+                        MessageBox.Show(
+                            $"Could not match the Station-1 green-leaf post for member " +
+                            $"{currentMemberDetails_st2.barcode_details} on line \"{lineName_st2}\".\n" +
+                            $"Bag weight was NOT saved — please re-scan and try again.",
+                            "Station 2 save aborted");
+
+                        // Abort: write NOTHING (no transaction, no post) so it can't go half-saved.
+                        // Restore the UI the same way the catch below does (the spinner was shown above).
+                        loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
+                        currentStep_st2 = currentStep_st2 - 1;
+                        ShowCurrentStep();
+                        return;
+                    }
+
                     var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
