@@ -2458,6 +2458,7 @@ namespace WeightMaster
                 {
                     // Handle exception here
                     System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
+                    Logger.Error("Station1.Confirm", "confirm/save failed", ex, new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
                     loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                     currentStep_st1 = currentStep_st1 - 1;
                     ShowCurrentStep();
@@ -2471,6 +2472,7 @@ namespace WeightMaster
                 loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
                 if (_isSuccess)
                 {
+                    Logger.Event("station1_save", new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
                     int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
                     Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, goldenLeafWeightTxt_st1.Text, normalLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
                     // When adding a new row dynamically(no need now)
@@ -3964,6 +3966,7 @@ namespace WeightMaster
 
                     if (greenLeafPostModel_st2 == null || greenLeafPostModel_st2.id <= 0)
                     {
+                        Logger.Warn("Station2.Confirm", "no green-leaf post to update (save aborted)", new { member = currentMemberDetails_st2?.barcode_details, line = lineName_st2 });
                         MessageBox.Show(
                             $"Could not match the Station-1 green-leaf post for member " +
                             $"{currentMemberDetails_st2.barcode_details} on line \"{lineName_st2}\".\n" +
@@ -4164,6 +4167,7 @@ namespace WeightMaster
 
                     //MessageBox.Show(newGRPM.bag_weight.ToString());
                     bool passed = await _consoleHandler.UpdateData(greenLeafPostModel_st2.id, newGRPM);
+                    Logger.Event("station2_confirm", new { member = currentMemberDetails_st2.barcode_details, line = lineName_st2, postId = greenLeafPostModel_st2.id, bagWeight = totalAcceptedSackWeight, updated = passed });
                     //MessageBox.Show(passed.ToString());
                     //await _consoleHandler.cloudsync();
 
@@ -4174,6 +4178,7 @@ namespace WeightMaster
                 }
                 catch (Exception ex)
                 {
+                    Logger.Error("Station2.Confirm", "confirm/save failed", ex, new { member = currentMemberDetails_st2?.barcode_details, line = lineName_st2 });
                     //MessageBox.Show("Upload Failed: " + ex.Message);
                     loadingDataInputBorder_st2.Visibility = Visibility.Hidden;
                     currentStep_st2 = currentStep_st2 - 1;

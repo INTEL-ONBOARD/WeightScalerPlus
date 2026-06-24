@@ -865,6 +865,7 @@ namespace WeightMaster.Core
                 // Total records to sync, captured once up front so the percentage is stable.
                 int total = await postStatusService.GetPendingRealPostCountAsync();
                 int done = 0;
+                Logger.Event("cloud_sync_started", new { total });
 
                 bool isAvailable = true;
                 do
@@ -890,6 +891,7 @@ namespace WeightMaster.Core
                                 // If sync fails, stop the loop to prevent infinite retries of the same record
                                 // The record remains Status=false and will be retried next time cloudSync is called
                                 System.Diagnostics.Debug.WriteLine($"======> Sync failed for Post ID: {model.id}. Stopping sync batch.");
+                                Logger.Warn("CloudSync", "post sync failed, stopping batch", new { postId = model.id, done, total });
                                 return false;
                             }
                         }
@@ -907,11 +909,13 @@ namespace WeightMaster.Core
                     // Loop will continue only if there are more items AND the last one was successful
                 } while (isAvailable);
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FINISHED!");
+                Logger.Event("cloud_sync_finished", new { done, total });
                 return true;
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC FAILED!");
+                Logger.Error("CloudSync", "cloud sync failed", ex);
                 return false;
             }
         }
@@ -1050,6 +1054,7 @@ namespace WeightMaster.Core
                 }
 
                 System.Diagnostics.Debug.WriteLine($"> HTTP Error: {ex.Message}");
+                Logger.Error("CloudApi", "POST greenleaf HTTP error", ex, new { postId = postModel.id, status = (int?)ex.StatusCode });
 
                 if (ex.Data != null)
                 {
@@ -1064,6 +1069,7 @@ namespace WeightMaster.Core
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"> General Error: {ex.Message}");
+                Logger.Error("CloudApi", "POST greenleaf failed", ex, new { postId = postModel.id });
 
                 if (ex.InnerException != null)
                 {
