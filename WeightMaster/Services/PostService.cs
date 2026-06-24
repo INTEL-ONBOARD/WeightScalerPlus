@@ -59,6 +59,9 @@ namespace WeightMaster.Services
 
         public async Task ReplacePostsAsync(List<GreenLeafPostModel> posts)
         {
+            // Wiping all posts re-seeds ids on re-add, so every existing PostStatus.PostId would
+            // point at a now-deleted post (orphan) and hang cloudSync. Clear PostStatus too.
+            _context.PostStatus.RemoveRange(_context.PostStatus);
             _context.GreenLeafPosts.RemoveRange(_context.GreenLeafPosts);
             var postModels = posts.Select(p => MapPostToModel(p)).ToList();
             await _context.GreenLeafPosts.AddRangeAsync(postModels);
@@ -80,6 +83,10 @@ namespace WeightMaster.Services
             var post = await GetPostByIdAsync(id);
             if (post != null)
             {
+                // Remove the post's PostStatus row(s) too, otherwise they become orphans that
+                // hang cloudSync (stuck on "Cloud syncing...").
+                var statuses = await _context.PostStatus.Where(ps => ps.PostId == id).ToListAsync();
+                _context.PostStatus.RemoveRange(statuses);
                 _context.GreenLeafPosts.Remove(post);
                 await _context.SaveChangesAsync();
             }

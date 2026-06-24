@@ -855,12 +855,17 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<bool> cloudSync()
+        public async Task<bool> cloudSync(IProgress<(int done, int total)>? progress = null)
         {
             try
             {
                 var postStatusService = new PostStatusService(new AppDbContext());
                 System.Diagnostics.Debug.WriteLine("======> CLOUD SYNC STARTED!");
+
+                // Total records to sync, captured once up front so the percentage is stable.
+                int total = await postStatusService.GetPendingRealPostCountAsync();
+                int done = 0;
+
                 bool isAvailable = true;
                 do
                 {
@@ -876,6 +881,8 @@ namespace WeightMaster.Core
                             if (isupdated)
                             {
                                 await postStatusService.UpdateStatusByPostIdAsync(model.id, true);
+                                done++;
+                                progress?.Report((done, total));
                                 //MessageBox.Show("===>[done] " + model.id);
                             }
                             else
@@ -883,8 +890,18 @@ namespace WeightMaster.Core
                                 // If sync fails, stop the loop to prevent infinite retries of the same record
                                 // The record remains Status=false and will be retried next time cloudSync is called
                                 System.Diagnostics.Debug.WriteLine($"======> Sync failed for Post ID: {model.id}. Stopping sync batch.");
-                                return false; 
+                                return false;
                             }
+                        }
+                        else
+                        {
+                            // model == null => a PostStatus row with Status=false whose GreenLeafPost no
+                            // longer exists (orphaned/duplicate). Without this branch the status is never
+                            // flipped, isAvailable stays true, and the loop spins forever -- this is the
+                            // "stuck on Cloud syncing..." bug. Self-heal the orphans so it can't block.
+                            int cleaned = await postStatusService.MarkOrphanedStatusesDoneAsync();
+                            System.Diagnostics.Debug.WriteLine($"======> Cleared {cleaned} orphaned PostStatus row(s).");
+                            if (cleaned == 0) break; // safety: nothing actionable, never spin
                         }
                     }
                     // Loop will continue only if there are more items AND the last one was successful

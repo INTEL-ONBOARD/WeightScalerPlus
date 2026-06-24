@@ -152,9 +152,9 @@ namespace WeightMaster.Services
         {
             return await _engine.GetMemberByCustomMemberNumAsync(customMemberNum);
         }
-        public async Task cloudsync()
+        public async Task cloudsync(IProgress<(int done, int total)>? progress = null)
         {
-            await _engine.cloudSync();
+            await _engine.cloudSync(progress);
         }
         // report data for boxes with line name and date from station 1 for daily report
         public async Task<List<TransactionLogBlockModel>> DocumentPrintWithDateAndLinename(string lineName, string date_)

@@ -5452,7 +5452,16 @@ namespace WeightMaster
             {
                 SyncButton_settings.IsEnabled = false;
                 statusLabel.Content = "Cloud syncing...";
-                await _consoleHandler.cloudsync();
+
+                // Created on the UI thread, so the callback runs on the UI thread and can safely
+                // update the label. Shows e.g. "Cloud syncing... 45% (9/20)".
+                var progress = new Progress<(int done, int total)>(p =>
+                {
+                    int percent = p.total > 0 ? (p.done * 100 / p.total) : 0;
+                    statusLabel.Content = $"Cloud syncing... {percent}% ({p.done}/{p.total})";
+                });
+
+                await _consoleHandler.cloudsync(progress);
                 statusLabel.Content = "Cloud sync completed";
             }
             catch

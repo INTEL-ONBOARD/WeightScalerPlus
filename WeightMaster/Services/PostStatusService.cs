@@ -110,10 +110,14 @@ namespace WeightMaster.Services
 
         public async Task UpdateStatusByPostIdAsync(int postId, bool newStatus)
         {
-            var existing = await _context.PostStatus.FirstOrDefaultAsync(ps => ps.PostId == postId);
-            if (existing != null)
+            // Update ALL rows for this PostId, not just the first. If duplicate PostStatus rows
+            // exist for one post, flipping only the first leaves the others Status=false, which
+            // makes cloudSync re-fetch the same post forever (stuck on "Cloud syncing...").
+            var rows = await _context.PostStatus.Where(ps => ps.PostId == postId).ToListAsync();
+            if (rows.Count > 0)
             {
-                existing.Status = newStatus;
+                foreach (var row in rows)
+                    row.Status = newStatus;
                 await _context.SaveChangesAsync();
             }
         }
@@ -148,6 +152,36 @@ namespace WeightMaster.Services
             }
 
             return null;
+        }
+
+        // Self-heal: mark every Status=false PostStatus whose GreenLeafPost no longer exists as
+        // done, so orphaned rows can never block cloudSync. Returns the number of rows fixed.
+        public async Task<int> MarkOrphanedStatusesDoneAsync()
+        {
+            var orphans = await _context.PostStatus
+                .Where(ps => ps.Status == false
+                             && !_context.GreenLeafPosts.Any(gp => gp.id == ps.PostId))
+                .ToListAsync();
+
+            foreach (var orphan in orphans)
+                orphan.Status = true;
+
+            if (orphans.Count > 0)
+                await _context.SaveChangesAsync();
+
+            return orphans.Count;
+        }
+
+        // Number of distinct posts still waiting to sync (Status=false) that still have a matching
+        // GreenLeafPost. Orphaned status rows are excluded so they don't skew the progress total.
+        public async Task<int> GetPendingRealPostCountAsync()
+        {
+            return await _context.PostStatus
+                .Where(ps => ps.Status == false
+                             && _context.GreenLeafPosts.Any(gp => gp.id == ps.PostId))
+                .Select(ps => ps.PostId)
+                .Distinct()
+                .CountAsync();
         }
 
     }
