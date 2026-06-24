@@ -2334,7 +2334,11 @@ namespace WeightMaster
                             leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                             supervisor = supervisor_st1,
                             membernumber = memberId_st1,
-                            premembernumber = memberData_st1.CustomPreMemberNum,
+                            // Null-safe: a member not in the member DB (unregistered) returns null from
+                            // getMember. Without ?. this NRE'd here AFTER the transaction was already saved,
+                            // so the green-leaf post was never created and Station 2 had nothing to update.
+                            // Allow unregistered members through: premembernumber is a nullable column.
+                            premembernumber = memberData_st1?.CustomPreMemberNum,
 
                             bag_count = nSacks,
                             box_count = nBoxes,
@@ -2385,7 +2389,11 @@ namespace WeightMaster
                             leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
                             supervisor = supervisor_st1,
                             membernumber = memberId_st1,
-                            premembernumber = memberData_st1.CustomPreMemberNum,
+                            // Null-safe: a member not in the member DB (unregistered) returns null from
+                            // getMember. Without ?. this NRE'd here AFTER the transaction was already saved,
+                            // so the green-leaf post was never created and Station 2 had nothing to update.
+                            // Allow unregistered members through: premembernumber is a nullable column.
+                            premembernumber = memberData_st1?.CustomPreMemberNum,
 
                             bag_count = nSacks + postModelSumFromLine.bag_count,
                             box_count = nBoxes + postModelSumFromLine.box_count,
