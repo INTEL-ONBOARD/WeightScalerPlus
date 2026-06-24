@@ -589,7 +589,7 @@ namespace WeightMaster.Core
             }
         }
 
-        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model, string code)
+        public async Task<bool> SetFinalTransactionAsync(FinalTransactionBlockModel model, string code, string? lineName = null)
         {
             try
             {
@@ -599,10 +599,15 @@ namespace WeightMaster.Core
 
                 var runService = new RunService(new AppDbContext());
                 TransactionService service = new TransactionService(new AppDbContext());
-                int id_ = (int)await service.GetTransactionIdByBarcodeAsync(code);
-                // DIAGNOSTIC (v27.0.12): confirm which transaction the (line-blind) barcode lookup
-                // linked this Station-2 FinalTransaction to, vs the line actually being confirmed.
-                Logger.Event("st2_finaltxn_link", new { barcode = code, confirmedLine = model.linename, linkedTransactionId = id_ });
+                // Line-aware link: when the confirmed line is provided, match this member's transaction
+                // ON THAT line so a multi-line member's confirm can't attach to the wrong line's row.
+                // Falls back to the old barcode-only lookup only if no line was supplied.
+                int? lookupId = !string.IsNullOrWhiteSpace(lineName)
+                    ? await service.GetTransactionIdByLineBarcodeAsync(lineName, code)
+                    : await service.GetTransactionIdByBarcodeAsync(code);
+                int id_ = lookupId ?? 0;   // was (int) cast — would crash if the lookup found nothing
+                // Diagnostic kept: log.json should now show confirmedLine == pickedLine.
+                Logger.Event("st2_finaltxn_link", new { barcode = code, confirmedLine = lineName ?? model.linename, linkedTransactionId = id_ });
                 model.Id = id_;
                 RunLog runLogs = new RunLog
                 {

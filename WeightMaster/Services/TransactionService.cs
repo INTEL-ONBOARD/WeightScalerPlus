@@ -369,6 +369,37 @@ namespace WeightMaster.Services
             return transaction?.Id;
         }
 
+        // Line-aware variant of GetTransactionIdByBarcodeAsync. Matches only the member's pending
+        // BAG round ON THE SPECIFIED line, so a Station-2 confirm on line B links to line B's
+        // transaction instead of whichever line's row happens to come first. Uses the SAME filter
+        // as the Station-2 queue (GetPendingTransactionsByLineBarcodeDateAsync) so the two agree.
+        public async Task<int?> GetTransactionIdByLineBarcodeAsync(string lineName, string barcodeDetails)
+        {
+            string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
+
+            var excludedIds = await _context.RunLog
+                .Where(r => !_context.RunLog.Select(x => x.FinalTransactionId).Contains(r.Id))
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            var transaction = await _context.transactionData
+                .Where(t => excludedIds.Contains(t.Id)
+                            && t.linename == lineName
+                            && t.barcode_details == barcodeDetails
+                            && t.box_count == 0
+                            && t.date == todayDate)
+                .FirstOrDefaultAsync();
+
+            // DIAGNOSTIC: confirm the line-aware lookup picks a row ON the confirmed line.
+            try
+            {
+                Logger.Event("st2_line_barcode_lookup", new { line = lineName, barcode = barcodeDetails, pickedId = transaction?.Id, pickedLine = transaction?.linename });
+            }
+            catch { }
+
+            return transaction?.Id;
+        }
+
 
         public async Task<List<TransactionLogBlockModel>> GetTransactionsByLineNameAndDateAsync(string lineName, string date)
         {

@@ -4089,12 +4089,12 @@ namespace WeightMaster
                         real_value = finalWeightScalerValue //TBDDD****************************************************************************
                     };*/
 
-                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, currentMemberDetails_st2.barcode_details);
+                    _isdone = await _consoleHandler.AddFinalTransactionAsync(Finaltransaction, currentMemberDetails_st2.barcode_details, lineName_st2);
 
 
                     for (int i = 1; i < currentMemberDetailsList_st2.Count; i++)
                     {
-                        _isdone = await _consoleHandler.AddFinalTransactionAsync(DummyFinaltransaction, currentMemberDetails_st2.barcode_details);
+                        _isdone = await _consoleHandler.AddFinalTransactionAsync(DummyFinaltransaction, currentMemberDetails_st2.barcode_details, lineName_st2);
                         bool isSuccess = await _consoleHandler.verifyTransactionsCloudCheck();
                     }
                     //MessageBox.Show(totalAcceptedSackWeight.ToString());

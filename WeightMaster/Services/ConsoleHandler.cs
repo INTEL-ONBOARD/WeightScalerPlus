@@ -77,9 +77,9 @@ namespace WeightMaster.Services
             return await _engine.verifyTransactionsCloud();
         }
         //add a new transaction for station 2
-        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction, string code)
+        public async Task<bool> AddFinalTransactionAsync(FinalTransactionBlockModel newTransaction, string code, string? lineName = null)
         {
-            return await _engine.SetFinalTransactionAsync(newTransaction, code);
+            return await _engine.SetFinalTransactionAsync(newTransaction, code, lineName);
         }
         //get data filtered based in the selected line
 
