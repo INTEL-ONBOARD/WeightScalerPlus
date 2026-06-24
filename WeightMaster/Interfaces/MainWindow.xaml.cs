@@ -4701,7 +4701,7 @@ namespace WeightMaster
                         int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
                         int rowBoxCount;
                         if (tempBoxWeight % 7 == 0) { rowBoxCount = (int)(tempBoxWeight / 3.5); }
-                        else { rowBoxCount = tempBoxWeight / 4; }
+                        else { rowBoxCount = (int)Math.Round(tempBoxWeight / 3.5); }
                         totalBoxCount += rowBoxCount; //fix: accumulate box count across rows (was overwriting with the last row only)
 
                         //calculate total row values
@@ -4866,7 +4866,7 @@ namespace WeightMaster
             int totalBoxCount = 0;
             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-            else { totalBoxCount = tempBoxWeight / 4; }
+            else { totalBoxCount = (int)Math.Round(tempBoxWeight / 3.5); }
 
             // A round is "Done" if a sack weight was deducted at station 2 (bag_weight > 0),
             // OR if it is a box-only round (boxes, no bags) — those have no station-2 sack step,
@@ -5014,7 +5014,7 @@ namespace WeightMaster
                         int tempBoxWeight = ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight);
 
                         if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                        else { totalBoxCount = tempBoxWeight / 4; }
+                        else { totalBoxCount = (int)Math.Round(tempBoxWeight / 3.5); }
 
                         lineRow.box_count += totalBoxCount;
                         lineRow.bag_count += tRow.bag_count;
@@ -6301,7 +6301,7 @@ namespace WeightMaster
                             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
                             int rowBoxCount = (tempBoxWeight % 7 == 0)
                                 ? (int)(tempBoxWeight / 3.5)
-                                : tempBoxWeight / 4;
+                                : (int)Math.Round(tempBoxWeight / 3.5);
                             totalBoxCount += rowBoxCount;
 
                             //(int)Math.Floor(scalerWeight)
@@ -6446,7 +6446,7 @@ namespace WeightMaster
                             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
                             int rowBoxCount = (tempBoxWeight % 7 == 0)
                                 ? (int)(tempBoxWeight / 3.5)
-                                : tempBoxWeight / 4;
+                                : (int)Math.Round(tempBoxWeight / 3.5);
                             totalBoxCount += rowBoxCount;
 
                             //(int)Math.Floor(scalerWeight)
@@ -6689,7 +6689,7 @@ namespace WeightMaster
             int totalBoxCount = 0;
             int tempBoxWeight = ((int)Math.Floor(transaction.real_value) - transaction.maximum_nomal_leaf_weight);
             if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-            else { totalBoxCount = tempBoxWeight / 4; }
+            else { totalBoxCount = (int)Math.Round(tempBoxWeight / 3.5); }
             // Left-aligned columns
             AddText(canvas, columnNo, fontSize, positions[0], y);
             AddText(canvas, transaction.barcode_details ?? "", fontSize, positions[1], y);
@@ -6842,7 +6842,7 @@ namespace WeightMaster
                     int tempBoxWeight = ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight);
 
                     if (tempBoxWeight % 7 == 0) { totalBoxCount = (int)(tempBoxWeight / 3.5); }
-                    else { totalBoxCount = tempBoxWeight / 4; }
+                    else { totalBoxCount = (int)Math.Round(tempBoxWeight / 3.5); }
 
                     //lineRow.box_count += ((int)Math.Floor(tRow.real_value) - tRow.maximum_nomal_leaf_weight) / 4; //wrong boxFix
                     lineRow.box_count += totalBoxCount;
