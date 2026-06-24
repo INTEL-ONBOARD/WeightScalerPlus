@@ -600,6 +600,9 @@ namespace WeightMaster.Core
                 var runService = new RunService(new AppDbContext());
                 TransactionService service = new TransactionService(new AppDbContext());
                 int id_ = (int)await service.GetTransactionIdByBarcodeAsync(code);
+                // DIAGNOSTIC (v27.0.12): confirm which transaction the (line-blind) barcode lookup
+                // linked this Station-2 FinalTransaction to, vs the line actually being confirmed.
+                Logger.Event("st2_finaltxn_link", new { barcode = code, confirmedLine = model.linename, linkedTransactionId = id_ });
                 model.Id = id_;
                 RunLog runLogs = new RunLog
                 {

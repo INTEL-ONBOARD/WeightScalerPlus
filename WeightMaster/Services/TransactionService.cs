@@ -350,6 +350,21 @@ namespace WeightMaster.Services
                 .Where(t => excludedIds.Contains(t.Id)  && t.barcode_details == barcodeDetails && t.date == todayDate)
                 .FirstOrDefaultAsync();
                 
+            // DIAGNOSTIC (v27.0.12): the Station-2 barcode->transaction link is LINE-BLIND.
+            // Log the row FirstOrDefault picked AND every candidate for this (barcode, date),
+            // to confirm cross-line mis-attribution for members with rounds on more than one line.
+            try
+            {
+                var candRows = await _context.transactionData
+                    .Where(t => t.barcode_details == barcodeDetails && t.date == todayDate)
+                    .ToListAsync();
+                var candidates = candRows
+                    .Select(t => new { t.Id, t.linename, t.box_count, t.bag_count, excluded = excludedIds.Contains(t.Id) })
+                    .ToList();
+                Logger.Event("st2_barcode_lookup", new { barcode = barcodeDetails, pickedId = transaction?.Id, pickedLine = transaction?.linename, candidates });
+            }
+            catch { }
+
             // Return the Id if the transaction exists; otherwise return null
             return transaction?.Id;
         }

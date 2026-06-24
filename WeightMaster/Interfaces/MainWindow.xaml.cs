@@ -4873,6 +4873,10 @@ namespace WeightMaster
             // so they are complete once weighed at station 1. Mark them Done, not Pending.
             bool isDone = (transaction.bag_weight > 0) || (totalBoxCount > 0 && transaction.bag_count == 0);
 
+            // DIAGNOSTIC (v27.0.12): log each Transaction View row so we can see, per field,
+            // which line/status each of a member's rounds is displayed under.
+            Logger.Event("txnview_row", new { member = transaction.barcode_details, line = transaction.linename, boxes = totalBoxCount, bags = transaction.bag_count, status = isDone ? "Done" : "Pending", normal = transaction.final_green_leaf_count, total = transaction.total_leaf_weight });
+
             // Set background color based on status
             var bgColor = isDone ? "#E8F5E9" : "#FFF3E0"; // Green-ish for completed, orange-ish for queue
 
