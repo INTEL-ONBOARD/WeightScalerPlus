@@ -5095,8 +5095,8 @@ namespace WeightMaster
                     totalBoxes += summary.box_count;
                     totalBags += summary.bag_count;
                     totalGold += summary.total_gold_leaf_weight;
-                    // Sum the after-deductions value so the Normal totals row matches the per-row column.
-                    totalNormal += summary.final_green_leaf_count;
+                    // Σ(total leaf - deductions) so the Normal totals row matches the per-row column and the printout.
+                    totalNormal += summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight);
                     totalNet += summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight);
                     totalWater += summary.water;
                     totalMora += summary.morapuwata;
@@ -5171,9 +5171,9 @@ namespace WeightMaster
             Grid.SetColumn(gold, 4);
             grid.Children.Add(gold);
 
-            // Show the after-deductions value so the Normal column reflects bag weight + other deductions,
-            // matching the printed Daily Report (which uses final_green_leaf_count).
-            var normal = new TextBlock { Text = summary.final_green_leaf_count.ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
+            // Net = total leaf - all deductions, matching the printed Daily Report so preview and
+            // printout always agree and foot against the deduction columns.
+            var normal = new TextBlock { Text = (summary.total_leaf_weight - (summary.water + summary.morapuwata + summary.thambimata + summary.reject + summary.bag_weight)).ToString(), FontSize = 18, VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Right };
             Grid.SetColumn(normal, 5);
             grid.Children.Add(normal);
 
@@ -6358,7 +6358,8 @@ namespace WeightMaster
                             //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                             //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             totalGoldLeafWeight += transaction.final_gold_leaf_count;
-                            totalNormalLeafWeight += transaction.final_green_leaf_count;
+                            // Net total = Σ(total leaf - deductions) so the totals row foots with the per-member column.
+                            totalNormalLeafWeight += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             int barcode_index = 0;
                             if (int.TryParse(transaction.barcode_details, out barcode_index))
                             {
@@ -6501,7 +6502,8 @@ namespace WeightMaster
                             totalBagWeight += transaction.bag_weight;
                             totalBoxWeight += tempBoxWeight;                    // Use the calculated box weight
                             totalGoldLeafWeight += transaction.final_gold_leaf_count;
-                            totalNormalLeafWeight += transaction.final_green_leaf_count;
+                            // Net total = Σ(total leaf - deductions) so the totals row foots with the per-member column.
+                            totalNormalLeafWeight += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                             //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             int barcode_index = 0;
@@ -6743,12 +6745,9 @@ namespace WeightMaster
             AddText(canvas, transaction.reject.ToString(), fontSize, positions[8], y, rightAlign: true);
             AddText(canvas, transaction.bag_weight.ToString(), fontSize, positions[9], y, rightAlign: true);
             AddText(canvas, tempBoxWeight.ToString(), fontSize, positions[10], y, rightAlign: true); //recently added box weight
-            //old row used to show total weight after substracting deductions and bag weights.
-            //AddText(canvas, (transaction.total_leaf_weight - (transaction.water +
-            //    transaction.morapuwata + transaction.thambimata +
-            //    transaction.reject + transaction.bag_weight)).ToString(),
-            //    fontSize, positions[11], y, rightAlign: true);
-            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
+            // Net = total leaf - all deductions (display-only), so each member row foots against its
+            // own deduction columns even for historical rows whose stored final_green was un-deducted.
+            AddText(canvas, (transaction.total_leaf_weight - (transaction.water + transaction.morapuwata + transaction.thambimata + transaction.reject + transaction.bag_weight)).ToString(), fontSize, positions[11], y, rightAlign: true);
             AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
         }
 
@@ -6774,7 +6773,10 @@ namespace WeightMaster
             //    transaction.reject + transaction.bag_weight)).ToString(),
             //    fontSize, positions[11], y, rightAlign: true);
             //AddText(canvas, transaction.total_gold_leaf_weight.ToString(), fontSize, positions[12], y, rightAlign: true);
-            AddText(canvas, transaction.final_green_leaf_count.ToString(), fontSize, positions[11], y, rightAlign: true);
+            // Net = total leaf - all deductions (display-only). The report always foots against its
+            // own deduction columns, including historical rows whose stored final_green_leaf_count
+            // was saved un-deducted (bag weight recorded but not subtracted).
+            AddText(canvas, (transaction.total_leaf_weight - (transaction.water + transaction.morapuwata + transaction.thambimata + transaction.reject + transaction.bag_weight)).ToString(), fontSize, positions[11], y, rightAlign: true);
             AddText(canvas, transaction.final_gold_leaf_count.ToString(), fontSize, positions[12], y, rightAlign: true);
         }
 
@@ -6938,7 +6940,8 @@ namespace WeightMaster
                             totalBagWeight += transaction.bag_weight;
                             totalBoxWeight += transaction.box_weight; // Use the box weight
                             finalGoldLeafWeight += transaction.final_gold_leaf_count;
-                            finalNormalLeafWeight += transaction.final_green_leaf_count;
+                            // Net total = Σ(total leaf - deductions) so the totals row foots with the per-line column.
+                            finalNormalLeafWeight += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata + transaction.thambimata + transaction.reject + transaction.bag_weight);
                             //totalDalu += transaction.total_leaf_weight - (transaction.water + transaction.morapuwata
                             //             + transaction.thambimata + transaction.reject + transaction.bag_weight);
                         }
