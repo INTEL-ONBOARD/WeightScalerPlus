@@ -3761,6 +3761,22 @@ namespace WeightMaster
             }
         }
 
+        // Authoritative Station-2 net leaf. The net MUST be derived from the SAME leaf weights and
+        // deductions being persisted (including the bag weight) rather than read back from the
+        // read-only normalLeafWeightTxt_st2 textbox: that textbox can be stale w.r.t. the bag weight
+        // at confirm time, which persisted an un-deducted net (bag_weight recorded but never
+        // subtracted) to both finaltransactiondata (daily report) and greenleafposts (cloud).
+        // Mirrors WeightDeduction_st2_TextChanged. Box weight is intentionally excluded here (box
+        // leaf is already net of tare at Station 1 and merged separately as boxGreenLeaf_st2).
+        private static (int green, int gold) ComputeNetLeafSt2(
+            int normalLeaf, int goldLeaf, int water, int reject, int mora, int thambi, int bagWeight)
+        {
+            int totalDeductions = water + reject + mora + thambi + bagWeight;
+            if (totalDeductions <= normalLeaf)
+                return (normalLeaf - totalDeductions, goldLeaf);
+            return (0, goldLeaf - (totalDeductions - normalLeaf));
+        }
+
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
             //loadingDataInputBorder_st2
@@ -3981,6 +3997,14 @@ namespace WeightMaster
                         return;
                     }
 
+                    // Recompute the net from the same leaf weights + deductions (incl. the bag weight
+                    // being saved) so the report can never show a net that ignores the bag weight.
+                    var ftNet_st2 = ComputeNetLeafSt2(
+                        currentMemberDetails_st2.actual_nomal_leaf_weight,
+                        currentMemberDetails_st2.total_gold_leaf_weight,
+                        finalWateredWeight, finalRejectedWeight, finalMaturedWeight, finalSpoiledWeight,
+                        totalAcceptedSackWeight);
+
                     var Finaltransaction = new FinalTransactionBlockModel
                     {
                         //linename = lineNameCmb_st2.SelectedValue.ToString(),
@@ -4011,8 +4035,8 @@ namespace WeightMaster
 
                         bag_weight = totalAcceptedSackWeight,
 
-                        final_green_leaf_count = finalAvailableNormalLeafWeight,
-                        final_gold_leaf_count = finalAvailableGoldenLeafWeight,
+                        final_green_leaf_count = ftNet_st2.green,
+                        final_gold_leaf_count = ftNet_st2.gold,
                         //real_value = totalWeightSaclaerValue
                         real_value = (float)currentMemberDetails_st2.real_value,  //this was changed to determine the box count and weights in repoets
                     };
@@ -4118,6 +4142,14 @@ namespace WeightMaster
                         System.Diagnostics.Debug.WriteLine("Station 2 box leaf lookup failed: " + exBox.Message);
                     }
 
+                    // Authoritative bag-net for the cloud row, from the post's own Station-1 leaf
+                    // weights + the deductions/bag weight being saved (box leaf added separately below).
+                    var gpNet_st2 = ComputeNetLeafSt2(
+                        (int)greenLeafPostModel_st2.nomal_leaf_weight,
+                        (int)greenLeafPostModel_st2.gold_leaf_weight,
+                        finalWateredWeight, finalRejectedWeight, finalMaturedWeight, finalSpoiledWeight,
+                        totalAcceptedSackWeight);
+
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
@@ -4154,8 +4186,11 @@ namespace WeightMaster
                         // BOXFIX: bag-net (Station 2) + box green leaf read from transactionData above,
                         // so the post matches the printed reports/receipts (e.g. bag net 33 + box 44 = 77),
                         // instead of the bag-only value that dropped the box leaf (was 33).
-                        final_green_leaf_count = finalAvailableNormalLeafWeight + boxGreenLeaf_st2,
-                        final_gold_leaf_count = finalAvailableGoldenLeafWeight + boxGoldLeaf_st2,
+                        // Bag-net is recomputed from the post's own Station-1 leaf weights + the
+                        // deductions/bag weight being saved (not the stale net textbox), so the
+                        // cloud row matches the report and never keeps an un-deducted net.
+                        final_green_leaf_count = gpNet_st2.green + boxGreenLeaf_st2,
+                        final_gold_leaf_count = gpNet_st2.gold + boxGoldLeaf_st2,
 
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail
