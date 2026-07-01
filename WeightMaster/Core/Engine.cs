@@ -1031,6 +1031,42 @@ namespace WeightMaster.Core
             var url = "https://api.teacoop.lk/api/v1/greenleaf";
             await PopulateLineIdIfMissingAsync(postModel);
 
+            // The cloud "total weight" must be crate-inclusive so it matches the printed report
+            // (e.g. 1421 -> 1435, 700 -> 711): send total_weight + box_weight. Use total_weight+box_weight
+            // (NOT real_weight, which also carries leaf rejected at the counter). Box weight is 0 for
+            // bag-only posts, so only box deliveries change.
+            // IMPORTANT: send a COPY. postModel is an EF-tracked entity; mutating it here would be
+            // written back to the LOCAL DB on the next SaveChanges. Local storage/reports stay as-is.
+            var payload = new GreenLeafPostModel
+            {
+                id = postModel.id,
+                leaf_handover_date = postModel.leaf_handover_date,
+                factory = postModel.factory,
+                line_id = postModel.line_id,
+                transportlinename = postModel.transportlinename,
+                transportagent = postModel.transportagent,
+                leaf_weight_officer = postModel.leaf_weight_officer,
+                supervisor = postModel.supervisor,
+                membernumber = postModel.membernumber,
+                premembernumber = postModel.premembernumber,
+                bag_count = postModel.bag_count,
+                box_count = postModel.box_count,
+                real_weight = postModel.real_weight,
+                total_weight = postModel.total_weight + postModel.box_weight, // crate-inclusive total for the cloud
+                nomal_leaf_weight = postModel.nomal_leaf_weight,
+                gold_leaf_weight = postModel.gold_leaf_weight,
+                wathurata = postModel.wathurata,
+                morapuwata = postModel.morapuwata,
+                thambimata = postModel.thambimata,
+                rejected = postModel.rejected,
+                bag_weight = postModel.bag_weight,
+                box_weight = postModel.box_weight,
+                final_green_leaf_count = postModel.final_green_leaf_count,
+                final_gold_leaf_count = postModel.final_gold_leaf_count,
+                created_user = postModel.created_user,
+                updated_user = postModel.updated_user
+            };
+
             var options = new JsonSerializerOptions
             {
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -1041,12 +1077,12 @@ namespace WeightMaster.Core
             try
             {
                 // Serialize the request body for logging
-                var jsonBody = JsonSerializer.Serialize(postModel, options);
+                var jsonBody = JsonSerializer.Serialize(payload, options);
                 System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
                 System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
                 //MessageBox.Show(jsonBody);
                 // Make the API call
-                var response = await client.PostAsync<object>(url, postModel);
+                var response = await client.PostAsync<object>(url, payload);
 
                 // Log success
                 System.Diagnostics.Debug.WriteLine($"> POST succeeded to: {url}");
