@@ -1037,6 +1037,21 @@ namespace WeightMaster.Core
             // bag-only posts, so only box deliveries change.
             // IMPORTANT: send a COPY. postModel is an EF-tracked entity; mutating it here would be
             // written back to the LOCAL DB on the next SaveChanges. Local storage/reports stay as-is.
+
+            // The cloud "normal leaf weight" is sent NET of the four quality deductions AND the sack
+            // tare, so the field carries the normal-grade leaf actually accepted rather than the
+            // pre-deduction figure. bag_weight/box_weight are still sent separately for the breakdown.
+            // gold_leaf_weight is deliberately NOT subtracted: nomal_leaf_weight already excludes it
+            // (nomal + gold == total_weight holds for every stored row), so taking it off here would
+            // count the gold twice. Clamped at zero; unlike ComputeNetLeafSt2 the overflow is NOT
+            // spilled into gold_leaf_weight, which is a grade weight and must keep matching the docket.
+            // NOTE: on well-formed rows this lands on the same value as final_green_leaf_count, which
+            // is also in this payload -- the two are expected to agree, not to carry different figures.
+            double leafDeductions = postModel.wathurata + postModel.morapuwata
+                                  + postModel.thambimata + postModel.rejected
+                                  + postModel.bag_weight;
+            double netNormalLeaf = Math.Max(0, postModel.nomal_leaf_weight - leafDeductions);
+
             var payload = new GreenLeafPostModel
             {
                 id = postModel.id,
@@ -1053,7 +1068,7 @@ namespace WeightMaster.Core
                 box_count = postModel.box_count,
                 real_weight = postModel.real_weight,
                 total_weight = postModel.total_weight + postModel.box_weight, // crate-inclusive total for the cloud
-                nomal_leaf_weight = postModel.nomal_leaf_weight,
+                nomal_leaf_weight = netNormalLeaf, // net of wathurata/morapuwata/thambimata/rejected + bag_weight
                 gold_leaf_weight = postModel.gold_leaf_weight,
                 wathurata = postModel.wathurata,
                 morapuwata = postModel.morapuwata,
