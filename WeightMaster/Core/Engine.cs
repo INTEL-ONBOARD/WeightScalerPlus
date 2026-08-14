@@ -1096,8 +1096,13 @@ namespace WeightMaster.Core
                 System.Diagnostics.Debug.WriteLine($"> POST URL: {url}");
                 System.Diagnostics.Debug.WriteLine($"> Request Body: {jsonBody}");
                 //MessageBox.Show(jsonBody);
-                // Make the API call
-                var response = await client.PostAsync<object>(url, payload);
+                // Make the API call. The scope only labels the audit row written by
+                // ApiAuditHandler -- it changes nothing about the request itself.
+                using (WeightMaster.Services.Api.ApiAuditScope.For(
+                           "greenleaf", "greenleafposts", postModel.id))
+                {
+                    var response = await client.PostAsync<object>(url, payload);
+                }
 
                 // Log success
                 System.Diagnostics.Debug.WriteLine($"> POST succeeded to: {url}");

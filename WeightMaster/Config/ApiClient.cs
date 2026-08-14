@@ -6,6 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WeightMaster.Services.Api;
 
 public class ApiClient
 {
@@ -13,7 +14,10 @@ public class ApiClient
 
     public ApiClient()
     {
-        _httpClient = new HttpClient();
+        // ApiAuditHandler records every call into api_post_log. It is inert
+        // unless ApiAuditWriter has been started, and never throws, so this
+        // behaves exactly as a bare HttpClient when auditing is off.
+        _httpClient = new HttpClient(new ApiAuditHandler(new HttpClientHandler()));
     }
     public async Task<T> GetAsync<T>(string url)
     {
