@@ -20,6 +20,13 @@ namespace WeightMaster.Config
         public DbSet<PostStatusModel> PostStatus { get; set; }
         public DbSet<TransportBillBlockModel> TransportBill { get; set; }
 
+        // Cloud mirror. Additive only -- these map to new tables created by
+        // LocalSchemaInstaller and are never touched by existing features.
+        // Nothing calls Migrate() or EnsureCreated() in this application, so
+        // declaring them cannot alter any existing table.
+        public DbSet<SyncOutboxEntry> SyncOutbox { get; set; }
+        public DbSet<SyncStateEntry> SyncState { get; set; }
+        public DbSet<ApiPostLogEntry> ApiPostLog { get; set; }
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
