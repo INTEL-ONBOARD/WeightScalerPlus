@@ -235,8 +235,21 @@ Primary key becomes `(branch_id, local_id)`.
 | Deletes | Soft — set `deleted_at` | A mirror must not lose history; a wrongly-detected delete stays recoverable |
 | DDL | Applied once by script | The app never runs DDL on the cloud |
 | Schema mismatch | Refuse to sync, log loudly | Better stale than corrupt |
-| DB user grants | `SELECT, INSERT, UPDATE` only | No `DROP`, no `DELETE`; a compromised branch cannot destroy the mirror |
-| Transport | `SslMode=Required` | Credentials and farmer data never cross the internet in clear |
+| DB user grants | `SELECT, INSERT, UPDATE` on the schema, plus `DELETE` on the three master tables only | No `DROP`; a compromised branch cannot destroy the mirror |
+| Transport | `SslMode=Required`, server enforces `require_secure_transport=ON` | Credentials and farmer data never cross the internet in clear |
+| Table-name case | Server initialised with `lower_case_table_names=1` | Branches run MySQL on Windows, which folds table names to lower case. A case-sensitive Linux server would fail to match them |
+
+### Correction to the original grant plan
+
+The design originally said "no `DELETE`". That is wrong for the three master
+tables. They are replaced wholesale on every member or user refresh, and their
+identity keys change each time, so soft-deleting instead of removing would
+accumulate dead rows without bound — tens of thousands per refresh.
+
+`DELETE` is therefore granted on `usersdata`, `membersdata` and `linemasterdata`
+and nowhere else. MySQL requires a table to exist before a table-level grant can
+be issued, so these three grants are applied **after** the mirror schema is
+created, not at user-creation time.
 
 Plus one status table, written by every branch each cycle:
 
