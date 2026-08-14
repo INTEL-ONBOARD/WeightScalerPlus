@@ -55,26 +55,38 @@ CREATE TABLE IF NOT EXISTS api_post_log (
   INDEX ix_api_post_log_source (source_table, source_row_pk)
 ) ENGINE=InnoDB;";
 
+        /// <summary>Why the last attempt failed, for the status file.</summary>
+        public static string? LastError { get; private set; }
+
         /// <summary>
         /// Returns true when all three tables are present afterwards. Never
-        /// throws: a failure here disables sync, it does not stop the app.
+        /// throws, and never gives up permanently -- the caller retries, because
+        /// the usual reason for failure is that the local MySQL has not finished
+        /// starting yet.
         /// </summary>
         public static async Task<bool> EnsureAsync(CancellationToken ct = default)
         {
+            string target = "unknown";
+
             try
             {
                 using var db = new AppDbContext();
+
+                // Recorded before connecting so a failure message names what it
+                // could not reach. Carries no credentials.
+                target = db.Database.GetDbConnection().DataSource ?? "unknown";
 
                 await db.Database.ExecuteSqlRawAsync(CreateOutbox, ct).ConfigureAwait(false);
                 await db.Database.ExecuteSqlRawAsync(CreateState, ct).ConfigureAwait(false);
                 await db.Database.ExecuteSqlRawAsync(CreateApiLog, ct).ConfigureAwait(false);
 
-                Logger.Info(Source, "sync tables present");
+                Logger.Info(Source, $"sync tables present (local db: {target})");
                 return true;
             }
             catch (Exception ex)
             {
-                Logger.Error(Source, "could not create sync tables - sync stays disabled", ex);
+                LastError = $"{ex.GetType().Name}: {ex.Message} (local db: {target})";
+                Logger.Warn(Source, $"could not create sync tables on {target} - will retry: {ex.Message}");
                 return false;
             }
         }
