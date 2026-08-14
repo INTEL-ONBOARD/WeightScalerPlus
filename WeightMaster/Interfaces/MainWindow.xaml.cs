@@ -59,6 +59,14 @@ namespace WeightMaster
         //___________________st1 global variables____________________________________________________________________________________________|
 
         private string memberId_st1 = ""; //stores member id with all digits to send back to api.
+
+        //Set while the member number box is being reset in code. barcodeTxt_st1_TextChanged
+        //does far more than update a label - it re-looks-up the member and refetches
+        //greenLeafPostModel_st1 - so letting it run on a programmatic clear is what wiped
+        //the turn table when this reset was attempted before (see the commented-out
+        //barcodeTxt_st1.Text = "" lines it replaces).
+        private bool suppressBarcodeChanged_st1 = false;
+
         private string lineName_st1 = "";
         private string supervisor_st1 = "";
         private double scalerRoundedWeight_st1 = 0;
@@ -1206,6 +1214,11 @@ namespace WeightMaster
 
         private async void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
         {
+            //Programmatic reset after a round: the caller has already cleared the member
+            //state itself. Running the lookup here would search for an empty member and
+            //clear the turn table.
+            if (suppressBarcodeChanged_st1) return;
+
             memberId_st1 = barcodeTxt_st1.Text;
             //converts the member id to a 05-digit number by adding remaining zeros to the left.
             memberId_st1 = barcodeTxt_st1.Text.PadLeft(5, '0');
@@ -2111,6 +2124,43 @@ namespace WeightMaster
         }
 
 
+        /// <summary>
+        /// Clears the member out of the Station-1 entry form once their round has been
+        /// saved, so the operator can scan or type the next member straight away.
+        ///
+        /// The text change event is suppressed while this runs. That event re-looks-up
+        /// the member and refetches greenLeafPostModel_st1, and letting it fire on an
+        /// empty box is what cleared the turn table when this was attempted previously.
+        /// Because it is suppressed, every piece of member state it would normally
+        /// maintain is reset here by hand - in particular greenLeafPostModel_st1, which
+        /// would otherwise attach the next member's weighing to this member's post.
+        /// </summary>
+        private void ResetMemberEntry_st1()
+        {
+            suppressBarcodeChanged_st1 = true;
+
+            try
+            {
+                barcodeTxt_st1.Text = "";
+                customerNameTxt_st1.Text = "";
+
+                memberId_st1 = "";
+                memberData_st1 = null;
+                greenLeafPostModel_st1 = null;
+
+                //this member's rounds are finished with; the next member starts empty
+                MemberTurnTablePanel_st1.Children.Clear();
+            }
+            finally
+            {
+                //restored even if a control throws, or every later edit would be ignored
+                suppressBarcodeChanged_st1 = false;
+            }
+
+            //put the caret back so the QR scanner or keyboard goes straight in
+            barcodeTxt_st1.Focus();
+        }
+
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
 
@@ -2514,7 +2564,10 @@ namespace WeightMaster
                     goldenLeafWeightTxt_st1.Text = "";
                     acceptedLeafWeightTxt_st1.Text = "";
 
-                    //barcodeTxt_st1.Text = ""; //this fucks up the text change event in barcode which leads to clearing the data in the turn table 
+                    //Round saved: clear the member so the next one can be scanned straight
+                    //away. The text change event is suppressed inside, which is what the
+                    //previous attempt at this line was missing.
+                    ResetMemberEntry_st1();
 
                     currentTotalDeduction_st1 = 0;
                     currentNormalLeafWeight_st1 = 0;
@@ -2564,7 +2617,10 @@ namespace WeightMaster
                     goldenLeafWeightTxt_st1.Text = "";
                     acceptedLeafWeightTxt_st1.Text = "";
 
-                    //barcodeTxt_st1.Text = ""; //this fucks up the text change event in barcode which leads to clearing the data in the turn table 
+                    //Round saved: clear the member so the next one can be scanned straight
+                    //away. The text change event is suppressed inside, which is what the
+                    //previous attempt at this line was missing.
+                    ResetMemberEntry_st1();
 
                     currentTotalDeduction_st1 = 0;
                     currentNormalLeafWeight_st1 = 0;
