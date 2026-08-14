@@ -1,0 +1,9 @@
+{
+  "_comment": "Copy to cloudsync.json beside WeightMaster.exe. No file = sync off.",
+  "sync_enabled": false,
+  "connection_string": "Server=CLOUD_HOST;Port=3306;Database=weightmaster_cloud;Uid=USER;Pwd=PASSWORD;SslMode=Required;",
+  "sync_interval_seconds": 45,
+  "sync_batch_size": 500,
+  "api_log_retention_days": 90,
+  "backfill_rows_per_cycle": 2000
+}

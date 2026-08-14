@@ -149,6 +149,10 @@ namespace WeightMaster.Services.Sync
                         .RunChunkAsync(local, cloud, branchId, config.BackfillRowsPerCycle, ct)
                         .ConfigureAwait(false);
 
+                    await MasterSnapshotSync
+                        .RunAsync(local, cloud, branchId, ct)
+                        .ConfigureAwait(false);
+
                     int pending = await OutboxDrainer.PendingCountAsync(local, ct).ConfigureAwait(false);
 
                     await CloudConnection.ReportStatusAsync(

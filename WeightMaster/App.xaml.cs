@@ -29,6 +29,12 @@ namespace WeightMaster
             Logger.Init(version, branch);
             Logger.Event("app_started", new { version, branch });
 
+            // ---- Cloud mirror -----------------------------------------------------------------
+            // Entirely inert unless cloudsync.json is present with sync_enabled true.
+            // Runs on a background thread and cannot throw into startup, so a branch
+            // without that file behaves exactly as it does today.
+            WeightMaster.Services.Sync.SyncBootstrap.StartInBackground();
+
             // Capture every unhandled error app-wide so nothing fails silently again.
             // (We only OBSERVE here — we don't change whether the app crashes/continues.)
             DispatcherUnhandledException += (s, e) =>
