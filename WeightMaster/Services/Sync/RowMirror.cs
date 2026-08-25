@@ -103,7 +103,8 @@ LIMIT 1;";
         /// </summary>
         public static async Task UpsertAsync(
             DbConnection cloud, string table, string branchId,
-            Dictionary<string, object?> row, CancellationToken ct)
+            Dictionary<string, object?> row, CancellationToken ct,
+            DbTransaction? tx = null)
         {
             var names = new List<string>(row.Count);
             foreach (string key in row.Keys) names.Add(key);
@@ -126,6 +127,12 @@ LIMIT 1;";
             updates.Append(", `synced_at` = NOW(3), `deleted_at` = NULL");
 
             using DbCommand cmd = cloud.CreateCommand();
+
+            // Required when the caller has a transaction open on this connection:
+            // MySqlConnector refuses to run a command that is not enlisted in the
+            // connection's active transaction. Null for the ordinary autocommit path.
+            cmd.Transaction = tx;
+
             cmd.CommandText =
                 $"INSERT INTO `{table}` ({insertCols}) VALUES ({insertVals}) " +
                 $"ON DUPLICATE KEY UPDATE {updates};";
