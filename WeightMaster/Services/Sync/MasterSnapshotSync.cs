@@ -74,7 +74,7 @@ namespace WeightMaster.Services.Sync
                 foreach (Dictionary<string, object?> row in rows)
                 {
                     ct.ThrowIfCancellationRequested();
-                    await RowMirror.UpsertAsync(cloud, table, branchId, row, ct).ConfigureAwait(false);
+                    await RowMirror.UpsertAsync(cloud, table, branchId, row, ct, tx).ConfigureAwait(false);
                 }
 
                 await tx.CommitAsync(ct).ConfigureAwait(false);
@@ -101,22 +101,35 @@ namespace WeightMaster.Services.Sync
         {
             try
             {
-                using DbCommand cmd = local.CreateCommand();
-                cmd.CommandText = $"CHECKSUM TABLE `{table}`;";
+                object checksum;
 
-                using DbDataReader reader = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
+                // The reader MUST be closed before anything else runs on this
+                // connection. MySqlConnector allows one active result set per
+                // connection, so counting while the CHECKSUM reader was still open
+                // threw on every cycle - and because the failure was swallowed and
+                // logged at Info, the master tables silently never synced at all.
+                using (DbCommand cmd = local.CreateCommand())
+                {
+                    cmd.CommandText = $"CHECKSUM TABLE `{table}`;";
 
-                if (!await reader.ReadAsync(ct).ConfigureAwait(false)) return null;
+                    using DbDataReader reader = await cmd.ExecuteReaderAsync(ct).ConfigureAwait(false);
 
-                object checksum = reader.GetValue(reader.FieldCount - 1);
-                if (checksum is DBNull) return null;
+                    if (!await reader.ReadAsync(ct).ConfigureAwait(false)) return null;
+
+                    object value = reader.GetValue(reader.FieldCount - 1);
+                    if (value is DBNull) return null;
+
+                    checksum = value;
+                }
 
                 long count = await CountAsync(local, table, ct).ConfigureAwait(false);
                 return $"{checksum}:{count}";
             }
             catch (Exception ex)
             {
-                Logger.Info(Source, $"could not checksum {table}: {ex.Message}");
+                // Warn, not Info: this stops a whole table from ever mirroring, and
+                // at Info it was invisible among thousands of routine event lines.
+                Logger.Warn(Source, $"could not checksum {table} - it will not mirror: {ex.Message}");
                 return null;
             }
         }
