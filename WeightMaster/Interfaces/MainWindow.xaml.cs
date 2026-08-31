@@ -4039,11 +4039,6 @@ namespace WeightMaster
                     if (greenLeafPostModel_st2 == null || greenLeafPostModel_st2.id <= 0)
                     {
                         Logger.Warn("Station2.Confirm", "no green-leaf post to update (save aborted)", new { member = currentMemberDetails_st2?.barcode_details, line = lineName_st2 });
-                        MessageBox.Show(
-                            $"Could not match the Station-1 green-leaf post for member " +
-                            $"{currentMemberDetails_st2.barcode_details} on line \"{lineName_st2}\".\n" +
-                            $"Bag weight was NOT saved — please re-scan and try again.",
-                            "Station 2 save aborted");
 
                         // Abort: write NOTHING (no transaction, no post) so it can't go half-saved.
                         // Restore the UI the same way the catch below does (the spinner was shown above).
