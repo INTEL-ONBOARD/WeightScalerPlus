@@ -21,6 +21,9 @@ jobs:
         with:
           dotnet-version: '8.0.x'
 
+      - name: Station 1 regression checks
+        run: node tests/station1-round/run.mjs
+
       - run: dotnet restore WeightMaster.sln -r ${{ matrix.rid }}
 
       - name: Resolve version

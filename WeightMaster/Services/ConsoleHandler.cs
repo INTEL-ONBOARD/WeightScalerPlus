@@ -126,9 +126,9 @@ namespace WeightMaster.Services
 
 
         //station 1 use only
-        public async Task SaveData(GreenLeafPostModel s)
+        public async Task<bool> SaveData(GreenLeafPostModel s)
         {
-            await _engine.addPost(s);
+            return await _engine.addPost(s);
         }
         //update the SaveData savedd on st1 record by using this at st2
         public async Task<bool> UpdateData(int id, GreenLeafPostModel s)

@@ -46,6 +46,11 @@ namespace WeightMaster
         private const int maxStep_st1 = 7;
         private int currentStep_st2 = 0;
         private const int maxStep_st2 = 6;
+        private bool _isSavingStation1;
+        private bool _isResettingStation1;
+        private int _station1RoundVersion;
+        private int _station1MemberLookupVersion;
+        private int _station1LineLookupVersion;
 
 
         //public int nSacks_st1 = 0;
@@ -59,13 +64,6 @@ namespace WeightMaster
         //___________________st1 global variables____________________________________________________________________________________________|
 
         private string memberId_st1 = ""; //stores member id with all digits to send back to api.
-
-        //Set while the member number box is being reset in code. barcodeTxt_st1_TextChanged
-        //does far more than update a label - it re-looks-up the member and refetches
-        //greenLeafPostModel_st1 - so letting it run on a programmatic clear is what wiped
-        //the turn table when this reset was attempted before (see the commented-out
-        //barcodeTxt_st1.Text = "" lines it replaces).
-        private bool suppressBarcodeChanged_st1 = false;
 
         private string lineName_st1 = "";
         private string supervisor_st1 = "";
@@ -210,6 +208,37 @@ namespace WeightMaster
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
+            if (!Station1Frame.IsVisible && !Station2Frame.IsVisible)
+                return;
+
+            if (Station1Frame.IsVisible && e.Key == Key.N &&
+                (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Windows)) == ModifierKeys.None)
+            {
+                e.Handled = true;
+                if (!e.IsRepeat && !_isSavingStation1 && !_isResettingStation1)
+                {
+                    lineNameCmb_st1.IsDropDownOpen = false;
+                    supervisorCmb_st1.IsDropDownOpen = false;
+                    billNoTxt_st1.Focus();
+                    billNoTxt_st1.SelectAll();
+                }
+                return;
+            }
+
+            if (e.Key != Key.Enter && e.Key != Key.Escape)
+                return;
+
+            if (Station1Frame.IsVisible)
+            {
+                if (lineNameCmb_st1.IsDropDownOpen || supervisorCmb_st1.IsDropDownOpen)
+                    return;
+
+                // Own the key before a focused button can process the same Enter again.
+                e.Handled = true;
+                if (e.IsRepeat || _isSavingStation1 || _isResettingStation1)
+                    return;
+            }
+
             switch (e.Key)
             {
                 case Key.Enter:
@@ -223,29 +252,17 @@ namespace WeightMaster
 
         private void GoToNextStep()
         {
+            if (Station1Frame.IsVisible && billNoTxt_st1.IsKeyboardFocusWithin)
+            {
+                currentStep_st1 = 3;
+                ShowCurrentStep();
+                return;
+            }
+
             if (!ValidateCurrentStep()) return;
 
             if (Station1Frame.IsVisible)
             {
-
-                //special case for station 1: if bill number textbox focused at the time, jump to the selected step
-                if (billNoTxt_st1.IsFocused)
-                {
-                    // 2. Clear keyboard focus
-                    var focusScope = FocusManager.GetFocusScope(billNoTxt_st1);
-                    if (focusScope != null)
-                    {
-                        FocusManager.SetFocusedElement(focusScope, null);
-                    }
-                    // Keyboard.ClearFocus();
-
-                    //reset the step
-                    currentStep_st1 = 1;
-                    ShowCurrentStep();
-
-                    return;
-                }
-
 
                 //allow only textbox increments within goToNextStep method
                 if (currentStep_st1 == maxStep_st1 /*|| currentStep_st1 == 1*/)
@@ -384,6 +401,7 @@ namespace WeightMaster
                         break;
                     case 6:
                         confirmAddRowButtonBorder_st1.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#111111")); // focused
+                        confirmAddRowButton_st1.Focus();
                         break;
                     case 7:
                         LoadStep5_st1();
@@ -691,6 +709,14 @@ namespace WeightMaster
         //barcode related logic_______________________________________________________________________________________________
         private void ComponentDispatcher_ThreadPreprocessMessage(ref MSG msg, ref bool handled)
         {
+            // Station 1 scanners type into the focused member field; Enter advances the round.
+            if (Station1Frame.IsVisible)
+            {
+                _timer.Stop();
+                _barcodeBuffer.Clear();
+                return;
+            }
+
             if (msg.message == 0x100) // WM_KEYDOWN
             {
                 var key = KeyInterop.KeyFromVirtualKey((int)msg.wParam);
@@ -1009,7 +1035,10 @@ namespace WeightMaster
                 //updating current Enter step
                 currentStep_st1 = 1;
                 currentStep_st2 = 1;
-                ShowCurrentStep();
+                if (Station1Frame.IsVisible)
+                    ResetStation1Round();
+                else
+                    ShowCurrentStep();
             }
             else
             {
@@ -1046,6 +1075,9 @@ namespace WeightMaster
         //topbar section
         private async void SettingsButtonClick(object sender, RoutedEventArgs e)
         {
+            if (_isSavingStation1)
+                return;
+
             SettingsFrame.Visibility = Visibility.Visible;
             Station1Frame.Visibility = Visibility.Collapsed;
             //button visibility logic
@@ -1103,6 +1135,9 @@ namespace WeightMaster
 
         private void LogoutButtonClick(object sender, RoutedEventArgs e)
         {
+            if (_isSavingStation1)
+                return;
+
             //IntroFrame.Visibility = Visibility.Visible;
             //LoginFrame.Visibility = Visibility.Visible;
             StationMainFrame.Visibility = Visibility.Collapsed;
@@ -1214,29 +1249,35 @@ namespace WeightMaster
 
         private async void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
         {
-            //Programmatic reset after a round: the caller has already cleared the member
-            //state itself. Running the lookup here would search for an empty member and
-            //clear the turn table.
-            if (suppressBarcodeChanged_st1) return;
+            if (_isResettingStation1)
+                return;
 
-            memberId_st1 = barcodeTxt_st1.Text;
-            //converts the member id to a 05-digit number by adding remaining zeros to the left.
-            memberId_st1 = barcodeTxt_st1.Text.PadLeft(5, '0');
-            //to clear out previous values by assigning null
-            string memberName = null;
-            //greenLeafPostModel_st1 = null; //this was done 'cause i need to call getDatabyMemberiDandDateSingle() in confirm button w/o affecting the turn table flow(by preventing barcodeTxt="" at confirm button click)
+            int lookupVersion = ++_station1MemberLookupVersion;
+            int roundVersion = _station1RoundVersion;
+            bool IsCurrentLookup() => lookupVersion == _station1MemberLookupVersion &&
+                roundVersion == _station1RoundVersion && !_isResettingStation1;
+
+            string scannedMember = barcodeTxt_st1.Text.Trim();
+            memberId_st1 = scannedMember.Length == 0 ? "" : scannedMember.PadLeft(5, '0');
+            string requestedMember = memberId_st1;
+            customerNameTxt_st1.Text = "-";
+            memberData_st1 = new memDbLog();
+            greenLeafPostModel_st1 = new GreenLeafPostModel();
+            if (requestedMember.Length == 0)
+                return;
+
             try
             {
-                memberName = await _consoleHandler.GetMemberName(memberId_st1);
-                customerNameTxt_st1.Text = memberName;
-                if (memberName.Equals("No name with initials found"))
-                {
-                    customerNameTxt_st1.Text = "-";
-                }
-                memberData_st1 = await _consoleHandler.getMember(memberId_st1);
+                string memberName = await _consoleHandler.GetMemberName(requestedMember);
+                if (!IsCurrentLookup()) return;
+                var member = await _consoleHandler.getMember(requestedMember);
+                if (!IsCurrentLookup()) return;
+                var post = await _consoleHandler.getDatabyMemberiDandDateSingle(requestedMember, DateTime.Now.ToString("yyyy-MM-dd"));
+                if (!IsCurrentLookup()) return;
 
-                //new api (if exists(not null), do an update after adding the new transaction at confirm button click evt)
-                greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
+                customerNameTxt_st1.Text = string.IsNullOrEmpty(memberName) || memberName == "No name with initials found" ? "-" : memberName;
+                memberData_st1 = member ?? new memDbLog();
+                greenLeafPostModel_st1 = post;
             }
             catch (Exception ex)
             {
@@ -1244,6 +1285,8 @@ namespace WeightMaster
                 //MessageBox.Show($"Error retrieving member name: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 System.Diagnostics.Debug.WriteLine($"Get Username by Barcode st1 Exception: {ex}");
             }
+
+            if (!IsCurrentLookup()) return;
 
             //used to count the number of rounds(for the table indexing and other purposes if necessary)
             _currentTurn_st1 = 1;
@@ -1278,7 +1321,8 @@ namespace WeightMaster
                 // get today's date for filtering
                 string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-                var result = lineMasterData.FirstOrDefault(item => item.LineName == lineNameCmb_st1.SelectedItem.ToString());
+                string selectedLine = lineNameCmb_st1.SelectedItem?.ToString();
+                var result = lineMasterData?.FirstOrDefault(item => item.LineName == selectedLine);
                 if (result == null)
                 { return; }
                 lineMasterNameLbl_st1.Text = result.LineMaster;
@@ -1300,6 +1344,9 @@ namespace WeightMaster
                     roundData = tempRoundData.Where(t => t.date == todayDate && (t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString())).ToList();
                 }
 
+                if (!IsCurrentLookup() || lineNameCmb_st1.SelectedItem?.ToString() != selectedLine)
+                    return;
+
                 //populate the data in a table
                 if (roundData.Any())
                 {
@@ -1310,23 +1357,17 @@ namespace WeightMaster
                     int rowNormalLeafWeight = 0;
                     int rowTotalLeafWeight = 0;
 
-                    // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                    var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                    // Count down each member's rounds while displaying the newest transaction first.
+                    var counts = roundData
+                        .GroupBy(t => t.barcode_details ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                        .ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
 
-                    foreach (var transaction in roundData)
+                    foreach (var transaction in roundData.OrderByDescending(t => t.Id))
                     {
                         // normalize barcode key and guard against null
                         string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
 
-                        // increment occurrence count for this barcode and use it as the round number
-                        if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                        {
-                            currentCount = 0;
-                        }
-                        currentCount++;
-                        counts[barcodeKey] = currentCount;
-
-                        int roundNo = currentCount;
+                        int roundNo = counts[barcodeKey]--;
 
                         // create row — ensure you pass strings if your constructor expects strings
                         Station1LineTableRow lr1 = new Station1LineTableRow(
@@ -1372,8 +1413,20 @@ namespace WeightMaster
         }
         private async void lineNameCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (_isResettingStation1)
+                return;
+
+            int lookupVersion = ++_station1LineLookupVersion;
+            int roundVersion = _station1RoundVersion;
+            string requestedMember = memberId_st1;
+            bool IsCurrentLookup() => lookupVersion == _station1LineLookupVersion &&
+                roundVersion == _station1RoundVersion && !_isResettingStation1;
+
             if (lineNameCmb_st1.SelectedItem == null)
             {
+                LineTablePanel_st1.Children.Clear();
+                lineMasterNameLbl_st1.Text = "-";
+                billNoTxt_st1.Text = "";
                 lineRowNBoxes_st1.Text = "0";
                 lineRowNSacks_st1.Text = "0";
                 lineRowGoldLeafWeights_st1.Text = "0";
@@ -1389,6 +1442,7 @@ namespace WeightMaster
 
             //get transport bill by line name
             var transportBill = await _consoleHandler.getTransportBillNoByLineName(searchLineName);
+            if (!IsCurrentLookup()) return;
             billNoTxt_st1.Text = transportBill ?? "";
 
             if (result != null)
@@ -1418,6 +1472,9 @@ namespace WeightMaster
                         roundData = tempRoundData.Where(t => t.date == todayDate && (t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString())).ToList();
                     }
 
+                    if (!IsCurrentLookup() || memberId_st1 != requestedMember)
+                        return;
+
                     //populate the data in a table
                     if (roundData.Any())
                     {
@@ -1428,23 +1485,17 @@ namespace WeightMaster
                         int rowNormalLeafWeight = 0;
                         int rowTotalLeafWeight = 0;
 
-                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+                        // Count down each member's rounds while displaying the newest transaction first.
+                        var counts = roundData
+                            .GroupBy(t => t.barcode_details ?? string.Empty, StringComparer.OrdinalIgnoreCase)
+                            .ToDictionary(group => group.Key, group => group.Count(), StringComparer.OrdinalIgnoreCase);
 
-                        foreach (var transaction in roundData)
+                        foreach (var transaction in roundData.OrderByDescending(t => t.Id))
                         {
                             // normalize barcode key and guard against null
                             string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
 
-                            // increment occurrence count for this barcode and use it as the round number
-                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                            {
-                                currentCount = 0;
-                            }
-                            currentCount++;
-                            counts[barcodeKey] = currentCount;
-
-                            int roundNo = currentCount;
+                            int roundNo = counts[barcodeKey]--;
 
                             // create row — ensure you pass strings if your constructor expects strings
                             Station1LineTableRow lr1 = new Station1LineTableRow(
@@ -2085,671 +2136,347 @@ namespace WeightMaster
 
 
 
-        //clear button st1
-        private void clearBtn_st1_Clicked(object sender, RoutedEventArgs e)
+        private void ResetStation1Round()
         {
-            wateredTxt_st1.Text = "";
-            rejectedTxt_st1.Text = "";
-            spoiledTxt_st1.Text = "";
-            maturedTxt_st1.Text = "";
-            currentTotalDeduction_st1 = 0;
-
-            normalLeafWeightTxt_st1.Text = "";
-            currentNormalLeafWeight_st1 = 0;
-
-            goldenLeafWeightTxt_st1.Text = "";
-            currentGoldenLeafWeight_st1 = 0;
-
-            acceptedLeafWeightTxt_st1.Text = "";
-            currentAcceptedLeafWeight_st1 = 0;
-            scalerRoundedWeight_st1 = 0;
-
-            //keep these empty else both textboxes gets disabled by logic.
-            nSacksTxt_st1.Text = "";
-            nBoxesTxt_st1.Text = "";
-
-            //clear the member id
-
-
-            weightScalerConfirmBtn_st1.IsEnabled = true;
-            confirmAddRowButton_st1.IsEnabled = false;
-            weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
-            confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
-
-            //this was added to go back to step 1 and enable scaler confirm button because,
-            // this is the only way to get a new scaler value without confirming the transaction
-            currentStep_st1 = 1;
-
-
-        }
-
-
-        /// <summary>
-        /// Clears the member out of the Station-1 entry form once their round has been
-        /// saved, so the operator can scan or type the next member straight away.
-        ///
-        /// The text change event is suppressed while this runs. That event re-looks-up
-        /// the member and refetches greenLeafPostModel_st1, and letting it fire on an
-        /// empty box is what cleared the turn table when this was attempted previously.
-        /// Because it is suppressed, every piece of member state it would normally
-        /// maintain is reset here by hand - in particular greenLeafPostModel_st1, which
-        /// would otherwise attach the next member's weighing to this member's post.
-        /// </summary>
-        private void ResetMemberEntry_st1()
-        {
-            suppressBarcodeChanged_st1 = true;
-
+            _isResettingStation1 = true;
+            ++_station1RoundVersion;
+            ++_station1MemberLookupVersion;
+            ++_station1LineLookupVersion;
             try
             {
-                barcodeTxt_st1.Text = "";
-                customerNameTxt_st1.Text = "";
-
+                _timer.Stop();
+                _barcodeBuffer.Clear();
+                currentStep_st1 = 1;
                 memberId_st1 = "";
-                memberData_st1 = null;
-                greenLeafPostModel_st1 = null;
+                lineName_st1 = "";
+                supervisor_st1 = "";
+                memberData_st1 = new memDbLog();
+                greenLeafPostModel_st1 = new GreenLeafPostModel();
 
-                //this member's rounds are finished with; the next member starts empty
+                scalerRoundedWeight_st1 = 0;
+                currentAcceptedLeafWeight_st1 = 0;
+                currentNormalLeafWeight_st1 = 0;
+                currentGoldenLeafWeight_st1 = 0;
+                currentTotalDeduction_st1 = 0;
+                _currentTurn_st1 = 1;
+                finalWeightScalerWeight_st1 = 0;
+                finalAcceptedLeafWeight_st1 = 0;
+                finalNBoxes_st1 = 0;
+                finalNSacks_st1 = 0;
+                finalAvailableGoldenLeafWeight_st1 = 0;
+                finalAvailableNormalLeafWeight_st1 = 0;
+
+                barcodeTxt_st1.Text = "";
+                lineNameCmb_st1.SelectedIndex = -1;
+                supervisorCmb_st1.SelectedIndex = -1;
+                customerNameTxt_st1.Text = "-";
+                lineMasterNameLbl_st1.Text = "-";
+                billNoTxt_st1.Text = "";
+                nSacksTxt_st1.Text = "";
+                nBoxesTxt_st1.Text = "";
+                wateredTxt_st1.Text = "";
+                maturedTxt_st1.Text = "";
+                spoiledTxt_st1.Text = "";
+                rejectedTxt_st1.Text = "";
+                goldenLeafWeightTxt_st1.Text = "";
+                normalLeafWeightTxt_st1.Text = "";
+                acceptedLeafWeightTxt_st1.Text = "";
+                blueText.Text = "0";
+                greenText.Text = "0";
+                goldText.Text = "0";
+
                 MemberTurnTablePanel_st1.Children.Clear();
+                LineTablePanel_st1.Children.Clear();
+                rowMemberTurns_st1.Text = "";
+                rowNBoxes_st1.Text = "0";
+                rowNSacks_st1.Text = "0";
+                rowGreenLeafWeights_st1.Text = "0";
+                rowGoldenLeafWeights_st1.Text = "0";
+                rowTotalLeafWeights_st1.Text = "0";
+                lineRowNBoxes_st1.Text = "0";
+                lineRowNSacks_st1.Text = "0";
+                lineRowGoldLeafWeights_st1.Text = "0";
+                lineRowNormalLeafWeights_st1.Text = "0";
+                lineRowTotalLeafWeights_st1.Text = "0";
+
+                confirmAddRowButton_st1.IsEnabled = false;
+                confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));
+
+                bool scaleReady = scalerPassedZero && weightScalerStatus_st1.Text == "සමබරයි";
+                weightScalerConfirmBtn_st1.IsEnabled = scaleReady;
+                weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(scaleReady ? "#2ECC71" : "#B4B4B4"));
             }
             finally
             {
-                //restored even if a control throws, or every later edit would be ignored
-                suppressBarcodeChanged_st1 = false;
+                _isResettingStation1 = false;
             }
 
-            //put the caret back so the QR scanner or keyboard goes straight in
-            barcodeTxt_st1.Focus();
+            ShowCurrentStep();
+            Keyboard.ClearFocus();
+            this.Focus();
         }
+
+        private void clearBtn_st1_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (!_isSavingStation1)
+                ResetStation1Round();
+        }
+
 
         private async void confirmAddRowButton_st1_Click(object sender, RoutedEventArgs e)
         {
+            if (_isSavingStation1 || _isResettingStation1)
+                return;
 
-            /*            bool passed = true;
-                        if (passed)
-                        {
-                            //MessageBox.Show("Process st1 finished!");
-                            // reset the steps and focus the weight button
-                            currentStep_st1 = 1;
-                            ShowCurrentStep();
-                        }
-
-                        bool failed = false;
-                        if (failed)
-                        {
-                            //MessageBox.Show("Step 5 button click failed!");
-                            currentStep_st1 = currentStep_st1 - 1;
-                            ShowCurrentStep();
-                        }*/
             if (!confirmAddRowButton_st1.IsEnabled)
             {
-                //MessageBox.Show("the button is currently disabled");
-                currentStep_st1 = currentStep_st1 - 1;
-                ShowCurrentStep();
-                return;
-            }
-            //lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
-            if (lineNameCmb_st1.SelectedValue != null)
-            {
-                lineName_st1 = lineNameCmb_st1.SelectedValue.ToString();
-            }
-            else
-            {
-                lineName_st1 = ""; // or any appropriate default
-            }
-            //supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
-            if (supervisorCmb_st1.SelectedValue != null)
-            {
-                supervisor_st1 = supervisorCmb_st1.SelectedValue.ToString();
-            }
-            else
-            {
-                supervisor_st1 = "";
-            }
-
-            if (lineName_st1.Equals("") || supervisor_st1.Equals(""))
-            {
-                MessageBox.Show("අධීක්ෂණය හා ප්‍රවාහන මාර්හය ඇතුලත් කරන්න");
-                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
-                currentStep_st1 = currentStep_st1 - 1;
-                ShowCurrentStep();
-                return;
-            }
-
-            if (barcodeTxt_st1.Text.Equals(""))
-            {
-                MessageBox.Show("සාමාජික අංකය ඇතුලත් කරන්න");
-                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
-                currentStep_st1 = currentStep_st1 - 1;
-                ShowCurrentStep();
-                return;
-            }
-
-
-            //clear and repopulate table rows(test) after successful update
-            if (!acceptedLeafWeightTxt_st1.Text.Equals("") && !normalLeafWeightTxt_st1.Text.Equals("") && ((!nSacksTxt_st1.Text.Equals("") && nBoxesTxt_st1.Text.Equals("")) || (nSacksTxt_st1.Text.Equals("") && !nBoxesTxt_st1.Text.Equals(""))))
-            {
-                //these are used to both updating the db and incrementing total valles for the table
-                //float.TryParse(weightScalerValTxt_st1.Text, out float weightScalerValue);
-                float weightScalerValue = (float)scalerRoundedWeight_st1;
-                int.TryParse(acceptedLeafWeightTxt_st1.Text, out int acceptedLeafWeight);
-
-                int.TryParse(nBoxesTxt_st1.Text, out int nBoxes);
-                int.TryParse(nSacksTxt_st1.Text, out int nSacks);
-
-                int.TryParse(wateredTxt_st1.Text, out int wateredWeight);
-                int.TryParse(maturedTxt_st1.Text, out int maturedWeight);
-                int.TryParse(spoiledTxt_st1.Text, out int spoiledWeight);
-                int.TryParse(rejectedTxt_st1.Text, out int rejectedWeight);
-
-                int.TryParse(normalLeafWeightTxt_st1.Text, out int availableNormalLeafWeight);
-                int.TryParse(goldenLeafWeightTxt_st1.Text, out int availableGoldenLeafWeight);
-                bool _isSuccess = false;
-
-                //cover the input grid with another grid to avoid misinputs and reconfirming the same request
-                loadingDataInputBorder_st1.Visibility = Visibility.Visible;
-                try
-                {
-                    var newTransaction = new TransactionLogBlockModel
-                    {
-                        linename = lineName_st1,
-                        transportagent = lineMasterNameLbl_st1.Text,
-                        company = _appConfig.branchName, //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
-                        leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
-                        superviosr = supervisor_st1,
-                        barcode_details = memberId_st1,
-                        name_with_initials = customerNameTxt_st1.Text,
-                        phone_number = "123-456-7890",
-                        date = DateTime.Now.ToString("yyyy-MM-dd"),
-                        box_count = nBoxes,
-                        bag_count = nSacks,
-                        real_value = (float)Math.Round(weightScalerValue, 2),
-                        maximum_nomal_leaf_weight = (int)scalerRoundedWeight_st1 - (int)Math.Ceiling(nBoxes * singleBoxWeight), //from now on, this will be used to calculate the box weight in station 2
-
-                        total_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
-                        actual_nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
-                        total_gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
-
-                        water = wateredWeight,
-                        morapuwata = maturedWeight,
-                        thambimata = spoiledWeight,
-                        reject = rejectedWeight,
-                        box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight), //
-                        final_green_leaf_count = availableNormalLeafWeight,
-                        final_gold_leaf_count = availableGoldenLeafWeight
-                    };
-
-                    // Call the service to add the transaction
-                    _isSuccess = await _consoleHandler.AddTransactionAsync(newTransaction);
-
-                    TransportBillBlockModel t1 = new TransportBillBlockModel
-                    {
-                        billNo = billNoTxt_st1.Text,
-                        dateCreated = DateTime.Now.ToString("yyyy-MM-dd"),
-                        lineName = lineName_st1,
-                    };
-                    _consoleHandler.addTransportBill(t1);
-
-
-                    //----------------------------------------------------------------------------------------------------------------------|
-
-                    //CHANGE: instead of checking just existing memberID, check both memberID and TransportLine
-                    //MessageBox.Show(memberId_st1);
-                    //MessageBox.Show(lineNameCmb_st1.SelectedValue.ToString());
-                    List<GreenLeafPostModel> postModels = await _consoleHandler.getAllpostsbyFilteringExtended(memberId_st1, lineNameCmb_st1.SelectedValue.ToString());
-
-                    //if (postModels == null) { MessageBox.Show("null"); }
-                    //if (postModels.Count == 0) { MessageBox.Show("count is zero"); }
-                    foreach (var post in postModels)
-                    {
-                        //string message = $@"Green Leaf Post Details:
-                        //                    ID: {post.id}
-                        //                    Leaf Handover Date: {post.leaf_handover_date}
-                        //                    Factory: {post.factory}
-                        //                    Transport Line Name: {post.transportlinename}
-                        //                    Transport Agent: {post.transportagent}
-                        //                    Leaf Weight Officer: {post.leaf_weight_officer}
-                        //                    Supervisor: {post.supervisor}
-                        //                    Member Number: {post.membernumber}
-                        //                    Pre-Member Number: {post.premembernumber ?? "N/A"}
-                        //                    Bag Count: {post.bag_count}
-                        //                    Box Count: {post.box_count}
-                        //                    Real Weight: {post.real_weight}
-                        //                    Total Weight: {post.total_weight}
-                        //                    Normal Leaf Weight: {post.nomal_leaf_weight}
-                        //                    Gold Leaf Weight: {post.gold_leaf_weight}
-                        //                    Wathurata: {post.wathurata}
-                        //                    Morapuwata: {post.morapuwata}
-                        //                    Thambimata: {post.thambimata}
-                        //                    Rejected: {post.rejected}
-                        //                    Bag Weight: {post.bag_weight}
-                        //                    Box Weight: {post.box_weight}
-                        //                    Final Green Leaf Count: {post.final_green_leaf_count}
-                        //                    Final Gold Leaf Count: {post.final_gold_leaf_count}
-                        //                    Created User: {post.created_user}
-                        //                    Updated User: {post.updated_user}";
-                        //MessageBox.Show(message, "Green Leaf Post Details");
-                    }
-                    GreenLeafPostModel postModelSumFromLine = new GreenLeafPostModel();
-                    if (postModels == null || postModels.Count == 0)
-                    {
-                        //MessageBox.Show("This list is empty");
-                    }
-                    else
-                    {
-                        //MessageBox.Show($"List has {postModels.Count} items.");
-                        postModelSumFromLine = BlockModelConverter.Sum(postModels);
-                    }
-                    //string message1 = $@"Green Leaf Post Details:
-                    //                        ID: {postModelSumFromLine.id}
-                    //                        Leaf Handover Date: {postModelSumFromLine.leaf_handover_date}
-                    //                        Factory: {postModelSumFromLine.factory}
-                    //                        Transport Line Name: {postModelSumFromLine.transportlinename}
-                    //                        Transport Agent: {postModelSumFromLine.transportagent}
-                    //                        Leaf Weight Officer: {postModelSumFromLine.leaf_weight_officer}
-                    //                        Supervisor: {postModelSumFromLine.supervisor}
-                    //                        Member Number: {postModelSumFromLine.membernumber}
-                    //                        Pre-Member Number: {postModelSumFromLine.premembernumber ?? "N/A"}
-                    //                        Bag Count: {postModelSumFromLine.bag_count}
-                    //                        Box Count: {postModelSumFromLine.box_count}
-                    //                        Real Weight: {postModelSumFromLine.real_weight}
-                    //                        Total Weight: {postModelSumFromLine.total_weight}
-                    //                        Normal Leaf Weight: {postModelSumFromLine.nomal_leaf_weight}
-                    //                        Gold Leaf Weight: {postModelSumFromLine.gold_leaf_weight}
-                    //                        Wathurata: {postModelSumFromLine.wathurata}
-                    //                        Morapuwata: {postModelSumFromLine.morapuwata}
-                    //                        Thambimata: {postModelSumFromLine.thambimata}
-                    //                        Rejected: {postModelSumFromLine.rejected}
-                    //                        Bag Weight: {postModelSumFromLine.bag_weight}
-                    //                        Box Weight: {postModelSumFromLine.box_weight}
-                    //                        Final Green Leaf Count: {postModelSumFromLine.final_green_leaf_count}
-                    //                        Final Gold Leaf Count: {postModelSumFromLine.final_gold_leaf_count}
-                    //                        Created User: {postModelSumFromLine.created_user}
-                    //                        Updated User: {postModelSumFromLine.updated_user}";
-                    //MessageBox.Show(message1, "Final Green Leaf Post Details");
-                    //call new api v2
-                    //save only if the table row doesn't already exists
-                    //if (greenLeafPostModel_st1 == null)
-                    if (postModels == null || postModels.Count == 0)
-                    {
-                        //MessageBox.Show("null was selected: creating new");
-                        var newGRPM = new GreenLeafPostModel
-                        {
-                            id = 0,
-                            leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
-
-                            line_id = GetLineIdByLineName(lineName_st1),
-                            transportlinename = lineName_st1,
-                            transportagent = lineMasterNameLbl_st1.Text,
-                            leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
-                            supervisor = supervisor_st1,
-                            membernumber = memberId_st1,
-                            // Null-safe: a member not in the member DB (unregistered) returns null from
-                            // getMember. Without ?. this NRE'd here AFTER the transaction was already saved,
-                            // so the green-leaf post was never created and Station 2 had nothing to update.
-                            // Allow unregistered members through: premembernumber is a nullable column.
-                            premembernumber = memberData_st1?.CustomPreMemberNum,
-
-                            bag_count = nSacks,
-                            box_count = nBoxes,
-
-                            real_weight = Math.Round(weightScalerValue, 2),
-                            //total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
-                            // Box tare (3.5 KG/box) is already removed by BoxDeduction_st1_TextChanged and is
-                            // tracked separately in box_weight below; do NOT add it back into the leaf columns,
-                            // otherwise the leaf weight is inflated by the crate weight (e.g. 90 net -> 98).
-                            total_weight = (int)currentAcceptedLeafWeight_st1,
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
-                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
-
-                            wathurata = wateredWeight,
-                            morapuwata = maturedWeight,
-                            thambimata = spoiledWeight,
-                            rejected = rejectedWeight,
-
-                            bag_weight = 0,
-                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight),
-
-                            final_green_leaf_count = availableNormalLeafWeight,
-                            final_gold_leaf_count = availableGoldenLeafWeight,
-
-                            created_user = userEmail,
-                            updated_user = ""
-                        };
-                        //MessageBox.Show("total_weight: "+newGRPM.total_weight.ToString());
-                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
-
-
-
-                        await _consoleHandler.SaveData(newGRPM);
-                    }
-                    else //add the current values to the existing record and update it instead of adding a new one
-                    {
-                        //MessageBox.Show("not null was selected: updating existing");
-                        //MessageBox.Show("is null");
-                        var newGRPM = new GreenLeafPostModel
-                        {
-                            id = 0,
-                            leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
-                            factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
-
-                            line_id = GetLineIdByLineName(lineName_st1),
-                            transportlinename = lineName_st1,
-                            transportagent = lineMasterNameLbl_st1.Text,
-                            leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
-                            supervisor = supervisor_st1,
-                            membernumber = memberId_st1,
-                            // Null-safe: a member not in the member DB (unregistered) returns null from
-                            // getMember. Without ?. this NRE'd here AFTER the transaction was already saved,
-                            // so the green-leaf post was never created and Station 2 had nothing to update.
-                            // Allow unregistered members through: premembernumber is a nullable column.
-                            premembernumber = memberData_st1?.CustomPreMemberNum,
-
-                            bag_count = nSacks + postModelSumFromLine.bag_count,
-                            box_count = nBoxes + postModelSumFromLine.box_count,
-
-                            real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
-                            // Box tare already removed by BoxDeduction_st1_TextChanged and kept in box_weight;
-                            // don't re-add it here, otherwise the leaf columns are inflated by the crate weight.
-                            total_weight = (int)acceptedLeafWeight + postModelSumFromLine.total_weight,
-
-                            nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
-                            gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
-
-                            wathurata = wateredWeight + postModelSumFromLine.wathurata,
-                            morapuwata = maturedWeight + postModelSumFromLine.morapuwata,
-                            thambimata = spoiledWeight + postModelSumFromLine.thambimata,
-                            rejected = rejectedWeight + postModelSumFromLine.rejected,
-
-                            bag_weight = 0 + postModelSumFromLine.bag_weight,
-                            box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + postModelSumFromLine.box_weight,
-
-                            final_green_leaf_count = availableNormalLeafWeight + postModelSumFromLine.final_green_leaf_count,
-                            final_gold_leaf_count = availableGoldenLeafWeight + postModelSumFromLine.final_gold_leaf_count,
-
-                            created_user = userEmail,
-                            updated_user = ""
-                        };
-                        //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
-                        //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
-
-
-                        bool success_update = await _consoleHandler.UpdateData(postModelSumFromLine.id, newGRPM);
-                        //MessageBox.Show(success_update.ToString());
-                    }
-
-
-                    //new api (if exists(not null), do an update after adding the new transaction)
-                    //this was called here after saveData() because i can't clear barcodeTxt. this will clear the turn table which runs w/o a direct api.
-                    greenLeafPostModel_st1 = await _consoleHandler.getDatabyMemberiDandDateSingle(memberId_st1, DateTime.Now.ToString("yyyy-MM-dd"));
-
-                    // enable and disable confirm buttons
-                    confirmAddRowButton_st1.IsEnabled = false;
-                    confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));  // Gray out
-
-
-                    //newly added: verify if the weight scaler value is zero or not for this existing button disability and color change
-                    if (scalerPassedZero == true)
-                    {
-                        //MessageBox.Show("Weight Scaler has passed zero before this confirm button evt: scal button enabled");
-                        weightScalerConfirmBtn_st1.IsEnabled = true;
-                        weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
-                    }
-                    else
-                    {
-                        //MessageBox.Show("Weight Scaler has not passed zero before this confirm button evt: scal button disabled");
-                    }
-
-                    //go back to the first step(focusing the barcode)
-                    currentStep_st1 = 1;
-                    ShowCurrentStep();
-                }
-                catch (Exception ex)
-                {
-                    // Handle exception here
-                    System.Diagnostics.Debug.WriteLine($"Exception: {ex}");
-                    Logger.Error("Station1.Confirm", "confirm/save failed", ex, new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
-                    loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
-                    currentStep_st1 = currentStep_st1 - 1;
-                    ShowCurrentStep();
-                }
-
-                //go back to 1st step in Enter Press logic
                 currentStep_st1 = 1;
                 ShowCurrentStep();
+                return;
+            }
 
-                //MessageBox.Show("ready to populate"+_isSuccess.ToString());
-                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
-                if (_isSuccess)
+            lineName_st1 = lineNameCmb_st1.SelectedValue?.ToString() ?? "";
+            supervisor_st1 = supervisorCmb_st1.SelectedValue?.ToString() ?? "";
+            if (lineName_st1.Length == 0 || supervisor_st1.Length == 0 ||
+                string.IsNullOrWhiteSpace(barcodeTxt_st1.Text) ||
+                string.IsNullOrEmpty(acceptedLeafWeightTxt_st1.Text) ||
+                string.IsNullOrEmpty(normalLeafWeightTxt_st1.Text) ||
+                (string.IsNullOrEmpty(nSacksTxt_st1.Text) == string.IsNullOrEmpty(nBoxesTxt_st1.Text)))
+            {
+                MessageBox.Show(this, "Select a line and supervisor, enter a member number, and enter either sacks or boxes.",
+                    "Incomplete round", MessageBoxButton.OK, MessageBoxImage.Information);
+                currentStep_st1 = 6;
+                ShowCurrentStep();
+                return;
+            }
+
+            float weightScalerValue = (float)scalerRoundedWeight_st1;
+            int.TryParse(acceptedLeafWeightTxt_st1.Text, out int acceptedLeafWeight);
+            int.TryParse(nBoxesTxt_st1.Text, out int nBoxes);
+            int.TryParse(nSacksTxt_st1.Text, out int nSacks);
+            int.TryParse(wateredTxt_st1.Text, out int wateredWeight);
+            int.TryParse(maturedTxt_st1.Text, out int maturedWeight);
+            int.TryParse(spoiledTxt_st1.Text, out int spoiledWeight);
+            int.TryParse(rejectedTxt_st1.Text, out int rejectedWeight);
+            int.TryParse(normalLeafWeightTxt_st1.Text, out int availableNormalLeafWeight);
+            int.TryParse(goldenLeafWeightTxt_st1.Text, out int availableGoldenLeafWeight);
+
+            // Guard every save entry point before the first asynchronous operation.
+            _isSavingStation1 = true;
+            ++_station1MemberLookupVersion;
+            ++_station1LineLookupVersion;
+            confirmAddRowButton_st1.IsEnabled = false;
+            Station1Frame.IsEnabled = false;
+            loadingDataInputBorder_st1.Visibility = Visibility.Visible;
+            bool saved = false;
+            try
+            {
+                memberId_st1 = barcodeTxt_st1.Text.Trim().PadLeft(5, '0');
+                memberData_st1 = await _consoleHandler.getMember(memberId_st1) ?? new memDbLog();
+                string memberName = await _consoleHandler.GetMemberName(memberId_st1);
+                customerNameTxt_st1.Text = string.IsNullOrEmpty(memberName) || memberName == "No name with initials found" ? "-" : memberName;
+                lineMasterNameLbl_st1.Text = lineMasterData?.FirstOrDefault(line => line.LineName == lineName_st1)?.LineMaster ?? "";
+
+                var newTransaction = new TransactionLogBlockModel
                 {
-                    Logger.Event("station1_save", new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
-                    int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
-                    Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, goldenLeafWeightTxt_st1.Text, normalLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
-                    // When adding a new row dynamically(no need now)
-                    //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
-                    MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-                    //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-                    //MessageBox.Show("data populated");
+                    linename = lineName_st1,
+                    transportagent = lineMasterNameLbl_st1.Text,
+                    company = _appConfig.branchName, //මොරවක්කෝරලේ තේ කම්හල || නව ඇලන්වැලි තේ කම්හල || කෝප්කෝලා තේ කම්හල //BRANCHCHANGE
+                    leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                    superviosr = supervisor_st1,
+                    barcode_details = memberId_st1,
+                    name_with_initials = customerNameTxt_st1.Text,
+                    phone_number = "123-456-7890",
+                    date = DateTime.Now.ToString("yyyy-MM-dd"),
+                    box_count = nBoxes,
+                    bag_count = nSacks,
+                    real_value = (float)Math.Round(weightScalerValue, 2),
+                    maximum_nomal_leaf_weight = (int)scalerRoundedWeight_st1 - (int)Math.Ceiling(nBoxes * singleBoxWeight), //from now on, this will be used to calculate the box weight in station 2
+
+                    total_leaf_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
+                    actual_nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
+                    total_gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
+
+                    water = wateredWeight,
+                    morapuwata = maturedWeight,
+                    thambimata = spoiledWeight,
+                    reject = rejectedWeight,
+                    box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight), //
+                    final_green_leaf_count = availableNormalLeafWeight,
+                    final_gold_leaf_count = availableGoldenLeafWeight
+                };
+
+                // Call the service to add the transaction
+                if (!await _consoleHandler.AddTransactionAsync(newTransaction))
+                    throw new InvalidOperationException("The transaction could not be saved.");
+
+                TransportBillBlockModel t1 = new TransportBillBlockModel
+                {
+                    billNo = billNoTxt_st1.Text,
+                    dateCreated = DateTime.Now.ToString("yyyy-MM-dd"),
+                    lineName = lineName_st1,
+                };
+                if (!await _consoleHandler.addTransportBill(t1))
+                    throw new InvalidOperationException("The transport bill could not be saved.");
 
 
-                    finalWeightScalerWeight_st1 += weightScalerValue;
-                    finalAcceptedLeafWeight_st1 += acceptedLeafWeight;
+                //----------------------------------------------------------------------------------------------------------------------|
 
-                    finalNBoxes_st1 += nBoxes;
-                    finalNSacks_st1 += nSacks;
+                //CHANGE: instead of checking just existing memberID, check both memberID and TransportLine
+                //MessageBox.Show(memberId_st1);
+                //MessageBox.Show(lineName_st1);
+                List<GreenLeafPostModel> postModels = await _consoleHandler.getAllpostsbyFilteringExtended(memberId_st1, lineName_st1);
 
-
-                    finalAvailableGoldenLeafWeight_st1 += availableGoldenLeafWeight;
-                    finalAvailableNormalLeafWeight_st1 += availableNormalLeafWeight;
-
-                    //if everything was added successfully, assign updated final values to the total values row
-                    //rowMemberTurns_st1.Text = MemberTurnTablePanel_st1.Children.Count.ToString();
-                    rowNBoxes_st1.Text = finalNBoxes_st1.ToString();
-                    rowNSacks_st1.Text = finalNSacks_st1.ToString();
-                    rowGreenLeafWeights_st1.Text = finalAvailableNormalLeafWeight_st1.ToString();
-                    rowGoldenLeafWeights_st1.Text = finalAvailableGoldenLeafWeight_st1.ToString();
-                    rowTotalLeafWeights_st1.Text = finalAcceptedLeafWeight_st1.ToString(); //only sacks and boxes deducted
-                                                                                           //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
-
-                    //if everything was added successfully, clear all textboxes(except table row, member & line master/name details)
-                    nSacksTxt_st1.Text = "";
-                    nBoxesTxt_st1.Text = "";
-
-                    wateredTxt_st1.Text = "";
-                    rejectedTxt_st1.Text = "";
-                    spoiledTxt_st1.Text = "";
-                    maturedTxt_st1.Text = "";
-
-                    normalLeafWeightTxt_st1.Text = "";
-                    goldenLeafWeightTxt_st1.Text = "";
-                    acceptedLeafWeightTxt_st1.Text = "";
-
-                    //Round saved: clear the member so the next one can be scanned straight
-                    //away. The text change event is suppressed inside, which is what the
-                    //previous attempt at this line was missing.
-                    ResetMemberEntry_st1();
-
-                    currentTotalDeduction_st1 = 0;
-                    currentNormalLeafWeight_st1 = 0;
-                    currentGoldenLeafWeight_st1 = 0;
-                    currentAcceptedLeafWeight_st1 = 0;
-
+                GreenLeafPostModel postModelSumFromLine = new GreenLeafPostModel();
+                if (postModels == null || postModels.Count == 0)
+                {
+                    //MessageBox.Show("This list is empty");
                 }
                 else
                 {
-                    //int totalWeight = (availableGoldenLeafWeight + availableNormalLeafWeight);
-                    //Station1TableRow station1TableRow1 = new Station1TableRow(_currentTurn_st1++.ToString(), nSacksTxt_st1.Text, nBoxesTxt_st1.Text, normalLeafWeightTxt_st1.Text, goldenLeafWeightTxt_st1.Text, /*totalWeight.ToString()*/acceptedLeafWeightTxt_st1.Text);
-                    // When adding a new row dynamically(no need now)
-                    //int insertIndex = MemberTurnTablePanel_st1.Children.Count - 1;
-                    //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-                    //MemberTurnTablePanel_st1.Children.Add(station1TableRow1);
-
-
-
-                    finalWeightScalerWeight_st1 += weightScalerValue;
-                    finalAcceptedLeafWeight_st1 += acceptedLeafWeight;
-
-                    finalNBoxes_st1 += nBoxes;
-                    finalNSacks_st1 += nSacks;
-
-                    finalAvailableGoldenLeafWeight_st1 += availableGoldenLeafWeight;
-                    finalAvailableNormalLeafWeight_st1 += availableNormalLeafWeight;
-
-                    //if everything was added successfully, assign updated final values to the total values row
-                    //rowMemberTurns_st1.Text = MemberTurnTablePanel_st1.Children.Count.ToString();
-                    rowNBoxes_st1.Text = finalNBoxes_st1.ToString();
-                    rowNSacks_st1.Text = finalNSacks_st1.ToString();
-                    rowGreenLeafWeights_st1.Text = finalAvailableNormalLeafWeight_st1.ToString();
-                    rowGoldenLeafWeights_st1.Text = finalAvailableGoldenLeafWeight_st1.ToString();
-                    rowTotalLeafWeights_st1.Text = finalAcceptedLeafWeight_st1.ToString(); //only sacks and boxes deducted
-                                                                                           //System.Diagnostics.Debug.WriteLine("Added value: "+ finalWeightScalerWeight_st1);
-
-                    //if everything was added successfully, clear all textboxes(except table row, member & line master/name details)
-                    nSacksTxt_st1.Text = "";
-                    nBoxesTxt_st1.Text = "";
-
-                    wateredTxt_st1.Text = "";
-                    rejectedTxt_st1.Text = "";
-                    spoiledTxt_st1.Text = "";
-                    maturedTxt_st1.Text = "";
-
-                    normalLeafWeightTxt_st1.Text = "";
-                    goldenLeafWeightTxt_st1.Text = "";
-                    acceptedLeafWeightTxt_st1.Text = "";
-
-                    //Round saved: clear the member so the next one can be scanned straight
-                    //away. The text change event is suppressed inside, which is what the
-                    //previous attempt at this line was missing.
-                    ResetMemberEntry_st1();
-
-                    currentTotalDeduction_st1 = 0;
-                    currentNormalLeafWeight_st1 = 0;
-                    currentGoldenLeafWeight_st1 = 0;
-                    currentAcceptedLeafWeight_st1 = 0;
-
+                    //MessageBox.Show($"List has {postModels.Count} items.");
+                    postModelSumFromLine = BlockModelConverter.Sum(postModels);
                 }
+                //call new api v2
+                //save only if the table row doesn't already exists
+                //if (greenLeafPostModel_st1 == null)
+                if (postModels == null || postModels.Count == 0)
+                {
+                    //MessageBox.Show("null was selected: creating new");
+                    var newGRPM = new GreenLeafPostModel
+                    {
+                        id = 0,
+                        leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                        factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
 
+                        line_id = GetLineIdByLineName(lineName_st1),
+                        transportlinename = lineName_st1,
+                        transportagent = lineMasterNameLbl_st1.Text,
+                        leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                        supervisor = supervisor_st1,
+                        membernumber = memberId_st1,
+                        premembernumber = memberData_st1?.CustomPreMemberNum,
+
+                        bag_count = nSacks,
+                        box_count = nBoxes,
+
+                        real_weight = Math.Round(weightScalerValue, 2),
+                        //total_weight = (int)currentNormalLeafWeight_st1 + (int)currentGoldenLeafWeight_st1,
+                        // Box tare (3.5 KG/box) is already removed by BoxDeduction_st1_TextChanged and is
+                        // tracked separately in box_weight below; do NOT add it back into the leaf columns,
+                        // otherwise the leaf weight is inflated by the crate weight (e.g. 90 net -> 98).
+                        total_weight = (int)currentAcceptedLeafWeight_st1,
+                        nomal_leaf_weight = (int)currentNormalLeafWeight_st1,
+                        gold_leaf_weight = (int)currentGoldenLeafWeight_st1,
+
+                        wathurata = wateredWeight,
+                        morapuwata = maturedWeight,
+                        thambimata = spoiledWeight,
+                        rejected = rejectedWeight,
+
+                        bag_weight = 0,
+                        box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight),
+
+                        final_green_leaf_count = availableNormalLeafWeight,
+                        final_gold_leaf_count = availableGoldenLeafWeight,
+
+                        created_user = userEmail,
+                        updated_user = ""
+                    };
+                    //MessageBox.Show("total_weight: "+newGRPM.total_weight.ToString());
+                    //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
+
+
+
+                    if (!await _consoleHandler.SaveData(newGRPM))
+                        throw new InvalidOperationException("The green-leaf record could not be saved.");
+                }
+                else //add the current values to the existing record and update it instead of adding a new one
+                {
+                    //MessageBox.Show("not null was selected: updating existing");
+                    //MessageBox.Show("is null");
+                    var newGRPM = new GreenLeafPostModel
+                    {
+                        id = 0,
+                        leaf_handover_date = DateTime.Now.ToString("yyyy-MM-dd"),
+                        factory = _appConfig.branchId, //coop:1 || coop-cola:2 || allan-valley:3  //BRANCHCHANGE
+
+                        line_id = GetLineIdByLineName(lineName_st1),
+                        transportlinename = lineName_st1,
+                        transportagent = lineMasterNameLbl_st1.Text,
+                        leaf_weight_officer = weightLeafOfficerTxt_st1.Text,
+                        supervisor = supervisor_st1,
+                        membernumber = memberId_st1,
+                        premembernumber = memberData_st1?.CustomPreMemberNum,
+
+                        bag_count = nSacks + postModelSumFromLine.bag_count,
+                        box_count = nBoxes + postModelSumFromLine.box_count,
+
+                        real_weight = Math.Round(weightScalerValue, 2) + postModelSumFromLine.real_weight,
+                        // Box tare already removed by BoxDeduction_st1_TextChanged and kept in box_weight;
+                        // don't re-add it here, otherwise the leaf columns are inflated by the crate weight.
+                        total_weight = (int)acceptedLeafWeight + postModelSumFromLine.total_weight,
+
+                        nomal_leaf_weight = (int)currentNormalLeafWeight_st1 + postModelSumFromLine.nomal_leaf_weight,
+                        gold_leaf_weight = (int)currentGoldenLeafWeight_st1 + postModelSumFromLine.gold_leaf_weight,
+
+                        wathurata = wateredWeight + postModelSumFromLine.wathurata,
+                        morapuwata = maturedWeight + postModelSumFromLine.morapuwata,
+                        thambimata = spoiledWeight + postModelSumFromLine.thambimata,
+                        rejected = rejectedWeight + postModelSumFromLine.rejected,
+
+                        bag_weight = 0 + postModelSumFromLine.bag_weight,
+                        box_weight = (int)Math.Ceiling(nBoxes * singleBoxWeight) + postModelSumFromLine.box_weight,
+
+                        final_green_leaf_count = availableNormalLeafWeight + postModelSumFromLine.final_green_leaf_count,
+                        final_gold_leaf_count = availableGoldenLeafWeight + postModelSumFromLine.final_gold_leaf_count,
+
+                        created_user = userEmail,
+                        updated_user = ""
+                    };
+                    //MessageBox.Show("total_weight: " + newGRPM.total_weight.ToString());
+                    //MessageBox.Show("final_green_leaf_count: " + newGRPM.final_green_leaf_count.ToString());
+
+
+                    if (!await _consoleHandler.UpdateData(postModelSumFromLine.id, newGRPM))
+                        throw new InvalidOperationException("The green-leaf record could not be updated.");
+                    //MessageBox.Show(success_update.ToString());
+                }
                 try
                 {
-                    bool _isoks = await _consoleHandler.verifyTransactionsCloudCheck();
-                    if (_isoks)
-                    {
-                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked done! ]:::::::::::::::");
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine(":::::::::::::::::::::[ cloud checked failed! ]::::::::::::");
-                    }
+                    await _consoleHandler.verifyTransactionsCloudCheck();
                 }
-                catch (Exception ex)
+                catch (Exception syncError)
                 {
-                    System.Diagnostics.Debug.WriteLine(ex.Message);
+                    System.Diagnostics.Debug.WriteLine($"Legacy transaction verification failed: {syncError}");
                 }
 
-                // clear the linewise table to repopulate
-                LineTablePanel_st1.Children.Clear();
-                //updating the linewise table to show the confirmed transaction by member id
-                try
-                {
-                    // Get today's date for filtering
-                    string todayDate = DateTime.Now.ToString("yyyy-MM-dd");
-
-                    List<TransactionLogBlockModel> roundData = null;
-                    //if empty string, include full list
-                    if (memberId_st1.ToString() == "00000" || memberId_st1.ToString() == "" || barcodeTxt_st1.ToString() == "")
-                    {
-                        //returns the full list
-                        var allRoundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedItem.ToString());
-                        // Filter by today's date
-                        roundData = allRoundData.Where(t => t.date == todayDate).ToList();
-                    }
-                    //if not empty string, filter list by barcode details string
-                    else
-                    {
-                        roundData = null;
-                        List<TransactionLogBlockModel> tempRoundData = await _consoleHandler.getDataByFilter(lineNameCmb_st1.SelectedItem.ToString());
-                        // Filter by today's date and barcode
-                        roundData = tempRoundData.Where(t => t.date == todayDate && (t.barcode_details == memberId_st1 || t.barcode_details == barcodeTxt_st1.ToString())).ToList();
-                    }
-                    if (roundData.Any())
-                    {
-                        // to assign into total values row
-                        int rowNBoxes = 0;
-                        int rowNSacks = 0;
-                        int rowGoldenLeafWeight = 0;
-                        int rowNormalLeafWeight = 0;
-                        int rowTotalLeafWeight = 0;
-
-                        // dictionary to count occurrences for each barcode_details (used to generate per-member round numbers)
-                        var counts = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
-
-                        //populate lines by barcode
-                        foreach (var transaction in roundData)
-                        {
-                            // normalize barcode key and guard against null
-                            string barcodeKey = transaction.barcode_details?.ToString() ?? string.Empty;
-
-                            // increment occurrence count for this barcode and use it as the round number
-                            if (!counts.TryGetValue(barcodeKey, out int currentCount))
-                            {
-                                currentCount = 0;
-                            }
-                            currentCount++;
-                            counts[barcodeKey] = currentCount;
-
-                            int roundNo = currentCount;
-
-                            // create row
-                            Station1LineTableRow lr1 = new Station1LineTableRow(
-                                roundNo.ToString(),
-                                barcodeKey,
-                                transaction.bag_count.ToString(),
-                                transaction.box_count.ToString(),
-                                transaction.total_gold_leaf_weight.ToString(),
-                                transaction.actual_nomal_leaf_weight.ToString(),
-                                (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight).ToString()
-                            );
-
-                            LineTablePanel_st1.Children.Add(lr1);
-
-                            // accumulate totals
-                            rowNBoxes += transaction.box_count;
-                            rowNSacks += transaction.bag_count;
-                            rowGoldenLeafWeight += transaction.total_gold_leaf_weight;
-                            rowNormalLeafWeight += transaction.actual_nomal_leaf_weight;
-                            rowTotalLeafWeight += (transaction.total_gold_leaf_weight + transaction.actual_nomal_leaf_weight);
-                        }
-
-                        // assign total column values to the total values row
-                        lineRowNBoxes_st1.Text = rowNBoxes.ToString();
-                        lineRowNSacks_st1.Text = rowNSacks.ToString();
-                        lineRowGoldLeafWeights_st1.Text = rowGoldenLeafWeight.ToString();
-                        lineRowNormalLeafWeights_st1.Text = rowNormalLeafWeight.ToString();
-                        lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
-
-                        // update all-lines total row
-                        UpdateAllLinesTotalRow_st1();
-                    }
-                    else
-                    {
-                        System.Diagnostics.Debug.WriteLine("No transactions found for the specified line name and date.");
-                    }
-
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine($"Error printing transactions by line name and date(for the confirm button): {ex.Message}");
-                }
-
+                Logger.Event("station1_save", new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
+                saved = true;
+                ResetStation1Round();
+                UpdateAllLinesTotalRow_st1();
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("කරුණාකර සියලු තොරතුරු අතුලත් කරන්න");
-                currentStep_st1 = currentStep_st1 - 1;
-                ShowCurrentStep();
+                System.Diagnostics.Debug.WriteLine($"Station 1 save failed: {ex}");
+                Logger.Error("Station1.Confirm", "confirm/save failed", ex, new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
+                currentStep_st1 = 6;
+                MessageBox.Show(this, "The round could not be fully saved. Inputs have been kept; some records may already exist.",
+                    "Save failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-            loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
+            finally
+            {
+                _isSavingStation1 = false;
+                Station1Frame.IsEnabled = true;
+                loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
+                confirmAddRowButton_st1.IsEnabled = !saved;
+                ShowCurrentStep();
+                if (saved)
+                {
+                    Keyboard.ClearFocus();
+                    this.Focus();
+                }
+            }
         }
 
         //station2 frame______________________________________________________________________________________________________________________________
