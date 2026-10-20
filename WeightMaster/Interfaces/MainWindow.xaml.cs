@@ -5348,7 +5348,7 @@ namespace WeightMaster
                 }
 
                 var choice = MessageBox.Show(
-                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and update now? The app will restart.",
+                    $"Current version: v{_updateService.GetCurrentVersion().ToString(3)}\nNew version: v{info.Version.ToString(3)}",
                     "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (choice != MessageBoxResult.Yes)
                 {
@@ -5394,7 +5394,7 @@ namespace WeightMaster
                 }
 
                 var choice = MessageBox.Show(
-                    $"Version {info.Version} is available (you have v{_updateService.GetCurrentVersion().ToString(3)}).\n\n{info.Notes}\n\nDownload and update now? The app will restart.",
+                    $"Current version: v{_updateService.GetCurrentVersion().ToString(3)}\nNew version: v{info.Version.ToString(3)}",
                     "Update available", MessageBoxButton.YesNo, MessageBoxImage.Information);
                 if (choice != MessageBoxResult.Yes)
                 {

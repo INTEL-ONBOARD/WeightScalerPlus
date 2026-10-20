@@ -24,6 +24,9 @@ jobs:
       - name: Station 1 regression checks
         run: node tests/station1-round/run.mjs
 
+      - name: Update dialog checks
+        run: node tests/update-prompt/check.mjs
+
       - run: dotnet restore WeightMaster.sln -r ${{ matrix.rid }}
 
       - name: Resolve version
@@ -73,4 +76,5 @@ jobs:
         with:
           files: artifacts/**/*.exe
           prerelease: ${{ contains(github.ref_name, '-') }}
-          generate_release_notes: true
+          # Older installed versions display this body inside their update popup.
+          generate_release_notes: false
