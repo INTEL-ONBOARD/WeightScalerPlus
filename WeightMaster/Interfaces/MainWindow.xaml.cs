@@ -2136,7 +2136,7 @@ namespace WeightMaster
 
 
 
-        private void ResetStation1Round()
+        private void ResetStation1Round(bool preserveSessionFields = false)
         {
             _isResettingStation1 = true;
             ++_station1RoundVersion;
@@ -2148,8 +2148,8 @@ namespace WeightMaster
                 _barcodeBuffer.Clear();
                 currentStep_st1 = 1;
                 memberId_st1 = "";
-                lineName_st1 = "";
-                supervisor_st1 = "";
+                lineName_st1 = preserveSessionFields ? lineNameCmb_st1.SelectedValue?.ToString() ?? "" : "";
+                supervisor_st1 = preserveSessionFields ? supervisorCmb_st1.SelectedValue?.ToString() ?? "" : "";
                 memberData_st1 = new memDbLog();
                 greenLeafPostModel_st1 = new GreenLeafPostModel();
 
@@ -2167,11 +2167,14 @@ namespace WeightMaster
                 finalAvailableNormalLeafWeight_st1 = 0;
 
                 barcodeTxt_st1.Text = "";
-                lineNameCmb_st1.SelectedIndex = -1;
-                supervisorCmb_st1.SelectedIndex = -1;
+                if (!preserveSessionFields)
+                {
+                    lineNameCmb_st1.SelectedIndex = -1;
+                    supervisorCmb_st1.SelectedIndex = -1;
+                    lineMasterNameLbl_st1.Text = "-";
+                    billNoTxt_st1.Text = "";
+                }
                 customerNameTxt_st1.Text = "-";
-                lineMasterNameLbl_st1.Text = "-";
-                billNoTxt_st1.Text = "";
                 nSacksTxt_st1.Text = "";
                 nBoxesTxt_st1.Text = "";
                 wateredTxt_st1.Text = "";
@@ -2453,7 +2456,7 @@ namespace WeightMaster
 
                 Logger.Event("station1_save", new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
                 saved = true;
-                ResetStation1Round();
+                ResetStation1Round(preserveSessionFields: true);
                 UpdateAllLinesTotalRow_st1();
             }
             catch (Exception ex)

@@ -14,13 +14,14 @@ compiles their bodies with headless control and persistence doubles. Async
 handlers return Task only in the temporary test copy so checks can await them.
 No database or scale is used.
 
-Checks cover two complete Enter-driven rounds, fresh metadata, retained saved
-records, duplicate submission, Clear during a pending save, save failure,
+Checks cover two complete Enter-driven rounds, retained supervisor/line/bill,
+fresh member and weighing details, editing retained fields, delayed bill lookups,
+retained saved records, duplicate submission, Clear during a pending save, save failure,
 keyboard auto-repeat and reset request-version invalidation. Table checks use
 scrambled transaction IDs and interleaved members to verify newest-first order,
 chronological round labels, unchanged totals and blank member identifiers.
 These checks do not replace a Windows WPF focus and physical-scale acceptance
-test.
+test. Manual Clear and the default reset still clear the three retained fields.
 
 Shortcut checks cover `M` from each round step, selecting the bill number,
 returning to the member number with Enter, preserving round data, preventing a
