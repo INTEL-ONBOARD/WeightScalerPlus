@@ -22,9 +22,10 @@ chronological round labels, unchanged totals and blank member identifiers.
 These checks do not replace a Windows WPF focus and physical-scale acceptance
 test.
 
-Shortcut checks cover `N` from each round step, selecting the bill number,
+Shortcut checks cover `M` from each round step, selecting the bill number,
 returning to the member number with Enter, preserving round data, preventing a
 save from that Enter, modifier keys, auto-repeat, busy state and Station 2 isolation.
+The previous `N` key must no longer activate the bill-number shortcut.
 
 Release checks also verify that unregistered members can still save both records
 and that successful and failed saves retain the production diagnostic calls.

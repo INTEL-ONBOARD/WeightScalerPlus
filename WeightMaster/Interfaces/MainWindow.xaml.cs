@@ -211,7 +211,7 @@ namespace WeightMaster
             if (!Station1Frame.IsVisible && !Station2Frame.IsVisible)
                 return;
 
-            if (Station1Frame.IsVisible && e.Key == Key.N &&
+            if (Station1Frame.IsVisible && e.Key == Key.M &&
                 (Keyboard.Modifiers & (ModifierKeys.Control | ModifierKeys.Alt | ModifierKeys.Windows)) == ModifierKeys.None)
             {
                 e.Handled = true;

@@ -187,12 +187,12 @@ partial class RoundHarness
             shortcut.Fill();
             shortcut.currentStep_st1 = originalStep;
             Keyboard.Current = "nSacksTxt_st1";
-            var n = new KeyEventArgs { Key = Key.N };
+            var m = new KeyEventArgs { Key = Key.M };
             int selections = shortcut.billNoTxt_st1.SelectAllCalls;
-            shortcut.Window_KeyDown(shortcut, n);
-            Check(n.Handled && Keyboard.Current == "billNoTxt_st1", "N focuses bill number from any round step");
-            Check(shortcut.billNoTxt_st1.SelectAllCalls == selections + 1, "N selects the current bill number");
-            Check(shortcut.currentStep_st1 == originalStep, "N does not advance or reset the round");
+            shortcut.Window_KeyDown(shortcut, m);
+            Check(m.Handled && Keyboard.Current == "billNoTxt_st1", "M focuses bill number from any round step");
+            Check(shortcut.billNoTxt_st1.SelectAllCalls == selections + 1, "M selects the current bill number");
+            Check(shortcut.currentStep_st1 == originalStep, "M does not advance or reset the round");
             shortcut.billNoTxt_st1.Text = "1042";
             int saves = shortcut._consoleHandler.AddCalls;
             Check(shortcut.Enter().Handled && Keyboard.Current == "barcodeTxt_st1" && shortcut.currentStep_st1 == 3, "Enter returns to member number");
@@ -200,34 +200,37 @@ partial class RoundHarness
             Check(shortcut._consoleHandler.AddCalls == saves, "bill Enter never saves the round");
         }
         Keyboard.Current = "barcodeTxt_st1";
-        shortcut.Window_KeyDown(shortcut, new() { Key = Key.N, IsRepeat = true });
-        Check(Keyboard.Current == "barcodeTxt_st1", "repeated N does not steal focus");
+        var oldShortcut = new KeyEventArgs { Key = Key.N };
+        shortcut.Window_KeyDown(shortcut, oldShortcut);
+        Check(!oldShortcut.Handled && Keyboard.Current == "barcodeTxt_st1", "N no longer activates the bill shortcut");
+        shortcut.Window_KeyDown(shortcut, new() { Key = Key.M, IsRepeat = true });
+        Check(Keyboard.Current == "barcodeTxt_st1", "repeated M does not steal focus");
         foreach (var modifiers in new[] { ModifierKeys.Control, ModifierKeys.Alt, ModifierKeys.Windows })
         {
             Keyboard.Modifiers = modifiers;
-            var modifiedN = new KeyEventArgs { Key = Key.N };
-            shortcut.Window_KeyDown(shortcut, modifiedN);
-            Check(!modifiedN.Handled && Keyboard.Current == "barcodeTxt_st1", "modified N is left to the application/OS");
+            var modifiedM = new KeyEventArgs { Key = Key.M };
+            shortcut.Window_KeyDown(shortcut, modifiedM);
+            Check(!modifiedM.Handled && Keyboard.Current == "barcodeTxt_st1", "modified M is left to the application/OS");
         }
         Keyboard.Modifiers = ModifierKeys.None;
         shortcut.lineNameCmb_st1.IsDropDownOpen = true;
         shortcut.supervisorCmb_st1.IsDropDownOpen = true;
         Keyboard.Modifiers = ModifierKeys.Shift;
-        shortcut.Window_KeyDown(shortcut, new() { Key = Key.N });
-        Check(Keyboard.Current == "billNoTxt_st1" && !shortcut.lineNameCmb_st1.IsDropDownOpen && !shortcut.supervisorCmb_st1.IsDropDownOpen, "uppercase N focuses bill and closes dropdowns");
+        shortcut.Window_KeyDown(shortcut, new() { Key = Key.M });
+        Check(Keyboard.Current == "billNoTxt_st1" && !shortcut.lineNameCmb_st1.IsDropDownOpen && !shortcut.supervisorCmb_st1.IsDropDownOpen, "uppercase M focuses bill and closes dropdowns");
         shortcut.Enter();
         Keyboard.Modifiers = ModifierKeys.None;
         shortcut._isSavingStation1 = true;
-        var busyN = new KeyEventArgs { Key = Key.N };
-        shortcut.Window_KeyDown(shortcut, busyN);
-        Check(busyN.Handled && Keyboard.Current == "barcodeTxt_st1", "N is blocked during save");
+        var busyM = new KeyEventArgs { Key = Key.M };
+        shortcut.Window_KeyDown(shortcut, busyM);
+        Check(busyM.Handled && Keyboard.Current == "barcodeTxt_st1", "M is blocked during save");
         shortcut._isSavingStation1 = false;
         shortcut.Station1Frame.IsVisible = false;
         shortcut.Station2Frame.IsVisible = true;
-        var station2N = new KeyEventArgs { Key = Key.N };
-        shortcut.Window_KeyDown(shortcut, station2N);
-        Check(!station2N.Handled && Keyboard.Current == "barcodeTxt_st1", "shortcut is limited to Station 1");
-        Console.WriteLine("PASS: N selects the bill number; Enter returns to member number without saving or clearing round data.");
+        var station2M = new KeyEventArgs { Key = Key.M };
+        shortcut.Window_KeyDown(shortcut, station2M);
+        Check(!station2M.Handled && Keyboard.Current == "barcodeTxt_st1", "shortcut is limited to Station 1");
+        Console.WriteLine("PASS: M selects the bill number; Enter returns to member number; N no longer activates the shortcut.");
     }
 }
 
@@ -280,7 +283,7 @@ sealed class FakeService
 sealed record FakeLine(string LineName, string LineMaster);
 sealed class FakeConfig { public string branchName = "Factory"; public string branchId = "1"; }
 sealed class FakeTimer { public void Stop() { } }
-enum Key { Enter, Escape, N }
+enum Key { Enter, Escape, N, M }
 [Flags] enum ModifierKeys { None = 0, Control = 1, Alt = 2, Windows = 4, Shift = 8 }
 enum Visibility { Visible, Hidden }
 sealed class KeyEventArgs { public Key Key; public bool Handled; public bool IsRepeat; }
