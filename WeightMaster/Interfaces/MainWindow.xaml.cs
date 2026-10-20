@@ -2171,9 +2171,11 @@ namespace WeightMaster
                 {
                     lineNameCmb_st1.SelectedIndex = -1;
                     supervisorCmb_st1.SelectedIndex = -1;
-                    lineMasterNameLbl_st1.Text = "-";
                     billNoTxt_st1.Text = "";
                 }
+                lineMasterNameLbl_st1.Text = preserveSessionFields
+                    ? lineMasterData?.FirstOrDefault(line => line.LineName == lineName_st1)?.LineMaster ?? "-"
+                    : "-";
                 customerNameTxt_st1.Text = "-";
                 nSacksTxt_st1.Text = "";
                 nBoxesTxt_st1.Text = "";
@@ -2222,7 +2224,7 @@ namespace WeightMaster
         private void clearBtn_st1_Clicked(object sender, RoutedEventArgs e)
         {
             if (!_isSavingStation1)
-                ResetStation1Round();
+                ResetStation1Round(preserveSessionFields: true);
         }
 
 

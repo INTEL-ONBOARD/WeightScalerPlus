@@ -174,11 +174,50 @@ partial class RoundHarness
         int step = h.currentStep_st1;
         Check(h.Enter(true).Handled && h.currentStep_st1 == step, "key auto-repeat cannot skip a step");
         int version = h._station1RoundVersion;
+        int callsBeforeClear = h._consoleHandler.AddCalls;
+        int recordsBeforeClear = h._consoleHandler.Transactions.Count;
         h.clearBtn_st1_Clicked(h, new());
-        h.AssertFresh();
+        h.AssertFresh("Haggala", "Supervisor", "Bill-42");
+        Check(h._consoleHandler.AddCalls == callsBeforeClear && h._consoleHandler.Transactions.Count == recordsBeforeClear, "Clear neither saves nor deletes transactions");
         Check(h._station1RoundVersion > version, "reset invalidates old async lookups");
         Check(!h.weightScalerConfirmBtn_st1.IsEnabled, "reset preserves zero-return interlock");
-        Console.WriteLine("PASS: Clear uses the same fresh reset; stale requests and key auto-repeat are invalidated.");
+        Console.WriteLine("PASS: Clear retains supervisor/line/bill, clears the weighing, preserves records and the zero-return interlock.");
+
+        var cleared = new RoundHarness();
+        cleared.clearBtn_st1_Clicked(cleared, new());
+        cleared.AssertFresh();
+        cleared.Fill("13579", "Katujurunda");
+        cleared.supervisorCmb_st1.SelectedValue = "Supervisor B";
+        cleared.billNoTxt_st1.Text = "1045";
+        cleared.lineMasterNameLbl_st1.Text = "Agent A";
+        for (int i = 0; i < 2; i++)
+        {
+            cleared.clearBtn_st1_Clicked(cleared, new());
+            cleared.AssertFresh("Katujurunda", "Supervisor B", "1045");
+            Check(cleared._consoleHandler.AddCalls == 0, "repeated Clear before saving never submits a round");
+        }
+        cleared.ReadyScale(); cleared.Enter();
+        cleared.Fill("24680", reuseSessionFields: true);
+        cleared.Enter(); cleared.Enter(); cleared.Enter(); cleared.Enter();
+        cleared.AssertFresh("Katujurunda", "Supervisor B", "1045");
+        Check(cleared._consoleHandler.Transactions.Single().barcode_details == "24680" && cleared._consoleHandler.Transactions.Single().linename == "Katujurunda", "round after Clear uses the new member and retained line");
+        Check(cleared._consoleHandler.Bills.Single().billNo == "1045", "round after Clear saves the retained bill");
+        Console.WriteLine("PASS: repeated Clear before the first save retains edited fields and the next Enter-driven round saves correctly.");
+
+        var pendingClear = new RoundHarness();
+        pendingClear.Fill("13579", "Katujurunda");
+        pendingClear.lineMasterNameLbl_st1.Text = "Agent A";
+        pendingClear._consoleHandler.TransportBillGate = new();
+        var lookupBeforeClear = pendingClear.lineNameCmb_st1_SelectionChanged(pendingClear, new());
+        pendingClear.billNoTxt_st1.Text = "1046";
+        pendingClear.clearBtn_st1_Clicked(pendingClear, new());
+        pendingClear.AssertFresh("Katujurunda", "Supervisor", "1046");
+        pendingClear._consoleHandler.TransportBillGate.SetResult("old bill");
+        await lookupBeforeClear.WaitAsync(TimeSpan.FromSeconds(3));
+        pendingClear.AssertFresh("Katujurunda", "Supervisor", "1046");
+        pendingClear.ResetStation1Round();
+        pendingClear.AssertFresh();
+        Console.WriteLine("PASS: Clear blocks stale bill responses, aligns the line agent, and the fresh-login reset still clears session fields.");
 
         var table = new RoundHarness();
         string today = DateTime.Now.ToString("yyyy-MM-dd");

@@ -21,7 +21,10 @@ keyboard auto-repeat and reset request-version invalidation. Table checks use
 scrambled transaction IDs and interleaved members to verify newest-first order,
 chronological round labels, unchanged totals and blank member identifiers.
 These checks do not replace a Windows WPF focus and physical-scale acceptance
-test. Manual Clear and the default reset still clear the three retained fields.
+test. Confirm and manual Clear retain supervisor, line and bill; the default
+fresh-login reset still clears them. Clear checks cover repeated clicks before
+the first save, edited values, delayed bill lookups, no database writes and
+continuing the next Enter-driven round with the retained fields.
 
 Shortcut checks cover `M` from each round step, selecting the bill number,
 returning to the member number with Enter, preserving round data, preventing a
