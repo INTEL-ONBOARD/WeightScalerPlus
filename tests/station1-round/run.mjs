@@ -9,10 +9,14 @@ const repo = resolve(testDir, '../..');
 const source = readFileSync(join(repo, 'WeightMaster/Interfaces/MainWindow.xaml.cs'), 'utf8');
 const output = mkdtempSync(join(tmpdir(), 'weightmaster-round-tests-'));
 const signatures = [
+  'private static bool IsValidStation1MemberNumber(',
+  'private void UpdateStation1ConfirmState(',
   'private void ResetStation1Round(', 'private void clearBtn_st1_Clicked(',
   'private async void confirmAddRowButton_st1_Click(', 'private void Window_KeyDown(',
   'private void GoToNextStep(', 'private void GoToPreviousStep(',
-  'private void ShowCurrentStep(', 'private void weightScalerConfirmBtn_st1_Click(',
+  'private void ShowCurrentStep(', 'private bool ValidateCurrentStep(',
+  'private void weightScalerConfirmBtn_st1_Click(',
+  'private void BarcodeTxt_st1_PreviewTextInput(', 'private void BarcodeTxt_st1_Pasting(',
   'private void triggerMechanism(', 'private async void barcodeTxt_st1_TextChanged(',
   'private async void lineNameCmb_st1_SelectionChanged('
 ];
@@ -36,6 +40,15 @@ const converter = readFileSync(join(repo, 'WeightMaster/utils/BlockModelConverte
 const sum = converter.slice(converter.indexOf('public static GreenLeafPostModel? Sum('), converter.indexOf('public static List<TransactionLogBlockModel> filterTransactionDataByLine'));
 writeFileSync(join(output, 'Converter.cs'), `using WeightMaster.Models;\nstatic class BlockModelConverter { ${sum} }`);
 writeFileSync(join(output, 'Regression.csproj'), '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><ImplicitUsings>enable</ImplicitUsings><Nullable>enable</Nullable><WarningLevel>0</WarningLevel></PropertyGroup></Project>');
+const xaml = readFileSync(join(repo, 'WeightMaster/Interfaces/MainWindow.xaml'), 'utf8');
+const memberInput = xaml.match(/<TextBox x:Name="barcodeTxt_st1"[^>]*\/>/)?.[0] ?? '';
+if (!memberInput.includes('MaxLength="5"') || !memberInput.includes('AllowDrop="False"')) {
+  throw new Error('Station 1 member input must cap typed length and reject drag-and-drop');
+}
+if (!source.includes('DataObject.AddPastingHandler(barcodeTxt_st1, BarcodeTxt_st1_Pasting)') ||
+    !source.includes('barcodeTxt_st1.Text = lineNameCmb_st1.SelectedItem != null && IsValidStation1MemberNumber(scannedMember)')) {
+  throw new Error('Station 1 member paste and scanner paths must use validation');
+}
 const result = spawnSync(process.env.DOTNET || 'dotnet', ['run', '--project', join(output, 'Regression.csproj'), '--verbosity', 'quiet'], { stdio: 'inherit', env: { ...process.env, DOTNET_CLI_TELEMETRY_OPTOUT: '1', DOTNET_NOLOGO: '1' } });
 if (result.error) throw result.error;
 process.exitCode = result.status ?? 1;

@@ -12,7 +12,15 @@ partial class RoundHarness
     private memDbLog memberData_st1 = new();
     private GreenLeafPostModel greenLeafPostModel_st1 = new();
     private List<FakeLine> lineMasterData = [new("Haggala", "Agent A"), new("Katujurunda", "Agent B")];
-    private bool ValidateCurrentStep() => true;
+    private bool ValidateStep1_st1() => true;
+    private bool ValidateStep2_st1() => true;
+    private bool ValidateStep3_st1() => true;
+    private bool ValidateStep4_st1() => true;
+    private bool ValidateStep5_st1() => true;
+    private bool ValidateStep1_st2() => true;
+    private bool ValidateStep2_st2() => true;
+    private bool ValidateStep3_st2() => true;
+    private bool ValidateStep4_st2() => true;
     private string GetLineIdByLineName(string name) => name == "Haggala" ? "1" : "2";
     private void UpdateAllLinesTotalRow_st1() { }
     private bool Focus() { Keyboard.Current = "window"; return true; }
@@ -69,7 +77,8 @@ partial class RoundHarness
         currentAcceptedLeafWeight_st1 = 23;
         currentNormalLeafWeight_st1 = 23;
         scalerRoundedWeight_st1 = 23;
-        confirmAddRowButton_st1.IsEnabled = true;
+        station1ReadingConfirmed = true;
+        UpdateStation1ConfirmState();
     }
 
     private void AssertFresh(string? retainedLine = null, string? retainedSupervisor = null, string? retainedBill = null)
@@ -83,7 +92,7 @@ partial class RoundHarness
         Check(nSacksTxt_st1.Text == "" && nBoxesTxt_st1.Text == "" && acceptedLeafWeightTxt_st1.Text == "", "weighing cleared");
         Check(currentAcceptedLeafWeight_st1 == 0 && scalerRoundedWeight_st1 == 0, "cached weights cleared");
         Check(MemberTurnTablePanel_st1.Children.Count == 0 && LineTablePanel_st1.Children.Count == 0, "context tables cleared");
-        Check(!confirmAddRowButton_st1.IsEnabled && !_isSavingStation1, "ready for a new round");
+        Check(!confirmAddRowButton_st1.IsEnabled && !station1ReadingConfirmed && !_isSavingStation1, "ready for a new round");
         Check(Keyboard.Current == "window", "keyboard focus restored");
         Check(weightLeafOfficerTxt_st1.Text == "Operator", "logged-in officer retained");
     }
@@ -95,6 +104,63 @@ partial class RoundHarness
 
     public static async Task Run()
     {
+        Check(IsValidStation1MemberNumber("1") && IsValidStation1MemberNumber("12345"), "one to five ASCII digits are valid");
+        Check(!IsValidStation1MemberNumber("") && !IsValidStation1MemberNumber("123456") &&
+            !IsValidStation1MemberNumber("12A") && !IsValidStation1MemberNumber("12.3") &&
+            !IsValidStation1MemberNumber("12 3") && !IsValidStation1MemberNumber("１２３"),
+            "empty, overlong, symbolic and non-ASCII member numbers are invalid");
+
+        var validation = new RoundHarness();
+        var input = new TextBox("member") { Text = "12", SelectionStart = 2 };
+        validation.lineNameCmb_st1.SelectedValue = "Haggala";
+        var typedDigit = new TextCompositionEventArgs { Text = "3" };
+        validation.BarcodeTxt_st1_PreviewTextInput(input, typedDigit);
+        Check(!typedDigit.Handled, "typing a digit is accepted");
+        var typedLetter = new TextCompositionEventArgs { Text = "A" };
+        validation.BarcodeTxt_st1_PreviewTextInput(input, typedLetter);
+        Check(typedLetter.Handled, "typing a letter is blocked");
+        input.Text = "12345"; input.SelectionStart = 5;
+        var sixthDigit = new TextCompositionEventArgs { Text = "6" };
+        validation.BarcodeTxt_st1_PreviewTextInput(input, sixthDigit);
+        Check(sixthDigit.Handled, "a sixth digit is blocked");
+        input.SelectionStart = 1; input.SelectionLength = 2;
+        var replacement = new TextCompositionEventArgs { Text = "9" };
+        validation.BarcodeTxt_st1_PreviewTextInput(input, replacement);
+        Check(!replacement.Handled, "replacing selected digits is allowed");
+        input.Text = "12"; input.SelectionStart = 2; input.SelectionLength = 0;
+        var validPaste = new DataObjectPastingEventArgs("34");
+        validation.BarcodeTxt_st1_Pasting(input, validPaste);
+        Check(!validPaste.Cancelled, "valid paste is accepted");
+        var invalidPaste = new DataObjectPastingEventArgs("3A");
+        validation.BarcodeTxt_st1_Pasting(input, invalidPaste);
+        Check(invalidPaste.Cancelled, "invalid paste is rejected");
+        validation.lineNameCmb_st1.SelectedValue = null;
+        var noLine = new TextCompositionEventArgs { Text = "3" };
+        validation.BarcodeTxt_st1_PreviewTextInput(input, noLine);
+        Check(noLine.Handled, "member entry waits for a line without a dialog");
+        validation.lineNameCmb_st1.SelectedValue = "Haggala";
+        validation.ReadyScale(); validation.Enter();
+        Check(!validation.confirmAddRowButton_st1.IsEnabled, "scale reading alone cannot enable final Confirm");
+        validation.lineNameCmb_st1.SelectedValue = "Haggala";
+        validation.barcodeTxt_st1.Text = "1234";
+        await validation.barcodeTxt_st1_TextChanged(validation, new());
+        Check(validation.confirmAddRowButton_st1.IsEnabled, "valid member enables final Confirm after scale reading");
+        validation.barcodeTxt_st1.Text = "12A";
+        await validation.barcodeTxt_st1_TextChanged(validation, new());
+        Check(!validation.confirmAddRowButton_st1.IsEnabled && validation.memberId_st1 == "", "invalid member disables Confirm and cannot reach lookup");
+        validation.currentStep_st1 = 6;
+        int dialogs = MessageBox.Calls;
+        validation.Enter();
+        await validation.confirmAddRowButton_st1_Click(validation, new());
+        Check(validation.currentStep_st1 == 6 && validation._consoleHandler.AddCalls == 0 && MessageBox.Calls == dialogs,
+            "invalid member cannot submit by Enter or click and shows no dialog");
+        validation.barcodeTxt_st1.Text = "7";
+        await validation.barcodeTxt_st1_TextChanged(validation, new());
+        Check(validation.confirmAddRowButton_st1.IsEnabled && validation.memberId_st1 == "00007", "correcting member re-enables Confirm and preserves padding");
+        validation.clearBtn_st1_Clicked(validation, new());
+        Check(!validation.confirmAddRowButton_st1.IsEnabled, "Clear disables final Confirm");
+        Console.WriteLine("PASS: Station 1 member validity gates final Confirm without dialogs, including Enter and reset.");
+
         var h = new RoundHarness();
         for (int round = 0; round < 2; round++)
         {
@@ -303,7 +369,7 @@ partial class RoundHarness
     }
 }
 
-sealed class FakeControl(string name)
+class FakeControl(string name)
 {
     public string Text { get; set; } = "";
     public object? SelectedValue { get; set; }
@@ -322,6 +388,20 @@ sealed class FakeControl(string name)
     public int SelectAllCalls { get; private set; }
     public void SelectAll() => SelectAllCalls++;
 }
+sealed class TextBox(string name) : FakeControl(name)
+{
+    public int SelectionStart { get; set; }
+    public int SelectionLength { get; set; }
+}
+sealed class TextCompositionEventArgs { public string Text = ""; public bool Handled; }
+sealed class DataObjectPastingEventArgs(string? text)
+{
+    public FakeDataObject DataObject { get; } = new(text);
+    public bool Cancelled { get; private set; }
+    public void CancelCommand() => Cancelled = true;
+}
+sealed class FakeDataObject(string? text) { public object? GetData(string format) => text; }
+static class DataFormats { public const string UnicodeText = "UnicodeText"; public const string Text = "Text"; }
 sealed class FakeService
 {
     public List<TransactionLogBlockModel> Transactions = [];
@@ -367,7 +447,7 @@ sealed class SolidColorBrush(Color value) { }
 static class ColorConverter { public static Color ConvertFromString(string value) => new(); }
 static class Keyboard { public static string? Current; public static ModifierKeys Modifiers; public static void ClearFocus() => Current = null; }
 static class FocusManager { public static object GetFocusScope(object control) => new(); public static void SetFocusedElement(object scope, object? element) { } }
-static class MessageBox { public static void Show(params object[] args) { } }
+static class MessageBox { public static int Calls; public static void Show(params object[] args) => Calls++; }
 enum MessageBoxButton { OK }
 enum MessageBoxImage { Information, Error }
 static class ConsoleSound { public static void PlayStable() { } }

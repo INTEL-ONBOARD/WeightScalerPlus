@@ -64,6 +64,7 @@ namespace WeightMaster
         //___________________st1 global variables____________________________________________________________________________________________|
 
         private string memberId_st1 = ""; //stores member id with all digits to send back to api.
+        private bool station1ReadingConfirmed;
 
         private string lineName_st1 = "";
         private string supervisor_st1 = "";
@@ -171,6 +172,8 @@ namespace WeightMaster
         public MainWindow()
         {
             InitializeComponent();
+            DataObject.AddPastingHandler(barcodeTxt_st1, BarcodeTxt_st1_Pasting);
+            UpdateStation1ConfirmState();
             _appConfig = new AppConfig();
             //Topbar
             runtimeService = new Runtime(this, path); // Pass the labels from XAML
@@ -484,6 +487,8 @@ namespace WeightMaster
                         return ValidateStep4_st1();
                     case 5:
                         return ValidateStep5_st1();
+                    case 6:
+                        return confirmAddRowButton_st1.IsEnabled;
                     default:
                         return true;
                 }
@@ -753,7 +758,9 @@ namespace WeightMaster
                 {
                     if (Station1Frame.IsVisible)
                     {
-                        barcodeTxt_st1.Text = _barcodeBuffer.ToString();
+                        string scannedMember = _barcodeBuffer.ToString();
+                        barcodeTxt_st1.Text = lineNameCmb_st1.SelectedItem != null && IsValidStation1MemberNumber(scannedMember)
+                            ? scannedMember : "";
                     }
                     if (Station2Frame.IsVisible)
                     {
@@ -1138,6 +1145,8 @@ namespace WeightMaster
             if (_isSavingStation1)
                 return;
 
+            station1ReadingConfirmed = false;
+            UpdateStation1ConfirmState();
             //IntroFrame.Visibility = Visibility.Visible;
             //LoginFrame.Visibility = Visibility.Visible;
             StationMainFrame.Visibility = Visibility.Collapsed;
@@ -1247,8 +1256,35 @@ namespace WeightMaster
 
         //station1 frame_______________________________________________________________________________________________________________________
 
+        private static bool IsValidStation1MemberNumber(string? value)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length > 5)
+                return false;
+
+            foreach (char digit in value)
+            {
+                if (digit < '0' || digit > '9')
+                    return false;
+            }
+
+            return true;
+        }
+
+        private void UpdateStation1ConfirmState()
+        {
+            if (confirmAddRowButton_st1 == null || confirmAddRowButtonBorder_st1 == null)
+                return;
+
+            bool canConfirm = station1ReadingConfirmed && !_isSavingStation1 && !_isResettingStation1 &&
+                IsValidStation1MemberNumber(barcodeTxt_st1.Text);
+            confirmAddRowButton_st1.IsEnabled = canConfirm;
+            confirmAddRowButtonBorder_st1.Background = new SolidColorBrush(
+                (Color)ColorConverter.ConvertFromString(canConfirm ? "#2ECC71" : "#B4B4B4"));
+        }
+
         private async void barcodeTxt_st1_TextChanged(object sender, TextChangedEventArgs e)
         {
+            UpdateStation1ConfirmState();
             if (_isResettingStation1)
                 return;
 
@@ -1257,8 +1293,8 @@ namespace WeightMaster
             bool IsCurrentLookup() => lookupVersion == _station1MemberLookupVersion &&
                 roundVersion == _station1RoundVersion && !_isResettingStation1;
 
-            string scannedMember = barcodeTxt_st1.Text.Trim();
-            memberId_st1 = scannedMember.Length == 0 ? "" : scannedMember.PadLeft(5, '0');
+            string scannedMember = barcodeTxt_st1.Text;
+            memberId_st1 = IsValidStation1MemberNumber(scannedMember) ? scannedMember.PadLeft(5, '0') : "";
             string requestedMember = memberId_st1;
             customerNameTxt_st1.Text = "-";
             memberData_st1 = new memDbLog();
@@ -1768,8 +1804,8 @@ namespace WeightMaster
                 //enable and disable confirm buttons
                 weightScalerConfirmBtn_st1.IsEnabled = false;
                 weightScalerConfirmBtnBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4")); // Gray out
-                confirmAddRowButton_st1.IsEnabled = true;
-                confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#2ECC71")); // green(enabled)
+                station1ReadingConfirmed = true;
+                UpdateStation1ConfirmState();
 
                 // go to next step
                 currentStep_st1 = 3;
@@ -2139,6 +2175,7 @@ namespace WeightMaster
         private void ResetStation1Round(bool preserveSessionFields = false)
         {
             _isResettingStation1 = true;
+            station1ReadingConfirmed = false;
             ++_station1RoundVersion;
             ++_station1MemberLookupVersion;
             ++_station1LineLookupVersion;
@@ -2204,8 +2241,7 @@ namespace WeightMaster
                 lineRowNormalLeafWeights_st1.Text = "0";
                 lineRowTotalLeafWeights_st1.Text = "0";
 
-                confirmAddRowButton_st1.IsEnabled = false;
-                confirmAddRowButtonBorder_st1.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#B4B4B4"));
+                UpdateStation1ConfirmState();
 
                 bool scaleReady = scalerPassedZero && weightScalerStatus_st1.Text == "සමබරයි";
                 weightScalerConfirmBtn_st1.IsEnabled = scaleReady;
@@ -2232,6 +2268,12 @@ namespace WeightMaster
         {
             if (_isSavingStation1 || _isResettingStation1)
                 return;
+
+            if (!IsValidStation1MemberNumber(barcodeTxt_st1.Text))
+            {
+                UpdateStation1ConfirmState();
+                return;
+            }
 
             if (!confirmAddRowButton_st1.IsEnabled)
             {
@@ -2270,7 +2312,7 @@ namespace WeightMaster
             _isSavingStation1 = true;
             ++_station1MemberLookupVersion;
             ++_station1LineLookupVersion;
-            confirmAddRowButton_st1.IsEnabled = false;
+            UpdateStation1ConfirmState();
             Station1Frame.IsEnabled = false;
             loadingDataInputBorder_st1.Visibility = Visibility.Visible;
             bool saved = false;
@@ -2474,7 +2516,7 @@ namespace WeightMaster
                 _isSavingStation1 = false;
                 Station1Frame.IsEnabled = true;
                 loadingDataInputBorder_st1.Visibility = Visibility.Hidden;
-                confirmAddRowButton_st1.IsEnabled = !saved;
+                UpdateStation1ConfirmState();
                 ShowCurrentStep();
                 if (saved)
                 {
@@ -5587,15 +5629,27 @@ namespace WeightMaster
 
         private void BarcodeTxt_st1_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            // Check if the input text is numeric
-            e.Handled = !IsTextNumeric(e.Text);
-            // Check whether a line name is selected to get-line wise data
-            if (lineNameCmb_st1.SelectedItem == null)
+            var textBox = (TextBox)sender;
+            string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength)
+                .Insert(textBox.SelectionStart, e.Text);
+            e.Handled = lineNameCmb_st1.SelectedItem == null || !IsValidStation1MemberNumber(proposedText);
+        }
+
+        private void BarcodeTxt_st1_Pasting(object sender, DataObjectPastingEventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            string? pastedText = e.DataObject.GetData(DataFormats.UnicodeText) as string
+                ?? e.DataObject.GetData(DataFormats.Text) as string;
+            if (pastedText == null || lineNameCmb_st1.SelectedItem == null)
             {
-                MessageBox.Show("ප්‍රවාහන මාර්ගය පලමුව තෝරාගන්න");
-                e.Handled = true;
-                //return;
+                e.CancelCommand();
+                return;
             }
+
+            string proposedText = textBox.Text.Remove(textBox.SelectionStart, textBox.SelectionLength)
+                .Insert(textBox.SelectionStart, pastedText);
+            if (!IsValidStation1MemberNumber(proposedText))
+                e.CancelCommand();
         }
 
         private void BarcodeTxt_st2_PreviewTextInput(object sender, TextCompositionEventArgs e)

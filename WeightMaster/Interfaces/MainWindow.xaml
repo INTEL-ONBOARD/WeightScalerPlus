@@ -398,7 +398,7 @@
                                 </Grid.ColumnDefinitions>
                                 <TextBlock Grid.Row="0" FontSize="20" Foreground="Black" HorizontalAlignment="Left" Margin="-6,-22,0,59" Grid.ColumnSpan="2"><Run Text="සාමාජික "/><Run Text="අංකය"/></TextBlock>
                                 <Border Background="#F7F7F7" x:Name="barcodeTxtBorder_st1" CornerRadius="10" BorderBrush="#C4C4C4" BorderThickness="2" Padding="2" Margin="-6,10,17,-30" Grid.ColumnSpan="2">
-                                    <TextBox x:Name="barcodeTxt_st1" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="BarcodeTxt_st1_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
+                                    <TextBox x:Name="barcodeTxt_st1" MaxLength="5" AllowDrop="False" GotFocus="barcodeTxt_GotFocus_st1" PreviewTextInput="BarcodeTxt_st1_PreviewTextInput" TextChanged="barcodeTxt_st1_TextChanged" Background="#F7F7F7" BorderThickness="0" Foreground="Black" FontSize="36" VerticalAlignment="Center" HorizontalAlignment="Stretch"/>
                                 </Border>
                             </Grid>
                             <!-- qr Button -->
@@ -642,7 +642,8 @@
                     </Grid>
                 </Border>
 
-                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,482">
+                <!-- Keep named controls for existing Station 1 code-behind; hide the member-turn table. -->
+                <Border Visibility="Collapsed" BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,482">
                     <!--Station1 member turn Table-->
                     <Grid>
                         <!-- Member turn Header Row -->
@@ -706,7 +707,7 @@
                     </Grid>
                 </Border>
 
-                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,359,10,78">
+                <Border BorderThickness="2" BorderBrush="#ECECEC" Background="#FBFBFB" CornerRadius="20" Margin="1083,35,10,78">
                     <!--Station1 line-wise Table-->
                     <Grid>
                         <!--Line-wise Header Row -->
