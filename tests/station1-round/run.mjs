@@ -27,7 +27,7 @@ const methods = signatures.map(signature => {
   return source.slice(start, end).replace('private async void ', 'private async Task ');
 }).join('\n');
 const controls = [...new Set([...methods.matchAll(/\b(\w+)\.(?:Text|SelectedIndex|SelectedValue|SelectedItem|IsEnabled|IsVisible|IsDropDownOpen|IsFocused|BorderBrush|Background|Visibility|Children|Focus|SelectAll)\b/g)]
-  .map(match => match[1]).filter(name => name !== 'this' && name !== 'Keyboard' && name !== 'FocusManager')
+  .map(match => match[1]).filter(name => !['this', 'Keyboard', 'FocusManager', 'DataFormats'].includes(name))
   .concat('weightScalerConfirmBtn_st2', 'confirmAddRowButton_st2'))];
 const header = source.slice(0, source.indexOf('public MainWindow()'));
 const fields = [...header.matchAll(/^[ \t]*(?:private|public)\s+(?:const\s+)?(?:string|String|int|bool|double|float)\s+\w+\s*(?:=[^;\r\n]*)?;/gm)].map(match => match[0]);
