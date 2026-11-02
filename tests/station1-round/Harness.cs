@@ -81,7 +81,7 @@ partial class RoundHarness
         UpdateStation1ConfirmState();
     }
 
-    private void AssertFresh(string? retainedLine = null, string? retainedSupervisor = null, string? retainedBill = null)
+    private void AssertFresh(string? retainedLine = null, string? retainedSupervisor = null, string? retainedBill = null, int expectedLineRows = 0)
     {
         Check(currentStep_st1 == 1, "round returns to step 1");
         Check(barcodeTxt_st1.Text == "" && memberId_st1 == "", "member cleared");
@@ -91,7 +91,11 @@ partial class RoundHarness
         Check(lineMasterNameLbl_st1.Text == (lineMasterData.FirstOrDefault(line => line.LineName == retainedLine)?.LineMaster ?? "-"), "line agent matches retained line");
         Check(nSacksTxt_st1.Text == "" && nBoxesTxt_st1.Text == "" && acceptedLeafWeightTxt_st1.Text == "", "weighing cleared");
         Check(currentAcceptedLeafWeight_st1 == 0 && scalerRoundedWeight_st1 == 0, "cached weights cleared");
-        Check(MemberTurnTablePanel_st1.Children.Count == 0 && LineTablePanel_st1.Children.Count == 0, "context tables cleared");
+        Check(MemberTurnTablePanel_st1.Children.Count == 0 && LineTablePanel_st1.Children.Count == expectedLineRows, "line table matches reset or post-save reload");
+        var shown = LineTablePanel_st1.Children.Cast<Station1LineTableRow>().ToList();
+        Check(lineRowNSacks_st1.Text == shown.Sum(row => int.Parse(row.Bags)).ToString() &&
+            lineRowTotalLeafWeights_st1.Text == shown.Sum(row => int.Parse(row.Total)).ToString(),
+            "grey line total matches visible rows");
         Check(!confirmAddRowButton_st1.IsEnabled && !station1ReadingConfirmed && !_isSavingStation1, "ready for a new round");
         Check(Keyboard.Current == "window", "keyboard focus restored");
         Check(weightLeafOfficerTxt_st1.Text == "Operator", "logged-in officer retained");
@@ -171,23 +175,41 @@ partial class RoundHarness
             h.Enter(); Check(h.currentStep_st1 == 5, "sacks to deductions");
             h.Enter(); Check(h.currentStep_st1 == 6 && Keyboard.Current == "confirmAddRowButton_st1", "deductions to Confirm");
             h.Enter();
-            h.AssertFresh("Haggala", "Supervisor", "Bill-42");
+            h.AssertFresh("Haggala", "Supervisor", "Bill-42", expectedLineRows: round + 1);
         }
         Check(h._consoleHandler.Transactions.Count == 2 && h._consoleHandler.Posts.Count == 2, "two persisted rounds retained");
         Check(h._consoleHandler.Transactions[1].barcode_details == "54321" && h._consoleHandler.Transactions[1].linename == "Haggala", "second round uses the new member and retained line");
         Check(Logger.Events.Count(name => name == "station1_save") == 2, "successful saves retain production event logging");
         Console.WriteLine("PASS: two complete five-Enter rounds retain supervisor, line and bill while clearing member and weight.");
 
+        var reload = new RoundHarness();
+        reload._consoleHandler.TableTransactions.Add(new TransactionLogBlockModel
+        {
+            Id = 20, linename = "Haggala", date = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd"),
+            barcode_details = "00001", bag_count = 8, actual_nomal_leaf_weight = 80
+        });
+        reload._consoleHandler.TableTransactions.Add(new TransactionLogBlockModel
+        {
+            Id = 30, linename = "Katujurunda", date = DateTime.Now.ToString("yyyy-MM-dd"),
+            barcode_details = "00002", bag_count = 9, actual_nomal_leaf_weight = 90
+        });
+        reload.Fill();
+        await reload.confirmAddRowButton_st1_Click(reload, new());
+        reload.AssertFresh("Haggala", "Supervisor", "Bill-42", expectedLineRows: 1);
+        Check(((Station1LineTableRow)reload.LineTablePanel_st1.Children.Single()).Member == "12345",
+            "post-confirm reload shows only today's records for the selected line");
+        Console.WriteLine("PASS: Confirm reloads only today's selected-line records and updates the grey total.");
+
         var edited = new RoundHarness();
         edited.Fill();
         await edited.confirmAddRowButton_st1_Click(edited, new());
-        edited.AssertFresh("Haggala", "Supervisor", "Bill-42");
+        edited.AssertFresh("Haggala", "Supervisor", "Bill-42", expectedLineRows: 1);
         edited.ReadyScale(); edited.Enter();
         edited.Fill("67890", "Katujurunda");
         edited.supervisorCmb_st1.SelectedValue = "Supervisor B";
         edited.billNoTxt_st1.Text = "1043";
         edited.Enter(); edited.Enter(); edited.Enter(); edited.Enter();
-        edited.AssertFresh("Katujurunda", "Supervisor B", "1043");
+        edited.AssertFresh("Katujurunda", "Supervisor B", "1043", expectedLineRows: 1);
         Check(edited._consoleHandler.Transactions.Last().linename == "Katujurunda" && edited._consoleHandler.Transactions.Last().superviosr == "Supervisor B", "edited line and supervisor are used by the next save");
         Check(edited._consoleHandler.Bills.Last().billNo == "1043", "edited bill number is saved");
         Console.WriteLine("PASS: retained fields stay editable and updated values are saved and retained for the following round.");
@@ -200,14 +222,14 @@ partial class RoundHarness
         await pendingLine.confirmAddRowButton_st1_Click(pendingLine, new());
         pendingLine._consoleHandler.TransportBillGate.SetResult("old bill");
         await staleLookup.WaitAsync(TimeSpan.FromSeconds(3));
-        pendingLine.AssertFresh("Haggala", "Supervisor", "1044");
+        pendingLine.AssertFresh("Haggala", "Supervisor", "1044", expectedLineRows: 1);
         Console.WriteLine("PASS: delayed line lookups cannot overwrite the retained bill after Confirm.");
 
         var unregistered = new RoundHarness();
         unregistered._consoleHandler.UnregisteredMember = true;
         unregistered.Fill("99999");
         await unregistered.confirmAddRowButton_st1_Click(unregistered, new());
-        unregistered.AssertFresh("Haggala", "Supervisor", "Bill-42");
+        unregistered.AssertFresh("Haggala", "Supervisor", "Bill-42", expectedLineRows: 1);
         Check(unregistered._consoleHandler.Transactions.Count == 1 && unregistered._consoleHandler.Posts.Count == 1, "unregistered member still saves transaction and green-leaf post");
         Check(unregistered._consoleHandler.Posts[0].membernumber == "99999", "unregistered member is not attributed to a previous member");
         Console.WriteLine("PASS: unregistered-member support and production save logging are preserved.");
@@ -224,12 +246,13 @@ partial class RoundHarness
         h._consoleHandler.Gate.SetResult(true);
         await Task.WhenAll(first, duplicate).WaitAsync(TimeSpan.FromSeconds(3));
         h._consoleHandler.Gate = null;
-        h.AssertFresh("Haggala", "Supervisor", "Bill-42");
+        h.AssertFresh("Haggala", "Supervisor", "Bill-42", expectedLineRows: 3);
         Console.WriteLine("PASS: duplicate Enter/save and Clear during save cannot interrupt the next round.");
 
         h.Fill(); h._consoleHandler.FailSave = true;
         await h.confirmAddRowButton_st1_Click(h, new());
         Check(h.barcodeTxt_st1.Text == "12345" && h.nSacksTxt_st1.Text == "1" && h.lineNameCmb_st1.SelectedValue != null, "failed save keeps all inputs");
+        Check(h.LineTablePanel_st1.Children.Count == 3, "failed save does not clear or reload the line table");
         Check(h.currentStep_st1 == 6 && h.confirmAddRowButton_st1.IsEnabled && !h._isSavingStation1 && h.Station1Frame.IsEnabled, "failed save restores controls");
         Check(Logger.Errors.Contains("Station1.Confirm"), "save failures retain production error logging");
         Console.WriteLine("PASS: failed save preserves the form and restores keyboard confirmation.");
@@ -265,7 +288,7 @@ partial class RoundHarness
         cleared.ReadyScale(); cleared.Enter();
         cleared.Fill("24680", reuseSessionFields: true);
         cleared.Enter(); cleared.Enter(); cleared.Enter(); cleared.Enter();
-        cleared.AssertFresh("Katujurunda", "Supervisor B", "1045");
+        cleared.AssertFresh("Katujurunda", "Supervisor B", "1045", expectedLineRows: 1);
         Check(cleared._consoleHandler.Transactions.Single().barcode_details == "24680" && cleared._consoleHandler.Transactions.Single().linename == "Katujurunda", "round after Clear uses the new member and retained line");
         Check(cleared._consoleHandler.Bills.Single().billNo == "1045", "round after Clear saves the retained bill");
         Console.WriteLine("PASS: repeated Clear before the first save retains edited fields and the next Enter-driven round saves correctly.");
@@ -417,13 +440,17 @@ sealed class FakeService
     public Task<string> GetMemberName(string member) => Task.FromResult("M. Perera");
     public Task<GreenLeafPostModel?> getDatabyMemberiDandDateSingle(string member, string date) => Task.FromResult<GreenLeafPostModel?>(null);
     public Task<string> getTransportBillNoByLineName(string line) => TransportBillGate?.Task ?? Task.FromResult("Bill-42");
-    public Task<List<TransactionLogBlockModel>> getDataByFilter(string line) => Task.FromResult(TableTransactions);
+    public Task<List<TransactionLogBlockModel>> getDataByFilter(string line) =>
+        Task.FromResult(TableTransactions.Where(transaction => transaction.linename == line).ToList());
     public async Task<bool> AddTransactionAsync(TransactionLogBlockModel transaction)
     {
         AddCalls++;
         if (Gate != null) await Gate.Task;
         if (FailSave) return false;
-        Transactions.Add(transaction); return true;
+        transaction.Id = Transactions.Count + 1;
+        Transactions.Add(transaction);
+        TableTransactions.Add(transaction);
+        return true;
     }
     public Task<bool> addTransportBill(TransportBillBlockModel bill) { Bills.Add(bill); return Task.FromResult(true); }
     public Task<List<GreenLeafPostModel>> getAllpostsbyFilteringExtended(string member, string line) => Task.FromResult(Posts.Where(p => p.membernumber == member && p.transportlinename == line).ToList());

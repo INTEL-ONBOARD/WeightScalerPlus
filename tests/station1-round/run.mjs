@@ -18,7 +18,8 @@ const signatures = [
   'private void weightScalerConfirmBtn_st1_Click(',
   'private void BarcodeTxt_st1_PreviewTextInput(', 'private void BarcodeTxt_st1_Pasting(',
   'private void triggerMechanism(', 'private async void barcodeTxt_st1_TextChanged(',
-  'private async void lineNameCmb_st1_SelectionChanged('
+  'private async void lineNameCmb_st1_SelectionChanged(',
+  'private async Task RefreshStation1LineTableAsync('
 ];
 const methods = signatures.map(signature => {
   const start = source.indexOf(signature);

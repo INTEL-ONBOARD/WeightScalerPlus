@@ -1449,6 +1449,11 @@ namespace WeightMaster
         }
         private async void lineNameCmb_st1_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            await RefreshStation1LineTableAsync(refreshBill: true);
+        }
+
+        private async Task RefreshStation1LineTableAsync(bool refreshBill)
+        {
             if (_isResettingStation1)
                 return;
 
@@ -1476,10 +1481,12 @@ namespace WeightMaster
             string searchLineName = lineNameCmb_st1.SelectedItem.ToString(); // replace with the line name you're searching for
             var result = lineMasterData.FirstOrDefault(item => item.LineName == searchLineName);
 
-            //get transport bill by line name
-            var transportBill = await _consoleHandler.getTransportBillNoByLineName(searchLineName);
-            if (!IsCurrentLookup()) return;
-            billNoTxt_st1.Text = transportBill ?? "";
+            if (refreshBill)
+            {
+                var transportBill = await _consoleHandler.getTransportBillNoByLineName(searchLineName);
+                if (!IsCurrentLookup()) return;
+                billNoTxt_st1.Text = transportBill ?? "";
+            }
 
             if (result != null)
             {
@@ -1562,7 +1569,8 @@ namespace WeightMaster
                         lineRowTotalLeafWeights_st1.Text = rowTotalLeafWeight.ToString();
 
                         // update all-lines total row
-                        UpdateAllLinesTotalRow_st1();
+                        if (refreshBill)
+                            UpdateAllLinesTotalRow_st1();
                     }
                     else
                     {
@@ -2501,6 +2509,15 @@ namespace WeightMaster
                 Logger.Event("station1_save", new { member = memberId_st1, line = lineName_st1, sacks = nSacks, boxes = nBoxes });
                 saved = true;
                 ResetStation1Round(preserveSessionFields: true);
+                try
+                {
+                    await RefreshStation1LineTableAsync(refreshBill: false);
+                }
+                catch (Exception refreshError)
+                {
+                    Logger.Error("Station1.LineTable", "line table refresh failed after save", refreshError,
+                        new { line = lineName_st1 });
+                }
                 UpdateAllLinesTotalRow_st1();
             }
             catch (Exception ex)
@@ -3607,6 +3624,31 @@ namespace WeightMaster
             return (0, goldLeaf - (totalDeductions - normalLeaf));
         }
 
+        private static (int water, int mora, int thambi, int reject, int green, int gold)
+            CalculateStation2GreenLeafTotals(
+                GreenLeafPostModel post, IReadOnlyList<TransactionLogBlockModel> boxRounds,
+                int sackWater, int sackMora, int sackThambi, int sackReject, int bagWeight)
+        {
+            if (boxRounds.Sum(round => round.box_count) != post.box_count)
+                throw new InvalidOperationException("The box rounds do not match the green-leaf record.");
+
+            int sackNormal = (int)post.nomal_leaf_weight - boxRounds.Sum(round => round.actual_nomal_leaf_weight);
+            int sackGold = (int)post.gold_leaf_weight - boxRounds.Sum(round => round.total_gold_leaf_weight);
+            if (sackNormal < 0 || sackGold < 0)
+                throw new InvalidOperationException("The box leaf exceeds the green-leaf record.");
+
+            var sackNet = ComputeNetLeafSt2(sackNormal, sackGold,
+                sackWater, sackReject, sackMora, sackThambi, bagWeight);
+
+            return (
+                sackWater + boxRounds.Sum(round => round.water),
+                sackMora + boxRounds.Sum(round => round.morapuwata),
+                sackThambi + boxRounds.Sum(round => round.thambimata),
+                sackReject + boxRounds.Sum(round => round.reject),
+                sackNet.green + boxRounds.Sum(round => round.final_green_leaf_count),
+                sackNet.gold + boxRounds.Sum(round => round.final_gold_leaf_count));
+        }
+
         private async void confirmAddRowButton_st2_Click(object sender, RoutedEventArgs e)
         {
             //loadingDataInputBorder_st2
@@ -3765,37 +3807,14 @@ namespace WeightMaster
                         finalRejectedWeight
                     );
 
-                // Check if the key exists
-                if (memberHashMap_st2.ContainsKey(memberId))
-                {
-                    // Key exists: Add the item to the existing list
-                    memberHashMap_st2[memberId].Add(finalRound);
-                }
-                else
-                {
-                    // Key does NOT exist: Create a new list, add the item, and add to the dictionary
-                    memberHashMap_st2.Add(memberId, new List<WeightRound_st2Model> { finalRound });
-                }
-
-
-
-
-                // Sum up each property to upload with the finalTransaciton
-                //float totalWeightSaclaerValue = addedRoundList.Sum(r => r.weightScalerWeight);
-                //int totalAcceptedSackWeight = addedRoundList.Sum(r => r.acceptedSackWeight);
-
-                // Sum up each property to upload with the finalTransaciton
-                float totalWeightSaclaerValue = 0;
-                int totalAcceptedSackWeight = 0;
+                // Include the final round without storing it before validation; a failed save can be retried.
+                float totalWeightSaclaerValue = finalRound.weightScalerWeight;
+                int totalAcceptedSackWeight = finalRound.acceptedSackWeight;
 
                 if (memberHashMap_st2.TryGetValue(memberId, out List<WeightRound_st2Model> weightRounds))
                 {
-                    totalWeightSaclaerValue = weightRounds.Sum(round => round.weightScalerWeight);
-                    totalAcceptedSackWeight = weightRounds.Sum(round => round.acceptedSackWeight);
-                }
-                else
-                {
-                    System.Diagnostics.Debug.WriteLine($"Key '{memberId}' not found.");
+                    totalWeightSaclaerValue += weightRounds.Sum(round => round.weightScalerWeight);
+                    totalAcceptedSackWeight += weightRounds.Sum(round => round.acceptedSackWeight);
                 }
 
                 try
@@ -3821,6 +3840,15 @@ namespace WeightMaster
                         ShowCurrentStep();
                         return;
                     }
+
+                    // Station 2 handles sacks; preserve box deductions and net leaf from Station 1.
+                    var memberRounds_st2 = await _consoleHandler.getDataByFilter(
+                        currentMemberDetails_st2.linename, currentMemberDetails_st2.barcode_details);
+                    var boxRounds_st2 = memberRounds_st2.Where(round => round.box_count > 0).ToList();
+                    var postTotals_st2 = CalculateStation2GreenLeafTotals(
+                        greenLeafPostModel_st2, boxRounds_st2,
+                        finalWateredWeight, finalMaturedWeight, finalSpoiledWeight, finalRejectedWeight,
+                        totalAcceptedSackWeight);
 
                     // Recompute the net from the same leaf weights + deductions (incl. the bag weight
                     // being saved) so the report can never show a net that ignores the bag weight.
@@ -3948,33 +3976,6 @@ namespace WeightMaster
                     }
                     //MessageBox.Show(totalAcceptedSackWeight.ToString());
 
-                    // BOXFIX: boxes never reach Station 2 (getPendingTransactionBagData filters box_count == 0),
-                    // so the box rounds' green AND gold leaf are dropped when this post is overwritten below. Box
-                    // rounds are already net of box tare + per-box cap at Station 1, so read this member's box rounds
-                    // for the SAME line + today from the transaction table and sum their final_green/gold_leaf_count.
-                    // Mirrors the way the line/daily reports already merge box data from transactionData.
-                    int boxGreenLeaf_st2 = 0;
-                    int boxGoldLeaf_st2 = 0;
-                    try
-                    {
-                        var memberRounds_st2 = await _consoleHandler.getDataByFilter(currentMemberDetails_st2.linename, currentMemberDetails_st2.barcode_details);
-                        var boxRounds_st2 = memberRounds_st2.Where(r => r.box_count > 0).ToList();
-                        boxGreenLeaf_st2 = boxRounds_st2.Sum(r => r.final_green_leaf_count);
-                        boxGoldLeaf_st2 = boxRounds_st2.Sum(r => r.final_gold_leaf_count);
-                    }
-                    catch (Exception exBox)
-                    {
-                        System.Diagnostics.Debug.WriteLine("Station 2 box leaf lookup failed: " + exBox.Message);
-                    }
-
-                    // Authoritative bag-net for the cloud row, from the post's own Station-1 leaf
-                    // weights + the deductions/bag weight being saved (box leaf added separately below).
-                    var gpNet_st2 = ComputeNetLeafSt2(
-                        (int)greenLeafPostModel_st2.nomal_leaf_weight,
-                        (int)greenLeafPostModel_st2.gold_leaf_weight,
-                        finalWateredWeight, finalRejectedWeight, finalMaturedWeight, finalSpoiledWeight,
-                        totalAcceptedSackWeight);
-
                     //call new api v2 (st2)
                     var newGRPM = new GreenLeafPostModel
                     {
@@ -4000,22 +4001,16 @@ namespace WeightMaster
                         nomal_leaf_weight = greenLeafPostModel_st2.nomal_leaf_weight,
                         gold_leaf_weight = greenLeafPostModel_st2.gold_leaf_weight,
 
-                        wathurata = finalWateredWeight,
-                        morapuwata = finalMaturedWeight,
-                        thambimata = finalSpoiledWeight,
-                        rejected = finalRejectedWeight,
+                        wathurata = postTotals_st2.water,
+                        morapuwata = postTotals_st2.mora,
+                        thambimata = postTotals_st2.thambi,
+                        rejected = postTotals_st2.reject,
 
                         bag_weight = totalAcceptedSackWeight,
                         box_weight = greenLeafPostModel_st2.box_weight,
 
-                        // BOXFIX: bag-net (Station 2) + box green leaf read from transactionData above,
-                        // so the post matches the printed reports/receipts (e.g. bag net 33 + box 44 = 77),
-                        // instead of the bag-only value that dropped the box leaf (was 33).
-                        // Bag-net is recomputed from the post's own Station-1 leaf weights + the
-                        // deductions/bag weight being saved (not the stale net textbox), so the
-                        // cloud row matches the report and never keeps an un-deducted net.
-                        final_green_leaf_count = gpNet_st2.green + boxGreenLeaf_st2,
-                        final_gold_leaf_count = gpNet_st2.gold + boxGoldLeaf_st2,
+                        final_green_leaf_count = postTotals_st2.green,
+                        final_gold_leaf_count = postTotals_st2.gold,
 
                         created_user = greenLeafPostModel_st2.created_user,
                         updated_user = userEmail

@@ -16,7 +16,7 @@ No database or scale is used.
 
 Checks cover two complete Enter-driven rounds, retained supervisor/line/bill,
 fresh member and weighing details, editing retained fields, delayed bill lookups,
-retained saved records, duplicate submission, Clear during a pending save, save failure,
+retained saved records, post-confirm selected-line reload and grey totals, duplicate submission, Clear during a pending save, save failure,
 keyboard auto-repeat and reset request-version invalidation. Table checks use
 scrambled transaction IDs and interleaved members to verify newest-first order,
 chronological round labels, unchanged totals and blank member identifiers.

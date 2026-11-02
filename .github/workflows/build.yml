@@ -24,6 +24,9 @@ jobs:
       - name: Station 1 regression checks
         run: node tests/station1-round/run.mjs
 
+      - name: Station 2 green-leaf checks
+        run: node tests/station2-greenleaf/run.mjs
+
       - name: Update dialog checks
         run: node tests/update-prompt/check.mjs
 
